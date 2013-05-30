@@ -1,0 +1,82 @@
+HEADERDIR = header
+UTILDIR = util
+
+HEADERS = ${HEADERDIR}/CMN_SIZE_mod.o \
+          ${HEADERDIR}/CMN_DEP_mod.o \
+          ${HEADERDIR}/CMN_DIAG_mod.o \
+          ${HEADERDIR}/cmn_fj_mod.o \
+          ${HEADERDIR}/CMN_GCTM_mod.o \
+          ${HEADERDIR}/CMN_ISOP_mod.o \
+          ${HEADERDIR}/CMN_mod.o \
+          ${HEADERDIR}/CMN_MONOT_mod.o \
+          ${HEADERDIR}/CMN_NOX_mod.o \
+          ${HEADERDIR}/CMN_O3_mod.o \
+          ${HEADERDIR}/CMN_VEL_mod.o \
+          ${HEADERDIR}/commsoil_mod.o \
+          ${HEADERDIR}/comode_loop_mod.o \
+          ${HEADERDIR}/jv_cmn_mod.o \
+          ${HEADERDIR}/jv_mie_mod.o \
+          ${HEADERDIR}/smv_dimension_mod.o \
+          ${HEADERDIR}/smv_errcode_mod.o \
+          ${HEADERDIR}/smv_physconst_mod.o \
+          ${HEADERDIR}/init_header.o
+
+UTILS = ${UTILDIR}/error_mod.o \
+        ${UTILDIR}/file_mod.o \
+        ${UTILDIR}/julday_mod.o \
+        ${UTILDIR}/bpch2_mod.o \
+        ${UTILDIR}/charpak_mod.o \
+        ${UTILDIR}/directory_mod.o \
+        ${UTILDIR}/grid_mod.o \
+        ${UTILDIR}/hdf_mod.o \
+        ${UTILDIR}/ifort_errmsg.o \
+        ${UTILDIR}/linux_err.o \
+        ${UTILDIR}/pressure_mod.o \
+        ${UTILDIR}/regrid_1x1_mod.o \
+        ${UTILDIR}/time_mod.o \
+        ${UTILDIR}/unix_cmds_mod.o \
+        ${UTILDIR}/closest.o \
+        ${UTILDIR}/cnv_gaussian_lat.o \
+        ${UTILDIR}/interp_ver.o \
+        ${UTILDIR}/interp_ver_f.o \
+        ${UTILDIR}/regrid_1x1.o \
+        ${UTILDIR}/regrid_1x1G.o \
+        ${UTILDIR}/regrid_2x25.o \
+        ${UTILDIR}/xshift.o \
+        ${UTILDIR}/yrev.o
+
+OBJS = biofit.o diag_mod.o logical_mod.o tracer_mod.o tracerid_mod.o gc_biomass_mod.o \
+       gfed2_biomass_mod.o gfed3_biomass_mod.o biomass_mod.o dao_mod.o boxvl.o scale_anthro_mod.o \
+       bravo_mod.o cac_anthro_mod.o pbl_mix_mod.o meganut_mod.o comode_mod.o drydep_mod.o \
+       global_oh_mod.o global_no3_mod.o carbon_mod.o dust_mod.o global_hno3_mod.o tropopause_mod.o \
+       isoropiaII_mod.o rpmares_mod.o seasalt_mod.o wetscav_mod.o epa_nei_mod.o nei2005_anthro_mod.o \
+       edgar_mod.o emep_mod.o streets_anthro_mod.o sulfate_mod.o chemistry_mod.o comchem.o \
+       convection_mod.o diag1.o diag_2pm.o diag41_mod.o diag3.o emissions_mod.o emmonot.o \
+       findmon.o gamap_mod.o initialize.o input_mod.o isoropiaIIcode.o ndxx_setup.o rdisopt.o \
+       rdlai.o rdland.o rdmonot.o readlai.o restart.o setbase.o sfcwindsqr.o sunparam.o \
+       tracer_mass_advect.o transport_mod.o start_chem.o integrate_chem.o end_chem.o
+
+CP = @CP@
+CC = @CC@
+F77 = @F77_FCST@
+FORT_FLAGS = @FORT_FLAGS@ -Mpreprocess
+INCLUDE_DIR = @INCLUDE_DIR@
+INSTALLDLIB = @INSTALLDLIB@
+
+chemistry.a : ${HEADERS} ${UTILS} ${OBJS}
+	${AR} -r $@ ${HEADERS} ${UTILS} ${OBJS}
+	${CP} $@ ${INSTALLDLIB}
+
+clean :
+	rm -f *.o *.a ${HEADERDIR}/*.o ${UTILDIR}/*.o
+
+.SUFFIXES : .o .F .F90 .c
+
+.F.o :
+	${F77} ${FORT_FLAGS} ${INCLUDE_DIR} -c $< -o $@
+
+.F90.o :
+	${F77} ${FORT_FLAGS} ${INCLUDE_DIR} -c $< -o $@
+
+.c.o :
+	${CC} -c $< -o $@
