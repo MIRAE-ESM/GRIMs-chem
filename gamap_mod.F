@@ -3721,7 +3721,8 @@
 #if   defined( GEOS_4 )
                   UNIT(T,67) = 'm'
 #else
-                  UNIT(T,67) = 'hPa'
+!                  UNIT(T,67) = 'hPa'
+                  UNIT(T,67) = 'm'
 #endif
                CASE( 10 )
                   NAME(T,67) = 'CLDFRC'

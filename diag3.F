@@ -3749,7 +3749,7 @@
      &               JFIRST,    LFIRST,    AD69(:,:,1) )
 
          ! Set ND69 = 0 so we won't print it out again
-         ND69 = 0
+!         ND69 = 0
       ENDIF
 
       !==================================================================
