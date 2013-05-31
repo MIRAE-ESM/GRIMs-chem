@@ -633,8 +633,8 @@
       NHMSe = 0
 
       ! Run directory
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:3' )
-      READ( SUBSTRS(1:N), '(a)' ) RUN_DIR
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:3' )
+!      READ( SUBSTRS(1:N), '(a)' ) RUN_DIR
 
       ! Input restart file
 !      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:4' )
@@ -721,8 +721,8 @@
       WRITE( 6, '(  a)' ) '---------------'
 !      WRITE( 6, 100     ) 'Start time of run           : ', NYMDb, NHMSb
 !      WRITE( 6, 100     ) 'End time of run             : ', NYMDe, NHMSe
-      WRITE( 6, 110     ) 'Run directory               : ',
-     &                     TRIM( RUN_DIR )
+!      WRITE( 6, 110     ) 'Run directory               : ',
+!     &                     TRIM( RUN_DIR )
       WRITE( 6, 110     ) 'Data Directory              : ',
      &                     TRIM( DATA_DIR )
 !      WRITE( 6, 110     ) 'GCAP       sub-directory    : ', 
