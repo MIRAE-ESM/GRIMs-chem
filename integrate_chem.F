@@ -10,6 +10,7 @@
 
       SUBROUTINE INTEGRATE_CHEM
 
+      USE BPCH2_MOD,      ONLY : OPEN_BPCH2_FOR_WRITE
       USE CHEMISTRY_MOD,  ONLY : DO_CHEMISTRY
       USE COMCHEM,        ONLY : UPDATE_COMCHEM
       USE COMFVER,        ONLY : DELTIM, STEPONE
@@ -21,6 +22,7 @@
       USE EMISSIONS_MOD,  ONLY : DO_EMISSIONS
       USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FILE_MOD,       ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
+      USE INPUT_MOD,      ONLY : BPCH_FILE
       USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS, LNLPBL
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
@@ -42,6 +44,7 @@
       USE TIME_MOD,       ONLY : SET_DIAGb, SET_DIAGe, TIMESTAMP_DIAG
       USE TIME_MOD,       ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
       USE TIME_MOD,       ONLY : SET_ELAPSED_MIN, SET_TIMESTEPS
+      USE TIME_MOD,       ONLY : EXPAND_DATE
       USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS, STT, TCVV
       USE TRACER_MOD,     ONLY : ITS_A_H2HD_SIM
       USE TRANSPORT_MOD,  ONLY : DO_TRANSPORT
@@ -60,6 +63,7 @@
       INTEGER :: MINUTE, YEAR, SEASON, ELAPSED_TODAY
       REAL*8  :: TAU
       LOGICAL, SAVE :: FIRST = .TRUE.
+      CHARACTER(LEN=255) :: FILENAME
 
       IF (STEPONE) THEN
 
@@ -145,6 +149,20 @@
             !===========================================================
             CALL INITIALIZE( 2 ) ! Zero arrays
             CALL INITIALIZE( 3 ) ! Zero counters
+         ENDIF
+
+         IF ( ITS_A_NEW_MONTH() ) THEN
+
+            ! Get BPCH_FILE from input_mod.F
+            FILENAME = BPCH_FILE
+
+            ! Expand YYYYMMDD tokens in the bpch file name
+            CALL EXPAND_DATE( FILENAME, NYMD, NHMS )
+
+            ! Open bpch file
+            CLOSE( IU_BPCH )
+            CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, FILENAME )
+
          ENDIF
 
          !==============================================================

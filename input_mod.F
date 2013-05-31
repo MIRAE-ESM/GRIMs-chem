@@ -25,6 +25,7 @@
 ! !PUBLIC MEMBER FUNCTIONS:
 !  
       PUBLIC  :: READ_INPUT_FILE
+      PUBLIC  :: BPCH_FILE
 !
 ! !PRIVATE MEMBER FUNCTIONS:
 !
@@ -3683,10 +3684,10 @@
 !      CALL INIT_DIAG_OH 
 
       ! Expand YYYYMMDD tokens in the bpch file name
-      CALL EXPAND_DATE( BPCH_FILE, GET_NYMDb(), GET_NHMSb() )
+!      CALL EXPAND_DATE( BPCH_FILE, GET_NYMDb(), GET_NHMSb() )
 
       ! Open the binary punch file for output 
-      CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, BPCH_FILE )
+!      CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, BPCH_FILE )
 
       END SUBROUTINE READ_DIAGNOSTIC_MENU
 !EOC
