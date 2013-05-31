@@ -625,12 +625,14 @@
       AZO(:) = 0d0
 #endif
 
+      CZ1 = 0d0
+
       ! Loop over surface grid boxes
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, IJLOOP, THIK )
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
+      DO J = 1, LATLOOP
+      DO I = 1, LONLOOP(J)
 
          ! 1-D grid box index
          IJLOOP      = ( (J-1) * IIPAR ) + I
