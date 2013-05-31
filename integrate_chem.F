@@ -63,6 +63,7 @@
       INTEGER :: MINUTE, YEAR, SEASON, ELAPSED_TODAY
       REAL*8  :: TAU
       LOGICAL, SAVE :: FIRST = .TRUE.
+      LOGICAL, SAVE :: FIRSTOPEN = .TRUE.
       CHARACTER(LEN=255) :: FILENAME
 
       IF (STEPONE) THEN
@@ -160,8 +161,14 @@
             CALL EXPAND_DATE( FILENAME, NYMD, NHMS )
 
             ! Open bpch file
+            IF (TRIM(FILENAME) .NE. TRIM(BPCH_FILE) .OR. FIRSTOPEN) THEN
+
             CLOSE( IU_BPCH )
             CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, FILENAME )
+
+            FIRSTOPEN = .FALSE.
+
+            ENDIF
 
          ENDIF
 
