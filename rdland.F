@@ -104,11 +104,19 @@
      &          FORM='FORMATTED',      ERR=700 )
 
       ! Read data
+      IF ( LAVHRRLAI ) THEN
  100  READ(65,101,end=110,ERR=800) I,J,TEMPIREG(I,J),
      &     (TEMPILAND(I,J,K),K=1,TEMPIREG(I,J)),
      &     (TEMPIUSE(I,J,K),K=1,TEMPIREG(I,J))
- 101  FORMAT(23I4)
+ 101  FORMAT(20I4)
       GO TO 100
+      ELSE
+ 200  READ(65,201,end=110,ERR=800) I,J,TEMPIREG(I,J),
+     &     (TEMPILAND(I,J,K),K=1,TEMPIREG(I,J)),
+     &     (TEMPIUSE(I,J,K),K=1,TEMPIREG(I,J))
+ 201  FORMAT(25I4)
+      GO TO 200
+      ENDIF
       ENDIF
 
       ! Process data into arrays
