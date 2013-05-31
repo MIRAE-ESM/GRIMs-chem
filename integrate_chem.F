@@ -128,7 +128,7 @@
          !==============================================================
          !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
          !==============================================================
-         IF ( ITS_TIME_FOR_BPCH() ) THEN
+         IF ( ITS_TIME_FOR_BPCH() .and. .not. FIRSTOPEN ) THEN
 
             ! Set time at end of diagnostic timestep
             CALL SET_DIAGe( TAU )
