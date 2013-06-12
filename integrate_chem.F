@@ -84,6 +84,12 @@
 
          IF (FIRST) THEN
 
+            TS = DELTIM / 60
+
+            CALL SET_TIMESTEPS( CHEMISTRY  = TS, EMISSION  = TS,
+     &                          DYNAMICS   = TS, UNIT_CONV = TS,
+     &                          CONVECTION = TS, DIAGNOS   = TS )
+
             ! Call AIRQNT to compute air mass quantities from PS1
             CALL SET_FLOATING_PRESSURE( PS1 )
             IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a SET_FLT_PRS' )

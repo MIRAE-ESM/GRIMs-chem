@@ -1057,7 +1057,7 @@
 !EOP
 !------------------------------------------------------------------------------
 !BOC
-      IF (STEPONE) ELAPSED_MIN = 0d0
+      IF (STEPONE) ELAPSED_MIN = TS_DYN
 
       ELAPSED_MIN = ELAPSED_MIN + TS_DYN
 
