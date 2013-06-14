@@ -51,10 +51,11 @@ OBJS = biofit.o diag_mod.o logical_mod.o tracer_mod.o tracerid_mod.o gc_biomass_
        global_oh_mod.o global_no3_mod.o carbon_mod.o dust_mod.o global_hno3_mod.o tropopause_mod.o \
        isoropiaII_mod.o rpmares_mod.o seasalt_mod.o wetscav_mod.o epa_nei_mod.o nei2005_anthro_mod.o \
        edgar_mod.o emep_mod.o streets_anthro_mod.o sulfate_mod.o chemistry_mod.o comchem.o \
-       convection_mod.o diag1.o diag_2pm.o diag41_mod.o diag3.o emissions_mod.o emmonot.o \
-       findmon.o gamap_mod.o initialize.o input_mod.o isoropiaIIcode.o ndxx_setup.o rdisopt.o \
-       rdlai.o rdland.o rdmonot.o readlai.o restart.o setbase.o sfcwindsqr.o sunparam.o \
-       tracer_mass_advect.o transport_mod.o start_chem.o integrate_chem.o end_chem.o
+       convection_mod.o diag1.o diag_2pm.o diag41_mod.o diag3.o flexaod.o diag_aod_mod.o \
+       emissions_mod.o emmonot.o findmon.o gamap_mod.o initialize.o input_mod.o isoropiaIIcode.o \
+       mie_spher.o ndxx_setup.o rdisopt.o rdlai.o rdland.o rdmonot.o readlai.o restart.o setbase.o \
+       sfcwindsqr.o sunparam.o tracer_mass_advect.o transport_mod.o \
+       start_chem.o integrate_chem.o end_chem.o
 
 CP = @CP@
 CC = @CC@

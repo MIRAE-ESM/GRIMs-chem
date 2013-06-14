@@ -18,6 +18,7 @@
       USE DAO_MOD,        ONLY : AD, AIRQNT, CONVERT_UNITS, COSSZA
       USE DAO_MOD,        ONLY : MAKE_RH, PS1, SUNCOS, SUNCOS_MID
       USE DIAG41_MOD,     ONLY : DIAG41, ND41
+      USE DIAG_AOD_MOD,   ONLY : WRITE_DIAG_AOD
       USE DRYDEP_MOD,     ONLY : DO_DRYDEP
       USE EMISSIONS_MOD,  ONLY : DO_EMISSIONS
       USE ERROR_MOD,      ONLY : DEBUG_MSG
@@ -141,6 +142,9 @@
 
             ! Write bpch file
             CALL DIAG3
+
+            ! Write AOD, SSA, ASM
+            CALL WRITE_DIAG_AOD
 
             ! Flush file units
             CALL FLUSH( IU_ND48    )          

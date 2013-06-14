@@ -533,6 +533,51 @@
 
       ENDIF
 
+      !-----------------------------------
+      ! SPACING*52,53,54: AOD [unitless]
+      !-----------------------------------
+
+      CALL WRITE_SEPARATOR( 700 )
+
+      DO T = 1, 8
+
+         N = ( SPACING * 52 ) + T
+
+         WRITE( C, '(i2.2)' ) T
+
+         NAME_NEW = 'AOD' // C
+
+         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
+     &                     1,        1e0,     'unitless', N )
+
+      ENDDO
+
+      DO T = 1, 8
+
+         N = ( SPACING * 53 ) + T
+
+         WRITE( C, '(i2.2)' ) T
+
+         NAME_NEW = 'SSA' // C
+
+         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
+     &                     1,        1e0,     'unitless', N )
+
+      ENDDO
+
+      DO T = 1, 8
+
+         N = ( SPACING * 54 ) + T
+
+         WRITE( C, '(i2.2)' ) T
+
+         NAME_NEW = 'ASM' // C
+
+         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
+     &                     1,        1e0,     'unitless', N )
+
+      ENDDO
+
       !------------------------------
       ! All other diagnostics 
       !------------------------------
@@ -679,6 +724,8 @@
             WRITE( IU_FILE, 150, IOSTAT=IOS )
          CASE( 600 ) 
             WRITE( IU_FILE, 160, IOSTAT=IOS )
+         CASE( 700 )
+            WRITE( IU_FILE, 180, IOSTAT=IOS )
          CASE DEFAULT
             WRITE( IU_FILE, 170, IOSTAT=IOS ) DIAG
       END SELECT
@@ -699,6 +746,7 @@
  150  FORMAT( '# GEOS-CHEM tracers [ug/m3]'          )
  160  FORMAT( '# SOA GPROD & APROD [kg/kg]'          )
  170  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
+ 180  FORMAT( '# AOD, SSA, ASM [unitless]'           )
       
       END SUBROUTINE WRITE_SEPARATOR
 !EOC
@@ -1296,6 +1344,21 @@
       CATEGORY(N) = 'WET-FRAC'
       DESCRIPT(N) = 'Wetland Fraction'
       OFFSET(N)   = SPACING * 51
+
+      N           = N + 1
+      CATEGORY(N) = 'DIAGAOD'
+      DESCRIPT(N) = 'Diagnostic Aerosol Optical Depth'
+      OFFSET(N)   = SPACING * 52
+
+      N           = N + 1
+      CATEGORY(N) = 'DIAGSSA'
+      DESCRIPT(N) = 'Diagnostic Single Scattering Albedo'
+      OFFSET(N)   = SPACING * 53
+
+      N           = N + 1
+      CATEGORY(N) = 'DIAGASM'
+      DESCRIPT(N) = 'Diagnostic Asymmetry Parameter'
+      OFFSET(N)   = SPACING * 54
 
 ! NEED TO DO THAT AT ONE POINT      
 !      ! New for CSPEC
