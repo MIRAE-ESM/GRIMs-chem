@@ -361,6 +361,14 @@
       ! EMISS_EMEP begins here!
       !=================================================================
 
+      TEMPARRAY1 = 0d0
+      TEMPARRAY2 = 0d0
+      TEMPARRAY3 = 0d0
+      TEMPARRAY4 = 0d0
+      TEMPARRAY5 = 0d0
+      TEMPARRAY6 = 0d0
+      TEMPARRAY7 = 0d0
+
       ! First-time initialization
       IF ( FIRST ) THEN
          CALL INIT_EMEP

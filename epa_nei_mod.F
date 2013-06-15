@@ -1153,6 +1153,19 @@
       ! READ_EPA begins here!
       !=================================================================
 
+      TEMPARRAY1  = 0d0
+      TEMPARRAY2  = 0d0
+      TEMPARRAY3  = 0d0
+      TEMPARRAY4  = 0d0
+      TEMPARRAY5  = 0d0
+      TEMPARRAY6  = 0d0
+      TEMPARRAY7  = 0d0
+      TEMPARRAY8  = 0d0
+      TEMPARRAY9  = 0d0
+      TEMPARRAY10 = 0d0
+      TEMPARRAY11 = 0d0
+      TEMPARRAY12 = 0d0
+
       ! Echo info
       IF (MASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
