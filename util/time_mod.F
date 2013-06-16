@@ -3598,7 +3598,7 @@
       !================================================================= 
 
       ! Return FALSE if it's the first timestep
-      IF ( TAU == TAUb ) THEN
+      IF ( TAU == TAUb .OR. FIRSTTIME ) THEN
          DO_BPCH = .FALSE.
          RETURN
       ENDIF
