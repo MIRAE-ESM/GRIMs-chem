@@ -13,6 +13,7 @@
       USE COMCHEM,        ONLY : INIT_COMCHEM
       USE COMODE_MOD,     ONLY : INIT_COMODE
       USE DAO_MOD,        ONLY : INIT_DAO
+      USE DIAG_AOD_MOD,   ONLY : INIT_DIAG_AOD
       USE ERROR_MOD,      ONLY : DEBUG_MSG, ERROR_STOP
       USE FLEXAOD,        ONLY : MIE_CALC
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
@@ -39,6 +40,10 @@
       ! Initialize GRIMs coupling module
       CALL INIT_COMCHEM
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_COMCHEM' )
+
+      ! Initialize AOD diagnostic module
+      CALL INIT_DIAG_AOD
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
 
       ! Initialize met field arrays from "dao_mod.f"
       CALL INIT_DAO
