@@ -527,7 +527,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -563,7 +563,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -599,7 +599,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -635,7 +635,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -671,7 +671,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -707,7 +707,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -743,7 +743,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -780,7 +780,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -816,7 +816,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -852,7 +852,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -888,7 +888,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -924,7 +924,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -960,7 +960,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -996,7 +996,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
@@ -1032,7 +1032,7 @@
             DO L = 1, 5
                CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2, 1 )
+     &                          TEMPARRAY2(:,:,L), 1 )
             ENDDO
 
             CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
