@@ -18,7 +18,7 @@
       USE COMFSPEC_VR, ONLY : QM, TEM, Z
       USE COMFVER,     ONLY : DELTIM
       USE COMGRAD,     ONLY : ALNDR, ALVDR
-      USE COMSFC,      ONLY : SLC, SLMSK, TSEA, UUSTAR, Z0CM
+      USE COMSFC,      ONLY : SMC, SLMSK, TSEA, UUSTAR, Z0CM
       USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, GWETTOP, HFLUX, LWI
       USE DAO_MOD,     ONLY : MOISTQ, PBL, PREACC, PRECON, PS1, RADSWG
       USE DAO_MOD,     ONLY : SPHU, T, TS, U10M, USTAR, V10M, Z0
@@ -65,7 +65,7 @@
       CMFMC = WORK1 + WORK2
 
       ! Soil moisture [unitless]
-      GWETTOP = SLC(:,:,1)
+      GWETTOP = SMC(:,:,1)
 
       ! Sensible heat flux [W/m2]
       HFLUX = _DTSFC
