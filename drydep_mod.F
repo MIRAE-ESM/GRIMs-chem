@@ -582,6 +582,7 @@
       ! References to F90 modules 
       USE DAO_MOD,      ONLY : ALBD,   BXHEIGHT, CLDFRC, GET_OBK
       USE DAO_MOD,      ONLY : RADSWG, RH,       TS,     USTAR,   Z0
+      USE DAO_MOD,      ONLY : SNOMAS
       USE PBL_MIX_MOD,  ONLY : GET_PBL_TOP_m
       USE MEGANUT_MOD,  ONLY : XLTMMP
                                   
@@ -656,7 +657,8 @@
          CFRAC(IJLOOP)  = CLDFRC(I,J)
 
          ! Set logical LSNOW if snow and sea ice (ALBEDO > 0.4)
-         LSNOW(IJLOOP)  = ( ALBD(I,J) > 0.4 )
+!         LSNOW(IJLOOP)  = ( ALBD(I,J) > 0.4 )
+         LSNOW(IJLOOP)  = ( SNOMAS(I,J) > 10d0 )
 
          ! Monin-Obhukov length [m]
          OBK(IJLOOP)    = GET_OBK( I, J )

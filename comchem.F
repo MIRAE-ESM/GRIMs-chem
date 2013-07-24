@@ -18,10 +18,10 @@
       USE COMFSPEC_VR, ONLY : QM, TEM, Z
       USE COMFVER,     ONLY : DELTIM
       USE COMGRAD,     ONLY : ALNDR, ALVDR
-      USE COMSFC,      ONLY : SMC, SLMSK, TSEA, UUSTAR, Z0CM
+      USE COMSFC,      ONLY : SMC, SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
       USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, GWETTOP, HFLUX, LWI
       USE DAO_MOD,     ONLY : MOISTQ, PBL, PREACC, PRECON, PS1, RADSWG
-      USE DAO_MOD,     ONLY : SPHU, T, TS, U10M, USTAR, V10M, Z0
+      USE DAO_MOD,     ONLY : SNOMAS, SPHU, T, TS, U10M, USTAR, V10M, Z0
       USE NISLQ,       ONLY : SLQ_Q1
       USE PARAMODEL,   ONLY : LEVSS, LNT22S
       USE TRACER_MOD,  ONLY : N_TRACERS
@@ -95,6 +95,9 @@
 
       ! Shortwave rad at ground [W/m2]
       RADSWG = _SSWDN
+
+      ! Water equivalent snow depth [mm H2O]
+      SNOMAS = SNOWEQ
 
       ! Specific humidity [g/kg]
       CALL TRANSFORM_3D( SLQ_Q1(:,1:LLPAR,:), SPHU )
