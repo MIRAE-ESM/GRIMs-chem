@@ -35,7 +35,7 @@
 !
       PRIVATE :: DRY_SETTLING
       PRIVATE :: DRY_DEPOSITION
-!      PRIVATE :: SRC_DUST_DEAD
+      PRIVATE :: SRC_DUST_DEAD
       PRIVATE :: SRC_DUST_GINOUX
 !
 !  !REVISION HISTORY:
@@ -547,10 +547,10 @@
       IF ( LDEAD ) THEN
 
          ! Use Zender's DEAD dust source function
-!         CALL SRC_DUST_DEAD( STT(:,:,:,IDTDST1:IDTDST4) )
+         CALL SRC_DUST_DEAD( STT(:,:,:,IDTDST1:IDTDST4) )
 
          !### Debug
-!         IF ( LPRT ) CALL DEBUG_MSG( '### EMISSDUST: a SRC_DUST_DEAD' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### EMISSDUST: a SRC_DUST_DEAD' )
          
       ELSE
 
@@ -564,7 +564,6 @@
 
       END SUBROUTINE EMISSDUST
 !EOC
-#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -597,7 +596,7 @@
       USE PRESSURE_MOD,  ONLY : GET_PEDGE,       GET_PCENTER 
       USE TIME_MOD,      ONLY : GET_TS_EMIS,     GET_MONTH   
       USE TIME_MOD,      ONLY : GET_DAY_OF_YEAR, ITS_A_NEW_MONTH
-      USE TRANSFER_MOD,  ONLY : TRANSFER_2D
+!      USE TRANSFER_MOD,  ONLY : TRANSFER_2D
 
       USE CMN_SIZE_MOD        ! Size parameters
       USE CMN_DIAG_MOD        ! ND06
@@ -696,7 +695,7 @@
       !=================================================================      
 
       ! DTSRCE is the emission timestep in seconds
-      DTSRCE = GET_TS_EMIS() * 60d0
+      DTSRCE = GET_TS_EMIS() * 2d0 * 60d0
 
       ! DOY is the day of year (0-365 or 0-366)
       DOY    = DBLE( GET_DAY_OF_YEAR() )
@@ -707,18 +706,20 @@
       IF ( FIRST ) THEN
 
          ! Echo info
+         IF (MASTER) THEN
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          WRITE( 6, 100   )
          WRITE( 6, 110   )
          WRITE( 6, 120   )
          WRITE( 6, 130   ) 
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
+         ENDIF
        
          ! FORMAT strings
  100     FORMAT( 'D E A D   D U S T   M O B I L I Z A T I O N'         )
  110     FORMAT( 'Routines from DEAD model by Charlie Zender et al'    )
- 120     FORMAT( 'Modified for GEOS-CHEM by D. Fairlie and R. Yantosca')
- 130     FORMAT( 'Last Modification Date: 1/23/07'                     )
+ 120     FORMAT( 'Modified for GRIMs by Seungun Lee'                   )
+ 130     FORMAT( 'Last Modification Date: 8/12/13'                     )
 
          ! Read fields for DEAD that are time-invariant
          CALL GET_TIME_INVARIANT_DATA
@@ -782,11 +783,11 @@
             ORO(I)         = OROGRAPHY(I,J) 
 
             ! Snow height [m H2O]
-#if   defined( GEOS_5 ) || defined( MERRA )
+!#if   defined( GEOS_5 ) || defined( MERRA )
             SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
-#else
-            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
-#endif
+!#else
+!            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
+!#endif
             ! Dust tracer and increments
             DO N = 1, NDSTBIN
                DSRC(I,N)   = 0.0d0
@@ -798,7 +799,8 @@
          !==============================================================
          
          ! Latitude in RADIANS
-         YMID_R = GET_YMID_R(J)
+!         YMID_R = GET_YMID_R(J)
+         YMID_R = 0d0
 
          ! Call DEAD dust mobilization
          CALL DST_MBL( DOY,    BHT2,  J,     YMID_R, ORO,    
@@ -825,7 +827,6 @@
 
       END SUBROUTINE SRC_DUST_DEAD
 !EOC
-#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -961,8 +962,8 @@
          ! FORMAT strings
  100     FORMAT( 'G I N O U X   D U S T   M O B I L I Z A T I O N'     )
  110     FORMAT( 'Routines originally by Paul Ginoux, GSFC'            )
- 120     FORMAT( 'Modified for GEOS-CHEM by D. Fairlie and R. Yantosca')
- 130     FORMAT( 'Last Modification Date: 4/6/04'                      )
+ 120     FORMAT( 'Modified for GRIMs by Seungun Lee'                   )
+ 130     FORMAT( 'Last Modification Date: 8/12/13'                     )
 
          ! Filename
          FILENAME = TRIM( DATA_DIR )        // 

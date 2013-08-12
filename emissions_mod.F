@@ -85,7 +85,7 @@
 ! !USES:
 !
       USE BIOMASS_MOD,            ONLY : COMPUTE_BIOMASS_EMISSIONS
-!      USE ARCTAS_SHIP_EMISS_MOD,  ONLY : EMISS_ARCTAS_SHIP
+      USE ARCTAS_SHIP_EMISS_MOD,  ONLY : EMISS_ARCTAS_SHIP
       USE BRAVO_MOD,              ONLY : EMISS_BRAVO
 !      USE C2H6_MOD,               ONLY : EMISSC2H6
       USE CAC_ANTHRO_MOD,         ONLY : EMISS_CAC_ANTHRO
@@ -117,7 +117,7 @@
       USE TRACER_MOD                 
 !      USE TAGGED_CO_MOD,          ONLY : EMISS_TAGGED_CO
 !      USE VISTAS_ANTHRO_MOD,      ONLY : EMISS_VISTAS_ANTHRO
-!      USE ICOADS_SHIP_MOD,        ONLY : EMISS_ICOADS_SHIP !(cklee,7/09/09)
+      USE ICOADS_SHIP_MOD,        ONLY : EMISS_ICOADS_SHIP !(cklee,7/09/09)
 
       USE CMN_SIZE_MOD                 ! Size parameters
       USE CMN_O3_MOD                   ! FSCLYR
@@ -339,12 +339,12 @@
          ENDIF
 
          ! Read SO2 ARCTAS emissions
-!         IF ( LARCSHIP .AND. ITS_A_NEW_YEAR() )
-!     $        CALL EMISS_ARCTAS_SHIP( YEAR )
+         IF ( LARCSHIP .AND. ITS_A_NEW_YEAR() )
+     $        CALL EMISS_ARCTAS_SHIP( YEAR )
 
          ! Read ICOADS ship emissions once per month !(cklee, 7/09/09)
          IF ( LICOADSSHIP .and. ITS_A_NEW_MONTH() ) THEN
-!            CALL EMISS_ICOADS_SHIP
+            CALL EMISS_ICOADS_SHIP
          ENDIF
 
          ! Emissions for various aerosol types

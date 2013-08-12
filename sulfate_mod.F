@@ -7119,8 +7119,8 @@
 !******************************************************************************
 !
       ! References to F90 modules
-!      USE ARCTAS_SHIP_EMISS_MOD,ONLY : GET_ARCTAS_SHIP
-!      USE ICOADS_SHIP_MOD,      ONLY : GET_ICOADS_SHIP   !(cklee, 7/09/09)
+      USE ARCTAS_SHIP_EMISS_MOD,ONLY : GET_ARCTAS_SHIP
+      USE ICOADS_SHIP_MOD,      ONLY : GET_ICOADS_SHIP   !(cklee, 7/09/09)
       USE BPCH2_MOD,            ONLY : GET_NAME_EXT_2D, GET_RES_EXT
       USE BPCH2_MOD,            ONLY : GET_TAU0,        READ_BPCH2
       USE DIRECTORY_MOD,        ONLY : DATA_DIR 
@@ -7172,21 +7172,21 @@
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
-!         DO J = 1, LATLOOP
-!         DO I = 1, LONLOOP(J)
+         DO J = 1, LATLOOP
+         DO I = 1, LONLOOP(J)
 
          ! Read ARCTAS SO2 emissions in [kg SO2/BOX/s]
-!         ESO2_sh(I,J) = GET_ARCTAS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
+         ESO2_sh(I,J) = GET_ARCTAS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
                
-!            IF ( LEMEPSHIP ) THEN
-!               IF ( GET_EUROPE_MASK(I,J) > 0d0 )
-!     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, IDTSO2, 
-!     &                                          KG_S=.TRUE.,
-!     $                                          SHIP=.TRUE.)
-!            ENDIF
+            IF ( LEMEPSHIP ) THEN
+               IF ( GET_EUROPE_MASK(I,J) > 0d0 )
+     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, IDTSO2, 
+     &                                          KG_S=.TRUE.,
+     $                                          SHIP=.TRUE.)
+            ENDIF
 
-!         ENDDO 
-!         ENDDO
+         ENDDO 
+         ENDDO
 !$OMP END PARALLEL DO
 
       !----------------------------------------
@@ -7300,20 +7300,20 @@
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
-!         DO J = 1, LATLOOP
-!         DO I = 1, LONLOOP(J)
+         DO J = 1, LATLOOP
+         DO I = 1, LONLOOP(J)
 
          ! Read ICOADS emissions in [kg SO2/box/s]
-!         ESO2_sh(I,J) = GET_ICOADS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
+         ESO2_sh(I,J) = GET_ICOADS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
                
-!            IF ( LEMEPSHIP ) THEN
-!               IF ( GET_EUROPE_MASK(I,J) > 0d0 )
-!     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, 26, KG_S=.TRUE.,
-!     $                                          SHIP=.TRUE.)
-!            ENDIF
+            IF ( LEMEPSHIP ) THEN
+               IF ( GET_EUROPE_MASK(I,J) > 0d0 )
+     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, 26, KG_S=.TRUE.,
+     $                                          SHIP=.TRUE.)
+            ENDIF
 
-!         ENDDO 
-!         ENDDO
+         ENDDO 
+         ENDDO
 !$OMP END PARALLEL DO
          
       ENDIF
