@@ -676,7 +676,7 @@
 
       ! Echo to stdout
       IF (MASTER) THEN
-      WRITE( 6, '(/,a)' ) 'SET_TIMESTEPS: setting GEOS-Chem timesteps!'
+      WRITE( 6, '(/,a)' ) 'SET_TIMESTEPS: setting GRIMs-Chem timesteps!'
       WRITE( 6, '(  a)' ) '-------------------------------------------'
       WRITE( 6, '(''Chemistry  Timestep [min] : '', i4 )' ) TS_CHEM
       WRITE( 6, '(''Convection Timestep [min] : '', i4 )' ) TS_CONV
