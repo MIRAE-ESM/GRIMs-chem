@@ -124,10 +124,10 @@
       V10M = V10M_
 
       ! U-winds [m/s]
-      CALL TRANSFORM_3D( SLQ_U2, UWND )
+!      CALL TRANSFORM_3D( SLQ_U2, UWND )
 
       ! V-winds [m/s]
-      CALL TRANSFORM_3D( SLQ_V2, VWND )
+!      CALL TRANSFORM_3D( SLQ_V2, VWND )
 
       ! Roughness height [m]
       Z0 = Z0CM * 1d-2

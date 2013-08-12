@@ -501,7 +501,7 @@
       ! DST_MBL begins here!
       !=================================================================
 
-      DUST_LONLOOP = DUST_LONLOOP
+      DUST_LONLOOP = LONLOOP(LAT_IDX)
 
       ! Time step [s]
       TM_DLT                 = TM_ADJ
@@ -4672,6 +4672,7 @@ c Fix up for negative argument, erf, etc.
       CHARACTER(LEN=255)    :: FILENAME
 
       REAL*8                :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      INTEGER               :: TEMPSFC_TYP(I2x25,J2x25)
       INTEGER               :: J
       INTEGER, EXTERNAL     :: CLX, CLY
 
@@ -4964,9 +4965,15 @@ c Fix up for negative argument, erf, etc.
       ! Also round off
 !      SFC_TYP = NINT( ARRAY(:,:,1) )
 
+      TEMPSFC_TYP = NINT( ARRAY(:,:,1) )
+
+#ifdef MP
+      CALL MPBCASTI(TEMPSFC_TYP,I2x25*J2x25)
+#endif
+
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP(J)
-         SFC_TYP(I,J) = NINT( ARRAY(CLX(I,J),CLY(I,J),1) )
+         SFC_TYP(I,J) = TEMPSFC_TYP(CLX(I,J),CLY(I,J))
       ENDDO
       ENDDO
 

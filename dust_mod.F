@@ -584,7 +584,8 @@
 !
       USE DAO_MOD,       ONLY : BXHEIGHT,     GWETTOP,   LWI
       USE DAO_MOD,       ONLY : SNOW,         SPHU,      T    
-      USE DAO_MOD,       ONLY : TS,           UWND,      VWND
+      USE DAO_MOD,       ONLY : TS!,           UWND,      VWND
+      USE DAO_MOD,       ONLY : U10M, V10M
       USE DAO_MOD,       ONLY : SNOMAS
       USE DUST_DEAD_MOD, ONLY : GET_TIME_INVARIANT_DATA, GET_ORO
       USE DUST_DEAD_MOD, ONLY : GET_MONTHLY_DATA,        DST_MBL
@@ -769,8 +770,10 @@
             THLON(I)       = TLON(I) * ( P1000 / PMID(I) )**AKAP
 
             ! U and V winds at surface [m/s]
-            ULON(I)        = UWND(I,J,1)
-            VLON(I)        = VWND(I,J,1)
+!            ULON(I)        = UWND(I,J,1)
+            ULON(I)        = U10M(I,J)
+!            VLON(I)        = VWND(I,J,1)
+            VLON(I)        = V10M(I,J)
             
             ! Half box height at surface [m]
             BHT2(I)        = BXHEIGHT(I,J,1) / 2.d0
