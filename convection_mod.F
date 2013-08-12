@@ -383,7 +383,7 @@
       N_TOT_TRC = N_TRACERS
 
       ! Call the S-J Lin convection routine
-      CALL NFCLDMX( N_TOT_TRC, TCVV, CMFMC, STT )
+      CALL NFCLDMX( N_TOT_TRC, TCVV, CMFMC, DTRAIN, STT )
 
       END SUBROUTINE DO_CONVECTION
 !EOC
@@ -830,7 +830,7 @@
 !\\
 ! !INTERFACE:
 !
-      SUBROUTINE NFCLDMX( NC, TCVV, CLDMAS, Q )
+      SUBROUTINE NFCLDMX( NC, TCVV, CLDMAS, DTRN, Q )
 
 !
 ! !USES:
@@ -862,6 +862,9 @@
 
       ! CLDMAS : Cloud mass flux (at upper edges of each level) [kg/m2/s]
       REAL*8,  INTENT(IN)    :: CLDMAS(IIPAR,JJPAR,LLPAR)
+
+      ! Detrainment mass flux [kg/m2/s]
+      REAL*8,  INTENT(IN)    :: DTRN(IIPAR,JJPAR,LLPAR)
 
       ! MW air (g/mol) / MW of tracer (g/mol) [unitless]
       REAL*8,  INTENT(IN)    :: TCVV(NC)
@@ -1341,7 +1344,7 @@
 !==============================================================================
 
                   IF ( CLDMAS(I,J,K-1) .gt. TINY ) THEN
-                     CMOUT    = CLDMAS(I,J,K)
+                     CMOUT    = CLDMAS(I,J,K) + DTRN(I,J,K)
                      ENTRN    = CMOUT         - CLDMAS(I,J,K-1)
                      QC_PRES  = QC(I,J) * ( 1d0 - F(I,J,K,IC) )
                      QC_SCAV  = QC(I,J) * F(I,J,K,IC)

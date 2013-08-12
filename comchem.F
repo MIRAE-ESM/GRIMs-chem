@@ -19,10 +19,11 @@
       USE COMFVER,     ONLY : DELTIM
       USE COMGRAD,     ONLY : ALNDR, ALVDR
       USE COMSFC,      ONLY : SMC, SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
-      USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, GWETTOP, HFLUX, LWI
-      USE DAO_MOD,     ONLY : MOISTQ, PBL, PREACC, PRECON, PS1, RADSWG
-      USE DAO_MOD,     ONLY : SNOMAS, SPHU, T, TS, U10M, USTAR, V10M, Z0
-      USE NISLQ,       ONLY : SLQ_Q1
+      USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, DTRAIN, GWETTOP
+      USE DAO_MOD,     ONLY : HFLUX, LWI, MOISTQ, PBL, PREACC, PRECON
+      USE DAO_MOD,     ONLY : PS1, RADSWG, SNOMAS, SPHU, T, TS
+      USE DAO_MOD,     ONLY : U10M, USTAR, V10M, UWND, VWND, Z0
+      USE NISLQ,       ONLY : SLQ_Q1, SLQ_U2, SLQ_V2
       USE PARAMODEL,   ONLY : LEVSS, LNT22S
       USE TRACER_MOD,  ONLY : N_TRACERS
 
@@ -63,6 +64,9 @@
       CALL TRANSFORM_3D( FCU, WORK1 )
       CALL TRANSFORM_3D( FCD, WORK2 )
       CMFMC = WORK1 + WORK2
+
+      ! Detrainment rate
+      DTRAIN = 0d0
 
       ! Soil moisture [unitless]
       GWETTOP = SMC(:,:,1)
@@ -118,6 +122,12 @@
 
       ! 10m V-winds [m/s]
       V10M = V10M_
+
+      ! U-winds [m/s]
+      CALL TRANSFORM_3D( SLQ_U2, UWND )
+
+      ! V-winds [m/s]
+      CALL TRANSFORM_3D( SLQ_V2, VWND )
 
       ! Roughness height [m]
       Z0 = Z0CM * 1d-2
