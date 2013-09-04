@@ -284,22 +284,22 @@
       !=================================================================
       ! ND01: Rn, Pb, Be emissions
       !=================================================================
-!      IF ( ND01 > 0 ) THEN 
-!         LD01 = MIN( ND01, LLPAR )
+      IF ( ND01 > 0 ) THEN 
+         LD01 = MIN( ND01, LLPAR )
 
-!         ALLOCATE( AD01( IIPAR, JJPAR, LD01, N_TRACERS ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD01' )
-!      ENDIF
+         ALLOCATE( AD01( IIPAR, JJPAR, LD01, N_TRACERS ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD01' )
+      ENDIF
 
       !=================================================================
       ! ND02: Rn, Pb, Be decay
       !=================================================================
-!      IF ( ND02 > 0 ) THEN 
-!         LD02 = MIN( ND02, LLPAR )
+      IF ( ND02 > 0 ) THEN 
+         LD02 = MIN( ND02, LLPAR )
 
-!         ALLOCATE( AD02( IIPAR, JJPAR, LD02, N_TRACERS ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD02' )
-!      ENDIF
+         ALLOCATE( AD02( IIPAR, JJPAR, LD02, N_TRACERS ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD02' )
+      ENDIF
 
       !=================================================================
       ! ND04: CO2 source - see ??
@@ -360,15 +360,15 @@
       !=================================================================
       ! ND09: HCN / CH3CN source & sink
       !=================================================================
-!      IF ( ND09 > 0 ) THEN
-!         LD09 = MIN( ND09, LLPAR )
+      IF ( ND09 > 0 ) THEN
+         LD09 = MIN( ND09, LLPAR )
 
-!         ALLOCATE( AD09( IIPAR, JJPAR, LD09, N_TRACERS ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD09' )
+         ALLOCATE( AD09( IIPAR, JJPAR, LD09, N_TRACERS ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD09' )
 
-!         ALLOCATE( AD09_em( IIPAR, JJPAR, PD09 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD09_em' )
-!      ENDIF
+         ALLOCATE( AD09_em( IIPAR, JJPAR, PD09 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD09_em' )
+      ENDIF
 
       !=================================================================
       ! ND10: H2/HD prod, loss, sources
@@ -392,10 +392,10 @@
       ! ND11: Acetone source diagnostics [atoms C/cm2/s]
       !       --> uses AD11 array (allocatable)
       !=================================================================
-!      IF ( ND11 > 0 ) THEN 
-!         ALLOCATE( AD11( IIPAR, JJPAR, PD11 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD11' )
-!      ENDIF
+      IF ( ND11 > 0 ) THEN 
+         ALLOCATE( AD11( IIPAR, JJPAR, PD11 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD11' )
+      ENDIF
       
       !=================================================================
       ! ND12: Distribution of emissions in boundary layer [fraction]
@@ -538,13 +538,13 @@
       !=================================================================
       ! ND19: CH4 loss by OH 
       !=================================================================
-!      IF ( ND19 > 0 ) THEN 
-!         LD19 = MIN( ND19, LLPAR )
+      IF ( ND19 > 0 ) THEN 
+         LD19 = MIN( ND19, LLPAR )
 	 
-!         ALLOCATE( AD19( IIPAR, JJPAR, LD19 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD19' )
+         ALLOCATE( AD19( IIPAR, JJPAR, LD19 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD19' )
 
-!      ENDIF 
+      ENDIF 
 
       !=================================================================
       !
@@ -563,102 +563,102 @@
       ! ND21: Optical depths and cloud fractions [unitless]
       !       --> uses AD21 array (allocatable) 
       !=================================================================
-!      IF ( ND21 > 0 ) THEN
-!         LD21 = MIN( ND21, LLTROP )
+      IF ( ND21 > 0 ) THEN
+         LD21 = MIN( ND21, LLTROP )
 
          ! For regular 
-!         ALLOCATE( AD21( IIPAR, JJPAR, LD21, PD21 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD21' )
+         ALLOCATE( AD21( IIPAR, JJPAR, LD21, PD21 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD21' )
 
          ! Separate for crystalline sulfate tracers (bmy, 1/5/05)
-!         IF ( LCRYST ) THEN
-!            ALLOCATE( AD21_cr( IIPAR, JJPAR, 6 ), STAT=AS )
-!            IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD21' )      
-!         ENDIF
+         IF ( LCRYST ) THEN
+            ALLOCATE( AD21_cr( IIPAR, JJPAR, 6 ), STAT=AS )
+            IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD21' )      
+         ENDIF
 
-!      ENDIF
+      ENDIF
 
       !=================================================================
       ! ND22: J-value diagnostics [s^-1] 
       !       --> uses AD22 array (allocatable)
       !=================================================================
-!      IF ( ND22 > 0 ) THEN
+      IF ( ND22 > 0 ) THEN
 
          ! For full chemistry, we only consider boxes below the
          ! tropopause.  Cap LD22 at LLTROP (bmy, 4/2/01)
-!         IF ( ITS_A_FULLCHEM_SIM() ) THEN
-!            LD22 = MIN( ND22, LLTROP )
-!         ELSE
-!            LD22 = MIN( ND22, LLPAR  )
-!         ENDIF
+         IF ( ITS_A_FULLCHEM_SIM() ) THEN
+            LD22 = MIN( ND22, LLTROP )
+         ELSE
+            LD22 = MIN( ND22, LLPAR  )
+         ENDIF
 
          ! Accumulating diagnostic array
-!         ALLOCATE( AD22( IIPAR, JJPAR, LD22, PD22 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD22' )
+         ALLOCATE( AD22( IIPAR, JJPAR, LD22, PD22 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD22' )
 
          ! Locations where LT is between HR1_JV and HR2_JV
-!         ALLOCATE( LTJV( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTJV' )         
+         ALLOCATE( LTJV( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTJV' )         
 
          ! Number of times where LT is between HR1_JV and HR2_JV
-!         ALLOCATE( CTJV( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTJV' )         
-!      ENDIF
+         ALLOCATE( CTJV( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTJV' )         
+      ENDIF
 
       !=================================================================
       ! ND27: Flux of Ox across the annual mean tropopause [kg/s]
       !       ND27 will also turn on ND24, ND25, ND26 diagnostics
       !=================================================================
-!      IF ( ND27 > 0 ) THEN
-!         ND24 = LLPAR
-!         ND25 = LLPAR
-!         ND26 = LLPAR
-!      ENDIF
+      IF ( ND27 > 0 ) THEN
+         ND24 = LLPAR
+         ND25 = LLPAR
+         ND26 = LLPAR
+      ENDIF
 
       !=================================================================
       ! ND24: Eastward mass flux from transport [kg/s] 
       !       --> uses MASSFLEW array (allocatable)
       !=================================================================
-!      IF ( ND24 > 0 ) THEN
-!         LD24 = MIN( ND24, LLPAR )
-!         NMAX = MIN( N_TRACERS, NNPAR )
+      IF ( ND24 > 0 ) THEN
+         LD24 = MIN( ND24, LLPAR )
+         NMAX = MIN( N_TRACERS, NNPAR )
       
-!         ALLOCATE( MASSFLEW( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS) 
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLEW' )
-!      ELSE
-!         ALLOCATE( MASSFLEW( 1, 1, 1, 1 ), STAT=AS) 
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLEW' )
-!      ENDIF
+         ALLOCATE( MASSFLEW( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS) 
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLEW' )
+      ELSE
+         ALLOCATE( MASSFLEW( 1, 1, 1, 1 ), STAT=AS) 
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLEW' )
+      ENDIF
 
       !=================================================================
       ! ND25: Northward mass flux from transport [kg/s] 
       !       --> uses MASSFLNS array (allocatable)
       !=================================================================
-!      IF ( ND25 > 0 ) THEN
-!         LD25 = MIN( ND25, LLPAR )
-!         NMAX = MIN( N_TRACERS, NNPAR )
+      IF ( ND25 > 0 ) THEN
+         LD25 = MIN( ND25, LLPAR )
+         NMAX = MIN( N_TRACERS, NNPAR )
 
-!         ALLOCATE( MASSFLNS( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLNS' ) 
-!      ELSE
-!         ALLOCATE( MASSFLNS( 1, 1, 1, 1 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLNS' ) 
-!      ENDIF
+         ALLOCATE( MASSFLNS( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLNS' ) 
+      ELSE
+         ALLOCATE( MASSFLNS( 1, 1, 1, 1 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLNS' ) 
+      ENDIF
 
       !=================================================================
       ! ND26: Vertical mass flux from transport [kg/s] 
       !       --> uses MASSFLUP array (allocatable)
       !=================================================================
-!      IF ( ND26 > 0 ) THEN
-!         LD26 = MIN( ND26, LLPAR )
-!         NMAX = MIN( N_TRACERS, NNPAR )
+      IF ( ND26 > 0 ) THEN
+         LD26 = MIN( ND26, LLPAR )
+         NMAX = MIN( N_TRACERS, NNPAR )
 
-!         ALLOCATE( MASSFLUP( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLUP' )
-!      ELSE
-!         ALLOCATE( MASSFLUP( 1, 1, 1, 1 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLUP' )
-!      ENDIF
+         ALLOCATE( MASSFLUP( IIPAR, JJPAR, LLPAR, NMAX ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLUP' )
+      ELSE
+         ALLOCATE( MASSFLUP( 1, 1, 1, 1 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'MASSFLUP' )
+      ENDIF
       !=================================================================
       ! ND28: Biomass burning diagnostic [molec/cm2/s]
       !       (NO, CO, ALK4, ACET, MEK, ALD2, PRPE, C3H8, CH2O, C2H6) 
@@ -674,10 +674,10 @@
       !       (anthro, biomass, biofuel, from monot., from methanol) 
       !        --> uses AD29 array (allocatable)
       !=================================================================
-!      IF ( ND29 > 0 ) THEN
-!         ALLOCATE( AD29( IIPAR, JJPAR, PD29 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD29' )
-!      ENDIF
+      IF ( ND29 > 0 ) THEN
+         ALLOCATE( AD29( IIPAR, JJPAR, PD29 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD29' )
+      ENDIF
 
       !=================================================================
       ! ND30: Land/water/ice flags
@@ -703,40 +703,40 @@
       !        stratosphere, soils, fertilizer, anthropogenic) 
       !       --> Uses AD32_xx arrays (allocatable)
       !=================================================================
-!      IF ( ND32 > 0 ) THEN
+      IF ( ND32 > 0 ) THEN
 
          ! For aircraft NOx
-!         ALLOCATE( AD32_ac( IIPAR, JJPAR, LLTROP ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_ac' )
+         ALLOCATE( AD32_ac( IIPAR, JJPAR, LLTROP ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_ac' )
          
          ! For anthropogenic NOx
-!         ALLOCATE( AD32_an( IIPAR, JJPAR, NOXEXTENT ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_an' ) 
+         ALLOCATE( AD32_an( IIPAR, JJPAR, NOXEXTENT ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_an' ) 
 
          ! For biomass burning NOx
-!         ALLOCATE( AD32_bb( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_bb' )
+         ALLOCATE( AD32_bb( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_bb' )
 
          ! For biofuel NOx
-!         ALLOCATE( AD32_bf( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_bf' )
+         ALLOCATE( AD32_bf( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_bf' )
 
          ! For fertilizer NOx
-!         ALLOCATE( AD32_fe( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_fe' ) 
+         ALLOCATE( AD32_fe( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_fe' ) 
 
          ! For Lightning NOx
-!         ALLOCATE( AD32_li( IIPAR, JJPAR, LLCONVM ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_li' )
+         ALLOCATE( AD32_li( IIPAR, JJPAR, LLCONVM ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_li' )
 
          ! For soil NOx
-!         ALLOCATE( AD32_so( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_so' ) 
+         ALLOCATE( AD32_so( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_so' ) 
 
          ! For stratospheric NOx
-!         ALLOCATE( AD32_ub( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_st' ) 
-!      ENDIF
+         ALLOCATE( AD32_ub( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD32_st' ) 
+      ENDIF
 
       !=================================================================
       ! ND33: Column sum of tracer [kg]
@@ -747,15 +747,17 @@
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD33' )
       ENDIF
 
+#ifdef NOUSE
       !=================================================================
       ! ND34: Biofuel burning emissions [molec/cm2/s]
       !       (NO, CO, ALK4, ACET, MEK, ALD2, PRPE, C3H8, CH2O, C2H6)  
       !       --> uses AD34 array (allocatable)
       !=================================================================
-!      IF ( ND34 > 0 ) THEN
-!         ALLOCATE( AD34( IIPAR, JJPAR, NBFTRACE ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD34' )
-!      ENDIF         
+      IF ( ND34 > 0 ) THEN
+         ALLOCATE( AD34( IIPAR, JJPAR, NBFTRACE ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD34' )
+      ENDIF         
+#endif
 
       !=================================================================
       ! ND35: Tracer at 500 mb [v/v] (this is ~ level 9 for GEOS-CHEM)
@@ -845,60 +847,60 @@
       ! ND43: Chemical diagnostics: OH [molec/cm3/s] and NO [v/v]
       !       --> uses AD43 array (allocatable)
       !=================================================================
-!      IF ( ND43 > 0 ) THEN
+      IF ( ND43 > 0 ) THEN
          
          ! For full chemistry, only save OH up to the tropopause.  
          ! For tagged CO or CO-OH, save OH everywhere (bmy, 2/12/01)
-!         IF ( ITS_A_FULLCHEM_SIM() ) THEN
-!            LD43 = MIN( ND43, LLTROP )
-!         ELSE
-!            LD43 = MIN( ND43, LLPAR  )
-!         ENDIF
+         IF ( ITS_A_FULLCHEM_SIM() ) THEN
+            LD43 = MIN( ND43, LLTROP )
+         ELSE
+            LD43 = MIN( ND43, LLPAR  )
+         ENDIF
 
          ! Accumulating diagnostic array
-!         ALLOCATE( AD43( IIPAR, JJPAR, LD43, PD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD43' )
+         ALLOCATE( AD43( IIPAR, JJPAR, LD43, PD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD43' )
 
          ! Locations where LT is between HR1_NO and HR2_NO
-!         ALLOCATE( LTNO( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTNO' )
+         ALLOCATE( LTNO( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTNO' )
          
          ! Number of times LT was between HR1_NO and HR2_NO
-!         ALLOCATE( CTNO( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTNO' )
+         ALLOCATE( CTNO( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTNO' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTOH( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTOH' )
+         ALLOCATE( LTOH( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTOH' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTOH( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTOH' )
+         ALLOCATE( CTOH( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTOH' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTHO2( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
+         ALLOCATE( LTHO2( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTHO2( IIPAR, JJPAR, LD43 ), STAT=AS )
+         ALLOCATE( CTHO2( IIPAR, JJPAR, LD43 ), STAT=AS )
 
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
-
-         ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTNO2( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTNO2( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
+         ALLOCATE( LTNO2( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTNO3( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
+         ALLOCATE( CTNO2( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTNO3( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
+         ALLOCATE( LTNO3( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTHO2' )
+
+         ! Locations where LT is between HR1_OH and HR2_OH
+         ALLOCATE( CTNO3( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTHO2' )
 
          ! update for aroms (dkh, 06/21/07)  
          ! additional comments added for clarification (hotp 7/21/09)
@@ -913,54 +915,54 @@
          ! information is part of ND43 (CHEM-L=$)
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLBRO2H( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLBRO2H' )
+         ALLOCATE( LTLBRO2H( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLBRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLBRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLBRO2H' )
+         ALLOCATE( CTLBRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLBRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLTRO2H( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLTRO2H' )
+         ALLOCATE( LTLTRO2H( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLTRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLTRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLTRO2H' )
+         ALLOCATE( CTLTRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLTRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLXRO2H( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLXRO2H' )
+         ALLOCATE( LTLXRO2H( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLXRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLXRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLXRO2H' )
+         ALLOCATE( CTLXRO2H( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLXRO2H' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLBRO2N( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLBRO2N' )
+         ALLOCATE( LTLBRO2N( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLBRO2N' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLBRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLBRO2N' )
+         ALLOCATE( CTLBRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLBRO2N' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLTRO2N( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLTRO2N' )
+         ALLOCATE( LTLTRO2N( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLTRO2N' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLTRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLTRO2N' )
+         ALLOCATE( CTLTRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLTRO2N' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( LTLXRO2N( IIPAR, JJPAR ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLXRO2N' )
+         ALLOCATE( LTLXRO2N( IIPAR, JJPAR ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'LTLXRO2N' )
 
          ! Locations where LT is between HR1_OH and HR2_OH
-!         ALLOCATE( CTLXRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLXRO2N' )
+         ALLOCATE( CTLXRO2N( IIPAR, JJPAR, LD43 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CTLXRO2N' )
 
-!      ENDIF
+      ENDIF
 
       !=================================================================
       ! ND44: Drydep fluxes [s-1] and drydep velocities [cm/s]
@@ -1022,10 +1024,10 @@
       !       (ISOP, PRPE, ACET, and MONOTERPENES)
       !       --> uses AD46 array (allocatable)
       !=================================================================
-!      IF ( ND46 > 0 ) THEN
-!         ALLOCATE( AD46( IIPAR, JJPAR, PD46 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD46' ) 
-!      ENDIF
+      IF ( ND46 > 0 ) THEN
+         ALLOCATE( AD46( IIPAR, JJPAR, PD46 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD46' ) 
+      ENDIF
 
       !=================================================================
       ! ND47: 24-h averaged tracer concentration [v/v]
@@ -1061,12 +1063,12 @@
       !=================================================================
       ! ND52: gamma HO2
       !=================================================================
-!      IF ( ND52 > 0 ) THEN
-!         LD52 = MIN( ND52, LLPAR)
+      IF ( ND52 > 0 ) THEN
+         LD52 = MIN( ND52, LLPAR)
 
-!         ALLOCATE( AD52( IIPAR, JJPAR, LD52 ), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD52' )
-!      ENDIF
+         ALLOCATE( AD52( IIPAR, JJPAR, LD52 ), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD52' )
+      ENDIF
 
       !=================================================================
       ! ND53: Free diagnostics
@@ -1109,12 +1111,12 @@
       !=================================================================
       ! ND58: CH4 emissions 
       !=================================================================
-!      IF ( ND58 > 0 ) THEN 
+      IF ( ND58 > 0 ) THEN 
 
-!         ALLOCATE( AD58( IIPAR, JJPAR, PD58), STAT=AS )
-!         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD58' )
+         ALLOCATE( AD58( IIPAR, JJPAR, PD58), STAT=AS )
+         IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD58' )
 
-!      ENDIF
+      ENDIF
 
       !=================================================================
       ! ND59: Used for TOMAS

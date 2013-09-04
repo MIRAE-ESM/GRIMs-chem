@@ -3264,9 +3264,9 @@
       !--------------------------
       ! ND12: PBL distribution
       !--------------------------
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:14' )
-      READ( SUBSTRS(1), * ) ND12
-      CALL SET_TINDEX( 12, ND12, SUBSTRS(2:N), N-1, PD12 )
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:14' )
+!      READ( SUBSTRS(1), * ) ND12
+!      CALL SET_TINDEX( 12, ND12, SUBSTRS(2:N), N-1, PD12 )
 
       !--------------------------
       ! ND13: Sulfur sources
@@ -3415,9 +3415,9 @@
       !--------------------------
       ! ND33: Column tracer
       !--------------------------
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:34' )
-      READ( SUBSTRS(1), * ) ND33
-      CALL SET_TINDEX( 33, ND33, SUBSTRS(2:N), N-1, N_MAX )
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:34' )
+!      READ( SUBSTRS(1), * ) ND33
+!      CALL SET_TINDEX( 33, ND33, SUBSTRS(2:N), N-1, N_MAX )
 
       !--------------------------
       ! ND34: Biofuel sources
@@ -3430,9 +3430,9 @@
       !--------------------------
       ! ND35: 500 hPa tracer
       !--------------------------
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:36' )
-      READ( SUBSTRS(1), * ) ND35
-      CALL SET_TINDEX( 35, ND35, SUBSTRS(2:N), N-1, N_MAX )
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:36' )
+!      READ( SUBSTRS(1), * ) ND35
+!      CALL SET_TINDEX( 35, ND35, SUBSTRS(2:N), N-1, N_MAX )
 
       !--------------------------
       ! ND36: Anthro emissions
@@ -3594,9 +3594,9 @@
       !--------------------------
       ! ND60: Wetland Fraction 
       !--------------------------
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:59' )
-      READ( SUBSTRS(1), * ) ND60
-      CALL SET_TINDEX( 60, ND60, SUBSTRS(2:N), N-1, PD60 )
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:59' )
+!      READ( SUBSTRS(1), * ) ND60
+!      CALL SET_TINDEX( 60, ND60, SUBSTRS(2:N), N-1, PD60 )
 
       !--------------------------
       ! ND61: Free

@@ -69,6 +69,7 @@
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP(J)
          ARRAY(I,J,:) = DIAGAOD(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
+         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 
@@ -90,6 +91,7 @@
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP(J)
          ARRAY(I,J,:) = DIAGSSA(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
+         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 
@@ -111,6 +113,7 @@
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP(J)
          ARRAY(I,J,:) = DIAGASM(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
+         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 

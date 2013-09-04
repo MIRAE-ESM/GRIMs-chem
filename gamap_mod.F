@@ -2016,7 +2016,6 @@
          ENDDO
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------
       ! HCN & CH3CN sources & sinks (ND09)
       !-------------------------------------
@@ -2253,7 +2252,6 @@
             SCALE(T,11) = 1e0
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Distrib of emissions in PBL (ND12)
@@ -2329,7 +2327,6 @@
          ENDDO
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! CH4 Loss due to reaction w/ OH
       !-------------------------------------
@@ -2540,7 +2537,6 @@
 
          ENDIF
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Biomass emissions (ND28)
@@ -2758,7 +2754,6 @@
          ENDIF
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! CO emissions (ND29)
       !-------------------------------------
@@ -2799,7 +2794,6 @@
             SCALE(T,29) = 1e0
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Land map (ND30)
@@ -2834,7 +2828,6 @@
          SCALE(T,31) = 1e0
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! CH3I emissions sources (ND36)
       !-------------------------------------      
@@ -2867,7 +2860,6 @@
             UNIT (T,36) = 'ng/m2/s'
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Afternoon-average boundary 
@@ -3051,6 +3043,7 @@
             SCALE(T,42) = 1e0
          ENDDO
       ENDIF
+#endif
       
       !-------------------------------------      
       ! Chemically-produced OH, etc (ND43)
@@ -3123,7 +3116,6 @@
             SCALE(T,43) = 1e0
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Dry deposition fluxes     (ND44)
@@ -3217,7 +3209,6 @@
          ENDIF
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! Biogenic emissions (ND46)
       !-------------------------------------      
@@ -3470,7 +3461,6 @@
          MWT  (T,52) = 0e0
          SCALE(T,52) = 1e0
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Time in the troposphere (ND54)
@@ -3576,7 +3566,6 @@
          SCALE(T,57) = 1e0
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------
       ! CH4 Emissions
       !-------------------------------------
@@ -3641,7 +3630,6 @@
             SCALE(T,58) = 1e0
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! Wetland Fraction (ND60)
