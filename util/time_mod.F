@@ -4247,6 +4247,7 @@
       E_HOURS = REAL( ELAPSED_MIN ) / 60e0 
 
       ! Write quantities
+#ifdef DBG_CHEM
       IF (MASTER) THEN
       WRITE( 6, 100 ) YEAR, MONTH, DAY, HOUR, MINUTE, E_HOURS
       ENDIF
@@ -4254,6 +4255,7 @@
       ! Format string
  100  FORMAT( '---> DATE: ', i4.4, '/', i2.2, '/', i2.2, 
      &            '  GMT: ', i2.2, ':', i2.2, '  X-HRS: ', f11.3 )
+#endif
 
       END SUBROUTINE PRINT_CURRENT_TIME
 !EOC
