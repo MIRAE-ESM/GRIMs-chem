@@ -389,7 +389,7 @@
 #else
 
       ! Default value
-      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4
+      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4 / 1.61
 
 #endif
 
