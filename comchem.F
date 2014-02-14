@@ -40,6 +40,7 @@
       REAL*8, DIMENSION(:,:),   ALLOCATABLE :: _SSWDN
       REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _MOISTQ1
       REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _MOISTQ2
+      REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _DETRN
 
       INTEGER :: TLEVH_, TNCLD, TNLEVS, TNLEVSP
 
@@ -66,7 +67,7 @@
       CMFMC = WORK1 + WORK2
 
       ! Detrainment rate
-      DTRAIN = 0d0
+      DTRAIN = _DETRN
 
       ! Soil moisture [unitless]
       GWETTOP = SMC(:,:,1)
@@ -170,6 +171,7 @@
       ALLOCATE( _SSWDN   (IIPAR,JJPAR) )
       ALLOCATE( _MOISTQ1 (IIPAR,LLPAR,JJPAR) )
       ALLOCATE( _MOISTQ2 (IIPAR,LLPAR,JJPAR) )
+      ALLOCATE( _DETRN   (IIPAR,JJPAR,LLPAR) )
 
       SAVE_QM    = 0
       SAVE_Z     = 0
@@ -180,6 +182,7 @@
       _SSWDN     = 0
       _MOISTQ1   = 0
       _MOISTQ2   = 0
+      _DETRN     = 0
 
       TLEVH_  = N_TRACERS * LLPAR
       TNCLD   = N_TRACERS
