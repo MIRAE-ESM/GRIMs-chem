@@ -46,7 +46,7 @@
       USE TIME_MOD,       ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
       USE TIME_MOD,       ONLY : SET_ELAPSED_MIN, SET_TIMESTEPS
       USE TIME_MOD,       ONLY : EXPAND_DATE
-      USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS, STT, TCVV
+      USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS, STT, STT2, TCVV
       USE TRACER_MOD,     ONLY : ITS_A_H2HD_SIM
       USE TRANSPORT_MOD,  ONLY : DO_TRANSPORT
       USE TROPOPAUSE_MOD, ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
@@ -233,6 +233,7 @@
          !==============================================================
          IF ( ITS_TIME_FOR_UNIT() ) THEN
             CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
+            CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT2 )
 
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:1' )
@@ -327,6 +328,7 @@
          !==============================================================
          IF ( ITS_TIME_FOR_UNIT() ) THEN
             CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT )
+            CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT2 )
 
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:2' )
