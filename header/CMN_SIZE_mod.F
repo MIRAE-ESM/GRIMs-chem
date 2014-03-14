@@ -484,10 +484,14 @@
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
 #ifdef MP
       USE COMMPI,       ONLY : LONLEN, LATLEN, MYPE
+#ifdef REDUCE_GRID
       USE COMREDUCE,    ONLY : LONFDP
+#endif
 #else
       USE COMFGRID,     ONLY : LATDEF
+#ifdef REDUCE_GRID
       USE COMREDUCE,    ONLY : LONFD
+#endif
 #endif
 
       INTEGER :: I, J
