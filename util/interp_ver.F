@@ -89,11 +89,11 @@
          !=====================================================
          DO ID=1, 48
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
-     &       PEDGE2(L) .GT. PEDGE1(ID+1)) THEN
+     &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
             ID1=ID
          ENDIF
          IF (PEDGE2(L+1) .LE. PEDGE1(ID) .AND.
-     &       PEDGE2(L+1) .GT. PEDGE1(ID+1)) THEN
+     &       PEDGE2(L+1) .GE. PEDGE1(ID+1)) THEN
             ID2=ID
          ENDIF
          ENDDO
