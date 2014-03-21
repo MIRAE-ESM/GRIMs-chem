@@ -484,14 +484,6 @@
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
 #ifdef MP
       USE COMMPI,       ONLY : LONLEN, LATLEN, MYPE
-#ifdef REDUCE_GRID
-      USE COMREDUCE,    ONLY : LONFDP
-#endif
-#else
-      USE COMFGRID,     ONLY : LATDEF
-#ifdef REDUCE_GRID
-      USE COMREDUCE,    ONLY : LONFD
-#endif
 #endif
 
       INTEGER :: I, J
@@ -569,18 +561,10 @@
       ALLOCATE ( LONLOOP(LATLOOP) )
 
       DO J = 1, LATLOOP
-#ifdef REDUCE_GRID
-#ifdef MP
-         LONLOOP(J) = LONFDP(J,MYPE) * 2
-#else
-         LONLOOP(J) = LONFD(LATDEF(J)) * 2
-#endif
-#else
 #ifdef MP
          LONLOOP(J) = LONLEN(MYPE) * 2
 #else
          LONLOOP(J) = LONF2_
-#endif
 #endif
       ENDDO
 

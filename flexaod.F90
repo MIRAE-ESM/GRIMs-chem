@@ -13,9 +13,10 @@
 
 module flexaod
 
-  use dao_mod,       only : airvol, bxheight, rh
+  use dao_mod,       only : airden, bxheight, rh
   use directory_mod, only : data_dir
-  use tracer_mod,    only : stt
+  use restart,       only : lbxhght
+  use tracer_mod,    only : stt2
   use tracerid_mod,  only : idtso4, idtnh4, idtnit
   use tracerid_mod,  only : idtbcpi, idtocpi, idtbcpo, idtocpo
   use tracerid_mod,  only : idtsala, idtsalc
@@ -409,52 +410,54 @@ module flexaod
     conc = 0d0
   endif
 
+  if ( .not. lbxhght ) return
+
   ! Tracer concentrations (kg)
   if (idtso4 .ne. 0 .and. idtnh4 .ne. 0 .and. idtnit .ne. 0) then
-    conc(:,:,:,1) = stt(:,:,:,idtso4) + stt(:,:,:,idtnh4) + stt(:,:,:,idtnit)
+    conc(:,:,:,1) = stt2(:,:,:,idtso4) * 96.0 / 28.97 &
+                  + stt2(:,:,:,idtnh4) * 18.0 / 28.97 &
+                  + stt2(:,:,:,idtnit) * 62.0 / 28.97
   endif
   if (idtocpi .ne. 0) then
-    conc(:,:,:,2) = stt(:,:,:,idtocpi)
+    conc(:,:,:,2) = stt2(:,:,:,idtocpi) * 12.0 * 2.1 / 28.97
   endif
   if (idtbcpi .ne. 0) then
-    conc(:,:,:,3) = stt(:,:,:,idtbcpi)
+    conc(:,:,:,3) = stt2(:,:,:,idtbcpi) * 12.0 / 28.97
   endif
   if (idtsala .ne. 0) then
-    conc(:,:,:,4) = stt(:,:,:,idtsala)
+    conc(:,:,:,4) = stt2(:,:,:,idtsala) * 36.0 / 28.97
   endif
   if (idtsalc .ne. 0) then
-    conc(:,:,:,5) = stt(:,:,:,idtsalc)
+    conc(:,:,:,5) = stt2(:,:,:,idtsalc) * 36.0 / 28.97
   endif
   if (idtocpo .ne. 0) then
-    conc(:,:,:,6) = stt(:,:,:,idtocpo)
+    conc(:,:,:,6) = stt2(:,:,:,idtocpo) * 12.0 * 2.1 / 28.97
   endif
   if (idtbcpo .ne. 0) then
-    conc(:,:,:,7) = stt(:,:,:,idtbcpo)
+    conc(:,:,:,7) = stt2(:,:,:,idtbcpo) * 12.0 / 28.97
   endif
   if (idtdst1 .ne. 0) then
-    conc(:,:,:,8) = stt(:,:,:,idtdst1)*0.25
-    conc(:,:,:,9) = stt(:,:,:,idtdst1)*0.25
-    conc(:,:,:,10) = stt(:,:,:,idtdst1)*0.25
-    conc(:,:,:,11) = stt(:,:,:,idtdst1)*0.25
+    conc(:,:,:,8) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
+    conc(:,:,:,9) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
+    conc(:,:,:,10) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
+    conc(:,:,:,11) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
   endif
   if (idtdst2 .ne. 0) then
-    conc(:,:,:,12) = stt(:,:,:,idtdst2)
+    conc(:,:,:,12) = stt2(:,:,:,idtdst2) * 29.0 / 28.97
   endif
   if (idtdst3 .ne. 0) then
-    conc(:,:,:,13) = stt(:,:,:,idtdst3)
+    conc(:,:,:,13) = stt2(:,:,:,idtdst3) * 29.0 / 28.97
   endif
   if (idtdst4 .ne. 0) then
-    conc(:,:,:,14) = stt(:,:,:,idtdst4)
+    conc(:,:,:,14) = stt2(:,:,:,idtdst4) * 29.0 / 28.97
   endif
 
   ! RH (%)
   relh = rh
-  ! Air volume (m3)
-  aird = airvol
+  ! Air volume (kg/m3)
+  aird = airden
   ! Box height (m)
   boxh = bxheight
-
-  if (sum(airvol) .eq. 0) return
 
   call interp_aod
 
@@ -698,7 +701,7 @@ subroutine interp_aod
     do l = 1,nl
 
       ! Aerosol concentration (g/cm3)
-      conc_gcm3 = conc(i,j,l,:) / aird(i,j,l) * 1e-3
+      conc_gcm3 = conc(i,j,l,:) * aird(i,j,l) * 1e-3
 
       ! Relative Humidity (%)
       rh = relh(i,j,l)

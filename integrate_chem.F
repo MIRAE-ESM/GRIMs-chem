@@ -28,6 +28,7 @@
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
       USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
+      USE RESTART,        ONLY : LBXHGHT
       USE TIME_MOD,       ONLY : GET_NYMD, GET_NHMS, GET_TAU
       USE TIME_MOD,       ONLY : GET_YEAR, GET_SEASON, GET_MONTH
       USE TIME_MOD,       ONLY : GET_HOUR, GET_MINUTE
@@ -46,12 +47,12 @@
       USE TIME_MOD,       ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
       USE TIME_MOD,       ONLY : SET_ELAPSED_MIN, SET_TIMESTEPS
       USE TIME_MOD,       ONLY : EXPAND_DATE
-      USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS, STT, STT2, TCVV
+      USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS
+      USE TRACER_MOD,     ONLY : STT1, STT2, STT, TCVV
       USE TRACER_MOD,     ONLY : ITS_A_H2HD_SIM
-      USE TRANSPORT_MOD,  ONLY : DO_TRANSPORT
       USE TROPOPAUSE_MOD, ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
       USE WETSCAV_MOD,    ONLY : DO_WETDEP, INIT_WETSCAV
-      
+
       USE CMN_SIZE_MOD    ! Size parameters   
       USE COMODE_LOOP_MOD ! SMVGEAR common blocks
       USE CMN_DIAG_MOD    ! Diagnostic switches, NJDAY
@@ -69,14 +70,17 @@
 
       IF (STEPONE) THEN
 
-      TS = DELTIM / 60
+         TS = DELTIM / 60
 
-      CALL SET_TIMESTEPS( CHEMISTRY  = TS, EMISSION  = TS,
-     &                    DYNAMICS   = TS, UNIT_CONV = TS,
-     &                    CONVECTION = TS, DIAGNOS   = TS )
+         CALL SET_TIMESTEPS( CHEMISTRY  = TS, EMISSION  = TS,
+     &                       DYNAMICS   = TS, UNIT_CONV = TS,
+     &                       CONVECTION = TS, DIAGNOS   = TS )
 
-      CALL SET_ELAPSED_MIN
-      CALL SET_CURRENT_TIME
+         CALL SET_ELAPSED_MIN
+         CALL SET_CURRENT_TIME
+
+         ! Update STT
+         STT2 = STT
 
       ELSE
 
@@ -96,6 +100,7 @@
             IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a SET_FLT_PRS' )
 
             CALL AIRQNT
+            LBXHGHT = .TRUE.
             IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a AIRQNT' )
 
             ! Initialize PBL quantities but do not do mixing
@@ -202,6 +207,7 @@
          IF ( LVARTROP ) CALL CHECK_VAR_TROP
 
          ! Compute airmass quantities at each grid box 
+         CALL SET_FLOATING_PRESSURE( PS1 )
          CALL AIRQNT
 
          ! Compute the cosine of the solar zenith angle array
@@ -229,27 +235,12 @@
          CALL DIAG_2PM
 
          !==============================================================
-         !   ***** U N I T   C O N V E R S I O N  ( kg -> v/v ) *****
-         !==============================================================
-         IF ( ITS_TIME_FOR_UNIT() ) THEN
-            CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
-            CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT2 )
-
-            !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:1' )
-         ENDIF
-
-         !==============================================================
          !              ***** T R A N S P O R T *****
          !==============================================================
          IF ( ITS_TIME_FOR_DYN() ) THEN
 
-            ! Call semi-lagrangian advect
-            CALL DO_TRANSPORT
-
-            ! Reset air mass quantities
-            CALL SET_FLOATING_PRESSURE( PS1 )
-            CALL AIRQNT
+            ! Transport of chemical tracers is moved to
+            ! gmp_integrate.F90, from this routine.
 
             ! Get relative humidity (after recomputing pressures)
             ! NOTE: for GEOS-5 we'll read this from disk instead
@@ -328,10 +319,9 @@
          !==============================================================
          IF ( ITS_TIME_FOR_UNIT() ) THEN
             CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT )
-            CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT2 )
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:2' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:1' )
          ENDIF
 
          !-------------------------------
@@ -415,6 +405,16 @@
          ENDIF
 
          !==============================================================
+         !   ***** U N I T   C O N V E R S I O N  ( kg -> v/v ) *****
+         !==============================================================
+         IF ( ITS_TIME_FOR_UNIT() ) THEN
+            CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
+
+            !### Debug
+            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:2' )
+         ENDIF
+
+         !==============================================================
          !  ***** E N D   O F   D Y N A M I C   T I M E S T E P *****
          !==============================================================
          
@@ -423,6 +423,10 @@
          IF ( ITS_TIME_FOR_DIAG() ) THEN
             CALL CHECK_STT( 'End of Dynamic Loop' )
          ENDIF
+
+         ! Update STT
+         STT1 = STT2
+         STT2 = STT
 
       ENDIF
 

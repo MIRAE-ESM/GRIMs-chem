@@ -52,9 +52,9 @@ OBJS = tracer_mod.o logical_mod.o tracerid_mod.o scale_anthro_mod.o arctas_ship_
        global_hno3_mod.o tropopause_mod.o isoropiaII_mod.o rpmares_mod.o seasalt_mod.o wetscav_mod.o \
        epa_nei_mod.o nei2005_anthro_mod.o edgar_mod.o emep_mod.o streets_anthro_mod.o icoads_ship_mod.o \
        sulfate_mod.o chemistry_mod.o comchem.o convection_mod.o diag1.o diag_2pm.o diag41_mod.o \
-       diag3.o flexaod.o diag_aod_mod.o emissions_mod.o emmonot.o findmon.o gamap_mod.o initialize.o \
-       input_mod.o isoropiaIIcode.o mie_spher.o ndxx_setup.o rdisopt.o rdlai.o rdland.o rdmonot.o \
-       readlai.o restart.o setbase.o sfcwindsqr.o sunparam.o tracer_mass_advect.o transport_mod.o \
+       diag3.o restart.o flexaod.o diag_aod_mod.o emissions_mod.o emmonot.o findmon.o gamap_mod.o \
+       initialize.o input_mod.o isoropiaIIcode.o mie_spher.o ndxx_setup.o rdisopt.o rdlai.o rdland.o \
+       rdmonot.o readlai.o setbase.o sfcwindsqr.o sunparam.o nislq_chem_advect.o transport_chem.o \
        start_chem.o integrate_chem.o end_chem.o
 
 CP = @CP@

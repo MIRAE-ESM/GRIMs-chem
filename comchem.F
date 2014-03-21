@@ -15,7 +15,7 @@
       USE COMFPHYS,    ONLY : U10M_ => U10M
       USE COMFPHYS,    ONLY : V10M_ => V10M
       USE COMFPHYS,    ONLY : HPBL, PSURF
-      USE COMFSPEC_VR, ONLY : QM, TEM, Z
+      USE COMFSPEC_VR, ONLY : TEM
       USE COMFVER,     ONLY : DELTIM
       USE COMGRAD,     ONLY : ALNDR, ALVDR
       USE COMSFC,      ONLY : SMC, SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
@@ -24,15 +24,13 @@
       USE DAO_MOD,     ONLY : PS1, RADSWG, SNOMAS, SPHU, T, TS
       USE DAO_MOD,     ONLY : U10M, USTAR, V10M, UWND, VWND, Z0
       USE NISLQ,       ONLY : SLQ_Q1, SLQ_U2, SLQ_V2
-      USE PARAMODEL,   ONLY : LEVSS, LNT22S
+      USE PARAMODEL,   ONLY : LEVSS
       USE TRACER_MOD,  ONLY : N_TRACERS
 
       USE CMN_SIZE_MOD
 
       IMPLICIT NONE
 
-      REAL*8, DIMENSION(:),     ALLOCATABLE :: SAVE_QM
-      REAL*8, DIMENSION(:,:),   ALLOCATABLE :: SAVE_Z
       REAL*8, DIMENSION(:,:),   ALLOCATABLE :: _CLDSA
       REAL*8, DIMENSION(:,:),   ALLOCATABLE :: _DTSFC
       REAL*8, DIMENSION(:,:),   ALLOCATABLE :: _RAINCPS
@@ -41,8 +39,11 @@
       REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _MOISTQ1
       REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _MOISTQ2
       REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: _DETRN
+      REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: DP1
+      REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: DP2
+      REAL*8, DIMENSION(:,:,:), ALLOCATABLE :: DP3
 
-      INTEGER :: TLEVH_, TNCLD, TNLEVS, TNLEVSP
+      INTEGER :: LEVH_, NCLD, NLEVS, NLEVSP
 
       CONTAINS
 
@@ -151,19 +152,8 @@
 
 !=====================================================================
 
-      SUBROUTINE SAVE_QM_Z
-
-      SAVE_QM = QM
-      SAVE_Z  = Z
-
-      END SUBROUTINE SAVE_QM_Z
-
-!==========================================================
-
       SUBROUTINE INIT_COMCHEM
 
-      ALLOCATE( SAVE_QM  (LNT22S) )
-      ALLOCATE( SAVE_Z   (LNT22S,5*LLPAR+1) )
       ALLOCATE( _CLDSA   (IIPAR,JJPAR) )
       ALLOCATE( _DTSFC   (IIPAR,JJPAR) )
       ALLOCATE( _RAINCPS (IIPAR,JJPAR) )
@@ -173,8 +163,10 @@
       ALLOCATE( _MOISTQ2 (IIPAR,LLPAR,JJPAR) )
       ALLOCATE( _DETRN   (IIPAR,JJPAR,LLPAR) )
 
-      SAVE_QM    = 0
-      SAVE_Z     = 0
+      ALLOCATE( DP1      (IIPAR,LLPAR,JJPAR) )
+      ALLOCATE( DP2      (IIPAR,LLPAR,JJPAR) )
+      ALLOCATE( DP3      (IIPAR,LLPAR,JJPAR) )
+
       _CLDSA     = 0
       _DTSFC     = 0
       _RAINCPS   = 0
@@ -184,10 +176,14 @@
       _MOISTQ2   = 0
       _DETRN     = 0
 
-      TLEVH_  = N_TRACERS * LLPAR
-      TNCLD   = N_TRACERS
-      TNLEVS  = N_TRACERS * LLPAR
-      TNLEVSP = N_TRACERS * LEVSS
+      DP1 = 0d0
+      DP2 = 0d0
+      DP3 = 0d0
+
+      LEVH_  = N_TRACERS * LLPAR
+      NCLD   = N_TRACERS
+      NLEVS  = N_TRACERS * LLPAR
+      NLEVSP = N_TRACERS * LEVSS
 
       END SUBROUTINE INIT_COMCHEM
 

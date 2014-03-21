@@ -89,7 +89,7 @@
       USE TIME_MOD,     ONLY : GET_CT_A6,   GET_CT_CHEM, GET_CT_CONV 
       USE TIME_MOD,     ONLY : GET_CT_DYN,  GET_CT_EMIS, GET_CT_I6   
       USE TIME_MOD,     ONLY : GET_CT_DIAG, GET_CT_A1
-      USE TRACER_MOD,   ONLY : N_TRACERS,   STT,         TRACER_MW_G
+      USE TRACER_MOD,   ONLY : N_TRACERS,   STT,        TRACER_MW_G
       USE TRACER_MOD,   ONLY : TRACER_NAME
       USE TRACER_MOD,   ONLY : ITS_AN_AEROSOL_SIM
       USE TRACER_MOD,   ONLY : ITS_A_CH3I_SIM
@@ -3342,6 +3342,7 @@
 
 
 !
+#ifdef NOUSE
 !*****************************************************************************
 !  ND62: I-J Instantaneous Column Maps for Tracers (molec/cm^2)  
 !
@@ -3392,7 +3393,6 @@
          ENDDO
       ENDIF
 !
-#ifdef NOUSE
 !******************************************************************************
 !  ND65: Production/Loss of specified chemical families
 !

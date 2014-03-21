@@ -1,5 +1,5 @@
 #include <define.h>
-   subroutine tracer_mass_advect(deltim,pt,ut,vt,pdot,q1,q3)
+   subroutine nislq_chem_advect(deltim,pt,ut,vt,pdot,q1,q3)
 #ifdef NISLQ_MASS
 !-------------------------------------------------------------------------------
 !
@@ -57,12 +57,7 @@
                            cyclic_cell_massadvx                               ,&
                            cyclic_cell_massadvy                               ,&
                            vertical_cell_advect
-   use comchem, only : levh_  => tlevh_
-   use comchem, only : ncld   => tncld
-   use comchem, only : nlevs  => tnlevs
-   use comchem, only : nlevsp => tnlevsp
-   use comchem, only : qm => save_qm
-   use comchem, only : z  => save_z
+   use comchem    , only : levh_, ncld, nlevs, nlevsp, dp1, dp3
 !-------------------------------------------------------------------------------
    implicit none
 !-------------------------------------------------------------------------------
@@ -102,7 +97,7 @@
 #ifdef DFS
 !dp2   real               , dimension(ib      , levs        )  ::  dp2
    real               , dimension(ib      , levs+1      )  ::  ppi,pdot2
-   real               , dimension(ib , jbw, levs        )  ::  dp1,dp3
+!   real               , dimension(ib , jbw, levs        )  ::  dp1,dp3
    real               , dimension(ib , jbw, nlevs       )  ::  qp
    real               , dimension(iba, jbw, nlevsp      )  ::  qt
 #ifdef MP
@@ -114,7 +109,7 @@
 #else /* SPH */
 !dp2   real               , dimension(LONF2S ,levs_         )  ::  dp2
    real               , dimension(LONF2S ,levs_+1       )  ::  ppi,pdot2
-   real               , dimension(LONF2S ,levs_ ,LATG2S )  ::  dp1,dp3
+!   real               , dimension(LONF2S ,levs_ ,LATG2S )  ::  dp1,dp3
    real               , dimension(LONF2S ,nlevs ,LATG2S )  ::  qp
    real               , dimension(lonf2_ ,nlevsp,LATG2S )  ::  qt
 #ifdef MP
@@ -136,7 +131,7 @@
 !
 !dp2   dp2=0.
 !
-   dp1=0.;  dp3=0.
+!   dp1=0.;  dp3=0.
    qp=0. ;  qt=0. ;  ppi=0.
 #ifdef MP
    utp=0.;  vtp=0.;  qpp=0.;  qtp=0.
@@ -161,8 +156,8 @@
 ! density (by spectral dynamics)
 !
 #ifdef DFS
-   call nislq_dp(psl1,dp1)   ! dp at time step n-1
-   call nislq_dp(psl3,dp3)   ! dp at time step n+1
+!   call nislq_dp(psl1,dp1)   ! dp at time step n-1
+!   call nislq_dp(psl3,dp3)   ! dp at time step n+1
 !
 !sldp   ! dir air (dp) for SL advection
 !sldp   forall(i=1:ib,j=1:jbw,k=1:levs) qp(i,j,k)=dp1(i,j,k)
@@ -175,8 +170,8 @@
      forall(i=1:ib,j=1:jbw) qp(i,j,kqp+k)=q1(i,j,k)*dp1(i,j,kk)
    enddo
 #else /* SPH */
-   call nislq_dp(qm,dp1)   ! dp at time step n-1
-   call nislq_dp(z ,dp3)   ! dp at time step n+1
+!   call nislq_dp(qm,dp1)   ! dp at time step n-1
+!   call nislq_dp(z ,dp3)   ! dp at time step n+1
    do j=1,jjend
 #ifdef REDUCE_GRID
 #ifdef MP
@@ -575,4 +570,4 @@
 #undef levh_
 #endif
 #endif /* NISLQ_MASS end */
-   end subroutine tracer_mass_advect
+   end subroutine nislq_chem_advect
