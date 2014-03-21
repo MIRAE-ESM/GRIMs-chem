@@ -28,7 +28,8 @@
 
       SUBROUTINE READ_RESTART
 
-      INTEGER :: N, IOS
+      REAL*8 :: WORK(IIPAR,JJPAR,LLPAR)
+      INTEGER :: I, J, L, N, IOS
 
       IF (MASTER) THEN
       OPEN(9999, FILE='chemi', FORM='UNFORMATTED', STATUS='OLD',
@@ -86,7 +87,15 @@
 
       CALL GET_RESTART_DATA( RH )
       CALL GET_RESTART_DATA( BXHEIGHT )
-      CALL GET_RESTART_DATA( AIRDEN )
+      CALL GET_RESTART_DATA( WORK )
+
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         AIRDEN(L,I,J) = WORK(I,J,L)
+      ENDDO
+      ENDDO
+      ENDDO
 
       IF (MASTER) THEN
       CLOSE(9999)
@@ -101,7 +110,8 @@
 
       SUBROUTINE WRITE_RESTART
 
-      INTEGER :: N
+      REAL*8 :: WORK(IIPAR,JJPAR,LLPAR)
+      INTEGER :: I, J, L, N
 
       IF (MASTER) THEN
       OPEN(9999, FILE='chemi', FORM='UNFORMATTED', STATUS='REPLACE',
@@ -136,9 +146,17 @@
      &     ACCESS='SEQUENTIAL')
       ENDIF
 
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         WORK(I,J,L) = AIRDEN(L,I,J)
+      ENDDO
+      ENDDO
+      ENDDO
+
       CALL PUT_RESTART_DATA( RH )
       CALL PUT_RESTART_DATA( BXHEIGHT )
-      CALL PUT_RESTART_DATA( AIRDEN )
+      CALL PUT_RESTART_DATA( WORK )
 
       IF (MASTER) THEN
       CLOSE(9999)

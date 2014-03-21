@@ -701,7 +701,7 @@ subroutine interp_aod
     do l = 1,nl
 
       ! Aerosol concentration (g/cm3)
-      conc_gcm3 = conc(i,j,l,:) * aird(i,j,l) * 1e-3
+      conc_gcm3 = conc(i,j,l,:) * aird(l,i,j) * 1e-3
 
       ! Relative Humidity (%)
       rh = relh(i,j,l)
@@ -995,7 +995,7 @@ subroutine alloc_other
 
   allocate(conc(ni,nj,nl,nsizspc+2))
   allocate(relh(ni,nj,nl))
-  allocate(aird(ni,nj,nl))
+  allocate(aird(nl,ni,nj))
   allocate(boxh(ni,nj,nl))
   allocate(outod(ni,nj,nl,nbnd))
   allocate(outssa(ni,nj,nl,nbnd))
