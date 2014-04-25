@@ -9,7 +9,7 @@
 !
 !=====================================================================
 
-      MODULE RESTART
+      MODULE RESTART_MOD
 
       USE DAO_MOD,      ONLY : AIRDEN, BXHEIGHT, RH
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
@@ -189,7 +189,11 @@
          WRITE(6,*) ' '
          WRITE(6,*) "CANNOT READ : GET_RESTART_DATA"
          CALL FLUSH(6)
+#ifdef MP
+         CALL MPABORT
+#else
          STOP
+#endif
       ENDIF
       ENDIF
 
@@ -219,7 +223,11 @@
          WRITE(6,*) ' '
          WRITE(6,*) "CANNOT WRITE : PUT_RESTART_DATA"
          CALL FLUSH(6)
+#ifdef MP
+         CALL MPABORT
+#else
          STOP
+#endif
       ENDIF
       ENDIF
 
@@ -227,4 +235,4 @@
 
 !======================================================================
 
-      END MODULE RESTART
+      END MODULE RESTART_MOD

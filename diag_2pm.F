@@ -104,7 +104,7 @@
 
       ! Pre-compute local time 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          LT(I,J) = GET_LOCALTIME( I, J )
       ENDDO
       ENDDO
@@ -113,7 +113,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          !-----------------------------
          ! ND45 -- mixing ratios

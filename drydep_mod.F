@@ -396,7 +396,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, IJLOOP, THIK, N, NN, NDVZ, DVZ )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! 1-D grid box index
          IJLOOP  = ( (J-1) * IIPAR ) + I
@@ -633,7 +633,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, IJLOOP, THIK )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! 1-D grid box index
          IJLOOP      = ( (J-1) * IIPAR ) + I
@@ -761,7 +761,7 @@
 
       ! Save grid box surface area [cm2] in a lookup table (bmy, 7/23/03)
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          AREA_CM2(I,J) = GET_AREA_CM2(I,J)
       ENDDO
       ENDDO
@@ -792,7 +792,7 @@
          ! Loop over grid boxes
          DO L = 1, PBL_MAX
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          
             ! Only deal w/ boxes w/in the boundary layer
             IF ( GET_FRAC_UNDER_PBLTOP( I, J, L ) > 0d0 ) THEN
@@ -905,7 +905,7 @@
          ! Loop over grid boxes
          DO L = 1, PBL_MAX
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             
             ! Fraction of box (I,J,L) under PBL top [unitless]
             F_UNDER_TOP = GET_FRAC_UNDER_PBLTOP( I, J, L )
@@ -1039,7 +1039,7 @@
       ! Initalize
       IJLOOP = 0
       DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             IJLOOP        = ( (J-1) * IIPAR ) + I
             JLOP(I,J,1)   = IJLOOP
          ENDDO

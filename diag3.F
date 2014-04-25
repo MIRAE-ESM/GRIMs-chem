@@ -89,7 +89,7 @@
       USE TIME_MOD,     ONLY : GET_CT_A6,   GET_CT_CHEM, GET_CT_CONV 
       USE TIME_MOD,     ONLY : GET_CT_DYN,  GET_CT_EMIS, GET_CT_I6   
       USE TIME_MOD,     ONLY : GET_CT_DIAG, GET_CT_A1
-      USE TRACER_MOD,   ONLY : N_TRACERS,   STT,        TRACER_MW_G
+      USE TRACER_MOD,   ONLY : N_TRACERS,   STT,         TRACER_MW_G
       USE TRACER_MOD,   ONLY : TRACER_NAME
       USE TRACER_MOD,   ONLY : ITS_AN_AEROSOL_SIM
       USE TRACER_MOD,   ONLY : ITS_A_CH3I_SIM
@@ -1880,7 +1880,7 @@
 
                ! Loop over grid boxes
                DO J = 1, LATLOOP
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
 
                   ! Get the level of the tropopause
                   L = LPAUSE(I,J)
@@ -3368,7 +3368,7 @@
 
             DO J = 1, LATLOOP
 
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
                   ! Grid box surface area [cm2]
                   AREA_M2 = GET_AREA_M2( I, J )
 

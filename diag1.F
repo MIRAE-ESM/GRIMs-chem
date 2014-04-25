@@ -144,7 +144,7 @@
          DO N = 1, N_TRC
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             STT_VV(I,J,L,N) = 
      &           MAX( STT(I,J,L,N) * TCVV(N) / AD(I,J,L), 0d0 )
          ENDDO
@@ -162,7 +162,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             IF ( IS_WATER( I, J ) ) AD30(I,J) = AD30(I,J) + 0e0
             IF ( IS_LAND ( I, J ) ) AD30(I,J) = AD30(I,J) + 1e0
             IF ( IS_ICE  ( I, J ) ) AD30(I,J) = AD30(I,J) + 2e0
@@ -180,7 +180,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LD31
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             AD31(I,J,L) = AD31(I,J,L) + GET_PEDGE( I, J, L ) 
          ENDDO
          ENDDO
@@ -198,7 +198,7 @@
          DO N = 1, N_TRC
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             AD33(I,J,N) = AD33(I,J,N) + STT(I,J,L,N)
          ENDDO
          ENDDO
@@ -221,7 +221,7 @@
 !$OMP+PRIVATE( I, J, N )
          DO N = 1, N_TRACERS
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             AD35(I,J,N) = AD35(I,J,N) + STT_VV(I,J,L,N)
          ENDDO
          ENDDO
@@ -250,7 +250,7 @@
          DO N = 1, N_TRC
             DO L = 1, LD45  
             DO J = 1, LATLOOP 
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                AD45(I,J,L,N) = AD45(I,J,L,N) + 
      &              STT_VV(I,J,L,N) * LTOTH(I,J)
             ENDDO
@@ -263,7 +263,7 @@
             IF ( N == IDTOX .and. IS_FULLCHEM ) THEN
                DO L = 1, LD45
                DO J = 1, LATLOOP
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
 #if   defined( APM )
                   AD45(I,J,L,(N_TRACERS+N_APMTRA+1)) = 
      &            AD45(I,J,L,(N_TRACERS+N_APMTRA+1)) +
@@ -293,7 +293,7 @@
          DO N = 1, N_TRC
             DO L = 1, LD47
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                AD47(I,J,L,N) = AD47(I,J,L,N) + STT_VV(I,J,L,N) 
             ENDDO   
             ENDDO
@@ -305,7 +305,7 @@
             IF ( N == IDTOX .and. IS_FULLCHEM ) THEN
                DO L = 1, LD47
                DO J = 1, LATLOOP
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
                   AD47(I,J,L,N_TRACERS+1) = AD47(I,J,L,N_TRACERS+1) +
      &                 ( STT_VV(I,J,L,N) * FRACO3(I,J,L) )
                ENDDO
@@ -323,7 +323,7 @@
 
             DO L = 1, LD54
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                IF ( ITS_IN_THE_TROP(I,J,L) )
      &              AD54(I,J,L) = AD54(I,J,L) + 1.
             ENDDO   
@@ -342,7 +342,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LD57
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             P0          = GET_PEDGE(I,J,1)
 
@@ -379,7 +379,7 @@
       !=================================================================  
       IF ( ND67 > 0 ) THEN
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
 #if   defined( GEOS_3 )
 
@@ -412,7 +412,7 @@
          AD67(:,:,14) = AD67(:,:,14) + ALBD
 !         AD67(:,:,15) = AD67(:,:,15) + PHIS
 !         AD67(:,:,16) = AD67(:,:,16) + CLDTOP
-!         AD67(:,:,17) = AD67(:,:,17) + TROPP
+         AD67(:,:,17) = AD67(:,:,17) + TROPP
 !         AD67(:,:,18) = AD67(:,:,18) + SLP
 !         AD67(:,:,19) = AD67(:,:,19) + TSKIN
 !         AD67(:,:,20) = AD67(:,:,20) + PARDF
@@ -440,7 +440,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LD68
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             AD68(I,J,L,1) = AD68(I,J,L,1) + BXHEIGHT(I,J,L)
             AD68(I,J,L,2) = AD68(I,J,L,2) + AD(I,J,L)
             AD68(I,J,L,4) = AD68(I,J,L,4) + AIRDEN(L,I,J) * XNUMOLAIR
@@ -463,7 +463,7 @@
       !================================================================= 
       IF ( ND69 > 0 ) THEN
          DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                AREA_M2 = GET_AREA_M2( I, J )
 
                AD69(I,J,1) = AREA_M2

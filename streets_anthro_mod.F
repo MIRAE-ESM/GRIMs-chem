@@ -1037,7 +1037,7 @@
       REAL*8            :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=50) :: THISUNIT
 
-      REAL*8            :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Variables for seasonal scaling of NH3 (jaf, 3/2/11)
       REAL*4            :: SCALAR_1x1(I1x1,J1x1-1,1)
@@ -1119,21 +1119,21 @@
 
       IF (MASTER) THEN
       IF ( PRESENT( UNIT ) ) THEN
-         CALL REGRID_1x1G( GEN_1x1, TEMPARRAY, 2 )
+         CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
       ELSE
-         CALL REGRID_1x1G( GEN_1x1, TEMPARRAY, 1 )
+         CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 1 )
       ENDIF
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
 #else
-      ARR = TEMPARRAY
+      ARR = F_ARRAY
 #endif
 
 
@@ -1841,7 +1841,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Future NOx [kg NO2/yr]
          NOx(I,J)  = NOx(I,J) * GET_FUTURE_SCALE_NOxff( I, J )
@@ -2059,7 +2059,7 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_STREETS_MASKS begins here!
@@ -2097,18 +2097,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, MASK_CHINA )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MASK_CHINA,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MASK_CHINA,IIPAR,JJPAR,1)
 #else
-      MASK_CHINA = TEMPARRAY
+      MASK_CHINA = F_ARRAY
 #endif
 
       !------------------------------------
@@ -2139,18 +2139,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, MASK_SE_ASIA )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MASK_SE_ASIA,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MASK_SE_ASIA,IIPAR,JJPAR,1)
 #else
-      MASK_SE_ASIA = TEMPARRAY
+      MASK_SE_ASIA = F_ARRAY
 #endif
 
       ! Return to calling program
@@ -2356,7 +2356,7 @@
 
       ! Fill array
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          A_CM2(I,J) = GET_AREA_CM2( I, J )
       ENDDO
       ENDDO

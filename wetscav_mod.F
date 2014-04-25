@@ -444,7 +444,7 @@
 !$OMP+PRIVATE( I, J, FRAC, L, PTEMP )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
 #if   defined( MERRA )
 
@@ -836,7 +836,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute ice to gas ratio for H2O2 by co-condensation
             ! (Eq. 9, Jacob et al, 2000)
@@ -897,7 +897,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for CH2O, using
             ! the appropriate parameters for Henry's law
@@ -951,7 +951,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for GLYX, using
             ! (1) Zhou and Mopper (1990): Kstar298 = 3.6e5 M/atm 
@@ -1005,7 +1005,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for MGLY, using
             ! the appropriate parameters for Henry's law
@@ -1060,7 +1060,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for GLYC, using
             ! the appropriate parameters for Henry's law
@@ -1115,7 +1115,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for CH3OOH, using
             ! the appropriate parameters for Henry's law
@@ -1176,7 +1176,7 @@
          !==============================================================
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Make sure to deplete H2O2s the same as SO2s. 
             ! (dkh, rjp, bmy, 11/17/05)
@@ -1233,7 +1233,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute ice to gas ratio for NH3 by co-condensation
             ! (Eq. 9, Jacob et al, 2000)
@@ -1341,7 +1341,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for ALPH, using
             ! the appropriate parameters for Henry's law
@@ -1392,7 +1392,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for LIMO, using
             ! the appropriate parameters for Henry's law
@@ -1444,7 +1444,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for ALCO, using
             ! the appropriate parameters for Henry's law
@@ -1503,7 +1503,7 @@
          ! Start scavenging at level 2
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for GAS1, using
             ! the appropriate parameters for Henry's law
@@ -1558,7 +1558,7 @@
 
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             F(I,J,L) = 0.8d0 * F(I,J,L)
          ENDDO
          ENDDO
@@ -1577,7 +1577,7 @@
 
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             F(I,J,L) = 0.8d0 * F(I,J,L)
          ENDDO
          ENDDO
@@ -1612,7 +1612,7 @@
             ! Apply scavenging in levels 2 and higher
             DO L = 2, LLPAR
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Compute liquid to gas ratio for HgCl2, using
                ! the appropriate parameters for Henry's law
@@ -1680,7 +1680,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for LIMO, using
             ! the appropriate parameters for Henry's law
@@ -1736,7 +1736,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for LIMO, using
             ! the appropriate parameters for Henry's law
@@ -1790,7 +1790,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for LIMO, using
             ! the appropriate parameters for Henry's law
@@ -1843,7 +1843,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Compute liquid to gas ratio for LIMO, using
             ! the appropriate parameters for Henry's law
@@ -1896,7 +1896,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             CALL COMPUTE_L2G( 8.3d4, -7.4d3, T(I,J,L), !USE H2O2
      &                          CLDLIQ(I,J,L), L2G )
@@ -1945,7 +1945,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             CALL COMPUTE_L2G( 8.4d2, -5.3d3, T(I,J,L), !USE H2O2
      &                          CLDLIQ(I,J,L), L2G )
@@ -1990,7 +1990,7 @@
          ! Apply scavenging in levels 2 and higher
          DO L = 2, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             CALL COMPUTE_L2G( 8.3d4,    -7.4d3, 
      &                        T(I,J,L), CLDLIQ(I,J,L), L2G )    !USE H2O2
@@ -2090,7 +2090,7 @@
       ! Apply scavenging in levels 2 and higher
       DO L = 2, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
                 
          ! Distance between grid box centers [m]
          TMP = 0.5d0 * ( BXHEIGHT(I,J,L-1) + BXHEIGHT(I,J,L) ) 
@@ -4055,7 +4055,7 @@
 !$OMP+PRIVATE( NN,      N,      F_RAINOUT, F_WASHOUT             )
 !$OMP+SCHEDULE( DYNAMIC )   
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Zero FTOP
          FTOP = 0d0
@@ -4601,7 +4601,7 @@
 !$OMP+PRIVATE( QDOWN,       IS_RAINOUT, IS_WASHOUT,  N          ) 
 !$OMP+SCHEDULE( DYNAMIC )   
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Zero FTOP
          FTOP = 0d0
@@ -6685,7 +6685,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Compute Temp [K] and Pressure [hPa]
          TK = T(I,J,L)

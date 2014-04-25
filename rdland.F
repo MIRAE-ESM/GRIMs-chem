@@ -62,9 +62,9 @@
       INTEGER :: I, J, K, IJLOOP, IREF, JREF
       INTEGER :: I0, J0
 
-      INTEGER :: TEMPIREG(I2x25,J2x25)
-      INTEGER :: TEMPILAND(I2x25,J2x25,NTYPE)
-      INTEGER :: TEMPIUSE(I2x25,J2x25,NTYPE)
+      INTEGER :: F_IREG(I2x25,J2x25)
+      INTEGER :: F_ILAND(I2x25,J2x25,NTYPE)
+      INTEGER :: F_IUSE(I2x25,J2x25,NTYPE)
       INTEGER, EXTERNAL :: CLX, CLY
 
       ! For filename
@@ -74,9 +74,9 @@
       ! RDLAND begins here!
       !=================================================================
 
-      TEMPIREG = 0
-      TEMPILAND = 0
-      TEMPIUSE = 0
+      F_IREG = 0
+      F_ILAND = 0
+      F_IUSE = 0
 
       ! Get nested-grid offsets (bmy, 2/11/03)
       I0 = GET_XOFFSET()
@@ -105,15 +105,15 @@
 
       ! Read data
       IF ( LAVHRRLAI ) THEN
- 100  READ(65,101,end=110,ERR=800) I,J,TEMPIREG(I,J),
-     &     (TEMPILAND(I,J,K),K=1,TEMPIREG(I,J)),
-     &     (TEMPIUSE(I,J,K),K=1,TEMPIREG(I,J))
+ 100  READ(65,101,end=110,ERR=800) I,J,F_IREG(I,J),
+     &     (F_ILAND(I,J,K),K=1,F_IREG(I,J)),
+     &     (F_IUSE(I,J,K),K=1,F_IREG(I,J))
  101  FORMAT(20I4)
       GO TO 100
       ELSE
- 200  READ(65,201,end=110,ERR=800) I,J,TEMPIREG(I,J),
-     &     (TEMPILAND(I,J,K),K=1,TEMPIREG(I,J)),
-     &     (TEMPIUSE(I,J,K),K=1,TEMPIREG(I,J))
+ 200  READ(65,201,end=110,ERR=800) I,J,F_IREG(I,J),
+     &     (F_ILAND(I,J,K),K=1,F_IREG(I,J)),
+     &     (F_IUSE(I,J,K),K=1,F_IREG(I,J))
  201  FORMAT(25I4)
       GO TO 200
       ENDIF
@@ -123,16 +123,16 @@
  110  CONTINUE
 
 #ifdef MP
-      CALL MPBCASTI(TEMPIREG,I2x25*J2x25)
-      CALL MPBCASTI(TEMPILAND,I2x25*J2x25*NTYPE)
-      CALL MPBCASTI(TEMPIUSE,I2x25*J2x25*NTYPE)
+      CALL MPBCASTI(F_IREG,I2x25*J2x25)
+      CALL MPBCASTI(F_ILAND,I2x25*J2x25*NTYPE)
+      CALL MPBCASTI(F_IUSE,I2x25*J2x25*NTYPE)
 #endif
 
       DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
-            IREG(I,J) = TEMPIREG(CLX(I,J),CLY(I,J))
-            ILAND(I,J,:) = TEMPILAND(CLX(I,J),CLY(I,J),:)
-            IUSE(I,J,:) = TEMPIUSE(CLX(I,J),CLY(I,J),:)
+         DO I = 1, LONLOOP
+            IREG(I,J) = F_IREG(CLX(I,J),CLY(I,J))
+            ILAND(I,J,:) = F_ILAND(CLX(I,J),CLY(I,J),:)
+            IUSE(I,J,:) = F_IUSE(CLX(I,J),CLY(I,J),:)
          ENDDO
       ENDDO
 
@@ -140,7 +140,7 @@
       IJLOOP = 0
       DO 500 J = 1, LATLOOP
          JREF = J + J0
-         DO 400 I = 1, LONLOOP(J)
+         DO 400 I = 1, LONLOOP
             FRCLND(I,J) = 1000.
             IREF = I + I0
             IJLOOP = ( (J-1) * IIPAR ) + I

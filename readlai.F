@@ -63,8 +63,8 @@
      &                                       '09','10','11','12'/)
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: TEMPXLAI(I2x25,J2x25,NTYPE)
-      REAL*8              :: TEMPXLAI2(I2x25,J2x25,NTYPE)
+      REAL*8              :: F_XLAI(I2x25,J2x25,NTYPE)
+      REAL*8              :: F_XLAI2(I2x25,J2x25,NTYPE)
       INTEGER, EXTERNAL   :: CLX, CLY
 
       ! New for MODIS & AVHRR (mpb,2009)
@@ -75,12 +75,12 @@
       ! READLAI begins here!
       !=================================================================
 
-      TEMPXLAI = 0d0
-      TEMPXLAI2 = 0d0
+      F_XLAI = 0d0
+      F_XLAI2 = 0d0
 
       ! Zero XLAI, XLAI2
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
       DO K = 1, IREG(I,J)
          XLAI(I,J,K)  = 0.D0
          XLAI2(I,J,K) = 0.D0
@@ -134,7 +134,7 @@
 
       ! Read until EOF
  10   READ( IU_FILE, '(3i3,20f5.1)', END=20 ) 
-     &     I, J, INDEX, ( TEMPXLAI(I,J,K), K=1,INDEX )
+     &     I, J, INDEX, ( F_XLAI(I,J,K), K=1,INDEX )
       GOTO 10
 
       ! Close file
@@ -189,7 +189,7 @@
 
       ! Read until EOF
  30   READ( IU_FILE, '(3i3,20f5.1)', END=40 )
-     &     I, J, INDEX, ( TEMPXLAI2(I,J,K), K=1,INDEX )
+     &     I, J, INDEX, ( F_XLAI2(I,J,K), K=1,INDEX )
       GOTO 30
 
       ! Close file
@@ -197,14 +197,14 @@
       ENDIF
 
 #ifdef MP
-      CALL MPBCASTR(TEMPXLAI,I2x25*J2x25*NTYPE)
-      CALL MPBCASTR(TEMPXLAI2,I2x25*J2x25*NTYPE)
+      CALL MPBCASTR(F_XLAI,I2x25*J2x25*NTYPE)
+      CALL MPBCASTR(F_XLAI2,I2x25*J2x25*NTYPE)
 #endif
       
       DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
-            XLAI(I,J,:) = TEMPXLAI(CLX(I,J),CLY(I,J),:)
-            XLAI2(I,J,:) = TEMPXLAI2(CLX(I,J),CLY(I,J),:)
+         DO I = 1, LONLOOP
+            XLAI(I,J,:) = F_XLAI(CLX(I,J),CLY(I,J),:)
+            XLAI2(I,J,:) = F_XLAI2(CLX(I,J),CLY(I,J),:)
          ENDDO
       ENDDO
       

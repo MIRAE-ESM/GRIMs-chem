@@ -471,8 +471,7 @@
       REAL*8  :: DISIZE, DJSIZE
 
       LOGICAL :: MASTER
-      INTEGER :: LATLOOP
-      INTEGER, ALLOCATABLE, DIMENSION(:)   :: LONLOOP
+      INTEGER :: LONLOOP, LATLOOP
       INTEGER, ALLOCATABLE, DIMENSION(:,:) :: LONID, LATID
 
       CONTAINS
@@ -487,10 +486,10 @@
 #endif
 
       INTEGER :: I, J
-      REAL*8  :: TEMPLON(LONF_,LATG_)
-      REAL*8  :: TEMPLAT(LONF_,LATG_)
-      REAL*8  :: LON(LONF2S,LATG2S)
-      REAL*8  :: LAT(LONF2S,LATG2S)
+      REAL*8  :: F_LONID(LONF_,LATG_)
+      REAL*8  :: F_LATID(LONF_,LATG_)
+      REAL*8  :: P_LONID(LONF2S,LATG2S)
+      REAL*8  :: P_LATID(LONF2S,LATG2S)
 
       IGLOB      = LONF_
       JGLOB      = LATG_
@@ -519,54 +518,47 @@
 #endif
 
 ! Set LONID, LATID
-      IF (MASTER) THEN
-      DO J = 1, LATG_
-         DO I = 1, LONF_
-            TEMPLON(I,J) = I
-            TEMPLAT(I,J) = J
-         ENDDO
-      ENDDO
-
-      CALL DYN_TRANS2MODEL_GRID(TEMPLON,1)
-      CALL DYN_TRANS2MODEL_GRID(TEMPLAT,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(TEMPLON,LONF2_,LATG2_,LON,LONF2S,LATG2S,1)
-      CALL MPGF2P(TEMPLAT,LONF2_,LATG2_,LAT,LONF2S,LATG2S,1)
-#else
-      DO J = 1, LATG_/2
-         DO I = 1, LONF_
-            LON(I,J) = TEMPLON(I,J*2-1)
-            LAT(I,J) = TEMPLAT(I,J*2-1)
-            LON(I+LONF_,J) = TEMPLON(I,J*2)
-            LAT(I+LONF_,J) = TEMPLAT(I,J*2)
-         ENDDO
-      ENDDO
-#endif
 
       ALLOCATE ( LONID(LONF2S,LATG2S) )
       ALLOCATE ( LATID(LONF2S,LATG2S) )
 
-      LONID = LON
-      LATID = LAT
+      IF (MASTER) THEN
+      DO J = 1, LATG_
+         DO I = 1, LONF_
+            F_LONID(I,J) = DBLE(I)
+            F_LATID(I,J) = DBLE(J)
+         ENDDO
+      ENDDO
+
+      CALL DYN_TRANS2MODEL_GRID(F_LONID,1)
+      CALL DYN_TRANS2MODEL_GRID(F_LATID,1)
+      ENDIF
+
+#ifdef MP
+      CALL MPGF2P(F_LONID,LONF2_,LATG2_,P_LONID,LONF2S,LATG2S,1)
+      CALL MPGF2P(F_LATID,LONF2_,LATG2_,P_LATID,LONF2S,LATG2S,1)
+#else
+      DO J = 1, LATG_/2
+         DO I = 1, LONF_
+            P_LONID(I,J) = F_LONID(I,J*2-1)
+            P_LATID(I,J) = F_LATID(I,J*2-1)
+            P_LONID(I+LONF_,J) = F_LONID(I,J*2)
+            P_LATID(I+LONF_,J) = F_LATID(I,J*2)
+         ENDDO
+      ENDDO
+#endif
+
+      LONID = NINT( P_LONID )
+      LATID = NINT( P_LATID )
 
 ! Set LONLOOP, LATLOOP
 #ifdef MP
+      LONLOOP = LONLEN(MYPE) * 2
       LATLOOP = LATLEN(MYPE)
 #else
-      LATLOOP = LATG2_
+      LONLOOP = IIPAR
+      LATLOOP = JJPAR
 #endif
-
-      ALLOCATE ( LONLOOP(LATLOOP) )
-
-      DO J = 1, LATLOOP
-#ifdef MP
-         LONLOOP(J) = LONLEN(MYPE) * 2
-#else
-         LONLOOP(J) = LONF2_
-#endif
-      ENDDO
 
       END SUBROUTINE INIT_CMN_SIZE
 !

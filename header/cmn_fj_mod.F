@@ -52,7 +52,7 @@
       INTEGER            :: RINDEX(JPMAX)
 
       ! Output J-values
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:,:) :: ZPJ!(LPAR,JPMAX,IPAR,JPAR)
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:,:) :: ZPJ
 
       INTEGER :: IPAR, JPAR, LPAR
 

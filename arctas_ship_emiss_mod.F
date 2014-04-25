@@ -341,7 +341,7 @@
       REAL*8         :: SC_1x1(I1x1,J1x1)
       REAL*8         :: TAU2008
 
-      REAL*8         :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8         :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! TAU0 values for 2008
       TAU2008 = GET_TAU0( 1, 1, 2008 )
@@ -372,18 +372,18 @@
 !      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, ARR )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1(:,:,1), TEMPARRAY, 1 )
+      CALL REGRID_1x1( GEOS_1x1(:,:,1), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
 #else
-      ARR = TEMPARRAY
+      ARR = F_ARRAY
 #endif
 
       END SUBROUTINE READ_ARCTAS_SHIP
@@ -548,7 +548,7 @@
 
          ! Fill array
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             A_CM2(I,J) = GET_AREA_CM2( I, J )
          ENDDO
          ENDDO

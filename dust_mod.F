@@ -278,7 +278,7 @@
          DO J = 1, LATLOOP
 
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
             
                ! Surface area [cm2]
                AREA_CM2 = GET_AREA_CM2(I,J)
@@ -445,7 +445,7 @@
          DO J = 1, LATLOOP
 
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Surface area [cm2]
                AREA_CM2 = GET_AREA_CM2(I,J)
@@ -584,8 +584,7 @@
 !
       USE DAO_MOD,       ONLY : BXHEIGHT,     GWETTOP,   LWI
       USE DAO_MOD,       ONLY : SNOW,         SPHU,      T    
-      USE DAO_MOD,       ONLY : TS!,           UWND,      VWND
-      USE DAO_MOD,       ONLY : U10M, V10M
+      USE DAO_MOD,       ONLY : TS,           U10M,      V10M
       USE DAO_MOD,       ONLY : SNOMAS
       USE DUST_DEAD_MOD, ONLY : GET_TIME_INVARIANT_DATA, GET_ORO
       USE DUST_DEAD_MOD, ONLY : GET_MONTHLY_DATA,        DST_MBL
@@ -751,7 +750,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Pressure [hPa] at bottom and top edge of level 1
             P1             = GET_PEDGE(I,J,1)
@@ -770,9 +769,7 @@
             THLON(I)       = TLON(I) * ( P1000 / PMID(I) )**AKAP
 
             ! U and V winds at surface [m/s]
-!            ULON(I)        = UWND(I,J,1)
             ULON(I)        = U10M(I,J)
-!            VLON(I)        = VWND(I,J,1)
             VLON(I)        = V10M(I,J)
             
             ! Half box height at surface [m]
@@ -803,7 +800,6 @@
          
          ! Latitude in RADIANS
 !         YMID_R = GET_YMID_R(J)
-         YMID_R = 0d0
 
          ! Call DEAD dust mobilization
          CALL DST_MBL( DOY,    BHT2,  J,     YMID_R, ORO,    
@@ -813,7 +809,7 @@
 
          ! Update
          DO N = 1, NDSTBIN
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Add dust emissions into tracer array [kg]
             TC(I,J,1,N) = TC(I,J,1,N) + DSRC(I,N) 
@@ -930,7 +926,7 @@
       CHARACTER(LEN=255)     :: FILENAME
 
       INTEGER                :: L
-      REAL*8                 :: TEMPARRAY(IGLOB*2,JGLOB/2,3)
+      REAL*8                 :: F_ARRAY(IGLOB*2,JGLOB/2,3)
 
       ! Transfer coeff for type natural source  (kg*s2/m5)
       REAL*8, PARAMETER      :: CH_DUST  = 9.375d-10
@@ -989,22 +985,21 @@
 !         SRCE_FUNC = ARRAY
 
          DO L = 1, 3
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ),
-     &                       TEMPARRAY(:,:,L), 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY(:,:,L), 2 )
          ENDDO
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 3 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 3 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 3 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 3 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,3)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,3)
          ENDIF
 
          ALLOCATE(SRCE_FUNC(IIPAR,JJPAR,3))
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,3)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,3)
 #else
-         SRCE_FUNC = TEMPARRAY
+         SRCE_FUNC = F_ARRAY
 #endif
 
          ! Reset first-time flag
@@ -1053,7 +1048,7 @@
          DO J = 1, LATLOOP
             
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Get grid box surface area [m2]
                AREA_M2 = GET_AREA_M2(I,J)
@@ -1212,7 +1207,7 @@
       DO N = 1, NDUST
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          IF ( WAVELENGTH > 0 ) THEN
 
@@ -1307,7 +1302,7 @@
 !$OMP+PRIVATE( I, J, JLOOP, L )
             DO L = 1, LD21
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                !--------------------------------------
                ! ND21 tracer #4: Dust optical depths (clh)
@@ -1533,7 +1528,7 @@
          DO N = 1, NDUST
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             IF ( WAVELENGTH > 0 ) THEN
 
@@ -1630,7 +1625,7 @@
 !$OMP+PRIVATE( I, J, JLOOP, L ) 
                DO L = 1, LD21
                DO J = 1, LATLOOP
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
 
                   !--------------------------------------
                   ! ND21 tracer #4: Dust optical depths

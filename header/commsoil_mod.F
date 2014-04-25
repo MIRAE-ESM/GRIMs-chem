@@ -77,7 +77,8 @@
 
 #endif
 
-      INTEGER, PARAMETER :: NLAND = 10000
+      !%%% NOTE: still to be determined
+      INTEGER, PARAMETER :: NLAND = 9999
 
 !
 ! !PUBLIC DATA MEMBERS:
@@ -106,13 +107,13 @@
       REAL*8  :: PULSDECAY(NPULSE)
 
       ! Stores output
-      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: SOILNOX!(IIPAR,JJPAR) 
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: SOILNOX
 
       ! Olson->soil type,nvegtype in commbio.h
       INTEGER :: NCONSOIL(NVEGTYPE) 
 
       ! Track NOx within canopy dry dep.
-      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: CANOPYNOX!(MAXIJ,NTYPE) 
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: CANOPYNOX
 
       ! Canopy wind extinction coeff from Y&L
       REAL*8  :: SOILTA(NSOIL)

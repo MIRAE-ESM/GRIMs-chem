@@ -280,7 +280,7 @@
          ! Grid box surface area [m2]
          AREA_M2           = GET_AREA_M2( J ) 
 
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initialize the IDENT object for error I/O
          IDENT%STDOUT_FILE = ''                     ! Write to
@@ -505,7 +505,7 @@
          ! Loop over grid boxes
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! ND37 diagnostic: store fraction of tracer 
             ! lost in moist convective updrafts ("MC-FRC-$")
@@ -538,7 +538,7 @@
 
          ! Loop over surface grid boxes
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
                
             ! Pressure at bottom and top edges of grid box [hPa]
             P1 = GET_PEDGE(I,J,L)
@@ -586,7 +586,7 @@
       DO N = 1,N_TOT_TRC
       DO L = 1,LLPAR
       DO J = 1,LATLOOP
-      DO I = 1,LONLOOP(J)
+      DO I = 1,LONLOOP
          STT(I,J,L,N) = MAX(STT(I,J,L,N),TINY(1d0))
       ENDDO
       ENDDO
@@ -715,7 +715,7 @@
          ! Loop over grid boxes
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Shut off scavenging in shallow convection for GCAP
             ! (swu, bmy, 11/1/05)
@@ -752,7 +752,7 @@
 
          ! Loop over surface grid boxes
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
                
             ! Pressure at bottom and top edges of grid box [hPa]
             P1 = GET_PEDGE(I,J,L)
@@ -797,7 +797,7 @@
       DO N = 1,N_TOT_TRC
       DO L = 1,LLPAR
       DO J = 1,LATLOOP
-      DO I = 1,LONLOOP(J)
+      DO I = 1,LONLOOP
          STT(I,J,L,N) = MAX(STT(I,J,L,N),TINY(1d0))
       ENDDO
       ENDDO
@@ -1141,7 +1141,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO K = 1, NLAY
          DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                AREA_M2 = GET_AREA_M2( I, J )
                BMASS(I,J,K) = AD(I,J,K) / AREA_M2
             ENDDO
@@ -1194,7 +1194,7 @@
          IF ( ND37 > 0 .and. ISOL > 0 ) THEN
             DO K = 1, LD37
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                AD37(I,J,K,ISOL) = AD37(I,J,K,ISOL) + F(I,J,K,IC) 
             ENDDO
             ENDDO
@@ -1215,7 +1215,7 @@
             ! is below the cloud base (i.e. below the 2nd sigma level).  
             !===========================================================
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
 
@@ -1309,7 +1309,7 @@
             DO K = 3, KTOP
             DO J = 1, LATLOOP
 
-               DO I = 1, LONLOOP(J)
+               DO I = 1, LONLOOP
 
                   IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
 
@@ -1536,7 +1536,7 @@
          DO IC = 1,  NC
          DO K  = 3,  KTOP
          DO J  = 1,  LATLOOP
-         DO I  = 1,  LONLOOP(J)
+         DO I  = 1,  LONLOOP
             IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
             CONVFLUP(I,J,K,IC) = CONVFLUP(I,J,K,IC) +
      &                           ( DTCSUM(I,J,K,IC) / DNS )
@@ -1555,7 +1555,7 @@
       DO N = 1,NC
       DO L = 1,LLPAR
       DO J = 1,LATLOOP
-      DO I = 1,LONLOOP(J)
+      DO I = 1,LONLOOP
          Q(I,J,L,N) = MAX(Q(I,J,L,N),TINY2)
       ENDDO
       ENDDO

@@ -356,7 +356,7 @@
 !$OMP+PRIVATE( I, J, L, PSFC, PRES, RH2, R0, B0 )
       DO L = 1, LLTROP
       DO J = 1, LATLOOP 
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 	
          ! Surface pressure
          PSFC = GET_PEDGE(I,J,1)
@@ -739,7 +739,7 @@
 !$OMP+PRIVATE( DELZ,    DELZ1, TOT1, TOT2, AREA_CM2, FLUX             )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)       
+      DO I = 1, LONLOOP
 
          ! Initialize 
          DO L = 1, LLPAR
@@ -980,7 +980,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLTROP  
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Skip stratospheric boxes
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE
@@ -1199,8 +1199,8 @@
       REAL*8,  PARAMETER      :: A = 2.9d-12
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: TEMPARRAY1(IGLOB*2,JGLOB/2,LT2x25)
-      REAL*8                  :: TEMPARRAY2(IGLOB*2,JGLOB/2,LLPAR)
+      REAL*8                  :: F_ARRAY1(IGLOB*2,JGLOB/2,LT2x25)
+      REAL*8                  :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
 
       !=================================================================
       ! CHEM_H2O2 begins here!
@@ -1220,7 +1220,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLTROP
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -1264,22 +1264,21 @@
             
          IF (MASTER) THEN
          DO L = 1, LT2x25
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ),
-     &                       TEMPARRAY1(:,:,L), 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
          ENDDO
 
-         CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
-         CALL YREV( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
+         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
+         CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
 
-         CALL INTERP_VER( TEMPARRAY1, TEMPARRAY2, LT2x25, 3 )
+         CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 3 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,LLPAR)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,JH2O2,IIPAR,JJPAR,LLPAR)
+         CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,JH2O2,IIPAR,JJPAR,LLPAR)
 #else
-         JH2O2 = TEMPARRAY2
+         JH2O2 = F_ARRAY2
 #endif
 
          ! Reset LASTMONTH
@@ -1296,7 +1295,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L  = 1, LLTROP
       DO J  = 1, LATLOOP
-      DO I  = 1, LONLOOP(J)
+      DO I  = 1, LONLOOP
 
          ! Initialize for safety's sake 
          FLUX = 0d0
@@ -1374,7 +1373,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLTROP
             AD44(I,J,DRYH2O2,1) = AD44(I,J,DRYH2O2,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -1536,7 +1535,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLTROP  
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initialize for safety's sake 
          AREA_CM2 = 0d0
@@ -1927,7 +1926,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLTROP
             AD44(I,J,DRYSO2,1) = AD44(I,J,DRYSO2,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -2624,7 +2623,7 @@
          DO N = 1, N_ND44
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             T44(I,J,L,N) = 0d0
          ENDDO
          ENDDO
@@ -2651,7 +2650,7 @@
 !$OMP+SCHEDULE( DYNAMIC ) 
       DO L = 1, LLTROP 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initialize for safety's sake
          AREA_CM2 = 0d0
@@ -2918,7 +2917,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLTROP
 
             ! Sum SO4, SO4s drydep fluxes in the vertical [molec/cm2/s]
@@ -3044,7 +3043,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -3059,7 +3058,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Skip stratospheric boxes
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE      
@@ -3130,7 +3129,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYMSA,1) = AD44(I,J,DRYMSA,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -3212,7 +3211,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -3226,7 +3225,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, PBL_MAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Fraction of box (I,J,L) underneath the PBL top [unitless]
          F_UNDER_TOP = GET_FRAC_UNDER_PBLTOP( I, J, L )
@@ -3287,7 +3286,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYNH3,1) = AD44(I,J,DRYNH3,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -3368,7 +3367,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -3382,7 +3381,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, PBL_MAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Fraction of box (I,J,L) underneath the PBL top [unitless]
          F_UNDER_TOP = GET_FRAC_UNDER_PBLTOP( I, J, L )       
@@ -3443,7 +3442,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYNH4,1) = AD44(I,J,DRYNH4,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -3512,7 +3511,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             T44(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -3527,7 +3526,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, PBL_MAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Fraction of box (I,J,L) underneath the PBL top [unitless]
          F_UNDER_TOP = GET_FRAC_UNDER_PBLTOP( I, J, L )     
@@ -3588,7 +3587,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYNH4aq,1) = AD44(I,J,DRYNH4aq,1) + T44(I,J,L)
          ENDDO
@@ -3680,7 +3679,7 @@
          DO N = 1, N_ND44
          DO L = 1, LLTROP 
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             T44(I,J,L,N) = 0d0
          ENDDO
          ENDDO
@@ -3697,7 +3696,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, PBL_MAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial NITRATE [v/v]
          NIT0  = STT(I,J,L,IDTNIT)
@@ -3843,7 +3842,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYNIT, 1) = AD44(I,J,DRYNIT, 1) + T44(I,J,L,1)
             AD44(I,J,DRYNITs,1) = AD44(I,J,DRYNITs,1) + T44(I,J,L,2)
@@ -4183,7 +4182,7 @@
 !$OMP+PRIVATE( AKw, ERATE, DMSSRC, NTOP, L,    FEMIS       )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Sea surface temperature in Celsius
          SST = SSTEMP(I,J) - 273.15d0
@@ -4477,7 +4476,7 @@
     
       ! Loop over surface grid boxes
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
     
          !==============================================================
          ! Loop over tropospheric GEOS-CHEM levels 
@@ -4615,7 +4614,7 @@
          AN       = 0d0
          BF       = 0d0
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Grid box surface area [cm2]
             AREA_CM2 = GET_AREA_CM2(I,J)
@@ -4821,7 +4820,7 @@
 !$OMP+PRIVATE( I, J, NTOP, L, SO2, FEMIS, SO2SRC, TEMPEMISS )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
           ! Top of the boundary layer
           NTOP = CEILING( GET_PBL_TOP_L( I, J ) ) 
@@ -5022,7 +5021,7 @@
 !$OMP+PRIVATE( NTOP, FEMIS, SO4, TEMPEMISS )
       DO J = 1, LATLOOP
          
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Grid box surface area [cm2]
             AREA_CM2 = GET_AREA_CM2(I,J)
@@ -5303,7 +5302,7 @@
          ! further notice.  (bmy, 11/17/04) 
          !-------------------------------------------------------------------
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             !! Grid box surface area [cm2]
             AREA_CM2 = GET_AREA_CM2( I, J )
@@ -5894,7 +5893,7 @@
       INTEGER              :: THISYEAR, THISDAY, YYYYMMDD, L
       CHARACTER(LEN=255)   :: FILENAME
 
-      REAL*8               :: TEMPARRAY(IGLOB*2,JGLOB/2,LVOLC)
+      REAL*8               :: F_ARRAY(IGLOB*2,JGLOB/2,LVOLC)
 
       !=================================================================
       ! READ_NONERUP_VOLC begins here!
@@ -5960,20 +5959,20 @@
          ! Save into correct level of ARRAY
 !         ARRAY(:,:,L) = ARRAY_1LEV
 
-         CALL REGRID_1x1G( ARRAY_GEN8, TEMPARRAY(:,:,L), 1 )
+         CALL REGRID_1x1G( ARRAY_GEN8, F_ARRAY(:,:,L), 1 )
 
       ENDDO
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, LVOLC )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, LVOLC )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, LVOLC )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, LVOLC )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,LVOLC)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,LVOLC)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,LVOLC)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,LVOLC)
 #else
-      ARRAY = TEMPARRAY
+      ARRAY = F_ARRAY
 #endif
 
       ! Unit conversion: [kg SO2/box/day] -> [kg SO2/box/s]
@@ -6029,7 +6028,7 @@
       INTEGER              :: YYYYMMDD, L
       CHARACTER(LEN=255)   :: FILENAME
 
-      REAL*8               :: TEMPARRAY(IGLOB*2,JGLOB/2,LVOLC)
+      REAL*8               :: F_ARRAY(IGLOB*2,JGLOB/2,LVOLC)
      
       !==================================================================
       ! READ_ERUP_VOLC begins here
@@ -6088,20 +6087,20 @@
             ! Save into correct level of ARRAY
 !            ARRAY(:,:,L) = ARRAY_1LEV
 
-            CALL REGRID_1x1G( ARRAY_GEN8, TEMPARRAY(:,:,L), 1 )
+            CALL REGRID_1x1G( ARRAY_GEN8, F_ARRAY(:,:,L), 1 )
 
          ENDDO
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, LVOLC )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, LVOLC )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, LVOLC )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, LVOLC )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,LVOLC)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,LVOLC)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,LVOLC)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,LVOLC)
 #else
-         ARRAY = TEMPARRAY
+         ARRAY = F_ARRAY
 #endif
 
          ! Unit conversion: [kg SO2/box/day] -> [kg SO2/box/s]
@@ -6208,8 +6207,8 @@
       CHARACTER(LEN=4)              :: SYEAR
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY1(IGLOB*2,JGLOB/2,2)
-      REAL*8                        :: TEMPARRAY2(IIPAR,JJPAR,2)
+      REAL*8                        :: F_ARRAY1(IGLOB*2,JGLOB/2,2)
+      REAL*8                        :: F_ARRAY2(IIPAR,JJPAR,2)
 
       !=================================================================
       ! READ_ANTHRO_SOx begins here!
@@ -6248,7 +6247,7 @@
          DO J = 1, LATLOOP
 
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Latitude [degrees]
                Y = GET_YMID( I, J )
@@ -6356,24 +6355,22 @@
 
          IF (MASTER) THEN
          DO L = 1, 2
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ),
-     &                       TEMPARRAY1(:,:,L), 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
          ENDDO
 
-         CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 2 )
-         CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 2 )
+         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 2 )
+         CALL YREV( F_ARRAY1, IGLOB, JGLOB, 2 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,2)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,2)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,
-     &               TEMPARRAY2,IIPAR,JJPAR,2)
+         CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,F_ARRAY2,IIPAR,JJPAR,2)
 #else
-         TEMPARRAY2 = TEMPARRAY1
+         F_ARRAY2 = F_ARRAY1
 #endif
 
-         E_SOx = TEMPARRAY2
+         E_SOx = F_ARRAY2
 
          !=================================================================
          ! Read in yearly SO2 scale factors here
@@ -6402,7 +6399,7 @@
          DO L = 1, 2
          DO J = 1, LATLOOP
 
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Grid box surface area [cm2]
                AREA_CM2 = GET_AREA_CM2( I, J )
@@ -6528,7 +6525,7 @@
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8              :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !==================================================================
       ! READ_OCEAN_DMS begins here!
@@ -6557,18 +6554,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), DMSo )
       
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,DMSo,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,DMSo,IIPAR,JJPAR,1)
 #else
-      DMSo = TEMPARRAY
+      DMSo = F_ARRAY
 #endif
 
       ! Return to calling program
@@ -6618,7 +6615,7 @@
       CHARACTER(LEN=4)        :: SYEAR
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !==================================================================
       ! READ_SST begins here!
@@ -6657,18 +6654,18 @@
 !         CALL DO_REGRID_1x1( 'K', ARRAY1, SSTEMP )
 
          IF (MASTER) THEN
-         CALL REGRID_1x1( DBLE( ARRAY1(:,:,1) ), TEMPARRAY, 2 )
+         CALL REGRID_1x1( DBLE( ARRAY1(:,:,1) ), F_ARRAY, 2 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
 #else
-         SSTEMP = TEMPARRAY
+         SSTEMP = F_ARRAY
 #endif
 
       ELSE
@@ -6699,18 +6696,18 @@
 !         CALL TRANSFER_2D( ARRAY(:,:,1), SSTEMP )
 
          IF (MASTER) THEN
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
 #else
-         SSTEMP = TEMPARRAY
+         SSTEMP = F_ARRAY
 #endif
 
       ENDIF
@@ -6785,7 +6782,7 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
                                     
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Days per month              
       REAL*8 :: NMDAY(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
@@ -6824,18 +6821,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), BIOCO )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOCO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOCO,IIPAR,JJPAR,1)
 #else
-      BIOCO = TEMPARRAY
+      BIOCO = F_ARRAY
 #endif
 
       !=================================================================
@@ -6849,7 +6846,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over latitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Convert biofuel SO2 from [kg CO/yr] to [kg SO2/s]
             ESO2_bf(I,J) = ( BIOCO(I,J) * 64d-3 * 0.0015d0 /
@@ -6914,7 +6911,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over latitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor for [cm2 * kg/molec]
             CONV = GET_AREA_CM2( I, J ) / XNUMOL(IDTSO2)
@@ -6967,8 +6964,8 @@
       REAL*8              :: FAC, FUEL, DZ(LLPAR), ZH(0:LLPAR)
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: TEMPARRAY1(I2x25,J2x25,20)
-      REAL*8              :: TEMPARRAY2(IGLOB*2,JGLOB/2,20)
+      REAL*8              :: F_ARRAY1(I2x25,J2x25,20)
+      REAL*8              :: F_ARRAY2(IGLOB*2,JGLOB/2,20)
 
       ! Month names
       CHARACTER(LEN=3)    :: CMONTH(12) = (/'jan', 'feb', 'mar', 'apr', 
@@ -6982,8 +6979,8 @@
       ! Zero arrays
       ESO2_ac = 0d0
       ACSO2   = 0d0
-      TEMPARRAY1 = 0d0
-      TEMPARRAY2 = 0d0
+      F_ARRAY1 = 0d0
+      F_ARRAY2 = 0d0
       
       ! File name
       FILENAME = TRIM( DATA_DIR )               // 
@@ -7028,26 +7025,26 @@
          ! Unit conversion: [kg Fuel/box/day] -> [kg SO2/box/s]
          ! Assuming an emission index of 1.0, 
          ! 1 g SO2 / kg fuel burned [Weisenstein et al., 1996]
-         TEMPARRAY1(I,J,L+1) = 1.d-3 * FUEL / ( 24.d0 * 3600d0 )
+         F_ARRAY1(I,J,L+1) = 1.d-3 * FUEL / ( 24.d0 * 3600d0 )
       ENDDO
 
       ! Close file
       CLOSE( IU_FILE )
 
       DO L = 1, 20
-         CALL REGRID_2x25( TEMPARRAY1(:,:,L), TEMPARRAY2(:,:,L), 1 )
+         CALL REGRID_2x25( F_ARRAY1(:,:,L), F_ARRAY2(:,:,L), 1 )
       ENDDO
 
-      CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 20 )
-      CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 20 )
+      CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 20 )
+      CALL YREV( F_ARRAY2, IGLOB, JGLOB, 20 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,20)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,20)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,ACSO2,IIPAR,JJPAR,20)
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,ACSO2,IIPAR,JJPAR,20)
 #else
-      ACSO2 = TEMPARRAY2
+      ACSO2 = F_ARRAY2
 #endif
 
       !=================================================================
@@ -7055,7 +7052,7 @@
       ! NOTE: we need to account for window grids (bmy, 9/20/02)
       !=================================================================
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! ACSO2 is the aircraft SO2 on the 1-km vertical grid
          FUEL = SUM( ACSO2(I,J,:) )
@@ -7148,8 +7145,8 @@
       REAL*8                        :: XTAU, AREA_CM2
       CHARACTER (LEN=255)           :: FILENAME
 
-      REAL*8                        :: TEMPARRAY1(IGLOB*2,JGLOB/2)
-      REAL*8                        :: TEMPARRAY2(IIPAR,JJPAR)
+      REAL*8                        :: F_ARRAY1(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY2(IIPAR,JJPAR)
 
       !=================================================================
       ! READ_SHIP_SO2 begins here!
@@ -7173,7 +7170,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
          ! Read ARCTAS SO2 emissions in [kg SO2/BOX/s]
          ESO2_sh(I,J) = GET_ARCTAS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
@@ -7217,28 +7214,27 @@
 !         CALL TRANSFER_2D( ARRAY(:,:,1), SHIPSO2 )
 
          IF (MASTER) THEN
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY1, 2 )
+         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
 
-         CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,
-     &               TEMPARRAY2,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,F_ARRAY2,IIPAR,JJPAR,1)
 #else
-         TEMPARRAY2 = TEMPARRAY1
+         F_ARRAY2 = F_ARRAY1
 #endif
 
-         SHIPSO2 = TEMPARRAY2
+         SHIPSO2 = F_ARRAY2
 
          ! Loop over latitudes
          DO J = 1, LATLOOP
 
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
             
                ! Grid box surface area [cm2]
                AREA_CM2 = GET_AREA_CM2( I, J )
@@ -7276,7 +7272,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ESO2_sh(I,J) = GET_EDGAR_SHIP_SO2( I, J, KG_S=.TRUE. )
 
@@ -7301,7 +7297,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
          ! Read ICOADS emissions in [kg SO2/box/s]
          ESO2_sh(I,J) = GET_ICOADS_SHIP( I, J, IDTSO2,  KG_S=.TRUE. )
@@ -7385,7 +7381,7 @@
       CHARACTER(LEN=255)            :: FILENAME
       REAL*8                        :: STREETS
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_ANTHRO_NH3 begins here!
@@ -7414,25 +7410,25 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_an )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ENH3_an,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_an,IIPAR,JJPAR,1)
 #else
-      ENH3_an = TEMPARRAY
+      ENH3_an = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, STREETS )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Convert from [kg N/box/mon] to [kg NH3/box/s]
          ENH3_an(I,J) = ENH3_an(I,J) * ( 17.d0 / 14.d0 ) 
@@ -7515,7 +7511,7 @@
      &                                      30d0, 31d0, 30d0, 31d0 /)
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8              :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_NATURAL_NH3 begins here!
@@ -7544,18 +7540,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_na )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ENH3_na,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_na,IIPAR,JJPAR,1)
 #else
-      ENH3_na = TEMPARRAY
+      ENH3_na = F_ARRAY
 #endif
 
       ! Convert from [kg N/box/mon] to [kg NH3/box/s]
@@ -7640,7 +7636,7 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_BIOFUEL_NH3 begins here!
@@ -7673,18 +7669,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_bf )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ENH3_bf,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_bf,IIPAR,JJPAR,1)
 #else
-      ENH3_bf = TEMPARRAY
+      ENH3_bf = F_ARRAY
 #endif
  
       ! Store NH3 in ENH3_bf array [kg NH3/box/s]
@@ -7702,7 +7698,7 @@
       DO J = 1, LATLOOP
  
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Scale biofuel NH3 to IPCC future scenario (if necessary)
             IF ( LFUTURE ) THEN
@@ -7761,7 +7757,7 @@
       DO J = 1, LATLOOP
  
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor for [cm2 * kg/molec]
             CONV = GET_AREA_CM2( I, J ) / XNUMOL(IDTNH3)
@@ -7814,8 +7810,8 @@
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: TEMPARRAY1(IGLOB*2,JGLOB/2,LT2x25)
-      REAL*8              :: TEMPARRAY2(IGLOB*2,JGLOB/2,LLPAR)
+      REAL*8              :: F_ARRAY1(IGLOB*2,JGLOB/2,LT2x25)
+      REAL*8              :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
 
       !=================================================================
       ! READ_OXIDANT begins here !
@@ -7857,21 +7853,21 @@
             
       IF (MASTER) THEN
       DO L = 1, LT2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), TEMPARRAY1(:,:,L), 2 )
+         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
       ENDDO
 
-      CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
-      CALL YREV( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
+      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
+      CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
 
-      CALL INTERP_VER( TEMPARRAY1, TEMPARRAY2, LT2x25, 3 )
+      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 3 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,LLPAR)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,PH2O2m,IIPAR,JJPAR,LLPAR)
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,PH2O2m,IIPAR,JJPAR,LLPAR)
 #else
-      PH2O2m = TEMPARRAY2
+      PH2O2m = F_ARRAY2
 #endif
 
       !=================================================================
@@ -7901,21 +7897,21 @@
       
       IF (MASTER) THEN
       DO L = 1, LT2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), TEMPARRAY1(:,:,L), 2 )
+         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
       ENDDO
 
-      CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
-      CALL YREV( TEMPARRAY1, IGLOB, JGLOB, LT2x25 )
+      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
+      CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
 
-      CALL INTERP_VER( TEMPARRAY1, TEMPARRAY2, LT2x25, 2 )
+      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 2 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,LLPAR)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,O3m,IIPAR,JJPAR,LLPAR)
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,O3m,IIPAR,JJPAR,LLPAR)
 #else
-      O3m = TEMPARRAY2
+      O3m = F_ARRAY2
 #endif
 
       ! Return to calling program
@@ -8004,7 +8000,7 @@
             ! Loop over surface grid boxes
             DO J = 1, LATLOOP
 
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Grid box latitude center [radians]
                YMID_R = GET_YMID_R( I, J )

@@ -349,25 +349,25 @@
       CHARACTER(LEN=40)       :: UNIT     
       CHARACTER(LEN=40)       :: RESERVED
 
-      REAL*8                  :: TEMPARRAY1(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY2(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY3(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY4(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY5(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY6(IGLOB*2,JGLOB/2)
-      REAL*8                  :: TEMPARRAY7(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY1(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY2(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY3(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY4(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY5(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY6(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY7(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! EMISS_EMEP begins here!
       !=================================================================
 
-      TEMPARRAY1 = 0d0
-      TEMPARRAY2 = 0d0
-      TEMPARRAY3 = 0d0
-      TEMPARRAY4 = 0d0
-      TEMPARRAY5 = 0d0
-      TEMPARRAY6 = 0d0
-      TEMPARRAY7 = 0d0
+      F_ARRAY1 = 0d0
+      F_ARRAY2 = 0d0
+      F_ARRAY3 = 0d0
+      F_ARRAY4 = 0d0
+      F_ARRAY5 = 0d0
+      F_ARRAY6 = 0d0
+      F_ARRAY7 = 0d0
 
       ! First-time initialization
       IF ( FIRST ) THEN
@@ -444,78 +444,78 @@
             CASE( 1  )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_NOx  )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY1, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
 
-               CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
 
             ! CO [molec/cm2/s]
             CASE( 4  )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_CO   )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY2, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY2, 2 )
 
-               CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,1)
 
             ! ALK4 [atoms C/cm2/s]
             CASE( 5  )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_ALK4 )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY3, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY3, 2 )
 
-               CALL XSHIFT( TEMPARRAY3, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY3, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY3,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY3,1)
 
             ! MEK [atoms C/cm2/s]
             CASE( 10 )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_MEK  )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY4, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY4, 2 )
 
-               CALL XSHIFT( TEMPARRAY4, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY4, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY4,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY4,1)
 
             ! ALD2 [atoms C/cm2/s]
             CASE( 11 )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_ALD2 )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY5, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY5, 2 )
 
-               CALL XSHIFT( TEMPARRAY5, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY5, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY5,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY5,1)
 
             ! PRPE [atoms C/cm2/s]
             CASE( 18 )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_PRPE )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY6, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY6, 2 )
 
-               CALL XSHIFT( TEMPARRAY6, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY6, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY6,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY6,1)
 
             ! C2H6 [atoms C/cm2/s]
             CASE( 21 )
 !               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_C2H6 )
 
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY7, 2 )
+               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY7, 2 )
 
-               CALL XSHIFT( TEMPARRAY7, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY7, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY7,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY7,1)
 
             CASE DEFAULT
                ! Nothing
@@ -529,21 +529,21 @@
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,EMEP_NOx,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,EMEP_CO,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY3,IGLOB*2,JGLOB/2,EMEP_ALK4,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY4,IGLOB*2,JGLOB/2,EMEP_MEK,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY5,IGLOB*2,JGLOB/2,EMEP_ALD2,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY6,IGLOB*2,JGLOB/2,EMEP_PRPE,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY7,IGLOB*2,JGLOB/2,EMEP_C2H6,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,EMEP_NOx,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,EMEP_CO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY3,IGLOB*2,JGLOB/2,EMEP_ALK4,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY4,IGLOB*2,JGLOB/2,EMEP_MEK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY5,IGLOB*2,JGLOB/2,EMEP_ALD2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY6,IGLOB*2,JGLOB/2,EMEP_PRPE,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY7,IGLOB*2,JGLOB/2,EMEP_C2H6,IIPAR,JJPAR,1)
 #else
-      EMEP_NOx = TEMPARRAY1
-      EMEP_CO = TEMPARRAY2
-      EMEP_ALK4 = TEMPARRAY3
-      EMEP_MEK = TEMPARRAY4
-      EMEP_ALD2 = TEMPARRAY5
-      EMEP_PRPE = TEMPARRAY6
-      EMEP_C2H6 = TEMPARRAY7
+      EMEP_NOx = F_ARRAY1
+      EMEP_CO = F_ARRAY2
+      EMEP_ALK4 = F_ARRAY3
+      EMEP_MEK = F_ARRAY4
+      EMEP_ALD2 = F_ARRAY5
+      EMEP_PRPE = F_ARRAY6
+      EMEP_C2H6 = F_ARRAY7
 #endif
 
       !=================================================================
@@ -823,7 +823,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Future NOx [molec/cm2/s]
          EMEP_NOx(I,J)  = EMEP_NOx(I,J)                   * 
@@ -981,7 +981,7 @@
       DO J = 1, LATLOOP
             
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Surface area [cm2] * seconds in this year 
             ! Multiply by 1d-9 to convert from [kg] to [Tg]
@@ -1068,7 +1068,7 @@
       REAL*4                  :: ARRAY(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_EUROPE_MASK begins here!
@@ -1099,18 +1099,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', ARRAY, EUROPE_MASK )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,EUROPE_MASK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,EUROPE_MASK,IIPAR,JJPAR,1)
 #else
-      EUROPE_MASK = TEMPARRAY
+      EUROPE_MASK = F_ARRAY
 #endif
 
       END SUBROUTINE READ_EUROPE_MASK
@@ -1231,7 +1231,7 @@
       REAL*8                        :: EMEP_TAU, TAU, A, B
       INTEGER                       :: EMEP_NYMD, MN, RATIOID, I, J
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ARRAY_1x1_SHIP(:,:,:) = 0.d0
       ARRAY_1x1_LAND(:,:,:) = 0.d0
@@ -1350,18 +1350,18 @@
 !      CALL DO_REGRID_1x1('kg/yr', ARRAY_1x1, ARRAY)
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( DBLE( ARRAY_1x1(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_1x1( DBLE( ARRAY_1x1(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,1)
 #else
-      ARRAY = TEMPARRAY
+      ARRAY = F_ARRAY
 #endif
 
       ! Convert SOx to SO2 assuming a SOx is 95% SO2 over Europe, as used
@@ -1380,7 +1380,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Surface area [cm2] * sec per year
             A = GET_AREA_CM2( I, J ) * 365d0 * 86400d0
@@ -1590,7 +1590,7 @@
          A = GET_AREA_CM2( J ) * 365d0 * 86400d0
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ARRAY(I,J) = ARRAY(I,J) / A * B
 

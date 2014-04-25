@@ -21,9 +21,9 @@
       USE COMSFC,      ONLY : SMC, SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
       USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, DTRAIN, GWETTOP
       USE DAO_MOD,     ONLY : HFLUX, LWI, MOISTQ, PBL, PREACC, PRECON
-      USE DAO_MOD,     ONLY : PS1, RADSWG, SNOMAS, SPHU, T, TS
-      USE DAO_MOD,     ONLY : U10M, USTAR, V10M, UWND, VWND, Z0
-      USE NISLQ,       ONLY : SLQ_Q1, SLQ_U2, SLQ_V2
+      USE DAO_MOD,     ONLY : PS1, RADSWG, SNOMAS, SPHU, T, TROPP, TS
+      USE DAO_MOD,     ONLY : U10M, USTAR, V10M, Z0
+      USE NISLQ,       ONLY : SLQ_Q1
       USE PARAMODEL,   ONLY : LEVSS
       USE TRACER_MOD,  ONLY : N_TRACERS
 
@@ -113,6 +113,10 @@
       CALL SPH_FFT_DRIVER(-1,WORK,TEM,1)
       CALL TRANSFORM_3D( WORK, T )
 
+      ! Tropopause [hPa]
+      CALL TPP_REICHLER( T, TROPP )
+      TROPP = TROPP * 1d-2
+
       ! Surface temperature [K]
       TS = TSEA
 
@@ -124,12 +128,6 @@
 
       ! 10m V-winds [m/s]
       V10M = V10M_
-
-      ! U-winds [m/s]
-!      CALL TRANSFORM_3D( SLQ_U2, UWND )
-
-      ! V-winds [m/s]
-!      CALL TRANSFORM_3D( SLQ_V2, VWND )
 
       ! Roughness height [m]
       Z0 = Z0CM * 1d-2

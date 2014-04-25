@@ -323,7 +323,7 @@
       REAL*8                  :: TEMP_TOT(IIPAR,JJPAR)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! COMPUTE_EDGAR_NOx begins here!
@@ -352,18 +352,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, TEMP_TOT )  
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,TEMP_TOT,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,TEMP_TOT,IIPAR,JJPAR,1)
 #else
-      TEMP_TOT = TEMPARRAY
+      TEMP_TOT = F_ARRAY
 #endif
 
       ! Loop over hours
@@ -374,23 +374,23 @@
 !         CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, TEMP_HRLY )
 
          IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,TEMP_HRLY,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,TEMP_HRLY,IIPAR,JJPAR,1)
 #else
-         TEMP_HRLY = TEMPARRAY
+         TEMP_HRLY = F_ARRAY
 #endif
 
          ! Scale factors are just the normalized hourly emissions
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             IF ( TEMP_TOT(I,J) > 0d0 ) THEN
                EDGAR_TODN(I,J,H) = TEMP_HRLY(I,J) / TEMP_TOT(I,J)
             ELSE
@@ -416,18 +416,18 @@
 !      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_NOx )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_NOx,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_NOx,IIPAR,JJPAR,1)
 #else
-      E_NOx = TEMPARRAY
+      E_NOx = F_ARRAY
 #endif
 
       !----------------------------------
@@ -446,18 +446,18 @@
 !         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_NOX_SHIP )
 
          IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_NOX_SHIP,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_NOX_SHIP,IIPAR,JJPAR,1)
 #else
-         E_NOX_SHIP = TEMPARRAY
+         E_NOX_SHIP = F_ARRAY
 #endif
 
       ENDIF
@@ -875,7 +875,7 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! COMPUTE_EDGAR_CO begins here!
@@ -908,18 +908,18 @@
 !      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_CO )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_CO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_CO,IIPAR,JJPAR,1)
 #else
-      E_CO = TEMPARRAY
+      E_CO = F_ARRAY
 #endif
 
       !----------------------------------
@@ -938,18 +938,18 @@
 !         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_CO_SHIP )
 
          IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_CO_SHIP,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_CO_SHIP,IIPAR,JJPAR,1)
 #else
-         E_CO_SHIP = TEMPARRAY
+         E_CO_SHIP = F_ARRAY
 #endif
 
       ENDIF
@@ -1120,7 +1120,7 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! COMPUTE_EDGAR_SO2 begins here!
@@ -1153,18 +1153,18 @@
 !      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_SO2 )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_SO2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_SO2,IIPAR,JJPAR,1)
 #else
-      E_SO2 = TEMPARRAY
+      E_SO2 = F_ARRAY
 #endif
 
       !----------------------------------
@@ -1183,18 +1183,18 @@
 !         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_SO2_SHIP )
 
          IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-         CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-         CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
          ENDIF
 
 #ifdef MP
-         CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,E_SO2_SHIP,IIPAR,JJPAR,1)
+         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_SO2_SHIP,IIPAR,JJPAR,1)
 #else
-         E_SO2_SHIP = TEMPARRAY
+         E_SO2_SHIP = F_ARRAY
 #endif
 
       ENDIF
@@ -2802,7 +2802,7 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'A_CM2' )
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          A_CM2(I,J) = GET_AREA_CM2( I, J )
       ENDDO
       ENDDO

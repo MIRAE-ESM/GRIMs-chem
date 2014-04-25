@@ -365,7 +365,7 @@
       CHARACTER(LEN=16 )      :: TIME_STR
       INTEGER                 :: DD, HH, DOY
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2,N_SPEC)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2,N_SPEC)
 
       !=================================================================
       ! GFED2_COMPUTE_BIOMASS begins here!
@@ -632,20 +632,20 @@
 
       IF (MASTER) THEN
       DO N = 1, N_SPEC
-         CALL REGRID_1x1( BIOM_GEOS_1x1(:,:,N), TEMPARRAY(:,:,N), 2 )
+         CALL REGRID_1x1( BIOM_GEOS_1x1(:,:,N), F_ARRAY(:,:,N), 2 )
       ENDDO
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, N_SPEC )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, N_SPEC )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, N_SPEC )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, N_SPEC )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,N_SPEC)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,N_SPEC)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &            GFED2_BIOMASS,IIPAR,JJPAR,N_SPEC)
 #else
-      GFED2_BIOMASS = TEMPARRAY
+      GFED2_BIOMASS = F_ARRAY
 #endif
 
       ! Compute future biomass emissions (if necessary)
@@ -735,7 +735,7 @@
       ! Loop over species and grid boxes
       DO N = 1, N_SPEC
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J) 
+      DO I = 1, LONLOOP
 
          ! Scale each species to IPCC future scenario
 ! Now use BIO_SAVE to have the correspondance GFED order -> tracers order.
@@ -844,7 +844,7 @@
          DO J = 1, LATLOOP
          
             ! Loop over longitudes
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                ! Convert to [Tg/gfed-period] (or [Tg C/gfed-period] for HC's)
                CONV = GET_AREA_CM2( I, J ) * ( MOLWT / 6.023d23 ) * 1d-9
 

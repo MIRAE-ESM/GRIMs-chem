@@ -1,3 +1,4 @@
+#include "define.h"
 !=====================================================================
 !
 !     SUBROUTINE START_CHEM
@@ -19,9 +20,9 @@
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
       USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LPRT, LVARTROP
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
-      USE RESTART,        ONLY : READ_RESTART
+      USE RESTART_MOD,    ONLY : READ_RESTART
       USE TRACER_MOD,     ONLY : ITS_A_FULLCHEM_SIM, ITS_AN_AEROSOL_SIM
-      USE TROPOPAUSE_MOD, ONLY : READ_TROPOPAUSE
+      USE CMN_SIZE_MOD,   ONLY : MASTER
 
       IMPLICIT NONE
 
@@ -61,8 +62,17 @@
       ! Read annual mean tropopause if not a variable tropopause
       ! read_tropopause is obsolete with variable tropopause
       IF ( .not. LVARTROP ) THEN
-         CALL READ_TROPOPAUSE
-         IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_TROPOPAUSE' )
+!         CALL READ_TROPOPAUSE
+!         IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_TROPOPAUSE' )
+         IF(MASTER) THEN
+         WRITE(6,*) 'GRIMs-Chem uses online tropopopause level.'
+         WRITE(6,*) 'LVARTROP should be T'
+         ENDIF
+#ifdef MP
+         CALL MPABORT
+#else
+         STOP
+#endif
       ENDIF
 
       ! Initialize allocatable SMVGEAR/KPP arrays

@@ -351,7 +351,7 @@
 !!$OMP+PRIVATE( CObf,  NH3bf, NOxbf,  SO2bf,  VOCbf         )
 !!$OMP+SCHEDULE( DYNAMIC )
 !      DO J = 1, LATLOOP
-!      DO I = 1, LONLOOP(J)
+!      DO I = 1, LONLOOP
 !
 !         ! Weekday avg anthro
 !         EPA_WD_AN_NOX (I,J) = EPA_WD_AN_NOX (I,J) * USA_MASK(I,J)
@@ -763,7 +763,7 @@
 !$OMP+PRIVATE( NH3an, NOxff, PRPEff, SO2ff,  TONEff, VOCff )         
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Weekday avg anthro
          EPA_WD_AN_NOX (I,J) = EPA_WD_AN_NOX (I,J) * USA_MASK(I,J)
@@ -983,7 +983,7 @@
 !$OMP+PRIVATE( I, J, CObf, NH3bf, NOxbf, SO2bf, VOCbf )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
                               
          ! Weekday avg biofuel    
          EPA_WD_BF_NOX (I,J) = EPA_WD_BF_NOX (I,J) * USA_MASK(I,J)
@@ -1136,35 +1136,35 @@
       CHARACTER(LEN=40) :: UNIT     
       CHARACTER(LEN=40) :: RESERVED
 
-      REAL*8            :: TEMPARRAY1(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY2(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY3(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY4(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY5(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY6(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY7(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY8(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY9(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY10(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY11(IGLOB*2,JGLOB/2)
-      REAL*8            :: TEMPARRAY12(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY1(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY2(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY3(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY4(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY5(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY6(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY7(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY8(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY9(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY10(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY11(IGLOB*2,JGLOB/2)
+      REAL*8            :: F_ARRAY12(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_EPA begins here!
       !=================================================================
 
-      TEMPARRAY1  = 0d0
-      TEMPARRAY2  = 0d0
-      TEMPARRAY3  = 0d0
-      TEMPARRAY4  = 0d0
-      TEMPARRAY5  = 0d0
-      TEMPARRAY6  = 0d0
-      TEMPARRAY7  = 0d0
-      TEMPARRAY8  = 0d0
-      TEMPARRAY9  = 0d0
-      TEMPARRAY10 = 0d0
-      TEMPARRAY11 = 0d0
-      TEMPARRAY12 = 0d0
+      F_ARRAY1  = 0d0
+      F_ARRAY2  = 0d0
+      F_ARRAY3  = 0d0
+      F_ARRAY4  = 0d0
+      F_ARRAY5  = 0d0
+      F_ARRAY6  = 0d0
+      F_ARRAY7  = 0d0
+      F_ARRAY8  = 0d0
+      F_ARRAY9  = 0d0
+      F_ARRAY10 = 0d0
+      F_ARRAY11 = 0d0
+      F_ARRAY12 = 0d0
 
       ! Echo info
       IF (MASTER) THEN
@@ -1210,111 +1210,111 @@
             CASE( 1  )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), NOx  )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY1, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
 
-               CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
             CASE( 4  )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), CO   )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY2, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY2, 2 )
 
-               CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,1)
             CASE( 5  )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), ALK4 )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY3, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY3, 2 )
 
-               CALL XSHIFT( TEMPARRAY3, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY3, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY3,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY3,1)
             CASE( 9  )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), ACET )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY4, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY4, 2 )
 
-               CALL XSHIFT( TEMPARRAY4, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY4, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY4,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY4,1)
             CASE( 10 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), MEK  )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY5, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY5, 2 )
 
-               CALL XSHIFT( TEMPARRAY5, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY5, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY5,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY5,1)
             CASE( 18 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), PRPE )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY6, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY6, 2 )
 
-               CALL XSHIFT( TEMPARRAY6, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY6, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY6,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY6,1)
             CASE( 19 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), C3H8 )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY7, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY7, 2 )
 
-               CALL XSHIFT( TEMPARRAY7, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY7, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY7,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY7,1)
             CASE( 20 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), CH2O )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY8, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY8, 2 )
 
-               CALL XSHIFT( TEMPARRAY8, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY8, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY8, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY8, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY8,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY8,1)
             CASE( 21 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), C2H6 )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY9, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY9, 2 )
 
-               CALL XSHIFT( TEMPARRAY9, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY9, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY9, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY9, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY9,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY9,1)
             CASE( 26 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), SO2  )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY10, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY10, 2 )
 
-               CALL XSHIFT( TEMPARRAY10, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY10, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY10, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY10, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY10,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY10,1)
             CASE( 27 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), SO4  )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY11, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY11, 2 )
 
-               CALL XSHIFT( TEMPARRAY11, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY11, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY11, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY11, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY11,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY11,1)
             CASE( 29 )
 !               CALL TRANSFER_2D( ARRAY(:,:,1), NH3  )
 
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY12, 2 )
+               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY12, 2 )
 
-               CALL XSHIFT( TEMPARRAY12, IGLOB, JGLOB, 1 )
-               CALL YREV( TEMPARRAY12, IGLOB, JGLOB, 1 )
+               CALL XSHIFT( F_ARRAY12, IGLOB, JGLOB, 1 )
+               CALL YREV( F_ARRAY12, IGLOB, JGLOB, 1 )
 
-               CALL DYN_TRANS2MODEL_GRID(TEMPARRAY12,1)
+               CALL DYN_TRANS2MODEL_GRID(F_ARRAY12,1)
             CASE DEFAULT
                ! Nothing
          END SELECT
@@ -1326,31 +1326,31 @@
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY3,IGLOB*2,JGLOB/2,ALK4,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY4,IGLOB*2,JGLOB/2,ACET,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY5,IGLOB*2,JGLOB/2,MEK,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY6,IGLOB*2,JGLOB/2,PRPE,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY7,IGLOB*2,JGLOB/2,C3H8,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY8,IGLOB*2,JGLOB/2,CH2O,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY9,IGLOB*2,JGLOB/2,C2H6,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY10,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY11,IGLOB*2,JGLOB/2,SO4,IIPAR,JJPAR,1)
-      CALL MPGF2P(TEMPARRAY12,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY3,IGLOB*2,JGLOB/2,ALK4,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY4,IGLOB*2,JGLOB/2,ACET,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY5,IGLOB*2,JGLOB/2,MEK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY6,IGLOB*2,JGLOB/2,PRPE,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY7,IGLOB*2,JGLOB/2,C3H8,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY8,IGLOB*2,JGLOB/2,CH2O,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY9,IGLOB*2,JGLOB/2,C2H6,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY10,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY11,IGLOB*2,JGLOB/2,SO4,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY12,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,1)
 #else
-      NOx = TEMPARRAY1
-      CO = TEMPARRAY2
-      ALK4 = TEMPARRAY3
-      ACET = TEMPARRAY4
-      MEK = TEMPARRAY5
-      PRPE = TEMPARRAY6
-      C3H8 = TEMPARRAY7
-      CH2O = TEMPARRAY8
-      C2H6 = TEMPARRAY9
-      SO2 = TEMPARRAY10
-      SO4 = TEMPARRAY11
-      NH3 = TEMPARRAY12
+      NOx = F_ARRAY1
+      CO = F_ARRAY2
+      ALK4 = F_ARRAY3
+      ACET = F_ARRAY4
+      MEK = F_ARRAY5
+      PRPE = F_ARRAY6
+      C3H8 = F_ARRAY7
+      CH2O = F_ARRAY8
+      C2H6 = F_ARRAY9
+      SO2 = F_ARRAY10
+      SO4 = F_ARRAY11
+      NH3 = F_ARRAY12
 #endif
 
       ! Get/Apply annual scalar factor (amv, 08/24/07)
@@ -1593,7 +1593,7 @@
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=14 ) :: MASK_DIR
 
-      REAL*8             :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8             :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_USA_MASK begins here!
@@ -1639,18 +1639,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), USA_MASK )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,USA_MASK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,USA_MASK,IIPAR,JJPAR,1)
 #else
-      USA_MASK = TEMPARRAY
+      USA_MASK = F_ARRAY
 #endif
 
       END SUBROUTINE READ_USA_MASK
@@ -1883,7 +1883,7 @@
       DO J = 1, LATLOOP
             
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Surface area [cm2] * seconds in this month / AVOGADRO's number
             ! Also multiply by the factor 1d-9 to convert kg to Tg
@@ -2088,7 +2088,7 @@
       ! Loop over surface boxes
       DO J = 1, LATLOOP
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Surface area [cm2] * seconds in this month / AVOGADRO's number
             ! Also multiply by the factor 1d-9 to convert kg to Tg

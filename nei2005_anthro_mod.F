@@ -411,8 +411,8 @@
       CHARACTER(LEN=1)           :: SSMN
       CHARACTER(LEN=2)           :: SMN
 
-      REAL*8                     :: TEMPARRAY1(IGLOB*2,JGLOB/2,5)
-      REAL*8                     :: TEMPARRAY2(IGLOB*2,JGLOB/2,5)
+      REAL*8                     :: F_ARRAY1(IGLOB*2,JGLOB/2,5)
+      REAL*8                     :: F_ARRAY2(IGLOB*2,JGLOB/2,5)
 
       !=================================================================
       ! EMISS_NEI2005_ANTHRO begins here!
@@ -525,26 +525,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,NOx_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,NOx_WKEND,IIPAR,JJPAR,5)
 #else
-            NOx = TEMPARRAY1
-            NOx_WKEND = TEMPARRAY2
+            NOx = F_ARRAY1
+            NOx_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -561,26 +561,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,CO_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,CO_WKEND,IIPAR,JJPAR,5)
 #else
-            CO = TEMPARRAY1
-            CO_WKEND = TEMPARRAY2
+            CO = F_ARRAY1
+            CO_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -597,26 +597,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,SO2_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,SO2_WKEND,IIPAR,JJPAR,5)
 #else
-            SO2 = TEMPARRAY1
-            SO2_WKEND = TEMPARRAY2
+            SO2 = F_ARRAY1
+            SO2_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -633,26 +633,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,SO4,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,SO4_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,SO4,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,SO4_WKEND,IIPAR,JJPAR,5)
 #else
-            SO4 = TEMPARRAY1
-            SO4_WKEND = TEMPARRAY2
+            SO4 = F_ARRAY1
+            SO4_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -669,26 +669,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,NH3_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,NH3_WKEND,IIPAR,JJPAR,5)
 #else
-            NH3 = TEMPARRAY1
-            NH3_WKEND = TEMPARRAY2
+            NH3 = F_ARRAY1
+            NH3_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -705,26 +705,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,OC,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,OC_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,OC,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,OC_WKEND,IIPAR,JJPAR,5)
 #else
-            OC = TEMPARRAY1
-            OC_WKEND = TEMPARRAY2
+            OC = F_ARRAY1
+            OC_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -741,26 +741,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,BC,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,BC_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,BC,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,BC_WKEND,IIPAR,JJPAR,5)
 #else
-            BC = TEMPARRAY1
-            BC_WKEND = TEMPARRAY2
+            BC = F_ARRAY1
+            BC_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -778,26 +778,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,ALK4,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,ALK4_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,ALK4,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,ALK4_WKEND,IIPAR,JJPAR,5)
 #else
-            ALK4 = TEMPARRAY1
-            ALK4_WKEND = TEMPARRAY2
+            ALK4 = F_ARRAY1
+            ALK4_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -814,26 +814,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,ACET,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,ACET_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,ACET,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,ACET_WKEND,IIPAR,JJPAR,5)
 #else
-            ACET = TEMPARRAY1
-            ACET_WKEND = TEMPARRAY2
+            ACET = F_ARRAY1
+            ACET_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -850,26 +850,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,MEK,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,MEK_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,MEK,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,MEK_WKEND,IIPAR,JJPAR,5)
 #else
-            MEK = TEMPARRAY1
-            MEK_WKEND = TEMPARRAY2
+            MEK = F_ARRAY1
+            MEK_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -886,26 +886,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,PRPE,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,PRPE_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,PRPE,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,PRPE_WKEND,IIPAR,JJPAR,5)
 #else
-            PRPE = TEMPARRAY1
-            PRPE_WKEND = TEMPARRAY2
+            PRPE = F_ARRAY1
+            PRPE_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -922,26 +922,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,C3H8,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,C3H8_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,C3H8,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,C3H8_WKEND,IIPAR,JJPAR,5)
 #else
-            C3H8 = TEMPARRAY1
-            C3H8_WKEND = TEMPARRAY2
+            C3H8 = F_ARRAY1
+            C3H8_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -958,26 +958,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,CH2O,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,CH2O_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,CH2O,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,CH2O_WKEND,IIPAR,JJPAR,5)
 #else
-            CH2O = TEMPARRAY1
-            CH2O_WKEND = TEMPARRAY2
+            CH2O = F_ARRAY1
+            CH2O_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -994,26 +994,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,C2H6,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,C2H6_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,C2H6,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,C2H6_WKEND,IIPAR,JJPAR,5)
 #else
-            C2H6 = TEMPARRAY1
-            C2H6_WKEND = TEMPARRAY2
+            C2H6 = F_ARRAY1
+            C2H6_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -1030,26 +1030,26 @@
 
             IF (MASTER) THEN
             DO L = 1, 5
-               CALL REGRID_1x1( GEOS_1x1(:,:,L), TEMPARRAY1(:,:,L), 1 )
+               CALL REGRID_1x1( GEOS_1x1(:,:,L), F_ARRAY1(:,:,L), 1 )
                CALL REGRID_1x1( GEOS_1x1(:,:,L) * DBLE( ARRAY(:,:,L) ),
-     &                          TEMPARRAY2(:,:,L), 1 )
+     &                          F_ARRAY2(:,:,L), 1 )
             ENDDO
 
-            CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL XSHIFT( TEMPARRAY2, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 5 )
-            CALL YREV( TEMPARRAY2, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY1, IGLOB, JGLOB, 5 )
+            CALL YREV( F_ARRAY2, IGLOB, JGLOB, 5 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,5)
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY2,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,5)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,5)
             ENDIF
 
 #ifdef MP
-        CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,ALD2,IIPAR,JJPAR,5)
-        CALL MPGF2P(TEMPARRAY2,IGLOB*2,JGLOB/2,ALD2_WKEND,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,ALD2,IIPAR,JJPAR,5)
+        CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,ALD2_WKEND,IIPAR,JJPAR,5)
 #else
-            ALD2 = TEMPARRAY1
-            ALD2_WKEND = TEMPARRAY2
+            ALD2 = F_ARRAY1
+            ALD2_WKEND = F_ARRAY2
 #endif
 
             DO L = 1, 5
@@ -2060,7 +2060,7 @@
       REAL*8             :: XTAU, GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255) :: FILENAME, SNAME
 
-      REAL*8             :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8             :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! Mask specific to NEI2005 data
@@ -2097,18 +2097,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, USA_MASK )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,USA_MASK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,USA_MASK,IIPAR,JJPAR,1)
 #else
-      USA_MASK = TEMPARRAY
+      USA_MASK = F_ARRAY
 #endif
 
       WHERE ( USA_MASK /= 0D0 ) USA_MASK = 1D0
@@ -2211,7 +2211,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, 5
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Future NOx [kg NO2/yr]
          NOx(I,J,L)  = NOx(I,J,L) * GET_FUTURE_SCALE_NOxff( I, J )
@@ -2553,7 +2553,7 @@
 
       ! Fill array
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          A_CM2(I,J) = GET_AREA_CM2( I, J )
       ENDDO
       ENDDO

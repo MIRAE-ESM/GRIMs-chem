@@ -380,27 +380,27 @@
       INTEGER, PARAMETER            :: BYTES_PER_NUMBER = 4
       INTEGER, PARAMETER            :: END_OF_RECORD    = 8
 
-      REAL*8 :: TEMPARRAY1(IGLOB*JGLOB,NL)
-      REAL*4 :: TEMPARRAY2(IGLOB*JGLOB,NL)
+      REAL*8 :: F_ARRAY(IGLOB*JGLOB,NL)
+      REAL*4 :: F_ARRAY4(IGLOB*JGLOB,NL)
 
 #ifdef MP
-      CALL MPGP2F(DBLE(ARRAY),NI,NJ,TEMPARRAY1,IGLOB*2,JGLOB/2,NL)
+      CALL MPGP2F(DBLE(ARRAY),NI,NJ,F_ARRAY,IGLOB*2,JGLOB/2,NL)
 #else
       DO J = 1, NJ
       DO I = 1, NI
-         TEMPARRAY1(NI*(J-1)+I,:) = DBLE(ARRAY(I,J,:))
+         F_ARRAY(NI*(J-1)+I,:) = DBLE(ARRAY(I,J,:))
       ENDDO
       ENDDO
 #endif
 
       IF (MASTER) THEN
 
-      CALL DYN_TRANS2OUTPUT_GRID(TEMPARRAY1,NL)
+      CALL DYN_TRANS2OUTPUT_GRID(F_ARRAY,NL)
 
-      CALL XSHIFT(TEMPARRAY1,IGLOB,JGLOB,NL)
-      CALL YREV(TEMPARRAY1,IGLOB,JGLOB,NL)
+      CALL XSHIFT(F_ARRAY,IGLOB,JGLOB,NL)
+      CALL YREV(F_ARRAY,IGLOB,JGLOB,NL)
 
-      TEMPARRAY2 = TEMPARRAY1
+      F_ARRAY4 = F_ARRAY
 
       !=================================================================
       ! BPCH2 begins here!!  
@@ -428,7 +428,7 @@
       IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:2' )
 
       WRITE( IUNIT, IOSTAT=IOS ) 
-     &     ( ( TEMPARRAY2(I,L), I=1,IGLOB*JGLOB ), L=1,NL )
+     &     ( ( F_ARRAY4(I,L), I=1,IGLOB*JGLOB ), L=1,NL )
 
       IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:3' )
 

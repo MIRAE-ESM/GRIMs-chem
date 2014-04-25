@@ -557,7 +557,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          BCCONV(I,J,L) = 0d0
 
          ! Initialize for drydep diagnostic
@@ -586,7 +586,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial BC mass [kg]
          TC0  = TC(I,J,L)
@@ -659,7 +659,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLPAR
             AD44(I,J,DRYBCPO,1) = AD44(I,J,DRYBCPO,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -729,7 +729,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -743,7 +743,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial H-philic BC [kg]
          TC0 = TC(I,J,L)
@@ -820,7 +820,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          BCCONV(I,J,L) = 0.d0
       ENDDO
       ENDDO
@@ -836,7 +836,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLPAR
             AD44(I,J,DRYBCPI,1) = AD44(I,J,DRYBCPI,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -906,7 +906,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          OCCONV(I,J,L) = 0d0
 
          ! Initialize for drydep diagnostic
@@ -934,7 +934,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial OC [kg]
          TC0  = TC(I,J,L)
@@ -1008,7 +1008,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLPAR
             AD44(I,J,DRYOCPO,1) = AD44(I,J,DRYOCPO,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -1077,7 +1077,7 @@
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -1091,7 +1091,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial H-philic OC [kg]
          TC0 = TC(I,J,L)
@@ -1169,7 +1169,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          OCCONV(I,J,L) = 0d0
       ENDDO
       ENDDO
@@ -1186,7 +1186,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLPAR
             AD44(I,J,DRYOCPI,1) = AD44(I,J,DRYOCPI,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -1288,7 +1288,7 @@
       !=================================================================
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
             ! Get 1-D index
             JLOOP   = JLOP( I, J, L )
@@ -1491,7 +1491,7 @@
       !=================================================================
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
             ! Get 1-D index
             JLOOP   = JLOP( I, J, L )
@@ -1747,7 +1747,7 @@
 !$OMP+PRIVATE( NOX                                                 )   ! (dkh, 10/30/06) 
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Volume of grid box [m3]
          VOL    = AIRVOL(I,J,L)    
@@ -3865,7 +3865,7 @@ c
 !$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ND44_TMP(I,J,L) = 0d0
          ENDDO
          ENDDO
@@ -3879,7 +3879,7 @@ c
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Initial SOA [kg]
          TC0 = TC(I,J,L)
@@ -3943,7 +3943,7 @@ c
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
          DO L = 1, LLPAR
             AD44(I,J,DEPID,1) = AD44(I,J,DEPID,1) + ND44_TMP(I,J,L)
          ENDDO
@@ -4134,7 +4134,7 @@ c
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Total HYDROPHILIC BC source [kg]
          BCSRC(I,J,1) = ANTH_BLKC(I,J,1) + 
@@ -4185,7 +4185,7 @@ c
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Anthropogenic BC source
             AD07(I,J,1) = AD07(I,J,1)        +
@@ -4345,7 +4345,7 @@ c
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, IJLOOP, TMMP, EMMO, SC, PDR, PDF )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! 1-D loop index
             IJLOOP         = ( (J-1) * IIPAR ) + I
@@ -4434,7 +4434,7 @@ c
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, IJLOOP, TMMP, SC, PDR, PDF )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! 1-D loop index
             IJLOOP         = ( (J-1) * IIPAR ) + I
@@ -4674,7 +4674,7 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Hydrophilic fraction of BLACK CARBON (aka ELEMENTAL CARBON)
       REAL*8, PARAMETER             :: FHB = 0.2d0
@@ -4720,25 +4720,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, FUT_SCL )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          ! Hydrophilic BLACK CARBON from anthropogenics [kg C/timestep]
          ANTH_BLKC(I,J,1) =          FHB   * FD2D(I,J) / STEPS_PER_MON
@@ -4769,25 +4769,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, FUT_SCL )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Hydrophilic ORGANIC CARBON from anthropogenics [kg C/timestep]
          ANTH_ORGC(I,J,1) =          FHO *   FD2D(I,J) / STEPS_PER_MON
@@ -4830,25 +4830,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, FUT_SCL )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Hydrophilic BLACK CARBON from biofuels [kg C /timestep]
          BIOF_BLKC(I,J,1) =          FHB *   FD2D(I,J) / STEPS_PER_MON
@@ -4880,25 +4880,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Hydrophilic ORGANIC CARBON from biofuels [kg C/timestep]
          BIOF_ORGC(I,J,1) =          FHO   * FD2D(I,J) / STEPS_PER_MON
@@ -4969,7 +4969,7 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Hydrophilic fraction of BLACK CARBON aerosol
       REAL*8, PARAMETER             :: FHB = 0.2d0
@@ -5022,22 +5022,22 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          IF (LONID(I,J) .LT. I1_NA .OR. LONID(I,J) .GT. I2_NA) CYCLE
          IF (LATID(I,J) .LT. J1_NA .OR. LATID(I,J) .GT. J2_NA) CYCLE
@@ -5074,22 +5074,22 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          IF (LONID(I,J) .LT. I1_NA .OR. LONID(I,J) .GT. I2_NA) CYCLE
          IF (LATID(I,J) .LT. J1_NA .OR. LATID(I,J) .GT. J2_NA) CYCLE
@@ -5141,22 +5141,22 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          IF (LONID(I,J) .LT. I1_NA .OR. LONID(I,J) .GT. I2_NA) CYCLE
          IF (LATID(I,J) .LT. J1_NA .OR. LATID(I,J) .GT. J2_NA) CYCLE
@@ -5196,22 +5196,22 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          IF (LONID(I,J) .LT. I1_NA .OR. LONID(I,J) .GT. I2_NA) CYCLE
          IF (LATID(I,J) .LT. J1_NA .OR. LATID(I,J) .GT. J2_NA) CYCLE
@@ -5276,7 +5276,7 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Hydrophilic fraction of carbonaceous aerosols
       REAL*8, PARAMETER             :: FHB = 0.2d0
@@ -5318,25 +5318,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, FUT_SCL )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          ! Hydrophilic BLACK CARBON from biomass [kg C/timestep]
          BIOB_BLKC(I,J,1) =          FHB   * FD2D(I,J) / STEPS_PER_YR
@@ -5367,25 +5367,25 @@ c
 !      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
 #else
-      FD2D = TEMPARRAY
+      FD2D = F_ARRAY
 #endif
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, FUT_SCL )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          ! Hydrophilic ORGANIC CARBON from biomass [kg C/timestep]
          BIOB_ORGC(I,J,1) =          FHO   * FD2D(I,J) / STEPS_PER_YR
@@ -5489,7 +5489,7 @@ c
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Grid box area [cm2]
             A_CM2 = GET_AREA_CM2( I, J )
@@ -5600,7 +5600,7 @@ c
 
 !$OMP PARALLEL DO DEFAULT( SHARED ) PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
    
             IF ( IS_BCPI ) EMIS_SAVE(I,J,IDTBCPI) = BCSRC(I,J,1)
             IF ( IS_OCPI ) EMIS_SAVE(I,J,IDTOCPI) = OCSRC(I,J,1)
@@ -5640,7 +5640,7 @@ c
 !$OMP+PRIVATE( I, J, L, F_OF_PBL )
       DO L = 1, PBL_MAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Fraction of PBL spanned by grid box (I,J,L) [unitless]
          F_OF_PBL = GET_FRAC_OF_PBL( I, J, L )
@@ -5787,7 +5787,7 @@ c
                ! Grid box latitude center [radians]
                YMID_R = GET_YMID_R( J )
 
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
 
                ! Increment IJLOOP
                IJLOOP = ( (J-1) * IIPAR ) + I
@@ -6489,7 +6489,7 @@ c
 !$OMP+PRIVATE( I, J, L, PSFC, PRES, RH2, R0, B0 )
       DO L = 1, LLTROP
       DO J = 1, LATLOOP 
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 	
          ! Surface pressure
          PSFC = GET_PEDGE(I,J,1)
@@ -6638,7 +6638,7 @@ c
       ! Loop over tropospheric grid boxes
       DO L = 1, LLTROP  
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Skip stratospheric boxes
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE
@@ -6840,7 +6840,7 @@ c
       ! Loop over tropospheric grid boxes
       DO L = 1, LLTROP  
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Skip stratospheric boxes
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE

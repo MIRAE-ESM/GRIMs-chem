@@ -20,12 +20,12 @@
       PUBLIC
 
       ! NOTE: This should be split off into a "landtype_mod.f"
-      INTEGER, ALLOCATABLE, DIMENSION(:)   :: IJREG!(MAXIJ)
-      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: IJLAND!(MAXIJ,NTYPE)
-      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: IJUSE!(MAXIJ,NTYPE)
+      INTEGER, ALLOCATABLE, DIMENSION(:)   :: IJREG
+      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: IJLAND
+      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: IJUSE
 
       ! NOTE: This should be split off into a "lai_mod.f"
-      REAL*8,  ALLOCATABLE, DIMENSION(:,:) :: XYLAI!(MAXIJ,NTYPE)
+      REAL*8,  ALLOCATABLE, DIMENSION(:,:) :: XYLAI
 
       CONTAINS
 

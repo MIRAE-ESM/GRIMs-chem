@@ -33,7 +33,7 @@
       PUBLIC  :: GET_TPAUSE_LEVEL
       PUBLIC  :: ITS_IN_THE_TROP
       PUBLIC  :: ITS_IN_THE_STRAT
-      PUBLIC  :: READ_TROPOPAUSE
+!      PUBLIC  :: READ_TROPOPAUSE
       PUBLIC  :: SAVE_FULL_TROP
 !
 ! !PRIVATE MEMBER FUNCTIONS:
@@ -257,9 +257,12 @@
       ! CHECK_VAR_TROP begins here!
       !=================================================================
 
+      ! Initialize
+      TPAUSE_LEV = 0d0
+
       ! set LMIN and LMAX to current min and max tropopause
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          TPAUSE_LEV(I,J) = GET_TPAUSE_LEVEL(I,J)
       ENDDO
       ENDDO
@@ -285,6 +288,7 @@
 
       END SUBROUTINE CHECK_VAR_TROP
 !EOC
+#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -306,7 +310,7 @@
       USE BPCH2_MOD,     ONLY : GET_TAU0,     READ_BPCH2
       USE DIRECTORY_MOD, ONLY : DATA_DIR
       USE ERROR_MOD,     ONLY : GEOS_CHEM_STOP
-!      USE TRANSFER_MOD,  ONLY : TRANSFER_2D
+      USE TRANSFER_MOD,  ONLY : TRANSFER_2D
 
       USE CMN_SIZE_MOD      ! Size parameters
       USE CMN_MOD           ! LPAUSE, for backwards compatibility
@@ -347,12 +351,8 @@
 !
       LOGICAL, SAVE      :: FIRST=.TRUE.
       INTEGER            :: I, J, COUNT
-      REAL*4             :: ARRAY(I2x25,J2x25,1)
+      REAL*4             :: ARRAY(IIPAR,JJPAR,1)
       CHARACTER(LEN=255) :: FILENAME
-
-      REAL*8             :: TEMPARRAY1(IGLOB*2,JGLOB/2)
-      REAL*8             :: TEMPARRAY2(IIPAR,JJPAR)
-      INTEGER, EXTERNAL  :: CLZ_GEOS4
 
       !=================================================================
       ! READ_TROPOPAUSE begins here!
@@ -370,42 +370,19 @@
       ! Create filename
       FILENAME = TRIM( DATA_DIR )                      // 
      &           'ann_mean_trop_200202/ann_mean_trop.' //
-     &           'geos4'        // '.' // GET_RES_EXT()
+     &           GET_NAME_EXT() // '.' // GET_RES_EXT()
 
       ! Write file name to stdout
-      IF (MASTER) THEN
       WRITE( 6, 110 ) TRIM( FILENAME )
-      ENDIF
  110  FORMAT( '     - READ_TROPOPAUSE: Reading ', a )
 
       ! Annual mean tropopause is tracer #1  
       CALL READ_BPCH2( FILENAME, 'TR-PAUSE', 1, 
-     &                 0d0,       I2x25,     J2x25,     
+     &                 0d0,       IIPAR,     JJPAR,     
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Copy from REAL*4 to INTEGER and resize to (IIPAR,JJPAR)
-!      CALL TRANSFER_2D( ARRAY(:,:,1), TROPOPAUSE )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY1, 2 )
-
-      CALL XSHIFT( TEMPARRAY1, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY1, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY1,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(TEMPARRAY1,IGLOB*2,JGLOB/2,TEMPARRAY2,IIPAR,JJPAR,1)
-#else
-      TEMPARRAY2 = TEMPARRAY1
-#endif
-
-      DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
-         TROPOPAUSE(I,J) = CLZ_GEOS4( I, J, NINT(TEMPARRAY2(I,J)) )
-      ENDDO
-      ENDDO
+      CALL TRANSFER_2D( ARRAY(:,:,1), TROPOPAUSE )
 
       !### For backwards compatibility during transition
       LPAUSE = TROPOPAUSE
@@ -428,26 +405,20 @@
       LMIN = MINVAL( TROPOPAUSE )
       LMAX = MAXVAL( TROPOPAUSE )
       
-      IF (MASTER) THEN
       WRITE( 6, 120 ) LMIN-1
-      ENDIF
  120  FORMAT( '     - READ_TROPOPAUSE: Minimum tropospheric extent,',
      &        ' L=1 to L=', i3 )
 
-      IF (MASTER) THEN
       WRITE( 6, 130 ) LMAX-1
-      ENDIF
  130  FORMAT( '     - READ_TROPOPAUSE: Maximum tropospheric extent,',
      &        ' L=1 to L=', i3 )
     
       IF ( LMAX-1 > LLTROP ) THEN
-         IF (MASTER) THEN
          WRITE( 6, '(a)' ) 'READ_TROPOPAUSE: LLTROP is set too low!' 
          WRITE( 6, 131   ) LMAX-1, LLTROP
  131     FORMAT( 'LMAX = ', i3, '  LLTROP = ', i3 )
          WRITE( 6, '(a)' ) 'STOP in READ_TROPOPAUSE.F!!!'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
-         ENDIF
          CALL GEOS_CHEM_STOP
       ENDIF
 
@@ -457,18 +428,15 @@
       !=================================================================
       COUNT = SUM( TROPOPAUSE - 1 )
 
-      IF (MASTER) THEN
       WRITE( 6, 140 ) COUNT
-      ENDIF
  140  FORMAT( '     - READ_TROPOPAUSE: # of tropopsheric boxes:  ', i8 )
       
-      IF (MASTER) THEN
       WRITE( 6, 150 ) ( IIPAR * JJPAR * LLPAR ) - COUNT
-      ENDIF
  150  FORMAT( '     - READ_TROPOPAUSE: # of stratospheric boxes: ', i8 )
 
       END SUBROUTINE READ_TROPOPAUSE
 !EOC
+#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -822,7 +790,7 @@
 !------------------------------------------------------------------------------
 !BOC
 
-#if   defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA )
+#if   defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA ) || defined ( GRIMS )
 !
 ! !LOCAL VARIABLES:
 ! 
@@ -843,7 +811,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L_TP, H, Pb, Pt, FRAC )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             !---------------------------
             ! Compute quantities
@@ -907,7 +875,7 @@
       ! Find height of the midpoint of the first level
       ! H (in m) is the height of the midpoint of layer L (hyl, 03/28/99)
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          H(I,J,1) = BXHEIGHT(I,J,1) / 2.d0
       ENDDO
       ENDDO
@@ -915,7 +883,7 @@
       ! Add to H 1/2 of the sum of the two adjacent boxheights
       DO L = 1, LLPAR-1
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          H(I,J,L+1) = H(I,J,L) + 
      &               ( BXHEIGHT(I,J,L) + BXHEIGHT(I,J,L+1) ) / 2.d0
       ENDDO
@@ -927,7 +895,7 @@
       !=================================================================
       IF ( ND55 > 0 ) THEN
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Get the tropopause level
             L           = GET_TPAUSE_LEVEL( I, J )

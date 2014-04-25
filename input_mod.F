@@ -1879,11 +1879,13 @@
       
 #if !defined(GRID2x25) && !defined(GRID4x5)
       
-!      IF ( LICARTT ) THEN
-!         LICARTT = .FALSE.
-!         WRITE( 6, '(/,a,/)' ) ' ICARTT-based corrections to  ' //
-!     $        'EPA-NEI99 are not available at high resolution.'
-!      ENDIF
+      IF ( LICARTT ) THEN
+         LICARTT = .FALSE.
+         IF (MASTER) THEN
+         WRITE( 6, '(/,a,/)' ) ' ICARTT-based corrections to  ' //
+     $        'EPA-NEI99 are not available at high resolution.'
+         ENDIF
+      ENDIF
          
 #endif
 
@@ -2778,13 +2780,15 @@
 
       ! The non-local PBL scheme is valid only with GEOS-5 or MERRA!
 #if   !defined( GEOS_5 ) && !defined( MERRA )
-!      IF ( LNLPBL ) THEN
-!         WRITE(*,*) '================================================='
-!         WRITE(*,*) 'The non-local PBL scheme is only valid for GEOS-5'
-!         WRITE(*,*) 'LNLPBL is automatically turned to false !'
-!         WRITE(*,*) '================================================='
-!         LNLPBL = .FALSE.
-!      ENDIF
+      IF ( LNLPBL ) THEN
+         IF (MASTER) THEN
+         WRITE(*,*) '================================================='
+         WRITE(*,*) 'The non-local PBL scheme is only valid for GEOS-5'
+         WRITE(*,*) 'LNLPBL is automatically turned to false !'
+         WRITE(*,*) '================================================='
+         ENDIF
+         LNLPBL = .FALSE.
+      ENDIF
 #endif
 
       !=================================================================

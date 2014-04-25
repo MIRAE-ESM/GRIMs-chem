@@ -15,7 +15,7 @@ module flexaod
 
   use dao_mod,       only : airden, bxheight, rh
   use directory_mod, only : data_dir
-  use restart,       only : lbxhght
+  use restart_mod,   only : lbxhght
   use tracer_mod,    only : stt2
   use tracerid_mod,  only : idtso4, idtnh4, idtnit
   use tracerid_mod,  only : idtbcpi, idtocpi, idtbcpo, idtocpo
@@ -695,7 +695,7 @@ subroutine interp_aod
   outg = 0.0
   do ibnd = 1,nbnd
   do j = 1,latloop
-  do i = 1,lonloop(j)
+  do i = 1,lonloop
 
     ! Loop over levels
     do l = 1,nl

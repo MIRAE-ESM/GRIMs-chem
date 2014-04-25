@@ -506,7 +506,7 @@
       DO N = 1, N_TOT_TRC
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          !---------------------------
          ! Check for Negatives

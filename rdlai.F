@@ -93,7 +93,7 @@
          ! Must now include the year (mpb,2009)
          CALL READLAI( MM, YYYY )
          DO J=1,LATLOOP
-         DO I=1,LONLOOP(J)
+         DO I=1,LONLOOP
          DO K=1,IREG(I,J)
             XLAI2(I,J,K) = (XLAI2(I,J,K)-XLAI(I,J,K))/(DBLE(ITD))
             XLAI(I,J,K)=XLAI(I,J,K)+ XLAI2(I,J,K) * DBLE(IMUL)
@@ -111,7 +111,7 @@
             CALL READLAI( MM , YYYY )
 
             DO J=1,LATLOOP
-            DO I=1,LONLOOP(J)
+            DO I=1,LONLOOP
             DO K=1,IREG(I,J)
                XLAI2(I,J,K) = (XLAI2(I,J,K)-XLAI(I,J,K))/(DBLE(ITD))
             END DO
@@ -119,7 +119,7 @@
             END DO
          ELSE
             DO J=1,LATLOOP
-            DO I=1,LONLOOP(J)
+            DO I=1,LONLOOP
             DO K=1,IREG(I,J)
                XLAI(I,J,K)=XLAI(I,J,K)+ XLAI2(I,J,K)
             END DO
@@ -131,7 +131,7 @@
       IJLOOP = 0
       DO J = 1, LATLOOP
          JREF = J + J0
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             IJLOOP = ( (J-1) * IIPAR ) + I
             DO K=1,IJREG(IJLOOP)
                IREF = I + I0

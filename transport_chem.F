@@ -1,3 +1,4 @@
+#include "define.h"
 !=====================================================================
 !
 !     SUBROUTINE TRANSPORT_CHEM
@@ -15,7 +16,7 @@
       USE COMFSPEC_VR,  ONLY : QM, Q, Z
       USE COMFVER,      ONLY : DELTIM
       USE GRID_MOD,     ONLY : GET_AREA_M2
-      USE NISLQ,        ONLY : SLQ_PSFC2, SLQ_U2, SLQ_V2, SLQ_W2
+      USE nislq,        ONLY : SLQ_PSFC2, SLQ_U2, SLQ_V2, SLQ_W2
       USE TRACER_MOD,   ONLY : N_TRACERS, STT1, STT, TCVV
 
       USE CMN_SIZE_MOD
@@ -63,8 +64,8 @@
 
       ! Airmass [kg] before transport
       DO L = 1, LLPAR
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
+      DO J = 1, LATLOOP
+      DO I = 1, LONLOOP
          A_M2 = GET_AREA_M2(I,J)
          AD_B(I,J,L) = DP1(I,LLPAR+1-L,J) * G0_1000 * A_M2
       ENDDO
@@ -74,8 +75,8 @@
       ! Tracer mass [kg] before transport
       DO N = 1, N_TRACERS
       DO L = 1, LLPAR
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
+      DO J = 1, LATLOOP
+      DO I = 1, LONLOOP
          TR_B(I,J,L,N) = STT1(I,J,L,N) * AD_B(I,J,L) / TCVV(N)
       ENDDO
       ENDDO
@@ -108,8 +109,8 @@
       DO N = 1, N_TRACERS
 
          DO L = 1, LLPAR
-         DO J = 1, JJPAR
-         DO I = 1, IIPAR
+         DO J = 1, LATLOOP
+         DO I = 1, LONLOOP
 
             ! Air mass [kg] after transport
             A_M2 = GET_AREA_M2(I,J)
@@ -122,9 +123,14 @@
          ENDDO
          ENDDO
 
+#ifdef MP
          CALL MPGP2F(TR_B(:,:,:,N),IIPAR,JJPAR,
      &               WORK3,IGLOB*2,JGLOB/2,LLPAR)
          CALL MPGP2F(TR_A,IIPAR,JJPAR,WORK4,IGLOB*2,JGLOB/2,LLPAR)
+#else
+         WORK3 = TR_B(:,:,:,N)
+         WORK4 = TR_A
+#endif
 
          IF (MASTER) THEN
 
@@ -133,12 +139,14 @@
 
          ENDIF
 
+#ifdef MP
          CALL MPBCASTR(TR_DIFF,1)
+#endif
 
          ! Add mass difference back to STT
          DO L = 1, LLPAR
-         DO J = 1, JJPAR
-         DO I = 1, IIPAR
+         DO J = 1, LATLOOP
+         DO I = 1, LONLOOP
 
             TR_A(I,J,L) = TR_A(I,J,L) * TR_DIFF
 

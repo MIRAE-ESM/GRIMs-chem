@@ -228,7 +228,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Assign into PFLT array
          PFLT(I,J) = PS(I,J) 

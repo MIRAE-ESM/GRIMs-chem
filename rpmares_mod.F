@@ -184,7 +184,7 @@
 #endif
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          ! Skip if we are in the stratosphere (bmy, 4/3/08)
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE

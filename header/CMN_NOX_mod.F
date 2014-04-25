@@ -23,7 +23,7 @@
 ! 
       ! NOTE: Keep this for backwards compatibility for now (bmy, 10/2/07)
       ! GEMISNOX2 = Soil Nox [molec NOx/cm3/s]
-      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: GEMISNOX2!(IIPAR,JJPAR)
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: GEMISNOX2
 
       CONTAINS
 

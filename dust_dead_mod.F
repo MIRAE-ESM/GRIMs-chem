@@ -242,8 +242,6 @@
       REAL*8,  ALLOCATABLE :: GSD_ANL_SRC(:)
       REAL*8,  ALLOCATABLE :: MSS_FRC_SRC(:)
 
-      INTEGER :: DUST_LONLOOP
-
       !=================================================================
       ! MODULE ROUTINES -- follow below the "CONTAINS" statement
       !=================================================================
@@ -501,8 +499,6 @@
       ! DST_MBL begins here!
       !=================================================================
 
-      DUST_LONLOOP = LONLOOP(LAT_IDX)
-
       ! Time step [s]
       TM_DLT                 = TM_ADJ
 
@@ -527,7 +523,7 @@
       !=================================================================
       ! Compute necessary derived fields
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
 
          ! Stop occasional haywire model runs
          IF ( TPT_MDP(I) > 350.0d0 ) THEN
@@ -643,7 +639,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! Get reference wind at 10m
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          W10M = SQRT( SFCWINDSQR( I, LAT_IDX ) )
 
          ! add mobilisation criterion flag
@@ -667,7 +663,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! Introduce Ustar and Z0 from GEOS data
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          IJLOOP = (LAT_IDX-1)*IIPAR+I
 
          ! Just assign for flag mobilisation candidates
@@ -751,7 +747,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Adjust threshold friction velocity to account
       ! for moisture and roughness
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          WND_FRC_THR_SLT(I) =      ! [m s-1] Threshold friction velocity
                                    !         for saltation
      &        WND_FRC_THR_SLT(i)   ! [m s-1] Threshold for dry, flat ground
@@ -760,7 +756,7 @@ ctdf        print *,' no mobilisation candidates'
       ENDDO
 
       ! Threshold saltation wind speed at reference height, 10m
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          IF ( FLG_MBL_SLICE(I) ) THEN
            WND_RFR_THR_SLT(I) =  ! [m s-1] Threshold 10 m wind speed
                                  !         for saltation
@@ -803,7 +799,7 @@ ctdf        print *,' no mobilisation candidates'
 !ctdf...prior to Apr/05/06
 !      ! Apply land surface and vegetation limitations
 !      ! and global tuning factor
-!      DO I = 1, DUST_LONLOOP
+!      DO I = 1, LONLOOP
 !         FLX_MSS_HRZ_SLT_TTL(I) = FLX_MSS_HRZ_SLT_TTL(I) ! [kg m-2 s-1]
 !     &       * LND_FRC_MBL_SLICE(i)   ! [frc] Bare ground fraction
 !     &       * MBL_BSN_FCT_SLICE(i)   ! [frc] Erodibility factor
@@ -815,7 +811,7 @@ ctdf        print *,' no mobilisation candidates'
       ! Now simply multiply by the GOCART source function.
       ! The vegetation effect has been eliminated in LND_FRC_MBL_GET
       ! and we also ignore MBL_BSN_FCT. (tdf, bmy, 1/25/07)
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          FLX_MSS_HRZ_SLT_TTL(I) = FLX_MSS_HRZ_SLT_TTL(I) ! [kg m-2 s-1]
      &       * LND_FRC_MBL_SLICE(i)   ! [frc] Bare ground fraction
      &       * FLX_MSS_FDG_FCT        ! [frc] Global mass flux tuning
@@ -863,7 +859,7 @@ ctdf        print *,' no mobilisation candidates'
       ! Now, flx_mss_vrt_dst has units of kg/m2/sec
 
       ! Fluxes are known, so adjust mixing ratios
-      DO  I=1, DUST_LONLOOP            ! NB: Inefficient loop order
+      DO  I=1, LONLOOP          ! NB: Inefficient loop order
          IF (FLG_MBL_SLICE(I)) THEN
 
             ! Loop over dust bins
@@ -926,7 +922,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! Save latitude slice in SRCE_FUNC_OUT
          SRCE_FUNC_OUT(LON_IDX) = SRCE_FUNC(LON_IDX,LAT_IDX)
@@ -982,7 +978,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! SOI_GET_TXT begins here!
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
 
          ! Save dry land fraction slice
          LND_FRC_DRY_OUT(I) = LND_FRC_DRY(I,J)
@@ -1042,7 +1038,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! SFC_TYP_GET begins here!
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          SFC_TYP_OUT(I) = SFC_TYP(I,J)
       ENDDO
 
@@ -1088,7 +1084,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
 
       ! Use TS from GEOS-CHEM (tdf, 3/30/04)
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          TPT_GND_OUT(I) = TS(I,J)
          TPT_SOI_OUT(I) = TS(I,J)
       ENDDO
@@ -1131,7 +1127,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! VWC_SFC_GET begins here!
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
          VWC_SFC_OUT(I) = GWETTOP(I,J)
       ENDDO
 
@@ -1383,7 +1379,7 @@ ctdf        print *,' no mobilisation candidates'
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Ocean
          IF ( IS_WATER( I, J ) ) OROGRAPHY(I,J) = 0
@@ -1459,7 +1455,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Time-invariant soil hydraulic properties
       ! See Bon96 p. 98, implemented in CCM:lsm/lsmtci()
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          IF ( FLG_MBL(LON_IDX) ) THEN
 
@@ -1604,7 +1600,7 @@ ctdf        print *,' no mobilisation candidates'
       CND_TRM_SOI(:) = 0.0D0
 
       ! Loop over longitude
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF ( FLG_MBL(LON_IDX) ) THEN
 
            ! Volumetric latent heat of fusion [J m-3]
@@ -1778,7 +1774,7 @@ ctdf        print *,' no mobilisation candidates'
       TRN_FSH_VPR_SOI_ATM(:) = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate ...
          IF ( FLG_MBL(LON_IDX) ) THEN
@@ -1888,7 +1884,7 @@ ctdf        print *,' no mobilisation candidates'
       WND_FRC(:) = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! Surface layer mean wind speed bounded [m/s]
          WND_MDP_BND(LON_IDX) =
@@ -2247,7 +2243,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Count ocean grid boxes
       OCN_NBR = 0
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF ( ORO_IS_OCN( ORO(LON_IDX) ) ) THEN
             OCN_NBR          = OCN_NBR + 1
             OCN_IDX(OCN_NBR) = LON_IDX
@@ -2256,7 +2252,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Count ice grid boxes
       ICE_NBR = 0
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF ( ORO_IS_ICE( ORO(LON_IDX) ) ) THEN
             ICE_NBR          = ICE_NBR+1
             ICE_IDX(ICE_NBR) = LON_IDX
@@ -2265,7 +2261,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Count land grid boxes
       LND_NBR = 0
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF ( ORO_IS_LND( ORO(LON_IDX) ) ) THEN
             LND_NBR          = LND_NBR + 1
             LND_IDX(LND_NBR) = LON_IDX
@@ -2438,7 +2434,7 @@ ctdf        print *,' no mobilisation candidates'
      &                / DNS_H2O_SNW_GND_STD
 
       ! Fractional snow cover
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! Snow height [m]
          SNW_HGT(LON_IDX) = SNW_HGT_LQD(LON_IDX)
@@ -2559,7 +2555,7 @@ ctdf        print *,' no mobilisation candidates'
       WND_RFR = WND_MIN             ! [m s-1]
 
       ! Compute horizontal wind speed at reference height
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF (FLG_ORO(LON_IDX) .AND. HGT_ZPD(LON_IDX) < HGT_RFR) THEN
 
             ! Code uses notation of Bon96 p. 50, where lvl_idx=1
@@ -2716,7 +2712,7 @@ ctdf        print *,' no mobilisation candidates'
 
       ENDIF
 
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! Threshold friction velocity for saltation dry ground
          ! tdf introduced alpha
@@ -2771,7 +2767,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
       ! WND_RFR_THR_SLT_GET begins here
       !=================================================================
-      DO I = 1, DUST_LONLOOP
+      DO I = 1, LONLOOP
 
          ! A more complicated procedure would recompute mno_lng for
          ! wnd_frc_thr, and then integrate vertically from rgh_mmn+hgt_zpd
@@ -2846,7 +2842,7 @@ ctdf        print *,' no mobilisation candidates'
       DNS_BLK_DRY(:) = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate then...
          IF ( FLG_MBL(LON_IDX) ) THEN
@@ -2917,7 +2913,7 @@ ctdf        print *,' no mobilisation candidates'
       gwc_thr(:)         = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a candidate for mobilization...
          IF ( FLG_MBL(LON_IDX) ) THEN
@@ -3024,7 +3020,7 @@ ctdf        print *,' no mobilisation candidates'
       FEFF_RCP = 1.0D0 / FEFF
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate...
          IF ( FLG_MBL(LON_IDX) ) THEN
@@ -3119,7 +3115,7 @@ ctdf        print *,' no mobilisation candidates'
 ! %%%%% DO NOT DELETE -- LEAVE THIS CODE COMMENTED OUT %%%%%
 !
 !      ! Loop over longitudes
-!      DO LON_IDX = 1, DUST_LONLOOP
+!      DO LON_IDX = 1, LONLOOP
 !
 !         ! If this is a mobilization candidate, then only
 !         ! only apply Owen effect only when Uref > Ureft (tdf 4/5/04)
@@ -3250,7 +3246,7 @@ ctdf        print *,' no mobilisation candidates'
       DO M = 1, NDSTBIN
 
          ! Loop over longitudes
-         DO LON_IDX = 1, DUST_LONLOOP
+         DO LON_IDX = 1, LONLOOP
 
             !===========================================================
             ! Simple technique is to mask dust mass by tracer mass
@@ -3401,7 +3397,7 @@ ctdf        print *,' no mobilisation candidates'
       QS_TTL(:) = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate and the friction
          ! velocity is above the threshold for saltation...
@@ -3495,7 +3491,7 @@ ctdf        print *,' no mobilisation candidates'
       FLX_MSS_VRT_DST_TTL(:) = 0.0D0
 
       ! Loop over longitudes
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate...
          IF ( FLG_MBL(LON_IDX) ) then
@@ -3655,7 +3651,7 @@ ctdf        print *,' no mobilisation candidates'
       FLX_MSS_VRT_DST(:,:) = 0.0D0    ! [frc]
 
       ! Loop over longitudes (NB: Inefficient loop order)
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
 
          ! If this is a mobilization candidate...
          IF ( FLG_MBL(LON_IDX) ) THEN
@@ -3828,7 +3824,7 @@ ctdf        print *,' no mobilisation candidates'
       ! Initialize outputs
       MBL_NBR = 0
 
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          FLG_MBL(LON_IDX) = .FALSE.
       ENDDO
 
@@ -3840,7 +3836,7 @@ ctdf        print *,' no mobilisation candidates'
       ! Land ahoy!
       !=================================================================
       LND_NBR = 0
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          IF ( ORO_IS_LND( ORO(LON_IDX)) ) THEN
             LND_NBR          = LND_NBR + 1
             LND_IDX(LND_NBR) = LON_IDX
@@ -4010,7 +4006,7 @@ ctdf        print *,' no mobilisation candidates'
       DO M = 1, NDSTBIN
 
          ! Loop over longitudes
-         DO I = 1, DUST_LONLOOP
+         DO I = 1, LONLOOP
 
             ! Integrate!
             Q_TTL(I) = Q_TTL(I) + Q(I,M)
@@ -4056,7 +4052,7 @@ ctdf        print *,' no mobilisation candidates'
       !=================================================================
 
       ! Return lat slice of VAI [m2/m2]
-      DO LON_IDX = 1, DUST_LONLOOP
+      DO LON_IDX = 1, LONLOOP
          VAI_DST_OUT(LON_IDX) = VAI_DST(LON_IDX,LAT_IDX)
       ENDDO
 
@@ -4671,8 +4667,8 @@ c Fix up for negative argument, erf, etc.
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: TEMPARRAY(IGLOB*2,JGLOB/2)
-      INTEGER               :: TEMPSFC_TYP(I2x25,J2x25)
+      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
+      INTEGER               :: F_SFC_TYP(I2x25,J2x25)
       INTEGER               :: J
       INTEGER, EXTERNAL     :: CLX, CLY
 
@@ -4752,18 +4748,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_GEO )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ERD_FCT_GEO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_GEO,IIPAR,JJPAR,1)
 #else
-      ERD_FCT_GEO = TEMPARRAY
+      ERD_FCT_GEO = F_ARRAY
 #endif
 
       !-----------------
@@ -4776,18 +4772,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_HYDRO )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ERD_FCT_HYDRO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_HYDRO,IIPAR,JJPAR,1)
 #else
-      ERD_FCT_HYDRO = TEMPARRAY
+      ERD_FCT_HYDRO = F_ARRAY
 #endif
 
       !-----------------
@@ -4800,18 +4796,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_TOPO )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ERD_FCT_TOPO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_TOPO,IIPAR,JJPAR,1)
 #else
-      ERD_FCT_TOPO = TEMPARRAY
+      ERD_FCT_TOPO = F_ARRAY
 #endif
 
       !-----------------
@@ -4824,18 +4820,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_UNITY )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,ERD_FCT_UNITY,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_UNITY,IIPAR,JJPAR,1)
 #else
-      ERD_FCT_UNITY = TEMPARRAY
+      ERD_FCT_UNITY = F_ARRAY
 #endif
 
       !-----------------
@@ -4866,18 +4862,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), LND_FRC_DRY )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,LND_FRC_DRY,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,LND_FRC_DRY,IIPAR,JJPAR,1)
 #else
-      LND_FRC_DRY = TEMPARRAY
+      LND_FRC_DRY = F_ARRAY
 #endif
 
       !-----------------
@@ -4890,18 +4886,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_CACO3 )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CACO3,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CACO3,IIPAR,JJPAR,1)
 #else
-      MSS_FRC_CACO3 = TEMPARRAY
+      MSS_FRC_CACO3 = F_ARRAY
 #endif
 
       !-----------------
@@ -4914,18 +4910,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_CLY )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CLY,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CLY,IIPAR,JJPAR,1)
 #else
-      MSS_FRC_CLY = TEMPARRAY
+      MSS_FRC_CLY = F_ARRAY
 #endif
 
       !-----------------
@@ -4938,18 +4934,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_SND )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MSS_FRC_SND,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_SND,IIPAR,JJPAR,1)
 #else
-      MSS_FRC_SND = TEMPARRAY
+      MSS_FRC_SND = F_ARRAY
 #endif
 
       !-----------------
@@ -4965,15 +4961,15 @@ c Fix up for negative argument, erf, etc.
       ! Also round off
 !      SFC_TYP = NINT( ARRAY(:,:,1) )
 
-      TEMPSFC_TYP = NINT( ARRAY(:,:,1) )
+      F_SFC_TYP = NINT( ARRAY(:,:,1) )
 
 #ifdef MP
-      CALL MPBCASTI(TEMPSFC_TYP,I2x25*J2x25)
+      CALL MPBCASTI(F_SFC_TYP,I2x25*J2x25)
 #endif
 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
-         SFC_TYP(I,J) = TEMPSFC_TYP(CLX(I,J),CLY(I,J))
+      DO I = 1, LONLOOP
+         SFC_TYP(I,J) = F_SFC_TYP(CLX(I,J),CLY(I,J))
       ENDDO
       ENDDO
 
@@ -5001,18 +4997,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), SRCE_FUNC )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,1)
 #else
-      SRCE_FUNC = TEMPARRAY
+      SRCE_FUNC = F_ARRAY
 #endif
 
       ! Return to calling program
@@ -5049,7 +5045,7 @@ c Fix up for negative argument, erf, etc.
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! GET_MONTHLY_DATA begins here!
@@ -5081,18 +5077,18 @@ c Fix up for negative argument, erf, etc.
 !      CALL TRANSFER_2D( ARRAY(:,:,1), VAI_DST )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,VAI_DST,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,VAI_DST,IIPAR,JJPAR,1)
 #else
-      VAI_DST = TEMPARRAY
+      VAI_DST = F_ARRAY
 #endif
 
       ! Return to calling program

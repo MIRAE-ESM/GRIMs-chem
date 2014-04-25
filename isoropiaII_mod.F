@@ -267,7 +267,7 @@
 !$OMP+SCHEDULE( DYNAMIC )
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Skip strat boxes 
          IF ( ITS_IN_THE_STRAT( I, J, L ) ) CYCLE

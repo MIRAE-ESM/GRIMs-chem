@@ -266,7 +266,7 @@
       CHARACTER(LEN=255)         :: FILENAME
       CHARACTER(LEN=4)           :: SYEAR, SNAME
 
-      REAL*8                     :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                     :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! EMISS_CAC_ANTHRO begins here!
@@ -404,18 +404,18 @@
 !            CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, NOx )
 
             IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+            CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
 #else
-            NOx = TEMPARRAY
+            NOx = F_ARRAY
 #endif
 
          ELSEIF ( SPECIES .eq. 2 ) THEN
@@ -423,18 +423,18 @@
 !            CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, CO )
 
             IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+            CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
 #else
-            CO = TEMPARRAY
+            CO = F_ARRAY
 #endif
 
          ELSEIF ( SPECIES .eq. 3 ) THEN
@@ -447,18 +447,18 @@
 !            CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, SO2 )
 
             IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+            CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
 #else
-            SO2 = TEMPARRAY
+            SO2 = F_ARRAY
 #endif
 
          ELSEIF ( SPECIES .eq. 4 ) THEN
@@ -466,18 +466,18 @@
 !            CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, NH3 )
 
             IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 1 )
+            CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,1)
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,1)
 #else
-            NH3 = TEMPARRAY
+            NH3 = F_ARRAY
 #endif
 
          ENDIF
@@ -755,7 +755,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Future NOx [kg NO2/yr]
          NOx(I,J)  = NOx(I,J) * GET_FUTURE_SCALE_NOxff( I, J )
@@ -890,7 +890,7 @@
       REAL*8                  :: TAU2000
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_CANADA_MASK begins here!
@@ -926,18 +926,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, MASK_CANADA )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,MASK_CANADA,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MASK_CANADA,IIPAR,JJPAR,1)
 #else
-      MASK_CANADA = TEMPARRAY
+      MASK_CANADA = F_ARRAY
 #endif
 
       END SUBROUTINE READ_CANADA_MASK
@@ -1076,7 +1076,7 @@
 
       ! Fill array
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          A_CM2(I,J) = GET_AREA_CM2( I, J )
       ENDDO
       ENDDO

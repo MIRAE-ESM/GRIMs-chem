@@ -26,16 +26,16 @@
 !
       ! Rural Emissions: EMISRN = NOx (1:NOXLEVELS), EMISR = all other tracers
       ! Total Emissions: EMISTN = NOx (1:NOXLEVELS), EMIST = all other tracers
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISR!(IIPAR,JJPAR,NEMPARA)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRN!(IIPAR,JJPAR,NOXLEVELS)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMIST!(IIPAR,JJPAR,NEMPARA)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISTN!(IIPAR,JJPAR,NOXLEVELS)
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISR
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRN
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMIST
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISTN
 
       ! Rural Emissions:
       ! EMISRRN = NOx emissions into sigma levels L=1,NOXEXTENT
       ! EMISRR  = All other tracer emissions into sigma level L=1
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRR! (IIPAR,JJPAR,NEMPARA+NEMPARB)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRRN!(IIPAR,JJPAR,NOXEXTENT      )
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRR
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISRRN
 
 
       !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -58,7 +58,7 @@
       !     ---------------------------	
 
       ! Define common block	
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISS_BVOC!(IIPAR,JJPAR,10)
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: EMISS_BVOC
 
 
       !+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -73,21 +73,21 @@
       ! NOTE: ALD2 is not emitted in GEIA so we don't need an array for
       !       it below...but it is emitted in EMEP.  It will be saved
 
-      REAL*4, ALLOCATABLE, DIMENSION(:,:,:,:) :: EMISTNOX! (IIPAR,JJPAR,4,2)
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTETHE!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTCO!  (IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTPRPE!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC3H8!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTALK4!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H6!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:,:,:) :: EMISTSOX! (IIPAR,JJPAR,4,2)
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTACET!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTMEK! (IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTBENZ!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTTOLU!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTXYLE!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H4!(IIPAR,JJPAR    )
-      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H2!(IIPAR,JJPAR    )
+      REAL*4, ALLOCATABLE, DIMENSION(:,:,:,:) :: EMISTNOX
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTETHE
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTCO
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTPRPE
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC3H8
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTALK4
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H6
+      REAL*4, ALLOCATABLE, DIMENSION(:,:,:,:) :: EMISTSOX
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTACET
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTMEK
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTBENZ
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTTOLU
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTXYLE
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H4
+      REAL*4, ALLOCATABLE, DIMENSION(:,:)     :: EMISTC2H2
 
 
       ! Time of day and weekday/weekend scale factors
@@ -105,22 +105,22 @@
 
       ! FTOTCO2 = yearly scale factors based on Total  Fuel CO2 emissions 
       ! FLIQCO2 = yearly scale factors based on Liquid Fuel CO2 emissions
-      REAL*4, ALLOCATABLE, DIMENSION(:,:) :: FTOTCO2!(IIPAR,JJPAR)
-      REAL*4, ALLOCATABLE, DIMENSION(:,:) :: FLIQCO2!(IIPAR,JJPAR)
+      REAL*4, ALLOCATABLE, DIMENSION(:,:) :: FTOTCO2
+      REAL*4, ALLOCATABLE, DIMENSION(:,:) :: FLIQCO2
 
       ! FRACO3, FRACNO          = fractions of O3, NO
       ! SAVEOH, SAVENO, SAVENO3 = array to save OH, NO, & NO3 fields 
       ! SAVENO2                 = array to save NO2 fields (rvm, 5/9/00)
       ! FRACNO2                 = fraction of NO2 (rvm, bmy, 2/27/02)
       ! SAVEHO2                 = array to save HO2 fields (rvm, bmy, 2/27/02)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACO3!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVEOH!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACNO!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO2!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO3!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACNO2!(IIPAR,JJPAR,LLPAR)
-      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVEHO2!(IIPAR,JJPAR,LLPAR)
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACO3
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVEOH
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACNO
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO2
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVENO3
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: FRACNO2
+      REAL*8, ALLOCATABLE, DIMENSION(:,:,:) :: SAVEHO2
 
       CONTAINS
 

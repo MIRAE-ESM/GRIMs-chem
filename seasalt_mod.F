@@ -309,7 +309,7 @@
 !$OMP+PRIVATE( DELZ,    DELZ1, TOT1, TOT2, AREA_CM2, FLUX             )
 !$OMP+SCHEDULE( DYNAMIC )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)       
+      DO I = 1, LONLOOP
 
          ! Initialize 
          DO L = 1, LLPAR
@@ -497,7 +497,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Grid box surface area [cm2]
             AREA_CM2 = GET_AREA_CM2( I, J )
@@ -582,7 +582,7 @@
       DO N = 1, NSALT
       DO L = 1, LLTROP
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          ALK_EMIS(I,J,L,N) = 0d0
          N_DENS(I,J,L,N)   = 0d0
       ENDDO
@@ -609,7 +609,7 @@
 !$OMP PARALLEL DO
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 !            emis_save(I,J,IDTSALA) = ALK_EMIS(I,J,1,1)
 !            emis_save(I,J,IDTSALC) = ALK_EMIS(I,J,1,2)
          ENDDO
@@ -742,7 +742,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          SALT(I,J)   = 0d0
          SALT_N(I,J) = 0d0
       ENDDO
@@ -812,7 +812,7 @@
       DO J = 1, LATLOOP
             
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Grid box surface area [m2]
             A_M2 = GET_AREA_M2( I, J )
@@ -849,7 +849,7 @@
 !$OMP+PRIVATE( I, J, NTOP, L, FEMIS )
 !$OMP+SCHEDULE( DYNAMIC ) 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Layer in which the PBL top occurs
          NTOP = CEILING( GET_PBL_TOP_L( I, J ) )

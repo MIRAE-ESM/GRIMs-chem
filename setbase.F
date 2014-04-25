@@ -65,7 +65,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor from [atoms C/cm2/s] to [kg C/box/step]
             FACTOR = 12d-3 * DTSRCE * GET_AREA_CM2( I, J ) / AVO

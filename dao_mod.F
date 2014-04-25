@@ -430,7 +430,7 @@
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
                
             ! Grid box surface area [m2]
             AREA_M2 = GET_AREA_M2( I, J )
@@ -550,7 +550,7 @@
          ! Grid box surface area [m2]
          AREA_M2 = GET_AREA_M2( J )
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
                
             ! Pressure at bottom edge of grid box [hPa]
             P1          = GET_PEDGE_FULLGRID(I,J,L)
@@ -725,7 +725,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          !----------------------------------------------------
          ! Interpolate 2D variables
@@ -774,7 +774,7 @@
          YSOUTH = GET_YEDGE( J   )
          YNORTH = GET_YEDGE( J+1 )
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Interpolate pressure [hPa] to the end of the dynamic timestep
             PSC2(I,J) = PS1(I,J) + ( PS2(I,J) - PS1(I,J) ) * TC2 
@@ -814,7 +814,7 @@
          YSOUTH = GET_YEDGE( J   )
          YNORTH = GET_YEDGE( J+1 )
 
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Interpolate pressure [hPa] to the end of the dynamic timestep
             PSC2(I,J) = PS1(I,J)  + ( PS2(I,J)  - PS1(I,J)  ) * TC2 
@@ -852,7 +852,7 @@
          YSOUTH = GET_YEDGE( J   )
          YNORTH = GET_YEDGE( J+1 )
 
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          !----------------------------------------------------
          ! Interpolate 2D variables
@@ -1395,7 +1395,7 @@
 !$OMP+PRIVATE( I, J, L )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          AVGW(I,J,L) = HCONV * SPHU(I,J,L) 
       ENDDO
       ENDDO
@@ -1465,7 +1465,7 @@
 !$OMP+PRIVATE( I, J, L, PRES, TEMP, ESAT, SHMB )
       DO L = 1, LLPAR
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Pressure at midpoint of box (I,J,L)
          PRES = GET_PCENTER(I,J,L)
@@ -1681,7 +1681,7 @@
       !=================================================================
 
       ! Quantities for central chemistry timestep
-      TS_SUN   = GET_TS_CHEM()                         ! Chemistry interval
+      TS_SUN   = GET_TS_CHEM() * 2                     ! Chemistry interval
       HOUR     = GET_HOUR()                            ! Current hour
       MINUTE   = GET_MINUTE()                          ! Current minutes
       FACTOR   = MINUTE / TS_SUN                       ! Multiplying factor
@@ -1715,7 +1715,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitude
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Latitude of grid box [radians]
             YMID_R   = GET_YMID_R( I, J )
@@ -1875,7 +1875,7 @@
             DO N = 1, N_TRACERS
             DO L = 1, LLPAR
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                STT(I,J,L,N) = STT(I,J,L,N) * TCVV(N) / AD(I,J,L)
             ENDDO
             ENDDO
@@ -1899,7 +1899,7 @@
             DO N = 1, N_TRACERS
             DO L = 1, LLPAR
             DO J = 1, LATLOOP
-            DO I = 1, LONLOOP(J)
+            DO I = 1, LONLOOP
                STT(I,J,L,N) = STT(I,J,L,N) * AD(I,J,L) / TCVV(N)
             ENDDO     
             ENDDO
@@ -2318,7 +2318,7 @@
 
 #endif
 
-#if   defined( GEOS_5 )
+#if   !defined( GEOS_5 ) && !defined( GRIMS )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays for everything EXCEPT GEOS-5
@@ -2438,7 +2438,7 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'ZMMU' )
       ZMMU = 0d0
 
-#elif !defined( GEOS_5 ) || !defined( MERRA )
+#elif defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays that are used for GEOS-5 or MERRA
@@ -2574,7 +2574,7 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'TTO3' )
       TTO3 = 0d0
 
-#if   !defined( GEOS_5 )
+#if   defined( GEOS_5 )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays that are used ONLY for GEOS-5

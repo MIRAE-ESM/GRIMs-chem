@@ -22,22 +22,22 @@
 ! !PUBLIC DATA MEMBERS:
 !
       ! IREG   - Number of landtypes in grid square (I,J)
-      INTEGER, ALLOCATABLE, DIMENSION(:,:)   :: IREG!(IIPAR,JJPAR)                                
+      INTEGER, ALLOCATABLE, DIMENSION(:,:)   :: IREG
 
       ! ILAND  - Land type ID in grid square (I,J) for IREG landtypes
-      INTEGER, ALLOCATABLE, DIMENSION(:,:,:) :: ILAND!(IIPAR,JJPAR,NTYPE)
+      INTEGER, ALLOCATABLE, DIMENSION(:,:,:) :: ILAND
 
       ! IUSE   - Fraction ((per mil) of gridbox area occupied by land type
-      INTEGER, ALLOCATABLE, DIMENSION(:,:,:) :: IUSE!(IIPAR,JJPAR,NTYPE)                          
+      INTEGER, ALLOCATABLE, DIMENSION(:,:,:) :: IUSE
 
       ! Fraction of land in grid box
-      REAL*8,  ALLOCATABLE, DIMENSION(:,:)   :: FRCLND!(IIPAR,JJPAR)
+      REAL*8,  ALLOCATABLE, DIMENSION(:,:)   :: FRCLND
 
       ! XLAI    - Leaf Area Index of land type for current MONTH
-      REAL*8,  ALLOCATABLE, DIMENSION(:,:,:) :: XLAI!(IIPAR,JJPAR,NTYPE)
+      REAL*8,  ALLOCATABLE, DIMENSION(:,:,:) :: XLAI
 
       ! XLAI2   - Leaf Area Index of land type for following MONTH
-      REAL*8,  ALLOCATABLE, DIMENSION(:,:,:) :: XLAI2!(IIPAR,JJPAR,NTYPE)
+      REAL*8,  ALLOCATABLE, DIMENSION(:,:,:) :: XLAI2
 
       CONTAINS
 

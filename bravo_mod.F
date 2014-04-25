@@ -209,7 +209,7 @@
       REAL*8                  :: TAU0
       CHARACTER(LEN=255)      :: FILENAME
       
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! EMISS_BRAVO begins here!
@@ -268,18 +268,18 @@
 !      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_NOx )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BRAVO_NOx,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_NOx,IIPAR,JJPAR,1)
 #else
-      BRAVO_NOx = TEMPARRAY
+      BRAVO_NOx = F_ARRAY
 #endif
 
       !---------------------
@@ -314,18 +314,18 @@
 !      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_CO )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BRAVO_CO,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_CO,IIPAR,JJPAR,1)
 #else
-      BRAVO_CO = TEMPARRAY
+      BRAVO_CO = F_ARRAY
 #endif
 
       !---------------------
@@ -360,18 +360,18 @@
 !      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_SO2 )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BRAVO_SO2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_SO2,IIPAR,JJPAR,1)
 #else
-      BRAVO_SO2 = TEMPARRAY
+      BRAVO_SO2 = F_ARRAY
 #endif
 
       !=================================================================
@@ -430,7 +430,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Future NOx [molec/cm2/s]
          BRAVO_NOx(I,J) = BRAVO_NOx(I,J)                * 
@@ -523,7 +523,7 @@
       DO J = 1, LATLOOP
             
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Convert [molec/cm2/s] to [Tg]
             ! (Multiply by 1d-9 to convert from [kg] to [Tg])
@@ -599,7 +599,7 @@
       REAL*8                  :: XTAU
       CHARACTER(LEN=255)      :: FILENAME 
 
-      REAL*8                  :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_BRAVO_MASK begins here!
@@ -633,18 +633,18 @@
 !      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, BRAVO_MASK )
 
       IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, TEMPARRAY, 2 )
+      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BRAVO_MASK,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_MASK,IIPAR,JJPAR,1)
 #else
-      BRAVO_MASK = TEMPARRAY
+      BRAVO_MASK = F_ARRAY
 #endif
 
       END SUBROUTINE READ_BRAVO_MASK

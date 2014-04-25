@@ -388,7 +388,7 @@
 !$OMP+PRIVATE( I, J, N )
          DO N = 1, NBIOMAX
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! ND28: biomass emissions in [molec/cm2/s]
             IF ( DO_ND28 ) THEN 

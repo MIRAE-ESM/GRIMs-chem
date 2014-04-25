@@ -88,7 +88,7 @@
 
       ! Zero GOOD_CT
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          GOOD_CT(I,J) = 0
       ENDDO
       ENDDO
@@ -99,7 +99,7 @@
 !$OMP+PRIVATE( I, J, N )
       DO N = 1, PD41
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          AD41(I,J,N) = 0e0
       ENDDO
       ENDDO
@@ -205,7 +205,7 @@
                      
          ! Divide by # of afternoon boxes at each longitude
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             SCALE        = DBLE( GOOD_CT(I,J) ) + EPS
             ARRAY(I,J,1) = AD41(I,J,N)        / SCALE
          ENDDO
@@ -286,7 +286,7 @@
       ! Find boxes where it is afternoon
       !-----------------------------------
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          ! Local time
          LT = GET_LOCALTIME( I, J )
@@ -311,7 +311,7 @@
 !$OMP+PRIVATE( I, J, N, PBLTOP )
       DO N = 1, PD41
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          
          IF ( N == 1 ) THEN
 

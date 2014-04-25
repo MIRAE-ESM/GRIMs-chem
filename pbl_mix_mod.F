@@ -196,7 +196,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, P, BLTOP, BLTHIK, LTOP, DELP )
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
 
          !----------------------------------------------
          ! Define pressure edges:
@@ -505,7 +505,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, N, AA, CC, CC_AA ) 
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
   
          ! We assume full mixing in the boundary layer, so the A
          ! coefficients are 1 everywhere, day & night (bmy, 2/11/03)

@@ -28,7 +28,7 @@
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
       USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
-      USE RESTART,        ONLY : LBXHGHT
+      USE RESTART_MOD,    ONLY : LBXHGHT
       USE TIME_MOD,       ONLY : GET_NYMD, GET_NHMS, GET_TAU
       USE TIME_MOD,       ONLY : GET_YEAR, GET_SEASON, GET_MONTH
       USE TIME_MOD,       ONLY : GET_HOUR, GET_MINUTE
@@ -97,20 +97,20 @@
 
             ! Call AIRQNT to compute air mass quantities from PS1
             CALL SET_FLOATING_PRESSURE( PS1 )
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a SET_FLT_PRS' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_FLT_PRS' )
 
             CALL AIRQNT
             LBXHGHT = .TRUE.
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a AIRQNT' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a AIRQNT' )
 
             ! Initialize PBL quantities but do not do mixing
             ! Add option for non-local PBL (Lin, 03/31/09) 
             IF ( .NOT. LNLPBL ) THEN
               CALL DO_PBL_MIX( .FALSE. )
-              IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a TURBDAY:1' )
+              IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
             ELSE
 !              CALL DO_PBL_MIX_2( .FALSE. )
-!              IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a NLPBL 1' )
+!              IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 1' )
             ENDIF
 
             FIRST = .FALSE.
@@ -135,7 +135,7 @@
          ELAPSED_TODAY = ( HOUR * 3600 ) + ( MINUTE * 60 )
 
          !### Debug
-         IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a SET_CURRENT_TIME' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_CURRENT_TIME' )
 
          !==============================================================
          !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
@@ -197,7 +197,7 @@
             CALL RDLAI( DAY_OF_YEAR, MONTH, YEAR )
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG ( '### INTE: a DAILY DATA' )
+            IF ( LPRT ) CALL DEBUG_MSG ( '### MAIN: a DAILY DATA' )
          ENDIF
 
          ! Case of variable tropopause:
@@ -226,7 +226,7 @@
          CALL SET_CT_DYN( INCREMENT=.TRUE. )
 
          !### Debug
-         IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a INTERP, etc' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a INTERP, etc' )
 
          ! Get averaging intervals for local-time diagnostics
          ! (NOTE: maybe improve this later on)
@@ -292,14 +292,14 @@
             ! Add option for non-local PBL. (Lin, 03/31/09)
             IF ( .NOT. LNLPBL ) THEN
                CALL DO_PBL_MIX( LTURB )
-               IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a TURBDAY:1' )
+               IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
             ELSE
 !               CALL DO_PBL_MIX_2( LTURB )
-!               IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a NLPBL 2' )
+!               IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 2' )
             ENDIF
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a TURBDAY:2' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:2' )
 
             !===========================================================
             !        ***** C L O U D   C O N V E C T I O N *****
@@ -309,7 +309,7 @@
                CALL DO_CONVECTION
 
                !### Debug
-               IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVECTION' )
+               IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVECTION' )
             ENDIF
          ENDIF
 
@@ -321,7 +321,7 @@
             CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT )
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:1' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:1' )
          ENDIF
 
          !-------------------------------
@@ -378,7 +378,7 @@
          CALL TIMESTAMP_DIAG
          CALL SET_ELAPSED_MIN
          CALL SET_CURRENT_TIME
-         IF ( LPRT ) CALL DEBUG_MSG( '### INTE: after SET_ELAPSED_MIN' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after SET_ELAPSED_MIN' )
 
          !==============================================================
          !       ***** A R C H I V E   D I A G N O S T I C S *****
@@ -386,22 +386,22 @@
          IF ( ITS_TIME_FOR_DIAG() ) THEN
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: b DIAGNOSTICS' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: b DIAGNOSTICS' )
 
             ! Accumulate several diagnostic quantities
             CALL DIAG1
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: after DIAG1' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after DIAG1' )
 
             ! ND41: save PBL height in 1200-1600 LT (amf)
             ! (for comparison w/ Holzworth, 1967)
             IF ( ND41 > 0 ) CALL DIAG41
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: after DIAG41' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after DIAG41' )
 
             ! Increment diagnostic timestep counter. (ccc, 5/13/09)
             CALL SET_CT_DIAG( INCREMENT=.TRUE. )
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a DIAGNOSTICS' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a DIAGNOSTICS' )
          ENDIF
 
          !==============================================================
@@ -411,7 +411,7 @@
             CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
 
             !### Debug
-            IF ( LPRT ) CALL DEBUG_MSG( '### INTE: a CONVERT_UNITS:2' )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:2' )
          ENDIF
 
          !==============================================================

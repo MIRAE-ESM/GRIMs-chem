@@ -626,7 +626,7 @@
       INTEGER                       :: N
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Add storage of CO emissions to calculate emissions 
       ! of the 9 new species (tmf, 12/18/06) 
@@ -668,19 +668,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBNOX) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBNOX),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBNOX) = TEMPARRAY
+            BIOMASS(:,:,IDBNOX) = F_ARRAY
 #endif
 
             ! Compute future NOx emissions (if necessary)
@@ -709,19 +709,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBCO) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBCO),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBCO) = TEMPARRAY
+            BIOMASS(:,:,IDBCO) = F_ARRAY
 #endif
 
             ! Store CO emissions before scaling 
@@ -729,18 +729,18 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), COEMIS(:,:) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,COEMIS,IIPAR,JJPAR,1)
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,COEMIS,IIPAR,JJPAR,1)
 #else
-            COEMIS = TEMPARRAY
+            COEMIS = F_ARRAY
 #endif
 
             ! Compute future NOx emissions (if necessary)
@@ -769,19 +769,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBALK4) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBALK4),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBALK4) = TEMPARRAY
+            BIOMASS(:,:,IDBALK4) = F_ARRAY
 #endif
 
             ! Compute future ALK4 emissions (if necessary)
@@ -810,19 +810,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBACET) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBACET),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBACET) = TEMPARRAY
+            BIOMASS(:,:,IDBACET) = F_ARRAY
 #endif
 
             ! ACET -- Convert from [molec/cm2/month] to [molec C/cm2/month] 
@@ -857,19 +857,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBMEK) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBMEK),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBMEK) = TEMPARRAY
+            BIOMASS(:,:,IDBMEK) = F_ARRAY
 #endif
 
             ! Compute future MEK emissions (if necessary)
@@ -898,19 +898,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBALD2) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBALD2),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBALD2) = TEMPARRAY
+            BIOMASS(:,:,IDBALD2) = F_ARRAY
 #endif
 
             ! Compute future ALD2 emissions (if necessary)
@@ -939,19 +939,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBPRPE) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBPRPE),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBPRPE) = TEMPARRAY
+            BIOMASS(:,:,IDBPRPE) = F_ARRAY
 #endif
 
             ! Compute future PRPE emissions (if necessary)
@@ -981,19 +981,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBC3H8) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBC3H8),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBC3H8) = TEMPARRAY
+            BIOMASS(:,:,IDBC3H8) = F_ARRAY
 #endif
 
             ! C3H8 -- convert from [molec/cm2/month] to [molec C/cm2/month] 
@@ -1025,19 +1025,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBCH2O) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBCH2O),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBCH2O) = TEMPARRAY
+            BIOMASS(:,:,IDBCH2O) = F_ARRAY
 #endif
 
             ! Compute future CH2O emissions (if necessary)
@@ -1066,19 +1066,19 @@
 !            CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS(:,:,IDBC2H6) )
 
             IF (MASTER) THEN
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 2 )
+            CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-            CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-            CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
             ENDIF
 
 #ifdef MP
-            CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,
+            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
      &                  BIOMASS(:,:,IDBC2H6),IIPAR,JJPAR,1)
 #else
-            BIOMASS(:,:,IDBC2H6) = TEMPARRAY
+            BIOMASS(:,:,IDBC2H6) = F_ARRAY
 #endif
 
             ! C2H6 --convert from [molec/cm2/month] to [molec C/cm2/month]
@@ -1353,7 +1353,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             BB(I,J) = BB(I,J) * GET_FUTURE_SCALE_NOxbb( I, J )
          ENDDO
          ENDDO
@@ -1366,7 +1366,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             BB(I,J) = BB(I,J) * GET_FUTURE_SCALE_CObb( I, J )
          ENDDO
          ENDDO
@@ -1379,7 +1379,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J )
          DO J = 1, LATLOOP
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             BB(I,J) = BB(I,J) * GET_FUTURE_SCALE_VOCbb( I, J )
          ENDDO
          ENDDO
@@ -1440,7 +1440,7 @@
       DO J = 1, LATLOOP
          
          ! Sum the emissions
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
             ! Conversion factor to [Tg/month] (or [Tg C/month] for HC's)
             CONV = GET_AREA_CM2( I, J ) * ( MOLWT / 6.023d23 ) * 1d-9
          
@@ -1519,7 +1519,7 @@
       CHARACTER(LEN=4)              :: CYEAR
       CHARACTER(LEN=255)            :: BC_FILE, OC_FILE
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Days per month (based on 1998)
       REAL*8 :: NDAYS(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
@@ -1618,18 +1618,18 @@
 !      CALL TRANSFER_2D ( ARRAY(:,:,1), BIOMASS_BC )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOMASS_BC,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOMASS_BC,IIPAR,JJPAR,1)
 #else
-      BIOMASS_BC = TEMPARRAY
+      BIOMASS_BC = F_ARRAY
 #endif
 
       !------------------
@@ -1650,18 +1650,18 @@
 !      CALL TRANSFER_2D ( ARRAY(:,:,1), BIOMASS_OC )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOMASS_OC,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOMASS_OC,IIPAR,JJPAR,1)
 #else
-      BIOMASS_OC = TEMPARRAY
+      BIOMASS_OC = F_ARRAY
 #endif
 
       !=================================================================
@@ -1676,7 +1676,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor for [1/cm2/s]
             CONV = 1d0 / ( GET_AREA_CM2( I, J ) * SEC_PER_MONTH )
@@ -1751,7 +1751,7 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
                                     
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Days per month              
       REAL*8 :: NDAYS(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
@@ -1838,18 +1838,18 @@
 !      CALL TRANSFER_2D ( ARRAY(:,:,1), BIOMASS_SO2 )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOMASS_SO2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOMASS_SO2,IIPAR,JJPAR,1)
 #else
-      BIOMASS_SO2 = TEMPARRAY
+      BIOMASS_SO2 = F_ARRAY
 #endif
 
       !=================================================================
@@ -1864,7 +1864,7 @@
       DO J = 1, LATLOOP
          
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor for [kg/month] -> [molec/cm2/s]
             CONV = XNUMOL(IDTSO2) /
@@ -1933,7 +1933,7 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Number of days in the month
       REAL*8 :: NDAYS(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
@@ -2020,18 +2020,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS_NH3 )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOMASS_NH3,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOMASS_NH3,IIPAR,JJPAR,1)
 #else
-      BIOMASS_NH3 = TEMPARRAY
+      BIOMASS_NH3 = F_ARRAY
 #endif
 
       !=================================================================
@@ -2046,7 +2046,7 @@
       DO J = 1, LATLOOP
 
          ! Loop over longitudes
-         DO I = 1, LONLOOP(J)
+         DO I = 1, LONLOOP
 
             ! Conversion factor for [kg/month] -> [molec/cm2/s]
             CONV = XNUMOL(IDTNH3) /
@@ -2107,7 +2107,7 @@
       CHARACTER(LEN=4)       :: SYEAR
       CHARACTER(LEN=255)     :: FILENAME
 
-      REAL*8                 :: TEMPARRAY(IGLOB*2,JGLOB/2)
+      REAL*8                 :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Number of days in the month
       REAL*8 :: NDAYS(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
@@ -2196,18 +2196,18 @@
 !      CALL TRANSFER_2D( ARRAY(:,:,1), BIOMASS_CO2 )
 
       IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), TEMPARRAY, 1 )
+      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
 
-      CALL XSHIFT( TEMPARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( TEMPARRAY, IGLOB, JGLOB, 1 )
+      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
+      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
 
-      CALL DYN_TRANS2MODEL_GRID(TEMPARRAY,1)
+      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(TEMPARRAY,IGLOB*2,JGLOB/2,BIOMASS_CO2,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOMASS_CO2,IIPAR,JJPAR,1)
 #else
-      BIOMASS_CO2 = TEMPARRAY
+      BIOMASS_CO2 = F_ARRAY
 #endif
 
       ! Convert from [molec CO/cm2/month] to [molec CO2/cm2/month]
@@ -2269,7 +2269,7 @@
       ! Loop over all tracers & boxes -- adjust to TOMS Aerosol index
       DO N = 1, NBIOMAX
       DO J = 1, LATLOOP
-      DO I = 1, LONLOOP(J)
+      DO I = 1, LONLOOP
          CALL TOMSAI( I, J, BIOMASS_ANN(I,J,N), 
      &                      BIOMASS_SEA(I,J,N), BIOMASS(I,J,N) )
       ENDDO
@@ -2344,6 +2344,8 @@
       INTEGER                :: II, JJ, KK, LL, AS, IMONTH, JYEAR
       INTEGER, SAVE          :: IFIRSTCALL = 1 
       REAL*8                 :: CONVERT_lon, READINTOMS(NMONTHSAI), TAU
+
+      REAL*8                 :: CONVERT_lat
 
       !=================================================================
       ! TOMSAI begins here!  
@@ -2424,10 +2426,8 @@
       CONVERT_lon = ( DBLE(LONID(I,J)) * DISIZE ) * 1.d0 / 1.25d0
       CTM_LON     = INT( CONVERT_LON ) - 144
       IF (CTM_LON .LE. 0) CTM_LON = CTM_LON + 288
-      CTM_LAT     = INT( 180d0 - ( DBLE(LATID(I,J)) * DJSIZE ) )
-
-      IF (LATID(I,J) == 1    ) CTM_LAT = 89 + 90
-      IF (LATID(I,J) == JGLOB) CTM_LAT = 1
+      CONVERT_lat = ( DBLE(LATID(I,J)) * DJSIZE ) - DJSIZE / 2d0
+      CTM_LAT     = 180 - NINT( CONVERT_LAT )
 
       !=================================================================
       ! See what region the box falls in to pick the appropriate 
@@ -2515,8 +2515,10 @@
       
       ! Error Check.
       IF(IMONTH.LT.1.OR.IMONTH.GT.12) THEN
+         IF (MASTER) THEN
          PRINT*,'Error in SR TOMSAI:  Value of IMONTH is wrong.'
          PRINT*,'IMONTH = ',IMONTH
+         ENDIF
 #ifdef MP
          CALL MPABORT
 #else
@@ -2558,7 +2560,11 @@
             PRINT*,'good for 1979-1999. You may need to comment out'
             PRINT*,'the call to this SR in SR bioburn.'
             PRINT*,'Your year is ',JYEAR,'.'
+#ifdef MP
+            CALL MPABORT
+#else
             STOP
+#endif
          ENDIF
 
          ! Do not adjust Africa with TOMSAI!!!!
