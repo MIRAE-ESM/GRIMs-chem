@@ -76,6 +76,7 @@
       LOGICAL :: LCRYST          ! Use Crystalline aerosols? (not implemented)
       LOGICAL :: LCOOKE          ! Use the C
       LOGICAL :: LDEAD           ! Use the DEAD/Zender dust algorithm?
+      LOGICAL :: LSHAO           ! Use the SHAO dust algorithm?
       LOGICAL :: LDUST           ! Use dust aerosol tracers?
       LOGICAL :: LSULF           ! Use sulfate aerosol tracers?
       LOGICAL :: LSOA            ! Use secondary organic aerosol tracers?

@@ -1124,6 +1124,7 @@
       USE ERROR_MOD,    ONLY : ERROR_STOP
       USE LOGICAL_MOD,  ONLY : LSULF, LCARB, LSOA
       USE LOGICAL_MOD,  ONLY : LDUST, LDEAD, LSSALT, LCRYST
+      USE LOGICAL_MOD,  ONLY : LSHAO
       USE LOGICAL_MOD,  ONLY : LDICARB
       USE TRACER_MOD,   ONLY : N_TRACERS
       USE TRACER_MOD,   ONLY : SALA_REDGE_um,      SALC_REDGE_um
@@ -1199,29 +1200,33 @@
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:6' )
       READ( SUBSTRS(1:N), * ) LDEAD      
 
-      ! Use online sea-salt aerosols?
+      ! Use SHAO dust mobilization (=T) or GINOUX (=F)
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:7' )
+      READ( SUBSTRS(1:N), * ) LSHAO      
+
+      ! Use online sea-salt aerosols?
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:8' )
       READ( SUBSTRS(1:N), * ) LSSALT      
 
       ! Accum mode seasalt radii bin edges [um]
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_aerosol_menu:8' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_aerosol_menu:9' )
       DO T = 1, N
          READ( SUBSTRS(T), * ) SALA_REDGE_um(T)
       ENDDO
 
       ! Coarse mode seasalt radii bin edges [um]
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_aerosol_menu:9' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_aerosol_menu:10' )
       DO T = 1, N
          READ( SUBSTRS(T), * ) SALC_REDGE_um(T)
       ENDDO
 
       ! Switch to comment the SOG condensation in carbon_mod.f (ccc, 3/10/09)
       ! Use online dicarbonyl chemistry 
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:10' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:11' )
       READ( SUBSTRS(1:N), * ) LDICARB
 
       ! Separator line
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:11' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_aerosol_menu:12' )
 
       !=================================================================
       ! Error checks
@@ -1242,6 +1247,7 @@
          LSOA   = .FALSE.
          LDUST  = .FALSE.
          LDEAD  = .FALSE.
+         LSHAO  = .FALSE.
          LSSALT = .FALSE.
       ENDIF
 
@@ -1400,6 +1406,7 @@
       WRITE( 6, 100     ) 'Online 2dy ORGANIC AEROSOLS?: ', LSOA
       WRITE( 6, 100     ) 'Online DUST AEROSOLS?       : ', LDUST
       WRITE( 6, 100     ) 'Use DEAD dust emissions?    : ', LDEAD
+      WRITE( 6, 100     ) 'Use SHAO dust emissions?    : ', LSHAO
       WRITE( 6, 100     ) 'Online SEA SALT AEROSOLS?   : ', LSSALT
       WRITE( 6, 110     ) 'Accum  SEA SALT radii [um]  : ', 
      &                     SALA_REDGE_um(1), SALA_REDGE_um(2)
@@ -6044,6 +6051,7 @@
       USE DIRECTORY_MOD, ONLY : TPBC_DIR,   DATA_DIR_1x1
       USE LOGICAL_MOD,   ONLY : LATEQ,      LAVHRRLAI,  LCARB      
       USE LOGICAL_MOD,   ONLY : LDEAD,      LDUST,      LSULF      
+      USE LOGICAL_MOD,   ONLY : LSHAO
       USE LOGICAL_MOD,   ONLY : LSOA,       LSSALT,     LCHEM      
       USE LOGICAL_MOD,   ONLY : LCONV,      LDBUG      
       USE LOGICAL_MOD,   ONLY : LDIAG,      LPRT,       LSTDRUN    
@@ -6125,6 +6133,7 @@
       LAVHRRLAI    = .FALSE.
       LCARB        = .FALSE.
       LDEAD        = .FALSE.
+      LSHAO        = .FALSE.
       LDUST        = .FALSE.
       LSULF        = .FALSE.
       LSOA         = .FALSE.

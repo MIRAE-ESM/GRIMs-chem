@@ -12,6 +12,7 @@
 
       SUBROUTINE TPP_REICHLER( TEMP, TPP_PRESS )
 
+      USE GRID_MOD,     ONLY : GET_XMID, GET_YMID
       USE PRESSURE_MOD, ONLY : GET_PCENTER
       USE CMN_SIZE_MOD
 
@@ -100,12 +101,13 @@
 
          ENDDO
 
-         PRINT*, "TPP_REICHLER: Couldn't find the tropopause."
-#ifdef MP
-         CALL MPABORT
-#else
-         STOP
-#endif
+         WRITE(6,*) "TPP_REICHLER: Couldn't find the tropopause."
+         WRITE(6,*) "TPP_REICHLER: Tropopause level is set to be 75mb."
+         WRITE(6,*) "DIAGNOSTICS:"
+         WRITE(6,110) GET_XMID(I,J), GET_YMID(I,J)
+ 110     FORMAT( 'LON=',F7.2,2X,'LAT=',F6.2 )
+         TPP_PRESS(I,J) = PLIML
+         CYCLE
 
  300     TPP_PRESS(I,J) = MAX( PTPH, PLIML )
 

@@ -36,6 +36,7 @@
       PRIVATE :: DRY_SETTLING
       PRIVATE :: DRY_DEPOSITION
       PRIVATE :: SRC_DUST_DEAD
+      PRIVATE :: SRC_DUST_SHAO
       PRIVATE :: SRC_DUST_GINOUX
 !
 !  !REVISION HISTORY:
@@ -497,7 +498,7 @@
 ! !USES:
 !
       USE ERROR_MOD,    ONLY : ERROR_STOP, DEBUG_MSG
-      USE LOGICAL_MOD,  ONLY : LDEAD, LDUST, LPRT
+      USE LOGICAL_MOD,  ONLY : LDEAD, LSHAO, LDUST, LPRT
       USE TRACER_MOD,   ONLY : STT
       USE TRACERID_MOD, ONLY : IDTDST1, IDTDST2, IDTDST3, IDTDST4
 
@@ -544,6 +545,16 @@
       !=================================================================
       ! Call appropriate emissions routine
       !=================================================================
+      IF ( LSHAO ) THEN
+
+         ! Use Shao Scheme over East Asia
+         CALL SRC_DUST_SHAO( STT(:,:,:,IDTDST1:IDTDST4) )
+
+         !### Debug
+         IF ( LPRT ) CALL DEBUG_MSG( '### EMISSDUST: a SRC_DUST_SHAO' )
+
+      ENDIF
+
       IF ( LDEAD ) THEN
 
          ! Use Zender's DEAD dust source function
@@ -593,6 +604,8 @@
       USE FILE_MOD,      ONLY : IOERROR
       USE ERROR_MOD,     ONLY : GEOS_CHEM_STOP
       USE GRID_MOD,      ONLY : GET_YMID_R
+      USE GRID_MOD,      ONLY : GET_XMID, GET_YMID
+      USE LOGICAL_MOD,   ONLY : LSHAO
       USE PRESSURE_MOD,  ONLY : GET_PEDGE,       GET_PCENTER 
       USE TIME_MOD,      ONLY : GET_TS_EMIS,     GET_MONTH   
       USE TIME_MOD,      ONLY : GET_DAY_OF_YEAR, ITS_A_NEW_MONTH
@@ -811,6 +824,11 @@
          DO N = 1, NDSTBIN
          DO I = 1, LONLOOP
 
+            ! Apply SHAO scheme over East Asia
+            IF ( (GET_XMID(I,J) .GE. 75 .AND. GET_XMID(I,J) .LE. 150)
+     &      .AND. (GET_YMID(I,J) .GE. 30 .AND. GET_YMID(I,J) .LE. 60)
+     &      .AND. LSHAO ) CYCLE
+
             ! Add dust emissions into tracer array [kg]
             TC(I,J,1,N) = TC(I,J,1,N) + DSRC(I,N) 
  
@@ -825,6 +843,287 @@
 !$OMP END PARALLEL DO
 
       END SUBROUTINE SRC_DUST_DEAD
+!EOC
+!------------------------------------------------------------------------------
+!          Harvard University Atmospheric Chemistry Modeling Group            !
+!------------------------------------------------------------------------------
+!BOP
+!
+! !IROUTINE: src_dust_shao
+!
+! !DESCRIPTION: Subroutine SRC\_DUST\_SHAO is the SHAO model dust emission 
+!  scheme, alternative to Ginoux scheme.  Increments the TC array with 
+!  emissions from the SHAO model.  
+!\\
+!\\
+! !INTERFACE:
+!
+      SUBROUTINE SRC_DUST_SHAO( TC )
+!
+! !USES:
+!
+      USE DAO_MOD,       ONLY : BXHEIGHT,     GWETTOP,   LWI
+      USE DAO_MOD,       ONLY : SNOW,         SPHU,      T    
+      USE DAO_MOD,       ONLY : TS,           U10M,      V10M
+      USE DAO_MOD,       ONLY : SNOMAS,       USTAR
+      USE DUST_SHAO_MOD, ONLY : GET_TIME_INVARIANT_DATA, GET_ORO
+      USE DUST_SHAO_MOD, ONLY : GET_MONTHLY_DATA,        QF_SHAO
+      USE DIAG_MOD,      ONLY : AD06
+      USE DIRECTORY_MOD, ONLY : DATA_DIR
+      USE FILE_MOD,      ONLY : IOERROR
+      USE ERROR_MOD,     ONLY : GEOS_CHEM_STOP
+      USE GRID_MOD,      ONLY : GET_XMID,        GET_YMID
+      USE GRID_MOD,      ONLY : GET_YMID_R,      GET_AREA_M2
+      USE PRESSURE_MOD,  ONLY : GET_PEDGE,       GET_PCENTER 
+      USE TIME_MOD,      ONLY : GET_TS_EMIS,     GET_MONTH   
+      USE TIME_MOD,      ONLY : GET_DAY_OF_YEAR, ITS_A_NEW_MONTH
+!      USE TRANSFER_MOD,  ONLY : TRANSFER_2D
+
+      USE CMN_SIZE_MOD        ! Size parameters
+      USE CMN_DIAG_MOD        ! ND06
+      USE CMN_GCTM_MOD        ! g0
+!
+! !INPUT/OUTPUT PARAMETERS: 
+! 
+      REAL*8, INTENT(INOUT) :: TC(IIPAR,JJPAR,LLPAR,NDSTBIN)  ! Dust mass [kg]
+!
+! !REMARKS:
+!  Input:
+!         SRCE_FUNK Source function                               (-)
+!         for 1: Sand, 2: Silt, 3: Clay
+!         DUSTDEN   Dust density                                  (kg/m3)
+!         DUSTREFF  Effective radius                              (um)
+!         AD        Air mass for each grid box                    (kg)
+!         NTDT      Time step                                     (s)
+!         W10M      Velocity at the anemometer level (10meters)   (m/s)
+!         GWET      Surface wetness                               (-)
+!                                                                             .
+!  Parameters used in GEOS-CHEM
+!                                                                             .
+!  Longitude: IIPAR
+!  Latitude : JJPAR 
+!  Levels   : LLPAR  =  20 (GEOS-1), 26 (GEOS-strat), 30 (GEOS-terra)
+!  Size bins: NDSTBIN  =   4
+!                                                                             .
+!  Dust properties used in GOCART
+!                                                                             .
+!  Size classes: 01-1, 1-1.8, 1.8-3, 3-6 (um)
+!  Radius: 0.7, 1.5, 2.5, 4  (um)
+!  Density: 2500, 2650, 2650, 2650 (kg/m3)! 
+! 
+! !REVISION HISTORY: 
+!  08 Apr 2004 - T. D. Fairlie - Initial version
+!  (1 ) Added OpenMP parallelization, added comments (bmy, 4/8/04)
+!  (2 ) Bug fix: DSRC needs to be held PRIVATE (bmy, 4/14/04)
+!  (3 ) Now references DATA_DIR from "directory_mod.f" (bmy, 7/20/04)
+!  (4 ) Now make sure all USE statements are USE, ONLY (bmy, 10/3/05)
+!  (5 ) Bug fix: It should be SNOW/1d3 not SNOW*1d3 (tdf, bmy, 11/18/05)
+!  (6 ) Updated output statement (bmy, 1/23/07)
+!  (7 ) Use SNOMAS (m H2O) for GEOS-5 (bmy, 1/24/07)
+!  25 Aug 2010 - R. Yantosca - Treat MERRA in the same way as for GEOS-5
+!  25 Aug 2010 - R. Yantosca - Added ProTeX headers
+!  03 Sep 2010 - R. Yantosca - Bug fix, SNOMAS was mislabled in GEOS-5
+!                              and has units of mm H2O instead of m H2O
+!                              so we need to convert to m H2O.
+!EOP
+!------------------------------------------------------------------------------
+!BOC
+!
+! !LOCAL VARIABLES:
+!
+      ! Scalars
+      LOGICAL, SAVE          :: FIRST = .TRUE.
+      INTEGER                :: I,      J,      L,       N
+      INTEGER                :: M,      IOS,    INC,     LAT_IDX
+      INTEGER                :: NDB,    NSTEP
+      REAL*8                 :: W10M,   DEN,    DIAM,    U_TS0 
+      REAL*8                 :: U_TS,   SRCE_P, Reynol,  YMID_R
+      REAL*8                 :: ALPHA,  BETA,   GAMMA,   CW
+      REAL*8                 :: DTSRCE, XTAU,   P1,      P2
+      REAL*8                 :: DOY             
+      REAL*8                 :: AREA_M2
+      CHARACTER(LEN=255)     :: FILENAME
+
+      ! Arrays
+      INTEGER                :: OROGRAPHY(IIPAR,JJPAR)
+      REAL*8                 :: PSLON(IIPAR)         ! surface pressure
+      REAL*8                 :: PTHICK(IIPAR)        ! delta P (L=1)
+      REAL*8                 :: PMID(IIPAR)          ! mid layer P (L=1)
+      REAL*8                 :: TLON(IIPAR)          ! temperature (L=1)
+      REAL*8                 :: THLON(IIPAR)         ! pot. temp. (L=1)
+      REAL*8                 :: ULON(IIPAR)          ! U-wind (L=1)
+      REAL*8                 :: VLON(IIPAR)          ! V-wind (L=1)
+      REAL*8                 :: BHT2(IIPAR)          ! half box height (L=1)
+      REAL*8                 :: Q_H2O(IIPAR)         ! specific humidity (L=1)
+      REAL*8                 :: ORO(IIPAR)           ! "orography" 
+      REAL*8                 :: SNW_HGT_LQD(IIPAR)   ! equivalent snow ht.
+      REAL*8                 :: DSRC(IIPAR,NDSTBIN)  ! dust mixing ratio incr.
+      REAL*8                 :: FRC_VEL(IIPAR)       ! friction velocity
+      REAL*8                 :: SOI_MST(IIPAR)       ! surface soil moisture contains
+
+      ! External functions
+      REAL*8,  EXTERNAL       :: SFCWINDSQR
+!
+! !DEFINED PARAMETERS:
+!
+      REAL*8, PARAMETER      :: Ch_dust = 9.375d-10
+      REAL*8, PARAMETER      :: G       = g0 * 1.D2
+      REAL*8, PARAMETER      :: RHOA    = 1.25D-3
+      REAL*8, PARAMETER      :: CP      = 1004.16d0
+      REAL*8, PARAMETER      :: RGAS    = 8314.3d0 / 28.97d0
+      REAL*8, PARAMETER      :: AKAP    = RGAS     / CP
+      REAL*8, PARAMETER      :: P1000   = 1000d0
+
+      !=================================================================
+      ! SRC_DUST_SHAO begins here!
+      !=================================================================      
+
+      ! DTSRCE is the emission timestep in seconds
+      DTSRCE = GET_TS_EMIS() * 2d0 * 60d0
+
+      ! DOY is the day of year (0-365 or 0-366)
+      DOY    = DBLE( GET_DAY_OF_YEAR() )
+
+      !=================================================================
+      ! Read data fields for the SHAO model from disk
+      !=================================================================      
+      IF ( FIRST ) THEN
+
+         ! Echo info
+         IF (MASTER) THEN
+         WRITE( 6, '(a)' ) REPEAT( '=', 79 )
+         WRITE( 6, 100   )
+         WRITE( 6, 110   )
+         WRITE( 6, 120   )
+         WRITE( 6, 130   ) 
+         WRITE( 6, '(a)' ) REPEAT( '=', 79 )
+         ENDIF
+       
+         ! FORMAT strings
+ 100     FORMAT( 'S H A O   D U S T   M O B I L I Z A T I O N'         )
+ 110     FORMAT( 'Routines from SHAO model by Shao et al'              )
+ 120     FORMAT( 'Modified for GRIMs by Seungun Lee'                   )
+ 130     FORMAT( 'Last Modification Date: 4/27/14'                     )
+
+         ! Read fields for SHAO that are time-invariant
+         CALL GET_TIME_INVARIANT_DATA
+         
+         ! Reset first-time flag
+         FIRST = .FALSE.
+      ENDIF
+
+      ! Read monthly data for SHAO
+      IF ( ITS_A_NEW_MONTH() ) THEN
+         CALL GET_MONTHLY_DATA
+      ENDIF
+
+      !=================================================================
+      ! Call dust mobilization scheme
+      !=================================================================
+
+      ! Make OROGRAPHY array from GEOS-CHEM LWI
+      CALL GET_ORO( OROGRAPHY )
+
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I,       J,       P1,   P2,   PTHICK, PMID, TLON        )
+!$OMP+PRIVATE( THLON,   ULON,    VLON, BHT2, Q_H2O,  ORO,  SNW_HGT_LQD )
+!$OMP+PRIVATE( N,       YMID_R,  DSRC                                  )
+!$OMP+PRIVATE( AREA_M2, FRC_VEL, SOI_MST                               )
+
+      ! Loop over latitudes
+      DO J = 1, LATLOOP
+
+         ! Loop over longitudes
+         DO I = 1, LONLOOP
+
+            ! Get grid box surface area [m2]
+            AREA_M2 = GET_AREA_M2(I,J)
+
+            ! Pressure [hPa] at bottom and top edge of level 1
+            P1             = GET_PEDGE(I,J,1)
+            P2             = GET_PEDGE(I,J,2)
+
+            ! Pressure thickness of 1st layer [Pa]
+            PTHICK(I)      = ( P1 - P2 ) * 100d0
+
+            ! Pressure at midpt of surface layer [Pa]
+            PMID(I)        = GET_PCENTER(I,J,1) * 100d0 
+
+            ! Temperature [K] at surface layer
+            TLON(I)        = T(I,J,1)
+
+            ! Potential temperature [K] at surface layer
+            THLON(I)       = TLON(I) * ( P1000 / PMID(I) )**AKAP
+
+            ! U and V winds at surface [m/s]
+            ULON(I)        = U10M(I,J)
+            VLON(I)        = V10M(I,J)
+            
+            ! Half box height at surface [m]
+            BHT2(I)        = BXHEIGHT(I,J,1) / 2.d0
+
+            ! Specific humidity at surface [kg H2O/kg air]
+            Q_H2O(I)       = SPHU(I,J,1) / 1000.d0         
+
+            ! Orography at surface
+            ! Ocean is 0; land is 1; ice is 2
+            ORO(I)         = OROGRAPHY(I,J) 
+
+            ! Snow height [m H2O]
+!#if   defined( GEOS_5 ) || defined( MERRA )
+            SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
+!#else
+!            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
+!#endif
+
+            ! Friction velocity [m/s]
+            FRC_VEL(I)     = USTAR(I,J)
+
+            ! Surface soil moisture contains [m3/m3]
+            SOI_MST(I)     = GWETTOP(I,J)
+
+            ! Dust tracer and increments
+            DO N = 1, NDSTBIN
+               DSRC(I,N)   = 0.0d0
+            ENDDO
+         ENDDO 
+
+         !==============================================================
+         ! Call dust mobilization driver (QF_SHAO) for latitude J
+         !==============================================================
+         
+         ! Latitude in RADIANS
+!         YMID_R = GET_YMID_R(J)
+
+         ! Call SHAO dust mobilization
+         CALL QF_SHAO( DOY,    BHT2,  J,       YMID_R,  ORO,    
+     &                 PTHICK, PMID,  Q_H2O,   DSRC,    SNW_HGT_LQD, 
+     &                 DTSRCE, TLON,  THLON,   VLON,    ULON,
+     &                 FIRST,  J,     FRC_VEL, SOI_MST, AREA_M2 )
+
+         ! Update
+         DO N = 1, NDSTBIN
+         DO I = 1, LONLOOP
+
+            ! Apply SHAO scheme over East Asia
+            IF (GET_XMID(I,J) .LT. 75 .OR. GET_XMID(I,J) .GT. 150) CYCLE
+            IF (GET_YMID(I,J) .LT. 30 .OR. GET_YMID(I,J) .GT. 60) CYCLE
+
+            ! Add dust emissions into tracer array [kg]
+            TC(I,J,1,N) = TC(I,J,1,N) + DSRC(I,N) 
+ 
+            ! ND19 diagnostics [kg]
+            IF ( ND06 > 0 ) THEN
+               AD06(I,J,N) = AD06(I,J,N) + DSRC(I,N)
+            ENDIF
+         ENDDO
+         ENDDO
+
+      ENDDO  
+!$OMP END PARALLEL DO
+
+      END SUBROUTINE SRC_DUST_SHAO
 !EOC
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
@@ -858,6 +1157,8 @@
       USE FILE_MOD,      ONLY : IOERROR
       USE TIME_MOD,      ONLY : GET_TS_EMIS
       USE GRID_MOD,      ONLY : GET_AREA_M2
+      USE GRID_MOD,      ONLY : GET_XMID, GET_YMID
+      USE LOGICAL_MOD,   ONLY : LSHAO
 
       USE CMN_SIZE_MOD        ! Size parameters
       USE CMN_DIAG_MOD        ! ND19, LD13 (for now)
@@ -1049,6 +1350,11 @@
             
             ! Loop over longitudes
             DO I = 1, LONLOOP
+
+               ! Apply SHAO scheme over East Asia
+               IF ( (GET_XMID(I,J) .GE. 75 .AND. GET_XMID(I,J) .LE. 150)
+     &         .AND. (GET_YMID(I,J) .GE. 30 .AND. GET_YMID(I,J) .LE. 60)
+     &         .AND. LSHAO ) CYCLE
 
                ! Get grid box surface area [m2]
                AREA_M2 = GET_AREA_M2(I,J)
@@ -1684,7 +1990,7 @@
 !
 ! !USES:
 !
-      USE LOGICAL_MOD, ONLY : LDEAD
+      USE LOGICAL_MOD, ONLY : LDEAD, LSHAO
       USE ERROR_MOD,   ONLY : ALLOC_ERR
 
       USE CMN_SIZE_MOD      ! Size parameters
