@@ -185,7 +185,7 @@
       ! Call GEOS-4 driver routine
       CALL DO_GEOS4_CONVECT
 
-#elif defined( GEOS_5 )
+#elif defined( GEOS_5 ) || defined( GRIMS )
 
       !=================================================================
       ! GEOS-5 met fields
@@ -378,12 +378,6 @@
       DEALLOCATE( COEF%MOLWT_KG )
 
 #endif
-
-      ! Pick the proper # of tracers
-      N_TOT_TRC = N_TRACERS
-
-      ! Call the S-J Lin convection routine
-      CALL NFCLDMX( N_TOT_TRC, TCVV, CMFMC, DTRAIN, STT )
 
       END SUBROUTINE DO_CONVECTION
 !EOC
@@ -1068,13 +1062,13 @@
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          ENDIF
 
-#if   !defined( GEOS_5 ) 
+#if   !defined( GEOS_5 ) && !defined( GRIMS )
          ! NOTE: We don't need to do this for GEOS-5 (bmy, 6/27/07)
          ! DSIG is the sigma-level thickness (NOTE: this assumes that
          ! we are using a pure-sigma grid.  Use new routine for fvDAS.)
-!         DO L = 1, LLPAR        
-!            DSIG(L) = GET_BP(L) - GET_BP(L+1)
-!         ENDDO
+         DO L = 1, LLPAR        
+            DSIG(L) = GET_BP(L) - GET_BP(L+1)
+         ENDDO
 #endif
 
          ! Flag to denote if this is a mercury simulation (sas, bmy, 1/19/05)
@@ -1231,7 +1225,7 @@
                !========================================================
 
                IF ( CLDMAS(I,J,2) .gt. TINY ) THEN 
-!#if   defined( GEOS_5 )
+#if   defined( GEOS_5 ) || defined( GRIMS )
 
                   ! Need to replace DSIG w/ the difference 
                   ! of pressure edges for GEOS-5 (bmy, 6/27/07)
@@ -1240,13 +1234,13 @@
      &         Q(I,J,2,IC) * ( GET_PEDGE(I,J,2) - GET_PEDGE(I,J,3) ) ) / 
      &                       ( GET_PEDGE(I,J,1) - GET_PEDGE(I,J,3) )
 
-!#else
+#else
                   ! for GEOS-3
-!                  QB(I,J) = 
-!     &               ( Q(I,J,1,IC) * DSIG(1)   + 
-!     &                 Q(I,J,2,IC) * DSIG(2) ) / ( DSIG(1) + DSIG(2) )
+                  QB(I,J) = 
+     &               ( Q(I,J,1,IC) * DSIG(1)   + 
+     &                 Q(I,J,2,IC) * DSIG(2) ) / ( DSIG(1) + DSIG(2) )
 
-!#endif
+#endif
 
                   ! total mass of air below the cloud base
                   MB(I,J) = BMASS(I,J,1) + BMASS(I,J,2)
@@ -1481,7 +1475,7 @@
                   ELSE                     
                      QC(I,J) = Q(I,J,K,IC)
 
-!#if   defined( GEOS_5 ) 
+#if   defined( GEOS_5 ) || defined( GRIMS )
                      !--------------------------------------------------
                      ! FIX FOR GEOS-5 MET FIELDS!
                      !
@@ -1515,7 +1509,7 @@
                         Q(I,J,K,IC) = Q(I,J,K,IC) + DELQ
 
                      ENDIF
-!#endif
+#endif
                   ENDIF
                ENDDO  !I
             ENDDO     !J

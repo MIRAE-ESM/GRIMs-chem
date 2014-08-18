@@ -75,11 +75,12 @@
       !%%% NOTE: still to be determined
       INTEGER, PARAMETER :: NLAND = 5536
 
-#endif
+#elif defined( GRIMS )
 
       !%%% NOTE: still to be determined
       INTEGER, PARAMETER :: NLAND = 9999
 
+#endif
 !
 ! !PUBLIC DATA MEMBERS:
 !

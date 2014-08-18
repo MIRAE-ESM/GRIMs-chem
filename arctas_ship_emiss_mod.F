@@ -15,7 +15,7 @@
 ! 
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -300,7 +300,6 @@
 ! !USES:
 ! 
       USE BPCH2_MOD,        ONLY : GET_TAU0,      READ_BPCH2
-!      USE REGRID_1x1_MOD,   ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
       USE REGRID_1x1_MOD,   ONLY : DO_REGRID_G2G_1x1
       USE SCALE_ANTHRO_MOD, ONLY : GET_ANNUAL_SCALAR_1x1
 
@@ -341,8 +340,6 @@
       REAL*8         :: SC_1x1(I1x1,J1x1)
       REAL*8         :: TAU2008
 
-      REAL*8         :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! TAU0 values for 2008
       TAU2008 = GET_TAU0( 1, 1, 2008 )
 
@@ -369,22 +366,7 @@
 
 
       ! Regrid from GEOS 1x1 --> current model resolution
-!      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, ARR )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1(:,:,1), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
-#else
-      ARR = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, ARR, 1, 1, 1 )
 
       END SUBROUTINE READ_ARCTAS_SHIP
 !EOC
@@ -418,6 +400,7 @@
 ! !LOCAL VARIABLES:
 !
       REAL*8     :: T_SO2, T_CO2
+      REAL*8, EXTERNAL :: MAKE_SUM
 
       !=================================================================
       ! TOTAL_EMISS_TG begins here!
@@ -439,7 +422,7 @@
          !-----------------------
 
          ! Total CO2 [Tg CO2]
-         T_CO2 = SUM( CO2_SHIP ) * 1d-9
+         T_CO2 = MAKE_SUM( CO2_SHIP, 1 ) * 1d-9
 
          ! Print totals
          IF (MASTER) THEN
@@ -453,7 +436,7 @@
          !-----------------------
 
          ! Total SO2 [Tg S]
-         T_SO2 = SUM( SO2_SHIP ) * 1d-9 * ( 32d0 / 64d0 )
+         T_SO2 = MAKE_SUM( SO2_SHIP, 1 ) * 1d-9 * ( 32d0 / 64d0 )
 
          ! Print totals in [Tg]
          IF (MASTER) THEN
@@ -505,9 +488,7 @@
 !
 ! !LOCAL VARIABLES:
 !
-      INTEGER              :: AS, J
-
-      INTEGER              :: I
+      INTEGER              :: AS, I, J
 
       !=================================================================
       ! INIT_ARCTAS_SHIP begins here!

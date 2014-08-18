@@ -291,6 +291,16 @@
       ! Pressure [hPa] at bottom edge of level L (see documentation header)
       PEDGE = AP(L) + ( BP(L) * PFLT(I,J) )
 
+#elif defined( GRIMS )
+
+      !-----------------------------
+      ! GRIMS met fields
+      !-----------------------------
+
+      ! Pressure [hPa] at bottom edge of level L (see documentation header)
+      PEDGE = AP(L) + ( BP(L) * PFLT(I,J) )
+      IF (PEDGE .LE. 0d0) PEDGE = PTOP
+
 #else 
 
       !-----------------------------
@@ -298,9 +308,7 @@
       !-----------------------------
 
       ! Pressure [hPa] at bottom edge of level L (see documentation header)
-!      PEDGE = AP(L) + ( BP(L) * ( PFLT(I,J) - PTOP ) )
-      PEDGE = AP(L) + ( BP(L) * PFLT(I,J) )
-      IF (PEDGE .LE. 0d0) PEDGE = PTOP
+      PEDGE = AP(L) + ( BP(L) * ( PFLT(I,J) - PTOP ) )
 
 #endif     
  
@@ -354,6 +362,16 @@
       ! Pressure [hPa] at bottom edge of level L (see documentation header)
       PEDGE = AP_FULLGRID(L) + ( BP_FULLGRID(L) * PFLT(I,J) )
 
+#elif defined( GRIMS )
+
+      !-----------------------------
+      ! GRIMS met fields
+      !-----------------------------
+
+      ! Pressure [hPa] at bottom edge of level L (see documentation header)
+      PEDGE = AP_FULLGRID(L) + ( BP_FULLGRID(L) * PFLT(I,J) )
+      IF (PEDGE .LE. 0d0) PEDGE = PTOP
+
 #else 
 
       !-----------------------------
@@ -361,9 +379,7 @@
       !-----------------------------
 
       ! Pressure [hPa] at bottom edge of level L (see documentation header)
-!      PEDGE = AP_FULLGRID(L) + ( BP_FULLGRID(L) * ( PFLT(I,J) - PTOP ) )
-      PEDGE = AP_FULLGRID(L) + ( BP_FULLGRID(L) * PFLT(I,J) )
-      IF (PEDGE .LE. 0d0) PEDGE = PTOP
+      PEDGE = AP_FULLGRID(L) + ( BP_FULLGRID(L) * ( PFLT(I,J) - PTOP ) )
 
 #endif     
  
@@ -892,8 +908,8 @@
       AP_FULLGRID = AP
       BP_FULLGRID = BP
 
-#endif
-      
+#elif defined( GRIMS )
+
       DO L = 1, LLPAR+1
          AP(L) = AK5(LLPAR+2-L) * 1d1
          BP(L) = BK5(LLPAR+2-L)
@@ -902,6 +918,8 @@
       AP_FULLGRID = AP
       BP_FULLGRID = BP
 
+#endif
+      
       ! Echo info to std output
       IF (MASTER) THEN
       WRITE( 6, '(a)'   ) REPEAT( '=', 79 )

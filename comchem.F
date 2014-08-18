@@ -65,7 +65,7 @@
       ! Cloud mass flux [kg/m2/s]
       CALL TRANSFORM_3D( FCU, WORK1 )
       CALL TRANSFORM_3D( FCD, WORK2 )
-      CMFMC = WORK1 + WORK2
+      CMFMC(:,:,2:LLPAR+1) = WORK1 + WORK2
 
       ! Detrainment rate
       DTRAIN = _DETRN

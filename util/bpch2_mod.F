@@ -132,7 +132,6 @@
       CHARACTER(LEN=80)                        :: TMP_TITLE
 
       IF (MASTER) THEN
-
       !=================================================================
       ! OPEN_BPCH2_FOR_READ begins here!
       !=================================================================
@@ -181,7 +180,6 @@
 
       ! Copy value of TMP_TITLE to TITLE for return 
       IF ( PRESENT( TITLE ) ) TITLE = TMP_TITLE
-
       ENDIF
 
       ! Return to calling program
@@ -228,7 +226,6 @@
       CHARACTER(LEN=80)                       :: TMP_TITLE
 
       IF (MASTER) THEN
-
       !=================================================================
       ! OPEN_BPCH2_FOR_WRITE begins here!
       !=================================================================
@@ -254,7 +251,6 @@
 
       ! Write the top-of-file title to disk
       CALL BPCH2_HDR( IUNIT, TMP_TITLE )
-
       ENDIF
 
       ! Return to calling program
@@ -299,7 +295,6 @@
       CHARACTER(LEN=40)             :: FTI = 'CTM bin 02'
 
       IF (MASTER) THEN
-
       !=================================================================
       ! BPCH2_HDR begins here!
       !
@@ -311,7 +306,6 @@
 
       WRITE ( IUNIT, IOSTAT=IOS ) TITLE
       IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2_hdr:2' )
-
       ENDIF
 
       ! Return to calling program    
@@ -394,7 +388,6 @@
 #endif
 
       IF (MASTER) THEN
-
       CALL DYN_TRANS2OUTPUT_GRID(F_ARRAY,NL)
 
       CALL XSHIFT(F_ARRAY,IGLOB,JGLOB,NL)
@@ -431,7 +424,6 @@
      &     ( ( F_ARRAY4(I,L), I=1,IGLOB*JGLOB ), L=1,NL )
 
       IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:3' )
-
       ENDIF
 
       !=================================================================
@@ -537,7 +529,6 @@
       CHARACTER(LEN=40)  :: RESERVED
 
       IF (MASTER) THEN
-
       !=================================================================
       ! READ_BPCH2 begins here!
       !  
@@ -643,7 +634,6 @@
       ! Close file and quit
       !=================================================================
       CLOSE( IU_FILE )
-
       ENDIF
 
       ! Return to calling program
@@ -715,9 +705,10 @@
 #elif defined( MERRA ) 
       MODELNAME = 'MERRA'
 
-#endif
+#elif defined( GRIMS )
       MODELNAME = 'GRIMS'
 
+#endif
 
       ! Return to calling program
       END FUNCTION GET_MODELNAME
@@ -752,7 +743,7 @@
       CHARACTER(LEN=5) :: NAME_EXT
       NAME_EXT = 'geos4'
 
-#elif defined( GEOS_5 )
+#elif defined( GEOS_5 ) || defined( GRIMS )
       CHARACTER(LEN=5) :: NAME_EXT
       NAME_EXT = 'geos5'
 
@@ -765,9 +756,6 @@
       NAME_EXT = 'geos5'
 
 #endif
-      CHARACTER(LEN=5) :: NAME_EXT
-      NAME_EXT = 'geos5'
-
 !
 ! !REVISION HISTORY:
 !  (1 ) Added name string for GEOS-4/fvDAS model type (bmy, 11/20/01)
@@ -854,7 +842,7 @@
       CHARACTER(LEN=3) :: RES_EXT
       RES_EXT = '4x5'
      
-#elif defined( GRID2x25 ) 
+#elif defined( GRID2x25 ) || defined( GRIMS )
       CHARACTER(LEN=4) :: RES_EXT
       RES_EXT = '2x25'
 
@@ -871,9 +859,6 @@
       RES_EXT = '05x0666'
 
 #endif
-      CHARACTER(LEN=4) :: RES_EXT
-      RES_EXT = '2x25'
-
 !
 ! !REVISION HISTORY:
 !  (1 ) Added extension for 1 x 1.25 grid (bmy, 12/1/04)
@@ -914,7 +899,7 @@
 !------------------------------------------------------------------------------
 !BOC
 ! 
-#if   defined( GCAP ) 
+#if   defined( GCAP ) || defined( GRIMS )
 
       ! GCAP grid does not have half-sized polar boxes
       HALFPOLAR = 0
@@ -922,8 +907,7 @@
 #else
 
       ! All GEOS grids have half-sized polar boxes
-!      HALFPOLAR = 1
-      HALFPOLAR = 0
+      HALFPOLAR = 1
 
 #endif
 

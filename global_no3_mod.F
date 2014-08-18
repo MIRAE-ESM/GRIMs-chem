@@ -16,7 +16,7 @@
 !
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -106,10 +106,6 @@
       REAL*8             :: XTAU
       CHARACTER(LEN=255) :: FILENAME
 
-      INTEGER            :: L
-      REAL*8             :: F_ARRAY1(IGLOB*2,JGLOB/2,LT2x25)
-      REAL*8             :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
-
       ! First time flag
       LOGICAL, SAVE      :: FIRST = .TRUE. 
 
@@ -153,26 +149,7 @@
 
       ! Assign data from ARRAY to the module variable H2O2
       ! Levels between LLTROP_FIX and LLROP are 0
-!      CALL TRANSFER_3D_TROP( ARRAY, NO3 )
-
-      IF (MASTER) THEN
-      DO L = 1, LT2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-      CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-
-      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 2 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,NO3,IIPAR,JJPAR,LLPAR)
-#else
-      NO3 = F_ARRAY2
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), NO3, 2, LT2x25, 6 )
 
       END SUBROUTINE GET_GLOBAL_NO3
 !EOC

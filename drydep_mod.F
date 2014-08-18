@@ -657,7 +657,6 @@
          CFRAC(IJLOOP)  = CLDFRC(I,J)
 
          ! Set logical LSNOW if snow and sea ice (ALBEDO > 0.4)
-!         LSNOW(IJLOOP)  = ( ALBD(I,J) > 0.4 )
          LSNOW(IJLOOP)  = ( SNOMAS(I,J) > 10d0 )
 
          ! Monin-Obhukov length [m]

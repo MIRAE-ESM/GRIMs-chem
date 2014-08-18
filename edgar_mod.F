@@ -66,7 +66,7 @@
 !  (6 ) Fixed typos in READ_C2H2 and READ_C2H4 (tmf, bmy, 12/20/10)
 !******************************************************************************
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -323,8 +323,6 @@
       REAL*8                  :: TEMP_TOT(IIPAR,JJPAR)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! COMPUTE_EDGAR_NOx begins here!
       !=================================================================
@@ -349,44 +347,14 @@
 
       ! Regrid anthro emissions to current resolution
       GEOS_1x1(:,:,1) = E_NOx_1x1(:,:)
-!      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, TEMP_TOT )  
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,TEMP_TOT,IIPAR,JJPAR,1)
-#else
-      TEMP_TOT = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, TEMP_TOT, 1, 1, 2 )
 
       ! Loop over hours
       DO H = 1, N_HOURS
 
          ! Regrid hourly emissions to current resolution
          GEOS_1x1(:,:,1) = E_NOx_HRLY_1x1(:,:,H)
-!         CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, TEMP_HRLY )
-
-         IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,TEMP_HRLY,IIPAR,JJPAR,1)
-#else
-         TEMP_HRLY = F_ARRAY
-#endif
+         CALL TRANS_REGRID( GEOS_1x1, TEMP_HRLY, 1, 1, 2 )
 
          ! Scale factors are just the normalized hourly emissions
          DO J = 1, LATLOOP
@@ -413,22 +381,7 @@
       !----------------------------------
 
       ! Regrid NOx emissions to current model resolution [kg/yr]
-!      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_NOx )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_NOx,IIPAR,JJPAR,1)
-#else
-      E_NOx = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, E_NOx, 1, 1, 1 )
 
       !----------------------------------
       ! Scale ship NOX and regrid
@@ -443,22 +396,7 @@
          GEOS_1x1(:,:,1) = E_NOX_SHIP_1x1(:,:) * SC_NOX_1x1(:,:)
 
          ! Regrid NOX emissions to current model resolution [kg/yr]
-!         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_NOX_SHIP )
-
-         IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_NOX_SHIP,IIPAR,JJPAR,1)
-#else
-         E_NOX_SHIP = F_ARRAY
-#endif
+         CALL TRANS_REGRID( GEOS_1x1, E_NOX_SHIP, 1, 1, 1 )
 
       ENDIF
 
@@ -875,8 +813,6 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! COMPUTE_EDGAR_CO begins here!
       !=================================================================
@@ -905,22 +841,7 @@
       !----------------------------------
 
       ! Regrid CO emissions to current model resolution [kg/yr]
-!      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_CO )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_CO,IIPAR,JJPAR,1)
-#else
-      E_CO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, E_CO, 1, 1, 1 )
 
       !----------------------------------
       ! Scale ship CO and regrid
@@ -935,22 +856,7 @@
          GEOS_1x1(:,:,1) = E_CO_SHIP_1x1(:,:) * SC_CO_1x1(:,:)
 
          ! Regrid CO emissions to current model resolution [kg/yr]
-!         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_CO_SHIP )
-
-         IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_CO_SHIP,IIPAR,JJPAR,1)
-#else
-         E_CO_SHIP = F_ARRAY
-#endif
+         CALL TRANS_REGRID( GEOS_1x1, E_CO_SHIP, 1, 1, 1 )
 
       ENDIF
 
@@ -1120,8 +1026,6 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: NAME
 
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! COMPUTE_EDGAR_SO2 begins here!
       !=================================================================
@@ -1150,22 +1054,7 @@
       GEOS_1x1(:,:,1) = E_SO2_1x1(:,:) * SC_SO2_1x1(:,:)
 
       ! Regrid SO2 emissions to current model resolution [kg/yr]
-!      CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_SO2 )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_SO2,IIPAR,JJPAR,1)
-#else
-      E_SO2 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, E_SO2, 1, 1, 1 )
 
       !----------------------------------
       ! Scale ship SO2 and regrid
@@ -1180,22 +1069,7 @@
          GEOS_1x1(:,:,1) = E_SO2_SHIP_1x1(:,:) * SC_SO2_1x1(:,:)
 
          ! Regrid SO2 emissions to current model resolution [kg/yr]
-!         CALL DO_REGRID_1x1( 'kg/yr', GEOS_1x1, E_SO2_SHIP )
-
-         IF (MASTER) THEN
-         CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 1 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,E_SO2_SHIP,IIPAR,JJPAR,1)
-#else
-         E_SO2_SHIP = F_ARRAY
-#endif
+         CALL TRANS_REGRID( GEOS_1x1, E_SO2_SHIP, 1, 1, 1 )
 
       ENDIF
 
@@ -2064,20 +1938,21 @@
       ! Local variables
       REAL*8              :: T_NOx, T_CO, T_SO2an, T_SO2sh
       REAL*8              :: T_NOxSh, T_COsh
+      REAL*8, EXTERNAL    :: MAKE_SUM
 
       !=================================================================
       ! EDGAR_TOTAL_Tg begins here!
       !=================================================================
 
       ! Compute totals [Tg/yr]
-      T_NOx      = SUM( EDGAR_NOx      ) * ( 14d0/46d0 ) / 1d9 ! Tg N
-      T_CO       = SUM( EDGAR_CO       )                 / 1d9 ! Tg CO
-      T_SO2an    = SUM( EDGAR_SO2      ) * ( 32d0/64d0 ) / 1d9 ! Tg S
+      T_NOx      = MAKE_SUM( EDGAR_NOx, 1      ) * ( 14d0/46d0 ) / 1d9 ! Tg N
+      T_CO       = MAKE_SUM( EDGAR_CO, 1       )                 / 1d9 ! Tg CO
+      T_SO2an    = MAKE_SUM( EDGAR_SO2, 1      ) * ( 32d0/64d0 ) / 1d9 ! Tg S
 
       IF ( LEDGARSHIP ) THEN
-         T_NOxSh = SUM( EDGAR_NOx_SHIP ) * ( 14d0/46d0 ) / 1d9 ! Tg N
-         T_COSh  = SUM( EDGAR_CO_SHIP  )                 / 1d9 ! Tg CO
-         T_SO2sh = SUM( EDGAR_SO2_SHIP ) * ( 32d0/64d0 ) / 1d9 ! Tg S
+         T_NOxSh = MAKE_SUM( EDGAR_NOx_SHIP, 1 ) * ( 14d0/46d0 ) / 1d9 ! Tg N
+         T_COSh  = MAKE_SUM( EDGAR_CO_SHIP, 1  )                 / 1d9 ! Tg CO
+         T_SO2sh = MAKE_SUM( EDGAR_SO2_SHIP, 1 ) * ( 32d0/64d0 ) / 1d9 ! Tg S
       ELSE
          T_NOxSh = 0d0
          T_COSh  = 0d0
@@ -2754,9 +2629,7 @@
       USE CMN_SIZE_MOD  ! Size parameters
 
       ! Local Variables
-      INTEGER            :: AS, J
-
-      INTEGER            :: I
+      INTEGER            :: AS, I, J
 
       !============================================================
       ! INIT_EDGAR begins here!

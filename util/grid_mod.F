@@ -1035,9 +1035,10 @@
 #elif defined( GRID4x5 )
       IIIPAR = 72
       JJJPAR = 46
-#endif
+#elif defined( GRIMS )
       IIIPAR = IGLOB
       JJJPAR = JGLOB
+#endif
 
       !=================================================================
       ! Allocate global-sized arrays (e.g. use IIIPAR, JJJPAR)

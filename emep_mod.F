@@ -35,6 +35,7 @@
 ! !USES:
 !
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -442,9 +443,7 @@
 
             ! NOx [molec/cm2/s]
             CASE( 1  )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_NOx  )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY1, 2 )
 
                CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
@@ -453,9 +452,7 @@
 
             ! CO [molec/cm2/s]
             CASE( 4  )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_CO   )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY2, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY2, 2 )
 
                CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
@@ -464,9 +461,7 @@
 
             ! ALK4 [atoms C/cm2/s]
             CASE( 5  )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_ALK4 )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY3, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY3, 2 )
 
                CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
@@ -475,9 +470,7 @@
 
             ! MEK [atoms C/cm2/s]
             CASE( 10 )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_MEK  )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY4, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY4, 2 )
 
                CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
@@ -486,9 +479,7 @@
 
             ! ALD2 [atoms C/cm2/s]
             CASE( 11 )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_ALD2 )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY5, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY5, 2 )
 
                CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
@@ -497,9 +488,7 @@
 
             ! PRPE [atoms C/cm2/s]
             CASE( 18 )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_PRPE )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY6, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY6, 2 )
 
                CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
@@ -508,9 +497,7 @@
 
             ! C2H6 [atoms C/cm2/s]
             CASE( 21 )
-!               CALL DO_REGRID_1x1( UNIT, ARRAY, EMEP_C2H6 )
-
-               CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY7, 2 )
+               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY7, 2 )
 
                CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
@@ -1003,6 +990,18 @@
             NH3  = NH3  + EMEP_NH3 (I,J) * A * B(9) 
          ENDDO
       ENDDO
+
+#ifdef MP
+      CALL MPISUM(NOX)
+      CALL MPISUM(CO)
+      CALL MPISUM(SO2)
+      CALL MPISUM(NH3)
+      CALL MPISUM(ALK4)
+      CALL MPISUM(MEK)
+      CALL MPISUM(ALD2)
+      CALL MPISUM(PRPE)
+      CALL MPISUM(C2H6)
+#endif
  
       !----------------
       ! Print sums
@@ -1068,8 +1067,6 @@
       REAL*4                  :: ARRAY(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! READ_EUROPE_MASK begins here!
       !=================================================================
@@ -1096,22 +1093,7 @@
      &                 1,         ARRAY,    QUIET=.TRUE. ) 
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-!      CALL DO_REGRID_1x1( 'unitless', ARRAY, EUROPE_MASK )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,EUROPE_MASK,IIPAR,JJPAR,1)
-#else
-      EUROPE_MASK = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), EUROPE_MASK, 1, 1, 2 )
 
       END SUBROUTINE READ_EUROPE_MASK
 !EOC
@@ -1231,8 +1213,6 @@
       REAL*8                        :: EMEP_TAU, TAU, A, B
       INTEGER                       :: EMEP_NYMD, MN, RATIOID, I, J
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ARRAY_1x1_SHIP(:,:,:) = 0.d0
       ARRAY_1x1_LAND(:,:,:) = 0.d0
 
@@ -1347,22 +1327,7 @@
      &                                       ARRAY_1x1_SHIP(:,:,1)
       IF ( wSHIP .eq. 2 ) ARRAY_1x1(:,:,1) = ARRAY_1x1_SHIP(:,:,1)
 
-!      CALL DO_REGRID_1x1('kg/yr', ARRAY_1x1, ARRAY)
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( DBLE( ARRAY_1x1(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARRAY,IIPAR,JJPAR,1)
-#else
-      ARRAY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY_1x1), ARRAY, 1, 1, 1 )
 
       ! Convert SOx to SO2 assuming a SOx is 95% SO2 over Europe, as used
       ! throughout GEOS-Chem, and as per Chin et al, 2000

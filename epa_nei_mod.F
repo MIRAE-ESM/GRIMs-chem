@@ -16,6 +16,7 @@
 ! !USES:
 ! 
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -77,60 +78,60 @@
       REAL*8,  ALLOCATABLE :: USA_MASK(:,:)
 
       ! Fossil fuel arrays -- weekday
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_NOX(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_CO(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_ALK4(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_ACET(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_MEK(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_PRPE(:,:)      
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_C2H6(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_C3H8(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_CH2O(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_NH3(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_SO2(:,:)      
-      REAL*8,  ALLOCATABLE :: EPA_WD_AN_SO4(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_NOX(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_CO(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_ALK4(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_ACET(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_MEK(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_PRPE(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_C2H6(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_C3H8(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_CH2O(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_NH3(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_SO2(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WD_AN_SO4(:,:)      
       
       ! Fossil fuel arrays -- weekend
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_NOX(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_CO(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_ALK4(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_ACET(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_MEK(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_PRPE(:,:)      
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_C2H6(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_C3H8(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_CH2O(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_NH3(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_SO2(:,:) 
-      REAL*8,  ALLOCATABLE :: EPA_WE_AN_SO4(:,:) 
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_NOX(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_CO(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_ALK4(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_ACET(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_MEK(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_PRPE(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_C2H6(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_C3H8(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_CH2O(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_NH3(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_SO2(:,:) 
+      REAL*4,  ALLOCATABLE :: EPA_WE_AN_SO4(:,:) 
 
       ! Biofuel arrays -- weekday
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_NOX(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_CO(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_ALK4(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_ACET(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_MEK(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_PRPE(:,:)      
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_C2H6(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_C3H8(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_CH2O(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_NH3(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_SO2(:,:)  
-      REAL*8,  ALLOCATABLE :: EPA_WD_BF_SO4(:,:)  
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_NOX(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_CO(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_ALK4(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_ACET(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_MEK(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_PRPE(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_C2H6(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_C3H8(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_CH2O(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_NH3(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_SO2(:,:)  
+      REAL*4,  ALLOCATABLE :: EPA_WD_BF_SO4(:,:)  
 
       ! Biofuel arrays -- weekend
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_NOX(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_CO(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_ALK4(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_ACET(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_MEK(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_PRPE(:,:)      
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_C2H6(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_C3H8(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_CH2O(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_NH3(:,:)
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_SO2(:,:)  
-      REAL*8,  ALLOCATABLE :: EPA_WE_BF_SO4(:,:)  
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_NOX(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_CO(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_ALK4(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_ACET(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_MEK(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_PRPE(:,:)      
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_C2H6(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_C3H8(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_CH2O(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_NH3(:,:)
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_SO2(:,:)  
+      REAL*4,  ALLOCATABLE :: EPA_WE_BF_SO4(:,:)  
 
       !=================================================================
       ! MODULE ROUTINES -- follow below the "CONTAINS" statement 
@@ -1097,18 +1098,18 @@
 !
 ! !INPUT/OUTPUT PARAMETERS: 
 ! 
-      REAL*8,           INTENT(INOUT) :: NOX(IIPAR,JJPAR)    ! NOx  data
-      REAL*8,           INTENT(INOUT) :: CO(IIPAR,JJPAR)     ! CO   data
-      REAL*8,           INTENT(INOUT) :: ALK4(IIPAR,JJPAR)   ! ALK4 data
-      REAL*8,           INTENT(INOUT) :: ACET(IIPAR,JJPAR)   ! ACET data
-      REAL*8,           INTENT(INOUT) :: MEK(IIPAR,JJPAR)    ! MEK  data
-      REAL*8,           INTENT(INOUT) :: PRPE(IIPAR,JJPAR)   ! PRPE data  
-      REAL*8,           INTENT(INOUT) :: C3H8(IIPAR,JJPAR)   ! C3H8 data
-      REAL*8,           INTENT(INOUT) :: CH2O(IIPAR,JJPAR)   ! CH2O data
-      REAL*8,           INTENT(INOUT) :: C2H6(IIPAR,JJPAR)   ! C2H6 data
-      REAL*8,           INTENT(INOUT) :: SO2(IIPAR,JJPAR)    ! SO2  data
-      REAL*8,           INTENT(INOUT) :: SO4(IIPAR,JJPAR)    ! SO4  data
-      REAL*8,           INTENT(INOUT) :: NH3(IIPAR,JJPAR)    ! NH3  data
+      REAL*4,           INTENT(INOUT) :: NOX(IIPAR,JJPAR)    ! NOx  data
+      REAL*4,           INTENT(INOUT) :: CO(IIPAR,JJPAR)     ! CO   data
+      REAL*4,           INTENT(INOUT) :: ALK4(IIPAR,JJPAR)   ! ALK4 data
+      REAL*4,           INTENT(INOUT) :: ACET(IIPAR,JJPAR)   ! ACET data
+      REAL*4,           INTENT(INOUT) :: MEK(IIPAR,JJPAR)    ! MEK  data
+      REAL*4,           INTENT(INOUT) :: PRPE(IIPAR,JJPAR)   ! PRPE data  
+      REAL*4,           INTENT(INOUT) :: C3H8(IIPAR,JJPAR)   ! C3H8 data
+      REAL*4,           INTENT(INOUT) :: CH2O(IIPAR,JJPAR)   ! CH2O data
+      REAL*4,           INTENT(INOUT) :: C2H6(IIPAR,JJPAR)   ! C2H6 data
+      REAL*4,           INTENT(INOUT) :: SO2(IIPAR,JJPAR)    ! SO2  data
+      REAL*4,           INTENT(INOUT) :: SO4(IIPAR,JJPAR)    ! SO4  data
+      REAL*4,           INTENT(INOUT) :: NH3(IIPAR,JJPAR)    ! NH3  data
 !
 ! !REVISION HISTORY: 
 !  01 Jul 2004 - R. Hudman   - Initial version
@@ -1148,6 +1149,7 @@
       REAL*8            :: F_ARRAY10(IGLOB*2,JGLOB/2)
       REAL*8            :: F_ARRAY11(IGLOB*2,JGLOB/2)
       REAL*8            :: F_ARRAY12(IGLOB*2,JGLOB/2)
+      REAL*8            :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
       ! READ_EPA begins here!
@@ -1208,108 +1210,84 @@
          !==============================================================
          SELECT CASE ( NTRACER )
             CASE( 1  )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), NOx  )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY1, 2 )
 
                CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
             CASE( 4  )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), CO   )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY2, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY2, 2 )
 
                CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,1)
             CASE( 5  )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), ALK4 )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY3, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY3, 2 )
 
                CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY3,1)
             CASE( 9  )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), ACET )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY4, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY4, 2 )
 
                CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY4,1)
             CASE( 10 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), MEK  )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY5, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY5, 2 )
 
                CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY5,1)
             CASE( 18 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), PRPE )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY6, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY6, 2 )
 
                CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY6,1)
             CASE( 19 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), C3H8 )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY7, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY7, 2 )
 
                CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY7,1)
             CASE( 20 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), CH2O )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY8, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY8, 2 )
 
                CALL XSHIFT( F_ARRAY8, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY8, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY8,1)
             CASE( 21 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), C2H6 )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY9, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY9, 2 )
 
                CALL XSHIFT( F_ARRAY9, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY9, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY9,1)
             CASE( 26 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), SO2  )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY10, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY10, 2 )
 
                CALL XSHIFT( F_ARRAY10, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY10, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY10,1)
             CASE( 27 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), SO4  )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY11, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY11, 2 )
 
                CALL XSHIFT( F_ARRAY11, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY11, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY11,1)
             CASE( 29 )
-!               CALL TRANSFER_2D( ARRAY(:,:,1), NH3  )
-
-               CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY12, 2 )
+               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY12, 2 )
 
                CALL XSHIFT( F_ARRAY12, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY12, IGLOB, JGLOB, 1 )
@@ -1326,18 +1304,30 @@
       ENDIF
 
 #ifdef MP
-      CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY3,IGLOB*2,JGLOB/2,ALK4,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY4,IGLOB*2,JGLOB/2,ACET,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY5,IGLOB*2,JGLOB/2,MEK,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY6,IGLOB*2,JGLOB/2,PRPE,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY7,IGLOB*2,JGLOB/2,C3H8,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY8,IGLOB*2,JGLOB/2,CH2O,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY9,IGLOB*2,JGLOB/2,C2H6,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY10,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY11,IGLOB*2,JGLOB/2,SO4,IIPAR,JJPAR,1)
-      CALL MPGF2P(F_ARRAY12,IGLOB*2,JGLOB/2,NH3,IIPAR,JJPAR,1)
+      CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      NOx = P_ARRAY
+      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      CO = P_ARRAY
+      CALL MPGF2P(F_ARRAY3,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      ALK4 = P_ARRAY
+      CALL MPGF2P(F_ARRAY4,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      ACET = P_ARRAY
+      CALL MPGF2P(F_ARRAY5,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      MEK = P_ARRAY
+      CALL MPGF2P(F_ARRAY6,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      PRPE = P_ARRAY
+      CALL MPGF2P(F_ARRAY7,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      C3H8 = P_ARRAY
+      CALL MPGF2P(F_ARRAY8,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      CH2O = P_ARRAY
+      CALL MPGF2P(F_ARRAY9,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      C2H6 = P_ARRAY
+      CALL MPGF2P(F_ARRAY10,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      SO2 = P_ARRAY
+      CALL MPGF2P(F_ARRAY11,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      SO4 = P_ARRAY
+      CALL MPGF2P(F_ARRAY12,IGLOB*2,JGLOB/2,P_ARRAY,IIPAR,JJPAR,1)
+      NH3 = P_ARRAY
 #else
       NOx = F_ARRAY1
       CO = F_ARRAY2
@@ -1593,8 +1583,6 @@
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=14 ) :: MASK_DIR
 
-      REAL*8             :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! READ_USA_MASK begins here!
       !=================================================================
@@ -1636,22 +1624,7 @@
      &                 1,         ARRAY,    QUIET=.TRUE. ) 
 
       ! Cast to REAL*8
-!      CALL TRANSFER_2D( ARRAY(:,:,1), USA_MASK )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,USA_MASK,IIPAR,JJPAR,1)
-#else
-      USA_MASK = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), USA_MASK, 2, 1, 2 )
 
       END SUBROUTINE READ_USA_MASK
 !EOC
@@ -1920,6 +1893,31 @@
 
          ENDDO
       ENDDO
+
+#ifdef MP
+      CALL MPISUM(WD_NOX)
+      CALL MPISUM(WD_CO)
+      CALL MPISUM(WD_ALK4)
+      CALL MPISUM(WD_ACET)
+      CALL MPISUM(WD_MEK)
+      CALL MPISUM(WD_PRPE)
+      CALL MPISUM(WD_C3H8)
+      CALL MPISUM(WD_CH2O)
+      CALL MPISUM(WD_SO2)
+      CALL MPISUM(WD_SO4)
+      CALL MPISUM(WD_NH3)
+      CALL MPISUM(WE_NOX)
+      CALL MPISUM(WE_CO)
+      CALL MPISUM(WE_ALK4)
+      CALL MPISUM(WE_ACET)
+      CALL MPISUM(WE_MEK)
+      CALL MPISUM(WE_PRPE)
+      CALL MPISUM(WE_C3H8)
+      CALL MPISUM(WE_CH2O)
+      CALL MPISUM(WE_SO2)
+      CALL MPISUM(WE_SO4)
+      CALL MPISUM(WE_NH3)
+#endif
  
       !=================================================================
       ! Print info
@@ -2126,6 +2124,31 @@
          ENDDO
       ENDDO
  
+#ifdef MP
+      CALL MPISUM(WD_NOX)
+      CALL MPISUM(WD_CO)
+      CALL MPISUM(WD_ALK4)
+      CALL MPISUM(WD_ACET)
+      CALL MPISUM(WD_MEK)
+      CALL MPISUM(WD_PRPE)
+      CALL MPISUM(WD_C3H8)
+      CALL MPISUM(WD_CH2O)
+      CALL MPISUM(WD_SO2)
+      CALL MPISUM(WD_SO4)
+      CALL MPISUM(WD_NH3)
+      CALL MPISUM(WE_NOX)
+      CALL MPISUM(WE_CO)
+      CALL MPISUM(WE_ALK4)
+      CALL MPISUM(WE_ACET)
+      CALL MPISUM(WE_MEK)
+      CALL MPISUM(WE_PRPE)
+      CALL MPISUM(WE_C3H8)
+      CALL MPISUM(WE_CH2O)
+      CALL MPISUM(WE_SO2)
+      CALL MPISUM(WE_SO4)
+      CALL MPISUM(WE_NH3)
+#endif
+
       !=================================================================
       ! Print info
       !=================================================================

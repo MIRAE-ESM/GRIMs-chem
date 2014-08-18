@@ -547,8 +547,8 @@
 
          NAME_NEW = 'AOD' // C
 
-         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
-     &                     1,        1e0,     'unitless', N )
+         CALL WRITE_TINFO( NAME_NEW, FNAME(T,70), 1e0,
+     &                     1,        1e0,         'unitless', N )
 
       ENDDO
 
@@ -560,8 +560,8 @@
 
          NAME_NEW = 'SSA' // C
 
-         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
-     &                     1,        1e0,     'unitless', N )
+         CALL WRITE_TINFO( NAME_NEW, FNAME(T+10,70), 1e0,
+     &                     1,        1e0,            'unitless', N )
 
       ENDDO
 
@@ -573,8 +573,8 @@
 
          NAME_NEW = 'ASM' // C
 
-         CALL WRITE_TINFO( NAME_NEW, NAME_NEW, 1e0,
-     &                     1,        1e0,     'unitless', N )
+         CALL WRITE_TINFO( NAME_NEW, FNAME(T+20,70), 1e0,
+     &                     1,        1e0,            'unitless', N )
 
       ENDDO
 
@@ -1472,9 +1472,6 @@
       !=================================================================
 
       ! Set a flag if any timeseries diagnostics are turned on
-!      DO_TIMESERIES = ( DO_SAVE_DIAG48 .or. DO_SAVE_DIAG49 .or.
-!     &                  DO_SAVE_DIAG50 .or. DO_SAVE_DIAG51 .or.
-!     &                  DO_SAVE_DIAG51b )
       DO_TIMESERIES = .FALSE.
 
       !----------------------------------
@@ -2813,9 +2810,6 @@
       !-------------------------------------      
       ! Surface pressure (ND31)
       !-------------------------------------   
-!      IF ( ND31 > 0       .or. DO_SAVE_DIAG48 .or. 
-!     &     DO_SAVE_DIAG49 .or. DO_SAVE_DIAG50 .or. 
-!     &     DO_SAVE_DIAG51 .or. DO_SAVE_DIAG51b     ) THEN
       IF ( ND31 > 0 ) THEN
          T           = 1
          NTRAC(31)   = T
@@ -3772,7 +3766,6 @@
 #if   defined( GEOS_4 )
                   UNIT(T,67) = 'm'
 #else
-!                  UNIT(T,67) = 'hPa'
                   UNIT(T,67) = 'm'
 #endif
                CASE( 10 )
@@ -3887,6 +3880,34 @@
          MWT  (T,69) = 0e0
          SCALE(T,69) = 1e0
       ENDIF
+
+      !-------------------------------------      
+      ! DIAGAOD, DIAGSSA, DIAGASM
+      !-------------------------------------      
+      FNAME(1,70) = 'AOD at 255 nm'
+      FNAME(2,70) = 'AOD at 292.5 nm'
+      FNAME(3,70) = 'AOD at 312.5 nm'
+      FNAME(4,70) = 'AOD at 507.5 nm'
+      FNAME(5,70) = 'AOD at 3.135 um'
+      FNAME(6,70) = 'AOD at 1.745 um'
+      FNAME(7,70) = 'AOD at 0.96 um'
+      FNAME(8,70) = 'AOD at 2.35 um'
+      FNAME(11,70) = 'SSA at 255 nm'
+      FNAME(12,70) = 'SSA at 292.5 nm'
+      FNAME(13,70) = 'SSA at 312.5 nm'
+      FNAME(14,70) = 'SSA at 507.5 nm'
+      FNAME(15,70) = 'SSA at 3.135 um'
+      FNAME(16,70) = 'SSA at 1.745 um'
+      FNAME(17,70) = 'SSA at 0.96 um'
+      FNAME(18,70) = 'SSA at 2.35 um'
+      FNAME(21,70) = 'ASM at 255 nm'
+      FNAME(22,70) = 'ASM at 292.5 nm'
+      FNAME(23,70) = 'ASM at 312.5 nm'
+      FNAME(24,70) = 'ASM at 507.5 nm'
+      FNAME(25,70) = 'ASM at 3.135 um'
+      FNAME(26,70) = 'ASM at 1.745 um'
+      FNAME(27,70) = 'ASM at 0.96 um'
+      FNAME(28,70) = 'ASM at 2.35 um'
 
       END SUBROUTINE INIT_TRACERINFO
 !EOC

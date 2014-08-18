@@ -146,7 +146,7 @@
 !  (8 ) Updates for nested grids (amv, bmy, 12/18/09)
 !******************************************************************************
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -384,10 +384,14 @@
       ! the GEOS-5 4x5 1-year benchmark v8-01-01-Run0. (bmy, 11/10/08)
       REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4 / 9.57d0
 
+#elif defined( GRIMS )
+
+      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4 / 1.61d0
+
 #else
 
       ! Default value
-      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4 / 1.61
+      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4
 
 #endif
 
@@ -4662,14 +4666,12 @@ c Fix up for negative argument, erf, etc.
       USE CMN_SIZE_MOD     ! Size parameters
 
       ! Local variables
-      INTEGER               :: I, IOS
+      INTEGER               :: I, J, IOS
       REAL*4                :: ARRAY(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
       INTEGER               :: F_SFC_TYP(I2x25,J2x25)
-      INTEGER               :: J
       INTEGER, EXTERNAL     :: CLX, CLY
 
       !=================================================================
@@ -4745,22 +4747,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_GEO )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_GEO,IIPAR,JJPAR,1)
-#else
-      ERD_FCT_GEO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_GEO, 2, 1, 2 )
 
       !-----------------
       ! ERD_FCT_HYDRO
@@ -4769,22 +4756,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_HYDRO )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_HYDRO,IIPAR,JJPAR,1)
-#else
-      ERD_FCT_HYDRO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_HYDRO, 2, 1, 2 )
 
       !-----------------
       ! ERD_FCT_TOPO
@@ -4793,22 +4765,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_TOPO )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_TOPO,IIPAR,JJPAR,1)
-#else
-      ERD_FCT_TOPO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_TOPO, 2, 1, 2 )
 
       !-----------------
       ! ERD_FCT_UNITY
@@ -4817,22 +4774,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ERD_FCT_UNITY )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ERD_FCT_UNITY,IIPAR,JJPAR,1)
-#else
-      ERD_FCT_UNITY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_UNITY, 2, 1, 2 )
 
       !-----------------
       ! MBL_BSN_FCT
@@ -4859,22 +4801,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), LND_FRC_DRY )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,LND_FRC_DRY,IIPAR,JJPAR,1)
-#else
-      LND_FRC_DRY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), LND_FRC_DRY, 2, 1, 2 )
 
       !-----------------
       ! MSS_FRC_CACO3
@@ -4883,22 +4810,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_CACO3 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CACO3,IIPAR,JJPAR,1)
-#else
-      MSS_FRC_CACO3 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CACO3, 2, 1, 2 )
 
       !-----------------
       ! MSS_FRC_CLY
@@ -4907,22 +4819,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_CLY )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CLY,IIPAR,JJPAR,1)
-#else
-      MSS_FRC_CLY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CLY, 2, 1, 2 )
 
       !-----------------
       ! MSS_FRC_SND
@@ -4931,22 +4828,7 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_SND )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_SND,IIPAR,JJPAR,1)
-#else
-      MSS_FRC_SND = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_SND, 2, 1, 2 )
 
       !-----------------
       ! SFC_TYP
@@ -4959,8 +4841,6 @@ c Fix up for negative argument, erf, etc.
       !CALL TRANSFER_2D( ARRAY(:,:,1), SFC_TYP )
 
       ! Also round off
-!      SFC_TYP = NINT( ARRAY(:,:,1) )
-
       F_SFC_TYP = NINT( ARRAY(:,:,1) )
 
 #ifdef MP
@@ -4994,22 +4874,7 @@ c Fix up for negative argument, erf, etc.
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8
-!      CALL TRANSFER_2D( ARRAY(:,:,1), SRCE_FUNC )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,1)
-#else
-      SRCE_FUNC = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), SRCE_FUNC, 2, 1, 2 )
 
       ! Return to calling program
       END SUBROUTINE GET_TIME_INVARIANT_DATA
@@ -5045,8 +4910,6 @@ c Fix up for negative argument, erf, etc.
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! GET_MONTHLY_DATA begins here!
       !=================================================================
@@ -5074,22 +4937,7 @@ c Fix up for negative argument, erf, etc.
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), VAI_DST )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,VAI_DST,IIPAR,JJPAR,1)
-#else
-      VAI_DST = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), VAI_DST, 2, 1, 2 )
 
       ! Return to calling program
       END SUBROUTINE GET_MONTHLY_DATA

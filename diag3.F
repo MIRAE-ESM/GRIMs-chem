@@ -3499,8 +3499,10 @@
          SCALE_ND66 = SCALE_I6   ! For GEOS-3, ND66 is 6-hr instantaneous data
 #elif defined( MERRA )
          SCALE_ND66 = SCALE_A3   ! For MERRA,  ND66 is 3-hour time-avg data
+#elif defined( GRIMS )
+         SCALE_ND66 = SCALEDYN   ! For GRIMS,  ND66 is instantaneous data
 #else
-         SCALE_ND66 = SCALEDYN   ! Otherwise,  ND66 is 6-hr time-avg data
+         SCALE_ND66 = SCALE_A6   ! Otherwise,  ND66 is 6-hr time-avg data
 #endif
 
          DO M = 1, TMAX(66)
@@ -3591,8 +3593,10 @@
 
 #if   defined( MERRA )
          SCALE_ND67 = SCALE_A1     ! For MERRA, most ND67 fields are hourly
+#elif defined( GRIMS )
+         SCALE_ND67 = SCALEDYN     ! For GRIMS, most ND67 fields are instantaneous
 #else
-         SCALE_ND67 = SCALEDYN     ! Otherwise, most ND67 fields are 3-hourly
+         SCALE_ND67 = SCALE_A3     ! Otherwise, most ND67 fields are 3-hourly
 #endif
 
          ! Binary punch file
@@ -3618,7 +3622,7 @@
                   UNIT   = 'm'
                CASE ( 9 )
                   SCALEX = SCALE_ND67
-                  UNIT   = 'hPa'
+                  UNIT   = 'm'
                CASE ( 10 )
                   SCALEX = SCALE_ND67
                   UNIT   = 'unitless'

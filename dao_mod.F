@@ -965,7 +965,7 @@
 
       ENDIF
 
-#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA )
+#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
 
       !--------------------------
       ! GEOS-4 / GEOS-5 / MERRA
@@ -985,9 +985,6 @@
       LAND = ( LWI_GISS(I,J) >= 0.5d0 .and. SNICE(I,J) < 0.5d0 )
     
 #endif
-
-      ! LWI=1 and ALBEDO less than 69.5% is a LAND box 
-      LAND = ( NINT( LWI(I,J) ) == 1 .and. ALBD(I,J) < 0.695d0 )
 
       END FUNCTION IS_LAND
 !EOC
@@ -1066,7 +1063,7 @@
          
       ENDIF
 
-#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA )
+#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
       
       !---------------------------
       ! GEOS-4 / GEOS-5 / MERRA
@@ -1086,9 +1083,6 @@
       WATER = ( LWI_GISS(I,J) < 0.5d0 .and. SNICE(I,J) < 0.5d0 )
 
 #endif
-
-      ! LWI=0 and ALBEDO less than 69.5% is a water box 
-      WATER = ( NINT( LWI(I,J) ) == 0 .and. ALBD(I,J) < 0.695d0 )
 
       END FUNCTION IS_WATER
 !EOC
@@ -1142,7 +1136,7 @@
       ! as a proxy for water coverage instead: ALBEDO > 0.695
       ICE = ( ALBD(I,J) >= 0.695d0 )
 
-#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA )
+#elif defined( GEOS_4 ) || defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
 
       !--------------------------
       ! GEOS-4 / GEOS-5 / MERRA
@@ -1161,9 +1155,6 @@
       ICE = ( SNICE(I,J) >= 0.5d0 )
 
 #endif
-
-      ! LWI=2 or ALBEDO > 69.5% is ice
-      ICE = ( NINT( LWI(I,J) ) == 2 .or. ALBD(I,J) >= 0.695d0 )
 
       END FUNCTION IS_ICE
 !EOC

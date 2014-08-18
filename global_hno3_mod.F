@@ -35,7 +35,7 @@
 !  (8 ) 
 !******************************************************************************
 !     
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -154,9 +154,6 @@
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: F_ARRAY1(IGLOB*2,JGLOB/2,L2x25)
-      REAL*8              :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
-
       ! First time flag
       LOGICAL, SAVE       :: FIRST = .TRUE. 
 
@@ -224,26 +221,7 @@
      &                 L2x25,     ARRAY,     QUIET=.TRUE. )
 
       ! Assign data from ARRAY to the module variable HNO3
-!      CALL TRANSFER_3D( ARRAY, HNO3 )
-
-      IF (MASTER) THEN
-      DO L = 1, L2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, L2x25 )
-      CALL YREV( F_ARRAY1, IGLOB, JGLOB, L2x25 )
-
-      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, L2x25, 2 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,HNO3,IIPAR,JJPAR,LLPAR)
-#else
-      HNO3 = F_ARRAY2
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), HNO3, 2, L2x25, 6 )
 
 #endif
 

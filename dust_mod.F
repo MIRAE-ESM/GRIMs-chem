@@ -15,7 +15,7 @@
 !
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -796,11 +796,11 @@
             ORO(I)         = OROGRAPHY(I,J) 
 
             ! Snow height [m H2O]
-!#if   defined( GEOS_5 ) || defined( MERRA )
+#if   defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
             SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
-!#else
-!            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
-!#endif
+#else
+            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
+#endif
             ! Dust tracer and increments
             DO N = 1, NDSTBIN
                DSRC(I,N)   = 0.0d0
@@ -1071,11 +1071,11 @@
             ORO(I)         = OROGRAPHY(I,J) 
 
             ! Snow height [m H2O]
-!#if   defined( GEOS_5 ) || defined( MERRA )
+#if   defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
             SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
-!#else
-!            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
-!#endif
+#else
+            SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
+#endif
 
             ! Friction velocity [m/s]
             FRC_VEL(I)     = USTAR(I,J)
@@ -1226,9 +1226,6 @@
       REAL*8                 :: GAMMA,  CW,   DTSRCE, AREA_M2
       CHARACTER(LEN=255)     :: FILENAME
 
-      INTEGER                :: L
-      REAL*8                 :: F_ARRAY(IGLOB*2,JGLOB/2,3)
-
       ! Transfer coeff for type natural source  (kg*s2/m5)
       REAL*8, PARAMETER      :: CH_DUST  = 9.375d-10
       REAL*8, PARAMETER      :: G        = G0 * 1.d2
@@ -1281,27 +1278,11 @@
 
          ! Close file
          CLOSE( 65 )
-
-         ! Cast to REAL*8
-!         SRCE_FUNC = ARRAY
-
-         DO L = 1, 3
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY(:,:,L), 2 )
-         ENDDO
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 3 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 3 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,3)
          ENDIF
 
+         ! Cast to REAL*8
          ALLOCATE(SRCE_FUNC(IIPAR,JJPAR,3))
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SRCE_FUNC,IIPAR,JJPAR,3)
-#else
-         SRCE_FUNC = F_ARRAY
-#endif
+         CALL TRANS_REGRID( DBLE(ARRAY), SRCE_FUNC, 2, 3, 2 )
 
          ! Reset first-time flag
          FIRST = .FALSE.
@@ -1990,7 +1971,7 @@
 !
 ! !USES:
 !
-      USE LOGICAL_MOD, ONLY : LDEAD, LSHAO
+      USE LOGICAL_MOD, ONLY : LDEAD
       USE ERROR_MOD,   ONLY : ALLOC_ERR
 
       USE CMN_SIZE_MOD      ! Size parameters

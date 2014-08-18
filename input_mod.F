@@ -580,6 +580,7 @@
       USE GRID_MOD,      ONLY : SET_XOFFSET, SET_YOFFSET,  COMPUTE_GRID
       USE LOGICAL_MOD,   ONLY : LSVGLB,      LUNZIP,       LWAIT
       USE LOGICAL_MOD,   ONLY : LVARTROP,    LLINOZ
+      USE LOGICAL_MOD,   ONLY : LFIXEDAOD,   LINSTAOD,     LAEROIND
 !      USE RESTART_MOD,   ONLY : SET_RESTART
       USE TIME_MOD,      ONLY : SET_BEGIN_TIME,   SET_END_TIME 
       USE TIME_MOD,      ONLY : SET_CURRENT_TIME, SET_DIAGb
@@ -702,8 +703,23 @@
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_simulation_menu:19' )
       READ( SUBSTRS(1:N), *     ) I0, J0
 
-      ! Separator line
+      ! Separator line (start of aerosol direct effect)
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:20' )
+
+      ! Aerosol direct effect with fixed AOD
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:21' )
+      READ( SUBSTRS(1:N), *     ) LFIXEDAOD
+
+      ! Aerosol direct effect with instantaneous AOD
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:22' )
+      READ( SUBSTRS(1:N), *     ) LINSTAOD
+
+      ! Aerosol indirect effect
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:23' )
+      READ( SUBSTRS(1:N), *     ) LAEROIND
+
+      ! Separator line
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:24' )
 
       !=================================================================
       ! Add safety checks for logical switches
@@ -749,6 +765,11 @@
       WRITE( 6, 120     ) 'Use variable tropopause?    : ', LVARTROP
       WRITE( 6, 120     ) 'Use LINOZ strat chemistry?  : ', LLINOZ
       WRITE( 6, 130     ) 'Global offsets I0, J0       : ', I0, J0
+      WRITE( 6, 120     ) 'Aerosol direct effect       : ',
+     &                     LFIXEDAOD .OR. LINSTAOD
+      WRITE( 6, 120     ) '     with fixed AOD         : ', LFIXEDAOD
+      WRITE( 6, 120     ) '     with inst. AOD         : ', LINSTAOD
+      WRITE( 6, 120     ) 'Aerosol indirect effect     : ', LAEROIND
       ENDIF
 
       ! Format statements
@@ -791,6 +812,15 @@
 
       ! Set counter
       CT1 = CT1 + 1
+
+      ! Error check
+      IF ( LFIXEDAOD .AND. LINSTAOD ) THEN
+         LFIXEDAOD = .FALSE.
+         IF (MASTER) THEN
+         WRITE(6,*) 'LFIXEDAOD and LINSTAOD cannot both be turned on.'
+         WRITE(6,*) 'LFIXEDAOD is automatically turned off.'
+         ENDIF
+      ENDIF
 
       END SUBROUTINE READ_SIMULATION_MENU
 !EOC
@@ -6087,6 +6117,7 @@
       USE LOGICAL_MOD,   ONLY : LSHIPTAG,    LPLANETAG
       USE LOGICAL_MOD,   ONLY : LCHEMCO2
       USE LOGICAL_MOD,   ONLY : LRETRO   !(wfr, 3/8/11)
+      USE LOGICAL_MOD,   ONLY : LFIXEDAOD,   LINSTAOD,    LAEROIND
 ! 
 ! !REVISION HISTORY: 
 !  20 Jul 2004 - R. Yantosca - Initial version
@@ -6221,6 +6252,10 @@
 
       LRETRO       = .FALSE.  !(wfr, 3/8/11)
       
+      LFIXEDAOD      = .FALSE.
+      LINSTAOD     = .FALSE.
+      LAEROIND     = .FALSE.
+
       ! Initialize counters
       CT1          = 0
       CT2          = 0

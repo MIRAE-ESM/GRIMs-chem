@@ -23,7 +23,7 @@
 ! 
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -183,7 +183,6 @@
       USE BPCH2_MOD,        ONLY : GET_TAU0,      READ_BPCH2
       USE DIRECTORY_MOD,    ONLY : DATA_DIR_1x1 
       USE LOGICAL_MOD,      ONLY : LFUTURE
-!      USE REGRID_1x1_MOD,   ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
       USE REGRID_1x1_MOD,   ONLY : DO_REGRID_G2G_1x1
       USE SCALE_ANTHRO_MOD, ONLY : GET_ANNUAL_SCALAR_1x1
       USE TIME_MOD,         ONLY : GET_YEAR
@@ -209,8 +208,6 @@
       REAL*8                  :: TAU0
       CHARACTER(LEN=255)      :: FILENAME
       
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! EMISS_BRAVO begins here!
       !=================================================================
@@ -265,22 +262,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid NOx [molec/cm2/s] to current model resolution
-!      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_NOx )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_NOx,IIPAR,JJPAR,1)
-#else
-      BRAVO_NOx = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, BRAVO_NOx, 1, 1, 2 )
 
       !---------------------
       ! Read and regrid CO
@@ -311,22 +293,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid CO [molec/cm2/s] to current model resolution
-!      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_CO )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_CO,IIPAR,JJPAR,1)
-#else
-      BRAVO_CO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, BRAVO_CO, 1, 1, 2 )
 
       !---------------------
       ! Read and regrid SO2
@@ -357,22 +324,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid SO2 [molec/cm2/s] to current model resolution
-!      CALL DO_REGRID_1x1( 'molec/cm2/s', GEOS_1x1, BRAVO_SO2 )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( GEOS_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_SO2,IIPAR,JJPAR,1)
-#else
-      BRAVO_SO2 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, BRAVO_SO2, 1, 1, 2 )
 
       !=================================================================
       ! Compute IPCC future emissions (if necessary)
@@ -535,6 +487,12 @@
             SO2 = SO2 + ( BRAVO_SO2(I,J) * A * B(3) )
          ENDDO
       ENDDO
+
+#ifdef MP
+      CALL MPISUM(NOX)
+      CALL MPISUM(CO)
+      CALL MPISUM(SO2)
+#endif
  
       !----------------
       ! Print sums
@@ -579,7 +537,7 @@
       USE BPCH2_MOD,      ONLY : GET_NAME_EXT_2D, GET_RES_EXT
       USE BPCH2_MOD,      ONLY : GET_TAU0,        READ_BPCH2
       USE DIRECTORY_MOD,  ONLY : DATA_DIR_1x1
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1,   DO_REGRID_G2G_1x1
+      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
 !      USE TRANSFER_MOD,   ONLY : TRANSFER_2D
 
       USE CMN_SIZE_MOD       ! Size parameters
@@ -598,8 +556,6 @@
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       REAL*8                  :: XTAU
       CHARACTER(LEN=255)      :: FILENAME 
-
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_BRAVO_MASK begins here!
@@ -627,25 +583,10 @@
       GEN_1x1(:,:) = ARRAY(:,:,1) 
 
       ! Regrid from GENERIC 1x1 GRID to GEOS 1x1 GRID
-!      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
+      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
       
       ! Regrid from GEOS 1x1 GRID to current model resolution
-!      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, BRAVO_MASK )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BRAVO_MASK,IIPAR,JJPAR,1)
-#else
-      BRAVO_MASK = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, BRAVO_MASK, 1, 1, 2 )
 
       END SUBROUTINE READ_BRAVO_MASK
 !EOC

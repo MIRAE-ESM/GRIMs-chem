@@ -224,7 +224,7 @@
       CALL WETDEP_MERRA(  LS=.TRUE. )
       IF ( LPRT ) CALL DEBUG_MSG( '### DO_WETDEP: after LS wetdep' )
 
-#elif defined( GEOS_5 )
+#elif defined( GEOS_5 ) || defined( GRIMS )
 
       !=================================================================
       ! GEOS5: Only do wet deposition for large-scale + anvil precip
@@ -261,12 +261,12 @@
       !---------------------
 
       ! Create precip fields
-!      CALL MAKE_QQ( LS=.FALSE. )
-!      IF ( LPRT ) CALL DEBUG_MSG( '### DO_WETDEP: before conv wetdep' )
+      CALL MAKE_QQ( LS=.FALSE. )
+      IF ( LPRT ) CALL DEBUG_MSG( '### DO_WETDEP: before conv wetdep' )
 
       !  Do wet deposition
-!      CALL WETDEP(  LS=.FALSE. )
-!      IF ( LPRT ) CALL DEBUG_MSG( '### DO_WETDEP: after conv wetdep' )
+      CALL WETDEP(  LS=.FALSE. )
+      IF ( LPRT ) CALL DEBUG_MSG( '### DO_WETDEP: after conv wetdep' )
 
 #endif
 
@@ -2309,7 +2309,7 @@
       ! Save the local temperature in TK for convenience
       TK = T(I,J,L)
 
-!#if   defined( GEOS_5 ) || defined( MERRA )
+#if   defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
       !------------------------------------------------------------------
       ! NOTE FROM HONGYU LIU (hyl@nianet.org) -- 3/5/08
       !
@@ -2331,7 +2331,7 @@
          RAINFRAC = 0d0
          RETURN
       ENDIF
-!#endif
+#endif
 
       !------------------------------
       ! 210Pb and 7Be (aerosol)

@@ -228,6 +228,7 @@
       USE LOGICAL_MOD,   ONLY : LNLPBL ! (Lin, 03/31/09)
 !      USE VDIFF_PRE_MOD, ONLY : emis_save ! (Lin, 03/31/09)
       USE MODULE_TRANS,  ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD,  ONLY : MASTER
 
       IMPLICIT NONE
@@ -1199,9 +1200,6 @@
       REAL*8,  PARAMETER      :: A = 2.9d-12
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: F_ARRAY1(IGLOB*2,JGLOB/2,LT2x25)
-      REAL*8                  :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
-
       !=================================================================
       ! CHEM_H2O2 begins here!
       !=================================================================
@@ -1260,27 +1258,8 @@
 
 
          ! Cast to REAL*8 and resize if necessary
-!         CALL TRANSFER_3D_TROP( ARRAY, JH2O2 )
+         CALL TRANS_REGRID( DBLE(ARRAY), JH2O2, 2, LT2x25, 8 )
             
-         IF (MASTER) THEN
-         DO L = 1, LT2x25
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-         ENDDO
-
-         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-         CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-
-         CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 3 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,JH2O2,IIPAR,JJPAR,LLPAR)
-#else
-         JH2O2 = F_ARRAY2
-#endif
-
          ! Reset LASTMONTH
          !LASTMONTH = GET_MONTH()
       ENDIF
@@ -5875,7 +5854,7 @@
       ! References to F90 modules
       USE BPCH2_MOD,      ONLY : GET_TAU0, READ_BPCH2
       USE DIRECTORY_MOD,  ONLY : DATA_DIR_1x1
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
+      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
       USE TIME_MOD,       ONLY : EXPAND_DATE
 
       USE CMN_SIZE_MOD         ! Size parameters
@@ -5887,7 +5866,7 @@
       REAL*4               :: ARRAY_GEN(I1x1,J1x1-1,LVOLC)
       REAL*8               :: ARRAY_GEN8(I1x1,J1x1-1)
       REAL*8               :: ARRAY_1x1(I1x1,J1x1,1)
-      REAL*8               :: ARRAY_1LEV(IIPAR,JJPAR)
+      REAL*8               :: ARRAY_1LEV(IGLOB*2,JGLOB/2)
       REAL*8               :: ARRAY(IIPAR,JJPAR,LVOLC)
       REAL*8               :: XTAU
       INTEGER              :: THISYEAR, THISDAY, YYYYMMDD, L
@@ -5951,16 +5930,13 @@
          ARRAY_GEN8 = ARRAY_GEN(:,:,L)
 
          ! Regrid from GENERIC 1x1 GRID to GEOS-Chem 1x1 GRID.
-!         CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
+         CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
 
          ! Regrid from 1x1 to correct grid
-!         CALL DO_REGRID_1x1( 'kg', ARRAY_1x1, ARRAY_1LEV )
+         CALL REGRID_1x1( ARRAY_1x1, ARRAY_1LEV, 1 )
 
          ! Save into correct level of ARRAY
-!         ARRAY(:,:,L) = ARRAY_1LEV
-
-         CALL REGRID_1x1G( ARRAY_GEN8, F_ARRAY(:,:,L), 1 )
-
+         F_ARRAY(:,:,L) = ARRAY_1LEV
       ENDDO
 
       CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, LVOLC )
@@ -6010,7 +5986,7 @@
       ! References to F90 modules
       USE BPCH2_MOD,      ONLY : GET_TAU0, READ_BPCH2
       USE DIRECTORY_MOD,  ONLY : DATA_DIR_1x1
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
+      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
       USE TIME_MOD,       ONLY : EXPAND_DATE
       
       USE CMN_SIZE_MOD         ! Size parameters
@@ -6022,7 +5998,7 @@
       REAL*4               :: ARRAY_GEN(I1x1,J1x1-1,LVOLC)
       REAL*8               :: ARRAY_GEN8(I1x1,J1x1-1)
       REAL*8               :: ARRAY_1x1(I1x1,J1x1,1)
-      REAL*8               :: ARRAY_1LEV(IIPAR,JJPAR)
+      REAL*8               :: ARRAY_1LEV(IGLOB*2,JGLOB/2)
       REAL*8               :: ARRAY(IIPAR,JJPAR,LVOLC)
       REAL*8               :: XTAU
       INTEGER              :: YYYYMMDD, L
@@ -6079,16 +6055,13 @@
             ARRAY_GEN8 = ARRAY_GEN(:,:,L)
 
             ! Regrid from GENERIC 1x1 GRID to GEOS-Chem 1x1 GRID.
-!            CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
+            CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
 
             ! Regrid from 1x1 to correct grid
-!            CALL DO_REGRID_1x1( 'kg', ARRAY_1x1, ARRAY_1LEV )
+            CALL REGRID_1x1( ARRAY_1x1, ARRAY_1LEV, 1 )
 
             ! Save into correct level of ARRAY
-!            ARRAY(:,:,L) = ARRAY_1LEV
-
-            CALL REGRID_1x1G( ARRAY_GEN8, F_ARRAY(:,:,L), 1 )
-
+            F_ARRAY(:,:,L) = ARRAY_1LEV
          ENDDO
 
          CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, LVOLC )
@@ -6207,8 +6180,7 @@
       CHARACTER(LEN=4)              :: SYEAR
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: F_ARRAY1(IGLOB*2,JGLOB/2,2)
-      REAL*8                        :: F_ARRAY2(IIPAR,JJPAR,2)
+      REAL*8                        :: P_ARRAY(IIPAR,JJPAR,2)
 
       !=================================================================
       ! READ_ANTHRO_SOx begins here!
@@ -6353,24 +6325,9 @@
      &                    XTAU,      I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         IF (MASTER) THEN
-         DO L = 1, 2
-            CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-         ENDDO
+         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY, 2, 2, 2 )
 
-         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 2 )
-         CALL YREV( F_ARRAY1, IGLOB, JGLOB, 2 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,2)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,F_ARRAY2,IIPAR,JJPAR,2)
-#else
-         F_ARRAY2 = F_ARRAY1
-#endif
-
-         E_SOx = F_ARRAY2
+         E_SOx = P_ARRAY
 
          !=================================================================
          ! Read in yearly SO2 scale factors here
@@ -6525,8 +6482,6 @@
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !==================================================================
       ! READ_OCEAN_DMS begins here!
       !==================================================================
@@ -6551,23 +6506,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. ) 
 
       ! Cast from REAL*4 to REAL*8 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), DMSo )
+      CALL TRANS_REGRID( DBLE(ARRAY), DMSo, 2, 1, 2 )
       
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,DMSo,IIPAR,JJPAR,1)
-#else
-      DMSo = F_ARRAY
-#endif
-
       ! Return to calling program
       END SUBROUTINE READ_OCEAN_DMS
 
@@ -6615,8 +6555,6 @@
       CHARACTER(LEN=4)        :: SYEAR
       CHARACTER(LEN=255)      :: FILENAME
 
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !==================================================================
       ! READ_SST begins here!
       !==================================================================
@@ -6651,22 +6589,7 @@
      &                    1,         ARRAY1(:,:,1), QUIET=.TRUE. ) 
 
          ! Regrid from 1x1 and cast to REAL*8
-!         CALL DO_REGRID_1x1( 'K', ARRAY1, SSTEMP )
-
-         IF (MASTER) THEN
-         CALL REGRID_1x1( DBLE( ARRAY1(:,:,1) ), F_ARRAY, 2 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
-#else
-         SSTEMP = F_ARRAY
-#endif
+         CALL TRANS_REGRID( DBLE(ARRAY1), SSTEMP, 1, 1, 2 )
 
       ELSE
 
@@ -6693,22 +6616,7 @@
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. ) 
 
          ! Cast from REAL*4 to REAL*8 
-!         CALL TRANSFER_2D( ARRAY(:,:,1), SSTEMP )
-
-         IF (MASTER) THEN
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-         CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SSTEMP,IIPAR,JJPAR,1)
-#else
-         SSTEMP = F_ARRAY
-#endif
+         CALL TRANS_REGRID( DBLE(ARRAY), SSTEMP, 2, 1, 2 )
 
       ENDIF
 
@@ -6782,8 +6690,6 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
                                     
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! Days per month              
       REAL*8 :: NMDAY(12) = (/ 31d0, 28d0, 31d0, 30d0, 31d0, 30d0, 
      &                         31d0, 31d0, 30d0, 31d0, 30d0, 31d0/)
@@ -6818,22 +6724,7 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE.  ) 
 
       ! Cast from REAL*4 to REAL*8
-!      CALL TRANSFER_2D( ARRAY(:,:,1), BIOCO )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,BIOCO,IIPAR,JJPAR,1)
-#else
-      BIOCO = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), BIOCO, 2, 1, 1 )
 
       !=================================================================
       ! Unit conversion to [kg SO2/s]
@@ -6964,8 +6855,7 @@
       REAL*8              :: FAC, FUEL, DZ(LLPAR), ZH(0:LLPAR)
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: F_ARRAY1(I2x25,J2x25,20)
-      REAL*8              :: F_ARRAY2(IGLOB*2,JGLOB/2,20)
+      REAL*8              :: F_ARRAY(I2x25,J2x25,20)
 
       ! Month names
       CHARACTER(LEN=3)    :: CMONTH(12) = (/'jan', 'feb', 'mar', 'apr', 
@@ -6979,8 +6869,7 @@
       ! Zero arrays
       ESO2_ac = 0d0
       ACSO2   = 0d0
-      F_ARRAY1 = 0d0
-      F_ARRAY2 = 0d0
+      F_ARRAY = 0d0
       
       ! File name
       FILENAME = TRIM( DATA_DIR )               // 
@@ -7025,27 +6914,14 @@
          ! Unit conversion: [kg Fuel/box/day] -> [kg SO2/box/s]
          ! Assuming an emission index of 1.0, 
          ! 1 g SO2 / kg fuel burned [Weisenstein et al., 1996]
-         F_ARRAY1(I,J,L+1) = 1.d-3 * FUEL / ( 24.d0 * 3600d0 )
+         F_ARRAY(I,J,L+1) = 1.d-3 * FUEL / ( 24.d0 * 3600d0 )
       ENDDO
 
       ! Close file
       CLOSE( IU_FILE )
-
-      DO L = 1, 20
-         CALL REGRID_2x25( F_ARRAY1(:,:,L), F_ARRAY2(:,:,L), 1 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 20 )
-      CALL YREV( F_ARRAY2, IGLOB, JGLOB, 20 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,20)
       ENDIF
 
-#ifdef MP
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,ACSO2,IIPAR,JJPAR,20)
-#else
-      ACSO2 = F_ARRAY2
-#endif
+      CALL TRANS_REGRID( F_ARRAY, ACSO2, 2, 20, 1 )
 
       !=================================================================
       ! Interpolate from the 1-km grid to the given GEOS-CHEM grid
@@ -7145,8 +7021,7 @@
       REAL*8                        :: XTAU, AREA_CM2
       CHARACTER (LEN=255)           :: FILENAME
 
-      REAL*8                        :: F_ARRAY1(IGLOB*2,JGLOB/2)
-      REAL*8                        :: F_ARRAY2(IIPAR,JJPAR)
+      REAL*8                        :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
       ! READ_SHIP_SO2 begins here!
@@ -7211,24 +7086,9 @@
      &                    1,         ARRAY(:,:,1),  QUIET=.TRUE. )
 
          ! Cast from REAL*4 to REAL*8
-!         CALL TRANSFER_2D( ARRAY(:,:,1), SHIPSO2 )
+         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY, 2, 1, 2 )
 
-         IF (MASTER) THEN
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY1, 2 )
-
-         CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
-         CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
-
-         CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
-         ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY1,IGLOB*2,JGLOB/2,F_ARRAY2,IIPAR,JJPAR,1)
-#else
-         F_ARRAY2 = F_ARRAY1
-#endif
-
-         SHIPSO2 = F_ARRAY2
+         SHIPSO2 = P_ARRAY
 
          ! Loop over latitudes
          DO J = 1, LATLOOP
@@ -7304,7 +7164,8 @@
                
             IF ( LEMEPSHIP ) THEN
                IF ( GET_EUROPE_MASK(I,J) > 0d0 )
-     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, 26, KG_S=.TRUE.,
+     $           ESO2_sh(I,J) = GET_EMEP_ANTHRO(I, J, IDTSO2, 
+     &                                          KG_S=.TRUE.,
      $                                          SHIP=.TRUE.)
             ENDIF
 
@@ -7381,8 +7242,6 @@
       CHARACTER(LEN=255)            :: FILENAME
       REAL*8                        :: STREETS
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! READ_ANTHRO_NH3 begins here!
       !=================================================================
@@ -7407,22 +7266,7 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_an )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_an,IIPAR,JJPAR,1)
-#else
-      ENH3_an = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_an, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -7511,8 +7355,6 @@
      &                                      30d0, 31d0, 30d0, 31d0 /)
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! READ_NATURAL_NH3 begins here!
       !=================================================================
@@ -7537,22 +7379,7 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_na )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_na,IIPAR,JJPAR,1)
-#else
-      ENH3_na = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_na, 2, 1, 1 )
 
       ! Convert from [kg N/box/mon] to [kg NH3/box/s]
       ENH3_na = ENH3_na * ( 17.d0 / 14.d0 ) /
@@ -7636,8 +7463,6 @@
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! READ_BIOFUEL_NH3 begins here!
       !=================================================================
@@ -7666,23 +7491,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
  
       ! Cast from REAL*4 to REAL*8 and resize if necesary
-!      CALL TRANSFER_2D( ARRAY(:,:,1), ENH3_bf )
+      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_bf, 2, 1, 1 )
 
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ENH3_bf,IIPAR,JJPAR,1)
-#else
-      ENH3_bf = F_ARRAY
-#endif
- 
       ! Store NH3 in ENH3_bf array [kg NH3/box/s]
       ENH3_bf = ENH3_bf / ( NMDAY(THISMONTH) * 86400.d0 )
 
@@ -7810,9 +7620,6 @@
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
-      REAL*8              :: F_ARRAY1(IGLOB*2,JGLOB/2,LT2x25)
-      REAL*8              :: F_ARRAY2(IGLOB*2,JGLOB/2,LLPAR)
-
       !=================================================================
       ! READ_OXIDANT begins here !
       !
@@ -7849,27 +7656,8 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-!      CALL TRANSFER_3D_TROP( ARRAY, PH2O2m )
+      CALL TRANS_REGRID( DBLE(ARRAY), PH2O2m, 2, LT2x25, 8 )
             
-      IF (MASTER) THEN
-      DO L = 1, LT2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-      CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-
-      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 3 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,PH2O2m,IIPAR,JJPAR,LLPAR)
-#else
-      PH2O2m = F_ARRAY2
-#endif
-
       !=================================================================
       ! Read monthly mean O3 [v/v]
       !=================================================================
@@ -7893,27 +7681,8 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-!      CALL TRANSFER_3D_TROP( ARRAY, O3m ) 
+      CALL TRANS_REGRID( DBLE(ARRAY), O3m, 2, LT2x25, 6 )
       
-      IF (MASTER) THEN
-      DO L = 1, LT2x25
-         CALL REGRID_2x25( DBLE( ARRAY(:,:,L) ), F_ARRAY1(:,:,L), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-      CALL YREV( F_ARRAY1, IGLOB, JGLOB, LT2x25 )
-
-      CALL INTERP_VER( F_ARRAY1, F_ARRAY2, LT2x25, 2 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,LLPAR)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY2,IGLOB*2,JGLOB/2,O3m,IIPAR,JJPAR,LLPAR)
-#else
-      O3m = F_ARRAY2
-#endif
-
       ! Return to calling program
       END SUBROUTINE READ_OXIDANT
 

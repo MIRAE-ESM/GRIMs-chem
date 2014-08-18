@@ -16,7 +16,7 @@
 ! 
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -237,8 +237,6 @@
       CHARACTER(LEN=4)           :: SYEAR, SNAME
       CHARACTER (LEN=2)          :: SMONTH
 
-      REAL*8                     :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! EMISS_ICOADS_SHIP begins here!
       !=================================================================
@@ -315,41 +313,11 @@
          ! Regrid from GEOS 1x1 --> current model resolution
          IF ( SPECIES .eq. 1 ) THEN
 
-!            CALL DO_REGRID_1x1( 'kg/month', GEOS_1x1, NOx )
-
-            IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1(:,:,1), F_ARRAY, 1 )
-
-            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-            ENDIF
-
-#ifdef MP
-            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,NOx,IIPAR,JJPAR,1)
-#else
-            NOx = F_ARRAY
-#endif
+            CALL TRANS_REGRID( GEOS_1x1, NOx, 1, 1, 1 )
 
          ELSEIF ( SPECIES .eq. 2 ) THEN
 
-!            CALL DO_REGRID_1x1( 'kg/month', GEOS_1x1, CO )
-
-            IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1(:,:,1), F_ARRAY, 1 )
-
-            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-            ENDIF
-
-#ifdef MP
-            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,CO,IIPAR,JJPAR,1)
-#else
-            CO = F_ARRAY
-#endif
+            CALL TRANS_REGRID( GEOS_1x1, CO, 1, 1, 1 )
 
          ELSEIF ( SPECIES .eq. 3 ) THEN
 
@@ -358,22 +326,7 @@
             ! utilized in sulfate_mod.f
             GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * 0.986
 
-!            CALL DO_REGRID_1x1( 'kg/month', GEOS_1x1, SO2 )
-
-            IF (MASTER) THEN
-            CALL REGRID_1x1( GEOS_1x1(:,:,1), F_ARRAY, 1 )
-
-            CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-            CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-            CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-            ENDIF
-
-#ifdef MP
-            CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,SO2,IIPAR,JJPAR,1)
-#else
-            SO2 = F_ARRAY
-#endif
+            CALL TRANS_REGRID( GEOS_1x1, SO2, 1, 1, 1 )
 
          ENDIF
 
@@ -488,6 +441,7 @@
       INTEGER             :: I,     J
       REAL*8              :: T_NOX, T_CO,  T_SO2
       CHARACTER(LEN=3)    :: UNIT
+      REAL*8, EXTERNAL    :: MAKE_SUM
 
       !=================================================================
       ! TOTAL_ICOADS_SHIP_TG begins here!
@@ -502,13 +456,13 @@
 
 
       ! Total NOx [Tg N]
-      T_NOX = SUM( NOx ) * 1d-9 * ( 14d0 / 46d0 )
+      T_NOX = MAKE_SUM( NOx, 1 ) * 1d-9 * ( 14d0 / 46d0 )
 
       ! Total CO  [Tg CO]
-      T_CO  = SUM( CO  ) * 1d-9
+      T_CO  = MAKE_SUM( CO, 1  ) * 1d-9
 
       ! Total SO2 [Tg S]
-      T_SO2 = SUM( SO2 ) * 1d-9 * ( 32d0 / 64d0 )
+      T_SO2 = MAKE_SUM( SO2, 1 ) * 1d-9 * ( 32d0 / 64d0 )
 
       ! Print totals in [kg]
       IF (MASTER) THEN
@@ -559,9 +513,7 @@
 !
 ! !LOCAL VARIABLES:
 !
-      INTEGER              :: AS, J
-
-      INTEGER              :: I
+      INTEGER              :: AS, I, J
 
       !=================================================================
       ! INIT_ICOADS_SHIP begins here!

@@ -15,7 +15,7 @@
 ! 
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -92,8 +92,6 @@
       REAL*8                        :: AS_1x1x1(I1x1,J1x1,1)
       REAL*8                        :: AS_R8(IIPAR,JJPAR)
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! Read 1x1 scale factors
       CALL GET_ANNUAL_SCALAR_1x1( TRACER, B_YEAR, T_YEAR, AS_1x1 )
 
@@ -101,22 +99,7 @@
       AS_1x1x1(:,:,1) = AS_1x1(:,:)
 
       ! Regrid emissions factors to current model resolution
-!      CALL DO_REGRID_1x1( 'unitless', AS_1x1x1, AS_R8 )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1( AS_1x1x1(:,:,1), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,AS_R8,IIPAR,JJPAR,1)
-#else
-      AS_R8 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( AS_1x1x1, AS_R8, 1, 1, 2 )
 
       ! Cast to REAL*4
       AS(:,:) = AS_R8(:,:)

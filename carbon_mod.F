@@ -176,7 +176,7 @@
 !******************************************************************************
 !
       USE LOGICAL_MOD,    ONLY : LNLPBL ! (Lin,03/31/09)
-      USE MODULE_TRANS,   ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD,   ONLY : MASTER
 
       IMPLICIT NONE
@@ -4674,8 +4674,6 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! Hydrophilic fraction of BLACK CARBON (aka ELEMENTAL CARBON)
       REAL*8, PARAMETER             :: FHB = 0.2d0
 
@@ -4717,22 +4715,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4766,22 +4749,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4827,22 +4795,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4877,22 +4830,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4969,8 +4907,6 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! Hydrophilic fraction of BLACK CARBON aerosol
       REAL*8, PARAMETER             :: FHB = 0.2d0
 
@@ -5019,22 +4955,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
@@ -5071,22 +4992,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
@@ -5138,22 +5044,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
@@ -5193,22 +5084,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
@@ -5276,8 +5152,6 @@ c
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
 
-      REAL*8                        :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       ! Hydrophilic fraction of carbonaceous aerosols
       REAL*8, PARAMETER             :: FHB = 0.2d0
       REAL*8, PARAMETER             :: FHO = 0.5d0
@@ -5315,22 +5189,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -5364,22 +5223,7 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FD2D )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 1 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FD2D,IIPAR,JJPAR,1)
-#else
-      FD2D = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FD2D, 2, 1, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )

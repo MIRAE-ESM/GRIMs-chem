@@ -16,7 +16,7 @@
 !
 ! !USES:
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -394,8 +394,6 @@
       CHARACTER(LEN=16 ) :: TIME_STR
       INTEGER            :: DD, HH, DOY
 
-      REAL*8             :: F_ARRAY(IGLOB*2,JGLOB/2,N_SPEC)
-
       !=================================================================
       ! GFED3_COMPUTE_BIOMASS begins here!
       !=================================================================
@@ -615,26 +613,7 @@
 
       ! Regrid from GEOS 1x1 grid to current grid.  (The unit 'molec/cm2' 
       ! is just used to denote that the quantity is per unit area.)
-!      CALL DO_REGRID_1x1( N_SPEC,       'molec/cm2', 
-!     &                    BIOM_GEOS_1x1, GFED3_BIOMASS ) 
-
-      IF (MASTER) THEN
-      DO N = 1, N_SPEC
-         CALL REGRID_1x1( BIOM_GEOS_1x1(:,:,N), F_ARRAY(:,:,N), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, N_SPEC )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, N_SPEC )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,N_SPEC)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
-     &            GFED3_BIOMASS,IIPAR,JJPAR,N_SPEC)
-#else
-      GFED3_BIOMASS = F_ARRAY
-#endif
+      CALL TRANS_REGRID( BIOM_GEOS_1x1, GFED3_BIOMASS, 1, N_SPEC, 2 )
 
       ! Compute future biomass emissions (if necessary)
       IF ( LFUTURE ) THEN
@@ -840,6 +819,10 @@
             ENDDO
          ENDDO
      
+#ifdef MP
+         CALL MPISUM(TOTAL)
+#endif
+
          ! Write totals
          IF (MASTER) THEN
          WRITE( 6, 110 ) NAME, TOTAL, UNIT

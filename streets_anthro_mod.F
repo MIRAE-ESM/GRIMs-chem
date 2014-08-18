@@ -82,7 +82,7 @@
 !        Initiated 1/2x2/3 annual scaling. (amv, bmy, 12/18/09)
 !******************************************************************************
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -1018,7 +1018,7 @@
 !      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
       USE DIRECTORY_MOD,  ONLY : DATA_DIR_1x1
 !      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
+      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
       USE TIME_MOD,       ONLY : GET_MONTH
       USE TRACERID_MOD,   ONLY : IDTNH3
 
@@ -1036,8 +1036,6 @@
       REAL*8            :: GEN_1x1(I1x1,J1x1-1)
       REAL*8            :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=50) :: THISUNIT
-
-      REAL*8            :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       ! Variables for seasonal scaling of NH3 (jaf, 3/2/11)
       REAL*4            :: SCALAR_1x1(I1x1,J1x1-1,1)
@@ -1112,29 +1110,14 @@
       GEN_1x1(:,:) = ARRAY(:,:,1)
       
       ! Regrid from GENERIC 1x1 --> GEOS 1x1 
-!      CALL DO_REGRID_G2G_1x1( THISUNIT, GEN_1x1, GEOS_1x1(:,:,1) )
+      CALL DO_REGRID_G2G_1x1( THISUNIT, GEN_1x1, GEOS_1x1(:,:,1) )
 
       ! Regrid from GEOS 1x1 --> current model resolution
-!      CALL DO_REGRID_1x1( THISUNIT, GEOS_1x1, ARR )
-
-      IF (MASTER) THEN
       IF ( PRESENT( UNIT ) ) THEN
-         CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
+         CALL TRANS_REGRID( GEOS_1x1, ARR, 1, 1, 2 )
       ELSE
-         CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 1 )
+         CALL TRANS_REGRID( GEOS_1x1, ARR, 1, 1, 1 )
       ENDIF
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,ARR,IIPAR,JJPAR,1)
-#else
-      ARR = F_ARRAY
-#endif
 
 
       END SUBROUTINE READ_STREETS
@@ -1894,6 +1877,7 @@
       REAL*8              :: T_ACET, T_ALD2, T_ALK4, T_C2H6
       REAL*8              :: T_C3H8, T_CH2O, T_MEK,  T_PRPE
       REAL*8              :: AFACTOR
+      REAL*8, EXTERNAL    :: MAKE_SUM
 
       CHARACTER(LEN=3)    :: UNIT
 
@@ -1918,7 +1902,7 @@
          !-----------------------
 
          ! Total CH4 [Tg CH4]
-         T_CH4 = SUM( CH4 ) * 1d-9
+         T_CH4 = MAKE_SUM( CH4, 1 ) * 1d-9
 
          ! Print totals
          IF (MASTER) THEN
@@ -1932,7 +1916,7 @@
          !-----------------------
 
          ! Total CO2 [Tg CO2]
-         T_CH4 = SUM( CO2 ) * 1d-9
+         T_CH4 = MAKE_SUM( CO2, 1 ) * 1d-9
 
          ! Print totals
          IF (MASTER) THEN
@@ -1964,16 +1948,16 @@
 #endif
          
          ! Total NOx [Tg N]
-         T_NOX = SUM( NOx ) * 1d-9 * ( 14d0 / ( 12d0 * 46d0 ) )
+         T_NOX = MAKE_SUM( NOx, 1 ) * 1d-9 * ( 14d0 / ( 12d0 * 46d0 ) )
  
          ! Total CO  [Tg CO]
-         T_CO  = SUM( CO  ) * 1d-9 / 12d0
+         T_CO  = MAKE_SUM( CO, 1  ) * 1d-9 / 12d0
 
          ! Total SO2 [Tg S]
-         T_SO2 = SUM( SO2 ) * 1d-9 * ( 32d0 / ( 12d0 * 64d0 ) )
+         T_SO2 = MAKE_SUM( SO2, 1 ) * 1d-9 * ( 32d0 / ( 12d0 * 64d0 ) )
 
          ! Total NH3 [Tg NH3]
-         T_NH3 = SUM( NH3 ) * 1d-9 / 12d0
+         T_NH3 = MAKE_SUM( NH3, 1 ) * 1d-9 / 12d0
          
          IF ( IS_2006 ) THEN
 
@@ -1981,14 +1965,14 @@
 
             AFACTOR = AFACTOR / 12d0 ! convert from Tg/yr to Tg/month 
             
-            T_ACET = SUM(ACET)  * AFACTOR
-            T_ALD2 = SUM(ALD2)  * AFACTOR
-            T_ALK4 = SUM(ALK4)  * AFACTOR
-            T_C2H6 = SUM(C2H6)  * AFACTOR
-            T_C3H8 = SUM(C3H8)  * AFACTOR
-            T_CH2O = SUM(CH2O)  * 30d-12 / (6.0225d23 * 12d0)
-            T_MEK  = SUM(MEK)   * AFACTOR
-            T_PRPE = SUM(PRPE)  * AFACTOR
+            T_ACET = MAKE_SUM(ACET,1)  * AFACTOR
+            T_ALD2 = MAKE_SUM(ALD2,1)  * AFACTOR
+            T_ALK4 = MAKE_SUM(ALK4,1)  * AFACTOR
+            T_C2H6 = MAKE_SUM(C2H6,1)  * AFACTOR
+            T_C3H8 = MAKE_SUM(C3H8,1)  * AFACTOR
+            T_CH2O = MAKE_SUM(CH2O,1)  * 30d-12 / (6.0225d23 * 12d0)
+            T_MEK  = MAKE_SUM(MEK,1)   * AFACTOR
+            T_PRPE = MAKE_SUM(PRPE,1)  * AFACTOR
 
          ENDIF
 
@@ -2049,7 +2033,7 @@
       ! References to F90 modules
       USE BPCH2_MOD,      ONLY : READ_BPCH2
       USE DIRECTORY_MOD,  ONLY : DATA_DIR_1x1
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1, DO_REGRID_1x1
+      USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
 
       USE CMN_SIZE_MOD       ! Size parameters
 
@@ -2058,8 +2042,6 @@
       REAL*8                  :: GEN_1x1(I1x1,J1x1-1)
       REAL*8                  :: GEOS_1x1(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
-
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2)
 
       !=================================================================
       ! READ_STREETS_MASKS begins here!
@@ -2091,25 +2073,10 @@
       MASK_CHINA_1x1(:,:) = GEN_1x1(:,:)
 
       ! Regrid from GENERIC 1x1 GRID to GEOS 1x1 GRID
-!      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
+      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-!      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, MASK_CHINA )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MASK_CHINA,IIPAR,JJPAR,1)
-#else
-      MASK_CHINA = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, MASK_CHINA, 1, 1, 2 )
 
       !------------------------------------
       ! SE Asia Mask (for 2000 emissions)
@@ -2133,25 +2100,10 @@
       GEN_1x1(:,:) = ARRAY(:,:,1)
 
       ! Regrid from GENERIC 1x1 GRID to GEOS 1x1 GRID
-!      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
+      CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-!      CALL DO_REGRID_1x1( 'unitless', GEOS_1x1, MASK_SE_ASIA )
-
-      IF (MASTER) THEN
-      CALL REGRID_1x1G( GEN_1x1, F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MASK_SE_ASIA,IIPAR,JJPAR,1)
-#else
-      MASK_SE_ASIA = F_ARRAY
-#endif
+      CALL TRANS_REGRID( GEOS_1x1, MASK_SE_ASIA, 1, 1, 2 )
 
       ! Return to calling program
       END SUBROUTINE READ_STREETS_MASKS
@@ -2266,9 +2218,7 @@
       USE CMN_SIZE_MOD    ! Size parameters
 
       ! Local variables
-      INTEGER              :: AS, J
-
-      INTEGER              :: I
+      INTEGER              :: AS, I, J
 
       !=================================================================
       ! INIT_STREETS begins here!

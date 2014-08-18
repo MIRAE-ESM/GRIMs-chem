@@ -84,7 +84,7 @@
 !--------------------------------------------------------------------------------------
 !****************************byk(090519)for shao scheme - end  *******************
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -2211,14 +2211,12 @@ ctdf        print *,' no mobilisation candidates'
       USE CMN_SIZE_MOD     ! Size parameters
 
       ! Local variables
-      INTEGER               :: I, IOS
+      INTEGER               :: I, J, IOS
       REAL*4                :: ARRAY(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
       INTEGER               :: F_SFC_TYP(I2x25,J2x25)
-      INTEGER               :: J
       INTEGER, EXTERNAL     :: CLX, CLY
 
       !=================================================================
@@ -2263,22 +2261,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), LND_FRC_DRY )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,LND_FRC_DRY,IIPAR,JJPAR,1)
-#else
-      LND_FRC_DRY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), LND_FRC_DRY, 2, 1, 2 )
 
       !-----------------
       ! MSS_FRC_CLY
@@ -2287,22 +2270,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_CLY )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_CLY,IIPAR,JJPAR,1)
-#else
-      MSS_FRC_CLY = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CLY, 2, 1, 2 )
 
       !-----------------
       ! MSS_FRC_SND
@@ -2311,22 +2279,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), MSS_FRC_SND )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,MSS_FRC_SND,IIPAR,JJPAR,1)
-#else
-      MSS_FRC_SND = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_SND, 2, 1, 2 )
 
       !-----------------
       ! SFC_TYP
@@ -2339,8 +2292,6 @@ ctdf        print *,' no mobilisation candidates'
       !CALL TRANSFER_2D( ARRAY(:,:,1), SFC_TYP )
 
       ! Also round off
-!      SFC_TYP = NINT( ARRAY(:,:,1) )
-
       F_SFC_TYP = NINT( ARRAY(:,:,1) )
 
 #ifdef MP
@@ -2372,22 +2323,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S01 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S01,IIPAR,JJPAR,1)
-#else
-      FRC_S01 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S01, 2, 1, 2 )
 
       !-----------------
       ! FRC_02  LOAMY SAND
@@ -2396,22 +2332,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S02 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S02,IIPAR,JJPAR,1)
-#else
-      FRC_S02 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S02, 2, 1, 2 )
 
       !-----------------
       ! FRC_03  SANDY LOAM
@@ -2420,22 +2341,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S03 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S03,IIPAR,JJPAR,1)
-#else
-      FRC_S03 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S03, 2, 1, 2 )
 
       !-----------------
       ! FRC_04  SILT LOAM
@@ -2444,22 +2350,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S04 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S04,IIPAR,JJPAR,1)
-#else
-      FRC_S04 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S04, 2, 1, 2 )
 
       !-----------------
       ! FRC_05  SILT
@@ -2468,22 +2359,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S05 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S05,IIPAR,JJPAR,1)
-#else
-      FRC_S05 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S05, 2, 1, 2 )
 
       !-----------------
       ! FRC_06  LOAM
@@ -2492,22 +2368,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S06 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S06,IIPAR,JJPAR,1)
-#else
-      FRC_S06 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S06, 2, 1, 2 )
 
       !-----------------
       ! FRC_07  SANDY CLAY LOAM
@@ -2516,22 +2377,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S07 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S07,IIPAR,JJPAR,1)
-#else
-      FRC_S07 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S07, 2, 1, 2 )
 
       !-----------------
       ! FRC_08  SILTY CLAY LOAM
@@ -2540,22 +2386,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S08 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S08,IIPAR,JJPAR,1)
-#else
-      FRC_S08 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S08, 2, 1, 2 )
 
       !-----------------
       ! FRC_09  CLAY LOAM
@@ -2564,22 +2395,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S09 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S09,IIPAR,JJPAR,1)
-#else
-      FRC_S09 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S09, 2, 1, 2 )
 
       !-----------------
       ! FRC_10  SANDY CLAY
@@ -2588,22 +2404,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S10 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S10,IIPAR,JJPAR,1)
-#else
-      FRC_S10 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S10, 2, 1, 2 )
 
       !-----------------
       ! FRC_11  SILTY CLAY
@@ -2612,22 +2413,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S11 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S11,IIPAR,JJPAR,1)
-#else
-      FRC_S11 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S11, 2, 1, 2 )
 
       !-----------------
       ! FRC_12  CLAY
@@ -2636,22 +2422,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-!      CALL TRANSFER_2D( ARRAY(:,:,1), FRC_S12 )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,FRC_S12,IIPAR,JJPAR,1)
-#else
-      FRC_S12 = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S12, 2, 1, 2 )
 
       ! Return to calling program
       END SUBROUTINE GET_TIME_INVARIANT_DATA
@@ -2687,8 +2458,6 @@ ctdf        print *,' no mobilisation candidates'
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
-      REAL*8                :: F_ARRAY(IGLOB*2,JGLOB/2)
-
       !=================================================================
       ! GET_MONTHLY_DATA begins here!
       !=================================================================
@@ -2716,22 +2485,7 @@ ctdf        print *,' no mobilisation candidates'
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-!      CALL TRANSFER_2D( ARRAY(:,:,1), VAI_DST )
-
-      IF (MASTER) THEN
-      CALL REGRID_2x25( DBLE( ARRAY(:,:,1) ), F_ARRAY, 2 )
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, 1 )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, 1 )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,1)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,VAI_DST,IIPAR,JJPAR,1)
-#else
-      VAI_DST = F_ARRAY
-#endif
+      CALL TRANS_REGRID( DBLE(ARRAY), VAI_DST, 2, 1, 2 )
 
       ! Return to calling program
       END SUBROUTINE GET_MONTHLY_DATA

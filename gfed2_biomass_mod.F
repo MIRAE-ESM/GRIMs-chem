@@ -104,7 +104,7 @@
 !        2008 is now available on disk (bmy, 7/8/09)
 !******************************************************************************
 !
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD, ONLY : MASTER
 
       IMPLICIT NONE
@@ -338,7 +338,6 @@
       USE LOGICAL_MOD,    ONLY : LFUTURE
       USE LOGICAL_MOD,    ONLY : L8DAYBB, L3HRBB, LSYNOPBB, LGFED2BB
       USE TIME_MOD,       ONLY : EXPAND_DATE,   TIMESTAMP_STRING
-!      USE REGRID_1x1_MOD, ONLY : DO_REGRID_1x1, DO_REGRID_G2G_1x1
       USE REGRID_1x1_MOD, ONLY : DO_REGRID_G2G_1x1
       USE TIME_MOD,       ONLY : GET_DAY, GET_HOUR, GET_DAY_OF_YEAR
       USE TIME_MOD,       ONLY : ITS_A_LEAPYEAR
@@ -364,8 +363,6 @@
       CHARACTER(LEN=255)      :: FILENAME
       CHARACTER(LEN=16 )      :: TIME_STR
       INTEGER                 :: DD, HH, DOY
-
-      REAL*8                  :: F_ARRAY(IGLOB*2,JGLOB/2,N_SPEC)
 
       !=================================================================
       ! GFED2_COMPUTE_BIOMASS begins here!
@@ -627,26 +624,7 @@
 
       ! Regrid from GEOS 1x1 grid to current grid.  (The unit 'molec/cm2' 
       ! is just used to denote that the quantity is per unit area.)
-!      CALL DO_REGRID_1x1( N_SPEC,       'molec/cm2', 
-!     &                    BIOM_GEOS_1x1, GFED2_BIOMASS ) 
-
-      IF (MASTER) THEN
-      DO N = 1, N_SPEC
-         CALL REGRID_1x1( BIOM_GEOS_1x1(:,:,N), F_ARRAY(:,:,N), 2 )
-      ENDDO
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, N_SPEC )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, N_SPEC )
-
-      CALL DYN_TRANS2MODEL_GRID(F_ARRAY,N_SPEC)
-      ENDIF
-
-#ifdef MP
-      CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,
-     &            GFED2_BIOMASS,IIPAR,JJPAR,N_SPEC)
-#else
-      GFED2_BIOMASS = F_ARRAY
-#endif
+      CALL TRANS_REGRID( BIOM_GEOS_1x1, GFED2_BIOMASS, 1, N_SPEC, 2 )
 
       ! Compute future biomass emissions (if necessary)
       IF ( LFUTURE ) THEN
@@ -852,6 +830,10 @@
             ENDDO
          ENDDO
      
+#ifdef MP
+         CALL MPISUM(TOTAL)
+#endif
+
          ! Write totals
          IF (MASTER) THEN
          WRITE( 6, 110 ) NAME, TOTAL, UNIT

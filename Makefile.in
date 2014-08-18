@@ -32,16 +32,13 @@ UTILS = ${UTILDIR}/error_mod.o \
         ${UTILDIR}/pressure_mod.o \
         ${UTILDIR}/regrid_1x1_mod.o \
         ${UTILDIR}/time_mod.o \
+        ${UTILDIR}/trans_regrid_mod.o \
         ${UTILDIR}/unix_cmds_mod.o \
         ${UTILDIR}/closest.o \
         ${UTILDIR}/cnv_gaussian_lat.o \
         ${UTILDIR}/ifort_errmsg.o \
-        ${UTILDIR}/interp_ver.o \
-        ${UTILDIR}/interp_ver_f.o \
         ${UTILDIR}/linux_err.o \
-        ${UTILDIR}/regrid_1x1.o \
-        ${UTILDIR}/regrid_1x1G.o \
-        ${UTILDIR}/regrid_2x25.o \
+        ${UTILDIR}/sum.o \
         ${UTILDIR}/tpp_reichler.o \
         ${UTILDIR}/xshift.o \
         ${UTILDIR}/yrev.o

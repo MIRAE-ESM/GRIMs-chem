@@ -235,5 +235,10 @@
       LOGICAL :: LND51_HDF       ! Save ND51  diagnostic in HDF5?
       LOGICAL :: LND51b_HDF      ! Save ND51b diagnostic in HDF5?
 
+      !%%%% Aerosol Feedback %%%%
+      LOGICAL :: LFIXEDAOD       ! Aerosol direct effect with fixed AOD
+      LOGICAL :: LINSTAOD        ! Aerosol direct effect with instantaneous AOD
+      LOGICAL :: LAEROIND        ! Aerosol indirect effect
+
       END MODULE LOGICAL_MOD
 !EOC
