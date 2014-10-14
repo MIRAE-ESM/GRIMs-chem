@@ -57,7 +57,7 @@
                            cyclic_cell_massadvx                               ,&
                            cyclic_cell_massadvy                               ,&
                            vertical_cell_advect
-   use comchem    , only : levh_, ncld, nlevs, nlevsp, dp1, dp3
+   use gcmlink_mod, only : levh_, ncld, nlevs, nlevsp, dp1, dp3
 !-------------------------------------------------------------------------------
    implicit none
 !-------------------------------------------------------------------------------

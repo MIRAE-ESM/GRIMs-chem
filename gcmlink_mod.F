@@ -1,6 +1,6 @@
 !=====================================================================
 !
-!     MODULE COMCHEM
+!     MODULE GCMLINK_MOD
 !
 !        This module converts and saves the variables which
 !        are needed in the chemistry processes.
@@ -9,24 +9,27 @@
 !
 !=====================================================================
 
-      MODULE COMCHEM
+      MODULE GCMLINK_MOD
 
+      USE BPCH2_MOD,   ONLY : GET_TAU0, READ_BPCH2
       USE COMFCST,     ONLY : FCD, FCU
       USE COMFPHYS,    ONLY : U10M_ => U10M
       USE COMFPHYS,    ONLY : V10M_ => V10M
       USE COMFPHYS,    ONLY : HPBL, PSURF
-      USE COMFSPEC_VR, ONLY : TEM
+      USE COMFSPEC_VR, ONLY : TE
       USE COMFVER,     ONLY : DELTIM
       USE COMGRAD,     ONLY : ALNDR, ALVDR
-      USE COMSFC,      ONLY : SMC, SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
+      USE COMSFC,      ONLY : SLMSK, SNOWEQ, TSEA, UUSTAR, Z0CM
       USE DAO_MOD,     ONLY : ALBD, CLDFRC, CMFMC, DTRAIN, GWETTOP
       USE DAO_MOD,     ONLY : HFLUX, LWI, MOISTQ, PBL, PREACC, PRECON
       USE DAO_MOD,     ONLY : PS1, RADSWG, SNOMAS, SPHU, T, TROPP, TS
       USE DAO_MOD,     ONLY : U10M, USTAR, V10M, Z0
-      USE NISLQ,       ONLY : SLQ_Q1
+      USE NISLQ,       ONLY : SLQ_Q2
       USE PARAMODEL,   ONLY : LEVSS
+      USE TIME_MOD,    ONLY : ITS_A_NEW_MONTH, GET_MONTH
       USE TRACER_MOD,  ONLY : N_TRACERS
 
+      USE TRANS_REGRID_MOD
       USE CMN_SIZE_MOD
 
       IMPLICIT NONE
@@ -49,12 +52,15 @@
 
 !==========================================================
 
-      SUBROUTINE UPDATE_COMCHEM
+      SUBROUTINE UPDATE_GCM
 
+      REAL*4  :: ARRAY(I1x1,J1x1,1)
       REAL*8  :: WORK(IIPAR,LLPAR,JJPAR)
       REAL*8  :: WORK1(IIPAR,JJPAR,LLPAR)
       REAL*8  :: WORK2(IIPAR,JJPAR,LLPAR)
-      INTEGER :: L
+      REAL*8  :: XTAU
+      INTEGER :: I, J, L
+      CHARACTER(LEN=255) :: FILENAME
 
       ! Surface Albedo [unitless]
       ALBD = 0.466d0 * ALVDR + 0.529d0 * ALNDR
@@ -64,14 +70,25 @@
 
       ! Cloud mass flux [kg/m2/s]
       CALL TRANSFORM_3D( FCU, WORK1 )
-      CALL TRANSFORM_3D( FCD, WORK2 )
-      CMFMC(:,:,2:LLPAR+1) = WORK1 + WORK2
+      CMFMC(:,:,2:LLPAR+1) = WORK1
 
       ! Detrainment rate
       DTRAIN = _DETRN
 
-      ! Soil moisture [unitless]
-      GWETTOP = SMC(:,:,1)
+      ! Top soil layer wetness [unitless]
+      IF ( ITS_A_NEW_MONTH() ) THEN
+
+         FILENAME = '/home/sul/MERRA/GWETTOP.clim.merra.1x1.bpch'
+
+         XTAU = GET_TAU0( GET_MONTH(), 1, 1985 )
+
+         CALL READ_BPCH2( FILENAME, 'DAO-FLDS',    22,
+     &                    XTAU,      I1x1,         J1x1,
+     &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
+
+         CALL TRANS_REGRID( DBLE(ARRAY), GWETTOP, 1, 1, 2 )
+
+      ENDIF
 
       ! Sensible heat flux [W/m2]
       HFLUX = _DTSFC
@@ -100,17 +117,17 @@
       PS1 = PSURF * 1d1
 
       ! Shortwave rad at ground [W/m2]
-      RADSWG = _SSWDN
+      RADSWG = _SSWDN * ( 1d0 - ALBD )
 
       ! Water equivalent snow depth [mm H2O]
       SNOMAS = SNOWEQ
 
       ! Specific humidity [g/kg]
-      CALL TRANSFORM_3D( SLQ_Q1(:,1:LLPAR,:), SPHU )
+      CALL TRANSFORM_3D( SLQ_Q2(:,1:LLPAR,:), SPHU )
       SPHU = SPHU * 1d3
 
       ! Temperature [K]
-      CALL SPH_FFT_DRIVER(-1,WORK,TEM,1)
+      CALL SPH_FFT_DRIVER(-1,WORK,TE,1)
       CALL TRANSFORM_3D( WORK, T )
 
       ! Tropopause [hPa]
@@ -132,7 +149,7 @@
       ! Roughness height [m]
       Z0 = Z0CM * 1d-2
 
-      END SUBROUTINE UPDATE_COMCHEM
+      END SUBROUTINE UPDATE_GCM
 
 !==========================================================
 
@@ -150,7 +167,7 @@
 
 !=====================================================================
 
-      SUBROUTINE INIT_COMCHEM
+      SUBROUTINE INIT_GCMLINK
 
       ALLOCATE( _CLDSA   (IIPAR,JJPAR) )
       ALLOCATE( _DTSFC   (IIPAR,JJPAR) )
@@ -183,8 +200,8 @@
       NLEVS  = N_TRACERS * LLPAR
       NLEVSP = N_TRACERS * LEVSS
 
-      END SUBROUTINE INIT_COMCHEM
+      END SUBROUTINE INIT_GCMLINK
 
 !==========================================================
 
-      END MODULE COMCHEM
+      END MODULE GCMLINK_MOD
