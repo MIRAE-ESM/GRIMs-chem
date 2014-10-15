@@ -230,7 +230,7 @@
       END SUBROUTINE TRANS_REGRID_33
 
       !=========================================================
-      ! This code is originally from the GRIMs 'cvnaer.f90'.
+      ! This code is originally from the GRIMs 'cnvaer.f90'.
       ! It is modified for use of regridding emission data.
       !                                 - Seungun Lee -
       !=========================================================
@@ -324,16 +324,15 @@
             GO TO 100
          ELSE
             IF (IR .GE. IDM1) THEN
-               IR2(IA) = IR
-               GO TO 120
+               IF (IR1(IA) .EQ. 0) IR1(IA) = 1
+               IF (IR2(IA) .EQ. 0) IR2(IA) = 1
+               GO TO 100
             ELSE
                IR = IR + 1
                GO TO 90
             ENDIF
          ENDIF
 100   CONTINUE
-
-120   CONTINUE
 
       JR = 1
       DO 160 JA=1, JDM2
@@ -530,7 +529,7 @@
       END SUBROUTINE REGRID_1x1
 
       !=========================================================
-      ! This code is originally from the GRIMs 'cvnaer.f90'.
+      ! This code is originally from the GRIMs 'cnvaer.f90'.
       ! It is modified for use of regridding emission data.
       !                                 - Seungun Lee -
       !=========================================================
@@ -624,16 +623,15 @@
             GO TO 100
          ELSE
             IF (IR .GE. IDM1) THEN
-               IR2(IA) = IR
-               GO TO 120
+               IF (IR1(IA) .EQ. 0) IR1(IA) = 1
+               IF (IR2(IA) .EQ. 0) IR2(IA) = 1
+               GO TO 100
             ELSE
                IR = IR + 1
                GO TO 90
             ENDIF
          ENDIF
 100   CONTINUE
-
-120   CONTINUE
 
       JR = 1
       DO 160 JA=1, JDM2
