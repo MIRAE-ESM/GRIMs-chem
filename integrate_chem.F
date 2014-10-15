@@ -70,17 +70,8 @@
 
       IF (STEPONE) THEN
 
-         TS = DELTIM / 60
-
-         CALL SET_TIMESTEPS( CHEMISTRY  = TS, EMISSION  = TS,
-     &                       DYNAMICS   = TS, UNIT_CONV = TS,
-     &                       CONVECTION = TS, DIAGNOS   = TS )
-
          CALL SET_ELAPSED_MIN
          CALL SET_CURRENT_TIME
-
-         ! Update STT
-         STT2 = STT
 
       ELSE
 

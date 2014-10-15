@@ -223,7 +223,7 @@
       ! Astronomical Julian Date at 0 GMT, 1 Jan 1985
       REAL*8, PARAMETER :: JD85 = 2446066.5d0
 
-      LOGICAL, SAVE, PUBLIC :: FIRSTTIME = .TRUE.
+      LOGICAL, PUBLIC   :: FIRSTTIME = .TRUE.
 
       CONTAINS
 !EOC
@@ -1048,7 +1048,7 @@
 !
       SUBROUTINE SET_ELAPSED_MIN
 
-      USE COMFVER, ONLY : STEPONE
+      USE COMFVER, ONLY : SHOUR, STEPONE
 
 ! 
 ! !REVISION HISTORY: 
@@ -1057,10 +1057,9 @@
 !EOP
 !------------------------------------------------------------------------------
 !BOC
-      IF (STEPONE) ELAPSED_MIN = TS_DYN
-
       ELAPSED_MIN = ELAPSED_MIN + TS_DYN
 
+      IF (STEPONE) ELAPSED_MIN = NINT( SHOUR / 60d0 )
       IF (.NOT. STEPONE) FIRSTTIME = .FALSE.
 
       END SUBROUTINE SET_ELAPSED_MIN
