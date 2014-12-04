@@ -11,27 +11,26 @@
       SUBROUTINE END_CHEM
 
       USE DIAG_AOD_MOD, ONLY : WRITE_DIAG_AOD
+      USE ERROR_MOD,    ONLY : DEBUG_MSG
+      USE FILE_MOD,     ONLY : CLOSE_FILES
       USE FILE_MOD,     ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
+      USE LOGICAL_MOD,  ONLY : LPRT
       USE TIME_MOD,     ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
-      USE TIME_MOD,     ONLY : GET_TAU, SET_DIAGe, SET_DIAGb
+      USE TIME_MOD,     ONLY : GET_TAU, SET_DIAGe
       USE RESTART_MOD,  ONLY : WRITE_RESTART
 
       IMPLICIT NONE
 
-      REAL*8 :: TAU
-
       ! Compute & print time quantities at start of dyn step
       CALL SET_CURRENT_TIME
       CALL PRINT_CURRENT_TIME
-
-      TAU = GET_TAU()
 
       !==============================================================
       !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
       !==============================================================
 
       ! Set time at end of diagnostic timestep
-      CALL SET_DIAGe( TAU )
+      CALL SET_DIAGe( GET_TAU() )
 
       ! Write bpch file
       CALL DIAG3
@@ -45,15 +44,21 @@
       CALL FLUSH( IU_SMV2LOG )
       CALL FLUSH( IU_DEBUG   )
 
-      ! Set time at beginning of next diagnostic timestep
-      CALL SET_DIAGb( TAU )
-
       !===========================================================
       !        ***** Z E R O   D I A G N O S T I C S *****
       !===========================================================
       CALL INITIALIZE( 2 ) ! Zero arrays
       CALL INITIALIZE( 3 ) ! Zero counters
 
+      ! Write restart file
       CALL WRITE_RESTART
+
+      ! Close all files
+      CALL CLOSE_FILES
+      IF ( LPRT ) CALL DEBUG_MSG( '### END: a CLOSE_FILES' )
+
+      ! Deallocate dynamic module arrays
+      CALL CLEANUP
+      IF ( LPRT ) CALL DEBUG_MSG( '### END: a CLEANUP' )
 
       END SUBROUTINE END_CHEM

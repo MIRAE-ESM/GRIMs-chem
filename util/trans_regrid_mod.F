@@ -1,106 +1,42 @@
 #include "define.h"
+!=====================================================================
+!
+!     MODULE TRANS_REGRID_MOD
+!
+!     SUBROUTINE TRANS_REGRID_2D : transform & regrid (2D)
+!     SUBROUTINE TRANS_REGRID_3D : transform & regrid (3D)
+!     SUBROUTINE REGRID_1x1      : regrid 1x1  -> model grid
+!     SUBROUTINE REGRID_2x25     : regrid 2x25 -> model grid
+!     SUBROUTINE INTERP_VER      : interp. 47L -> model layer
+!     SUBROUTINE INTERP_VER_F    : interp. 72L -> model layer
+!
+!     INTERFACE TRANS_REGRID
+!
+!        RES=1   : 1x1  -> model grid
+!        RES=2   : 2x25 -> model grid
+!        FLAG=1  : mass regrid
+!        FLAG=3  : mass regrid & interp_ver
+!        FLAG=5  : mass regrid & interp_ver_f
+!        FLAG=2  : conc regrid
+!        FLAG=4  : conc regrid & interp_ver   (mixing ratio)
+!        FLAG=6  : conc regrid & interp_ver   (density)
+!        FLAG=8  : conc regrid & interp_ver_f (mixing ratio)
+!        FLAG=10 : conc regrid & interp_ver_f (density)
+!
+!                                            Written by Seungun Lee
+!
+!=====================================================================
+
       MODULE TRANS_REGRID_MOD
 
       INTERFACE TRANS_REGRID
-         MODULE PROCEDURE TRANS_REGRID_22
-         MODULE PROCEDURE TRANS_REGRID_23
-         MODULE PROCEDURE TRANS_REGRID_32
-         MODULE PROCEDURE TRANS_REGRID_33
+         MODULE PROCEDURE TRANS_REGRID_2D
+         MODULE PROCEDURE TRANS_REGRID_3D
       END INTERFACE
 
       CONTAINS
 
-      SUBROUTINE TRANS_REGRID_22(INARRAY,OUTARRAY,RES,VERT,FLAG)
-
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
-      USE CMN_SIZE_MOD
-
-      IMPLICIT NONE
-
-      REAL*8, INTENT(IN)  :: INARRAY(:,:)
-      REAL*8, INTENT(OUT) :: OUTARRAY(:,:)
-      INTEGER, INTENT(IN) :: RES, VERT, FLAG
-
-      REAL*8 :: F_ARRAY(IGLOB*2,JGLOB/2)
-
-      IF (MASTER) THEN
-      IF ( RES .EQ. 1 ) THEN
-         IF ( MOD(FLAG,2) .EQ. 1 ) THEN
-            CALL REGRID_1x1( INARRAY, F_ARRAY, 1 )
-         ENDIF
-         IF ( MOD(FLAG,2) .EQ. 0 ) THEN
-            CALL REGRID_1x1( INARRAY, F_ARRAY, 2 )
-         ENDIF
-      ENDIF
-      IF ( RES .EQ. 2 ) THEN
-         IF ( MOD(FLAG,2) .EQ. 1 ) THEN
-            CALL REGRID_2x25( INARRAY, F_ARRAY, 1 )
-         ENDIF
-         IF ( MOD(FLAG,2) .EQ. 0 ) THEN
-            CALL REGRID_2x25( INARRAY, F_ARRAY, 2 )
-         ENDIF
-      ENDIF
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, VERT )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, VERT )
-
-      CALL DYN_TRANS2MODEL_GRID( F_ARRAY, VERT )
-      ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,OUTARRAY,IIPAR,JJPAR,VERT)
-#else
-         OUTARRAY = F_ARRAY
-#endif
-
-      END SUBROUTINE TRANS_REGRID_22
-
-      SUBROUTINE TRANS_REGRID_23(INARRAY,OUTARRAY,RES,VERT,FLAG)
-
-      USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
-      USE CMN_SIZE_MOD
-
-      IMPLICIT NONE
-
-      REAL*8, INTENT(IN)  :: INARRAY(:,:)
-      REAL*8, INTENT(OUT) :: OUTARRAY(:,:,:)
-      INTEGER, INTENT(IN) :: RES, VERT, FLAG
-
-      REAL*8 :: F_ARRAY(IGLOB*2,JGLOB/2,VERT)
-
-      IF (MASTER) THEN
-      IF ( RES .EQ. 1 ) THEN
-         IF ( MOD(FLAG,2) .EQ. 1 ) THEN
-            CALL REGRID_1x1( INARRAY, F_ARRAY, 1 )
-         ENDIF
-         IF ( MOD(FLAG,2) .EQ. 0 ) THEN
-            CALL REGRID_1x1( INARRAY, F_ARRAY, 2 )
-         ENDIF
-      ENDIF
-      IF ( RES .EQ. 2 ) THEN
-         IF ( MOD(FLAG,2) .EQ. 1 ) THEN
-            CALL REGRID_2x25( INARRAY, F_ARRAY, 1 )
-         ENDIF
-         IF ( MOD(FLAG,2) .EQ. 0 ) THEN
-            CALL REGRID_2x25( INARRAY, F_ARRAY, 2 )
-         ENDIF
-      ENDIF
-
-      CALL XSHIFT( F_ARRAY, IGLOB, JGLOB, VERT )
-      CALL YREV( F_ARRAY, IGLOB, JGLOB, VERT )
-
-      CALL DYN_TRANS2MODEL_GRID( F_ARRAY, VERT )
-      ENDIF
-
-#ifdef MP
-         CALL MPGF2P(F_ARRAY,IGLOB*2,JGLOB/2,OUTARRAY,IIPAR,JJPAR,VERT)
-#else
-         OUTARRAY = F_ARRAY
-#endif
-
-      END SUBROUTINE TRANS_REGRID_23
-
-      SUBROUTINE TRANS_REGRID_32(INARRAY,OUTARRAY,RES,VERT,FLAG)
+      SUBROUTINE TRANS_REGRID_2D(INARRAY,OUTARRAY,RES,VERT,FLAG)
 
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
       USE CMN_SIZE_MOD
@@ -143,9 +79,9 @@
          OUTARRAY = F_ARRAY
 #endif
 
-      END SUBROUTINE TRANS_REGRID_32
+      END SUBROUTINE TRANS_REGRID_2D
 
-      SUBROUTINE TRANS_REGRID_33(INARRAY,OUTARRAY,RES,VERT,FLAG)
+      SUBROUTINE TRANS_REGRID_3D(INARRAY,OUTARRAY,RES,VERT,FLAG)
 
       USE MODULE_TRANS, ONLY : DYN_TRANS2MODEL_GRID
       USE CMN_SIZE_MOD
@@ -195,15 +131,13 @@
          CASE( 3 )
             CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 1 )
          CASE( 4 )
-            CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 1 )
-         CASE( 5 )
             CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 2 )
          CASE( 6 )
-            CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 2 )
-         CASE( 7 )
             CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 3 )
+         CASE( 5 )
+            CALL INTERP_VER_F( F_ARRAY1, F_ARRAY2, VERT, 1 )
          CASE( 8 )
-            CALL INTERP_VER( F_ARRAY1, F_ARRAY2, VERT, 3 )
+            CALL INTERP_VER_F( F_ARRAY1, F_ARRAY2, VERT, 2 )
          CASE( 10 )
             CALL INTERP_VER_F( F_ARRAY1, F_ARRAY2, VERT, 3 )
          CASE DEFAULT
@@ -227,7 +161,7 @@
 #endif
       ENDIF
 
-      END SUBROUTINE TRANS_REGRID_33
+      END SUBROUTINE TRANS_REGRID_3D
 
       !=========================================================
       ! This code is originally from the GRIMs 'cnvaer.f90'.
@@ -236,6 +170,7 @@
       !=========================================================
       SUBROUTINE REGRID_1x1( INDATA, OUTDATA, FLAG )
 
+      USE COMFGRID, ONLY : COLRAD
       USE CMN_SIZE_MOD
 
       INTEGER, PARAMETER  :: IDM1=360,     JDM1=181,
@@ -282,7 +217,13 @@
          ALON(I) = DALON * ( I - 1.5 )
       ENDDO
 
-      CALL CNV_GAUSSIAN_LAT(JDM2, BLAT)
+      DO J = 1, JDM2/2
+         BLAT(J) = 0.5d0 * PI - COLRAD(J)
+      ENDDO
+      DO J = JDM2/2+1, JDM2
+         BLAT(J) = - BLAT(JDM2+1-J)
+      ENDDO
+
       ALAT(1) = PI / 2d0
       DO J=1, JDM2-1
          ALAT(J+1) = 0.5 * ( BLAT(J) + BLAT(J+1) )
@@ -535,6 +476,7 @@
       !=========================================================
       SUBROUTINE REGRID_2x25( INDATA, OUTDATA, FLAG )
 
+      USE COMFGRID, ONLY : COLRAD
       USE CMN_SIZE_MOD
 
       INTEGER, PARAMETER  :: IDM1=144,     JDM1=91,
@@ -581,7 +523,13 @@
          ALON(I) = DALON * ( I - 1.5 )
       ENDDO
 
-      CALL CNV_GAUSSIAN_LAT(JDM2, BLAT)
+      DO J = 1, JDM2/2
+         BLAT(J) = 0.5d0 * PI - COLRAD(J)
+      ENDDO
+      DO J = JDM2/2+1, JDM2
+         BLAT(J) = - BLAT(JDM2+1-J)
+      ENDDO
+
       ALAT(1) = PI / 2d0
       DO J=1, JDM2-1
          ALAT(J+1) = 0.5 * ( BLAT(J) + BLAT(J+1) )

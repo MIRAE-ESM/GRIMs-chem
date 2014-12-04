@@ -253,11 +253,7 @@ c     PURPOSE: Write all of the characters in str1 into variable
      &    'STRREPL: PATTERN and REPLTXT must have same # of characters!'
          WRITE( 6, '(a)' ) 'STOP in STRREPL (charpak_mod.f)'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
 
       ! Loop over all instances of PATTERN in STR

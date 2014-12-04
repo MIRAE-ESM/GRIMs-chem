@@ -115,6 +115,7 @@
 !
 ! !USES:
 !
+      USE COMFGRID, ONLY : COLRAD
       USE CMN_SIZE_MOD  ! Size parameters
       USE CMN_GCTM_MOD  ! Physical constants
 !
@@ -147,16 +148,17 @@
          FIRST = .FALSE.
       ENDIF
 
+#ifdef NOUSE
       !=================================================================
       ! Compute latitude centers & edges (algorithm from old "input.f")
       !=================================================================
-!      FMID  = 0.5d0 * DBLE( JJJPAR + 1 )
-!      FEDGE = 0.5d0 * DBLE( JJJPAR + 2 )
+      FMID  = 0.5d0 * DBLE( JJJPAR + 1 )
+      FEDGE = 0.5d0 * DBLE( JJJPAR + 2 )
 
-!      DO J = 1, JJJPAR
-!         YMID_G(J)  = DJSIZE * ( DBLE(J) - FMID  )
-!         YEDGE_G(J) = DJSIZE * ( DBLE(J) - FEDGE )
-!      ENDDO
+      DO J = 1, JJJPAR
+         YMID_G(J)  = DJSIZE * ( DBLE(J) - FMID  )
+         YEDGE_G(J) = DJSIZE * ( DBLE(J) - FEDGE )
+      ENDDO
 
 #if   defined( GRID4x5 ) && defined( GCAP )
       ! Overwrite YMID at poles for GCAP 4 x 5 grid (swu, bmy, 5/24/05)
@@ -186,32 +188,43 @@
 #endif
 
       ! Overwrite YEDGE at poles
-!      YEDGE_G(1)        = -90d0
-!      YEDGE_G(JJJPAR+1) = +90d0
+      YEDGE_G(1)        = -90d0
+      YEDGE_G(JJJPAR+1) = +90d0
 
       ! Compute latitude center/edges in radians
-!      DO J = 1, JJJPAR
-!         YMID_R_G(J)  = ( PI / 180d0 ) * YMID_G(J)
-!         YEDGE_R_G(J) = ( PI / 180d0 ) * YEDGE_G(J)
-!      ENDDO
+      DO J = 1, JJJPAR
+         YMID_R_G(J)  = ( PI / 180d0 ) * YMID_G(J)
+         YEDGE_R_G(J) = ( PI / 180d0 ) * YEDGE_G(J)
+      ENDDO
          
       ! Overwrite RLATV at N. pole
-!      YEDGE_R_G(JJJPAR+1) = PI / 2d0
+      YEDGE_R_G(JJJPAR+1) = PI / 2d0
+#endif
 
-      CALL CNV_GAUSSIAN_LAT(JJJPAR, YMID_R_G)
-
-      YEDGE_R_G(1) = PI / 2d0
-      DO J = 1, JJJPAR-1
-         YEDGE_R_G(J+1) = 0.5d0 * ( YMID_R_G(J) + YMID_R_G(J+1) )
+      ! Compute latitude centers in radians
+      DO J = 1, JJJPAR/2
+         YMID_R_G(J) = 0.5d0 * PI - COLRAD(J)
       ENDDO
-      YEDGE_R_G(JJJPAR+1) = - ( PI / 2d0 )
+      DO J = JJJPAR/2+1, JJJPAR
+         YMID_R_G(J) = - YMID_R_G(JJJPAR+1-J)
+      ENDDO
 
+      ! Compute latitude edges in radians
+      YEDGE_R_G(1) = 0.5d0 * PI
+      DO J = 2, JJJPAR
+         YEDGE_R_G(J) = ( YMID_R_G(J-1) + YMID_R_G(J) ) / 2d0
+      ENDDO
+      YEDGE_R_G(JJJPAR+1) = - 0.5d0 * PI
+
+      ! Compute latitude centers in degrees
       DO J = 1, JJJPAR
-         YMID_G(J)  = ( 180d0 / PI ) * YMID_R_G(J)
+         YMID_G(J) = ( 180d0 / PI ) * YMID_R_G(J)
+      ENDDO
+
+      ! Compute latitude edges in degrees
+      DO J = 1, JJJPAR+1
          YEDGE_G(J) = ( 180d0 / PI ) * YEDGE_R_G(J)
       ENDDO
-
-      YEDGE_G(JJJPAR+1) = -90d0
 
       !=================================================================
       ! Compute longitude centers & edges (algorithm from old "input.f")

@@ -15,7 +15,6 @@ module flexaod
 
   use dao_mod,       only : airden, bxheight, rh
   use directory_mod, only : data_dir
-  use restart_mod,   only : lbxhght
   use tracer_mod,    only : stt2
   use tracerid_mod,  only : idtso4, idtnh4, idtnit
   use tracerid_mod,  only : idtbcpi, idtocpi, idtbcpo, idtocpo
@@ -33,7 +32,11 @@ module flexaod
   integer,parameter :: nwl = 61        ! number input wavelengths
   integer,parameter :: nrh = 5         ! number of input RH bins
   integer,parameter :: nsinyuk = 109
+#ifdef RRTMGSW
+  integer,parameter :: nbnd = 14
+#else
   integer,parameter :: nbnd = 8
+#endif
   integer,parameter :: nspecs = 6      ! Number of GEOS-Chem species
   integer,parameter :: ndust = 7       ! Number of GEOS-Chem DUST species
   integer,parameter :: npcoef = 100    ! Number of Legendre expansion coeff.
@@ -43,9 +46,7 @@ module flexaod
   real,dimension(6), parameter :: &
     hgf_bc_chin = (/ 1.0, 1.0, 1.0, 1.2, 1.4, 1.5 /)
 
-  !--------------
-  ! Optics vars
-  !--------------
+  ! Module variables
   real,dimension(nbnd) :: wl_um
   integer,dimension(:),allocatable    :: rhbins
   real,dimension(:),allocatable       :: wlbins
@@ -85,14 +86,38 @@ module flexaod
   subroutine mie_calc
 
   ! Wavelenght in microns (um)
-  wl_um(1) = 0.255
-  wl_um(2) = 0.2925
-  wl_um(3) = 0.3125
-  wl_um(4) = 0.5075
-  wl_um(5) = 3.135
-  wl_um(6) = 1.745
-  wl_um(7) = 0.96
-  wl_um(8) = 2.35
+#ifdef RRTMGSW
+  wl_um(1)  = (  3.846  +  3.077  ) / 2d0
+  wl_um(2)  = (  3.077  +  2.500  ) / 2d0
+  wl_um(3)  = (  2.500  +  2.150  ) / 2d0
+  wl_um(4)  = (  2.150  +  1.942  ) / 2d0
+  wl_um(5)  = (  1.942  +  1.626  ) / 2d0
+  wl_um(6)  = (  1.626  +  1.299  ) / 2d0
+  wl_um(7)  = (  1.299  +  1.242  ) / 2d0
+  wl_um(8)  = (  1.242  +  0.7782 ) / 2d0
+  wl_um(9)  = (  0.7782 +  0.6250 ) / 2d0
+  wl_um(10) = (  0.6250 +  0.4415 ) / 2d0
+  wl_um(11) = (  0.4415 +  0.3448 ) / 2d0
+  wl_um(12) = (  0.3448 +  0.2632 ) / 2d0
+  wl_um(13) = (  0.2632 +  0.2000 ) / 2d0
+  wl_um(14) = ( 12.195  +  3.846  ) / 2d0
+#else
+  wl_um(1) = ( 0.225 + 0.285 ) / 2d0
+  wl_um(2) = ( 0.285 + 0.300 ) / 2d0
+  wl_um(3) = ( 0.300 + 0.325 ) / 2d0
+  wl_um(4) = ( 0.325 + 0.690 ) / 2d0
+  wl_um(5) = ( 2.27  + 4.0   ) / 2d0
+  wl_um(6) = ( 1.22  + 2.27  ) / 2d0
+  wl_um(7) = ( 0.70  + 1.22  ) / 2d0
+  wl_um(8) = ( 0.70  + 4.0   ) / 2d0
+#endif
+
+  ! Cap
+  wl_um = max(0.250,wl_um)
+  wl_um = min(40.00,wl_um)
+
+  ! Allocate arrays
+  call alloc_other
 
   !--------------------------------------------------------------------
   ! Read Optical properties
@@ -106,8 +131,6 @@ module flexaod
   ! Allocate arrays
   call alloc_optics
 
-  !====================================================================
-  ! Switch optics source
   mr = 0.0
   mi = 0.0
 
@@ -139,17 +162,17 @@ module flexaod
           close(iou)
           endif
 
-#ifdef MP
-          call mpbcastr(wlbins,nwl)
-          call mpbcastr(specmr,nwl*nrh*nspecs)
-          call mpbcastr(specmi,nwl*nrh*nspecs)
-#endif
-
           ! Exit immediately if BC and dust (dry data only)
           if (species(ispec)=='bc' .or. species(ispec)=='dust') exit
 
         enddo
       enddo
+
+#ifdef MP
+      call mpbcastr(wlbins,nwl)
+      call mpbcastr(specmr,nwl*nrh*nspecs)
+      call mpbcastr(specmi,nwl*nrh*nspecs)
+#endif
 
       ! Interpolation of refractive indices onto output wavelength
       do ibnd = 1, nbnd
@@ -160,10 +183,6 @@ module flexaod
           enddo
         enddo
       enddo
-
-  !--------------------------------------------------------------------
-  ! Overwrite dust refractive indices for STD case with
-  ! those provided by Sinyuk et al. (2003)
 
     ! Reallocate buffer arrays
     if (allocated(wlbins)) deallocate(wlbins)
@@ -196,10 +215,6 @@ module flexaod
       ! Change sign of imaginary index for consistency with Mie calculations
       mi(1,nspecs,ibnd) = - linterp( wlbins, specmi(:,1,1), max(wl_um(ibnd),0.3) )
     enddo
-
-  !--------------------------------------------------------------------
-
-  !====================================================================
 
   !--------------------------------------------------------------------
   ! Read Water optical properties
@@ -324,8 +339,12 @@ module flexaod
   !--------------------------------------------------------------------
 
     if (master) then
-    filename = trim(data_dir)//'/flexaod/'//'mie_tables'
-    open(111, file=filename, form='unformatted', status='old', iostat=ios)
+#ifdef RRTMGSW
+    filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
+#else
+    filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'
+#endif
+    open(iou, file=filename, form='unformatted', status='old', iostat=ios)
     endif
 
 #ifdef MP
@@ -336,13 +355,13 @@ module flexaod
       if (master) then
       write(6,'("  o Reading Mie tables failed !!! ")')
       endif
-      go to 3000
+      go to 100
     endif
 
     if (master) then
-    read(111) q_ext, c_ext, c_sca, r_eff, v_ave, ssalb, asym, &
+    read(iou) q_ext, c_ext, c_sca, r_eff, v_ave, ssalb, asym, &
               q_dext, c_dext, c_dsca, r_dust, v_dave, dssalb, dasym
-    close(111)
+    close(iou)
     endif
 
 #ifdef MP
@@ -368,7 +387,7 @@ module flexaod
 
     return
 
-3000 continue
+100 continue
 
     ! Message
     if (master) then
@@ -384,11 +403,15 @@ module flexaod
     endif
 
     if (master) then
-    filename = trim(data_dir)//'/flexaod/'//'mie_tables'
-    open(111, file=filename, form='unformatted', status='unknown')
-    write(111) q_ext, c_ext, c_sca, r_eff, v_ave, ssalb, asym, &
+#ifdef RRTMGSW
+    filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
+#else
+    filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'
+#endif
+    open(iou, file=filename, form='unformatted', status='unknown')
+    write(iou) q_ext, c_ext, c_sca, r_eff, v_ave, ssalb, asym, &
                q_dext, c_dext, c_dsca, r_dust, v_dave, dssalb, dasym
-    close(111)
+    close(iou)
     endif
 
     ! Message
@@ -402,17 +425,7 @@ module flexaod
 
   subroutine calc_aod
 
-  if (.not. allocated(conc)) then
-    call alloc_other
-    outod = 0d0
-    outssa = 0d0
-    outg = 0d0
-    conc = 0d0
-  endif
-
-  if ( .not. lbxhght ) return
-
-  ! Tracer concentrations (kg)
+  ! Tracer concentrations (kg/kg)
   if (idtso4 .ne. 0 .and. idtnh4 .ne. 0 .and. idtnit .ne. 0) then
     conc(:,:,:,1) = stt2(:,:,:,idtso4) * 96.0 / 28.97 &
                   + stt2(:,:,:,idtnh4) * 18.0 / 28.97 &
@@ -454,7 +467,7 @@ module flexaod
 
   ! RH (%)
   relh = rh
-  ! Air volume (kg/m3)
+  ! Air density (kg/m3)
   aird = airden
   ! Box height (m)
   boxh = bxheight
@@ -483,11 +496,7 @@ real function linterp( bins, values, outpoint )
                    F6.3," !!!")') &
            minval(bins), maxval(bins)
     endif
-#ifdef MP
-    call mpabort
-#else
     stop
-#endif
   endif
 
   ! Get number of bins
@@ -699,6 +708,8 @@ subroutine interp_aod
 
     ! Loop over levels
     do l = 1,nl
+
+      if (aird(l,i,j) .eq. 0) return
 
       ! Aerosol concentration (g/cm3)
       conc_gcm3 = conc(i,j,l,:) * aird(l,i,j) * 1e-3
@@ -954,26 +965,26 @@ end subroutine interp_aod
 !======================================================================
 subroutine alloc_optics
 
-    allocate(rhbins(nrh))
-    allocate(wlbins(nwl))
-    allocate(specmr(nwl,nrh,nspecs))
-    allocate(specmi(nwl,nrh,nspecs))
-    allocate(mr(nrh,nspecs,nbnd))
-    allocate(mi(nrh,nspecs,nbnd))
-    allocate(q_ext(nrh,nspecs-1,nbnd))
-    allocate(c_ext(nrh,nspecs-1,nbnd))
-    allocate(c_sca(nrh,nspecs-1,nbnd))
-    allocate(v_ave(nrh,nspecs-1,nbnd))
-    allocate(ssalb(nrh,nspecs-1,nbnd))
-    allocate(asym(nrh,nspecs-1,nbnd))
-    allocate(r_eff(nrh,nspecs-1,nbnd))
-    allocate(q_dext(ndust,nbnd))
-    allocate(c_dext(ndust,nbnd))
-    allocate(c_dsca(ndust,nbnd))
-    allocate(v_dave(ndust,nbnd))
-    allocate(dssalb(ndust,nbnd))
-    allocate(dasym(ndust,nbnd))
-    allocate(r_dust(ndust,nbnd))
+  allocate(rhbins(nrh))
+  allocate(wlbins(nwl))
+  allocate(specmr(nwl,nrh,nspecs))
+  allocate(specmi(nwl,nrh,nspecs))
+  allocate(mr(nrh,nspecs,nbnd))
+  allocate(mi(nrh,nspecs,nbnd))
+  allocate(q_ext(nrh,nspecs-1,nbnd))
+  allocate(c_ext(nrh,nspecs-1,nbnd))
+  allocate(c_sca(nrh,nspecs-1,nbnd))
+  allocate(v_ave(nrh,nspecs-1,nbnd))
+  allocate(ssalb(nrh,nspecs-1,nbnd))
+  allocate(asym(nrh,nspecs-1,nbnd))
+  allocate(r_eff(nrh,nspecs-1,nbnd))
+  allocate(q_dext(ndust,nbnd))
+  allocate(c_dext(ndust,nbnd))
+  allocate(c_dsca(ndust,nbnd))
+  allocate(v_dave(ndust,nbnd))
+  allocate(dssalb(ndust,nbnd))
+  allocate(dasym(ndust,nbnd))
+  allocate(r_dust(ndust,nbnd))
 
 end subroutine alloc_optics
 
@@ -1007,5 +1018,7 @@ subroutine alloc_other
   allocate(numconc(nsizspc+2,ni,nj,nl))
 
 end subroutine alloc_other
+
+!======================================================================
 
 end module flexaod

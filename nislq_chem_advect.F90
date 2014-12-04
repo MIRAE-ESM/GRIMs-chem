@@ -1,6 +1,6 @@
 #include <define.h>
    subroutine nislq_chem_advect(deltim,pt,ut,vt,pdot,q1,q3)
-#ifdef NISLQ_MASS
+#ifdef NISLQ_MONO
 !-------------------------------------------------------------------------------
 !
 ! a routine to do non-iteration semi-Lagrangain finite volume advection
@@ -36,7 +36,8 @@
    use commpi     , only : nsize=>nrow,ncol,mype,latlen,latstr
 #endif
 #else /* SPH */
-   use paramodel  , only : LONF2S,LATG2S,lonf2_,latg2_,levs_,LEVSS
+   use paramodel  , only : LONF2S,LATG2S,lonf2_,latg2_,levs_,levh_,LEVSS
+   use comfspec_vr, only : qm,z
    use comio      , only : iope
 #ifdef MP
    use commpi     , only : nsize=>nrow,ncol,mype,latlen,latdef,latstr
@@ -51,13 +52,18 @@
 #endif
 #endif /* REDUCE_GRID end */
 #endif /* DFS end */
-   use nislq      , only : nx,lev,my,my_max                                   ,&
+   use nislq      , only : nx,lev,my,my_max,ncld,nlevs,nlevsp                 ,&
                            lonfull,latfull,lonpart,latpart,mylonlen           ,&
                            cyclic_cell_intpx                                  ,&
                            cyclic_cell_massadvx                               ,&
                            cyclic_cell_massadvy                               ,&
                            vertical_cell_advect
-   use gcmlink_mod, only : levh_, ncld, nlevs, nlevsp, dp1, dp3
+#ifdef DCMIP
+   use dcmip_grims, only : ptop
+#endif
+#ifdef CHEM
+   use tracer_mod , only : ntr=>n_tracers
+#endif
 !-------------------------------------------------------------------------------
    implicit none
 !-------------------------------------------------------------------------------
@@ -69,8 +75,8 @@
    real, intent(in)   , dimension(ib,jbw)                  ::  pt
    real, intent(in)   , dimension(ib,jbw,levs)             ::  ut,vt
    real, intent(in)   , dimension(ib,jbw,levs+1)           ::  pdot
-   real, intent(in)   , dimension(ib,jbw,levh)             ::  q1
-   real, intent(out)  , dimension(ib,jbw,levh)             ::  q3
+   real, intent(in)   , dimension(ib,jbw,levs*ntr)             ::  q1
+   real, intent(out)  , dimension(ib,jbw,levs*ntr)             ::  q3
 #define LONF2S ib
 #define LATG2S jbw
 #define LEVSS levsp
@@ -80,70 +86,56 @@
    real, intent(in)   , dimension(LONF2S,        LATG2S)   ::  pt
    real, intent(in)   , dimension(LONF2S,levs_  ,LATG2S)   ::  ut,vt
    real, intent(in)   , dimension(LONF2S,levs_+1,LATG2S)   ::  pdot
-   real, intent(in)   , dimension(LONF2S,levh_  ,LATG2S)   ::  q1
-   real, intent(out)  , dimension(LONF2S,levh_  ,LATG2S)   ::  q3
+   real, intent(in)   , dimension(LONF2S,levs_*ntr  ,LATG2S)   ::  q1
+   real, intent(out)  , dimension(LONF2S,levs_*ntr  ,LATG2S)   ::  q3
 #endif
 !
 ! local variables
 !
-   integer            , parameter                          ::  mass=1
+   integer            , parameter                          ::  mass=0
 #ifndef MP
    integer            , parameter                          ::  nsize=1
 #endif
    integer                                                 ::  jjend,j,j1,j2  ,&
                                                                jj,lat         ,&
                                                                i,lonsd        ,&
-                                                               kqp,k,kk
+                                                               k,kk
 #ifdef DFS
-!dp2   real               , dimension(ib      , levs        )  ::  dp2
    real               , dimension(ib      , levs+1      )  ::  ppi,pdot2
-!   real               , dimension(ib , jbw, levs        )  ::  dp1,dp3
-   real               , dimension(ib , jbw, nlevs       )  ::  qp
-   real               , dimension(iba, jbw, nlevsp      )  ::  qt
+   real               , dimension(ib , jbw, ntr*levs_       )  ::  qp
+   real               , dimension(iba, jbw, ntr*LEVSS      )  ::  qt
 #ifdef MP
    real               , dimension(iba, jbw, levsp       )  ::  utp,vtp
-   real               , dimension(iba, jbw, nlevsp      )  ::  qpp
-   real               , dimension(ib , jbw, nlevs       )  ::  qtp
+   real               , dimension(iba, jbw, ntr*LEVSS      )  ::  qpp
+   real               , dimension(ib , jbw, ntr*levs_       )  ::  qtp
 #endif
-   real               , dimension(ib      , nlevs       )  ::  qtn
+   real               , dimension(ib      , ntr*levs_       )  ::  qtn
 #else /* SPH */
-!dp2   real               , dimension(LONF2S ,levs_         )  ::  dp2
    real               , dimension(LONF2S ,levs_+1       )  ::  ppi,pdot2
-!   real               , dimension(LONF2S ,levs_ ,LATG2S )  ::  dp1,dp3
-   real               , dimension(LONF2S ,nlevs ,LATG2S )  ::  qp
-   real               , dimension(lonf2_ ,nlevsp,LATG2S )  ::  qt
+   real               , dimension(LONF2S ,ntr*levs_ ,LATG2S )  ::  qp
+   real               , dimension(lonf2_ ,ntr*LEVSS,LATG2S )  ::  qt
 #ifdef MP
    real               , dimension(lonf2_ ,levsp_,latg2p_)  ::  utp,vtp
-   real               , dimension(lonf2_ ,nlevsp,latg2p_)  ::  qpp
-   real               , dimension(LONF2S ,nlevs ,LATG2S )  ::  qtp
+   real               , dimension(lonf2_ ,ntr*LEVSS,latg2p_)  ::  qpp
+   real               , dimension(LONF2S ,ntr*levs_ ,LATG2S )  ::  qtp
 #endif
-   real               , dimension(LONF2S ,nlevs         )  ::  qtn
+   real               , dimension(LONF2S ,ntr*levs_         )  ::  qtn
 #endif /* DFS end */
    !
    real               , dimension(lonfull,LEVSS ,latpart)  ::  uulon,vvlon
    real               , dimension(latfull,LEVSS ,lonpart)  ::  vvlat
-   real               , dimension(lonfull,nlevsp,latpart)  ::  qqlon,rrlon
-   real               , dimension(latfull,nlevsp,lonpart)  ::  qqlat,rrlat
+   real               , dimension(lonfull,ntr*LEVSS,latpart)  ::  qqlon,rrlon
+   real               , dimension(latfull,ntr*LEVSS,lonpart)  ::  qqlat,rrlat
 !
 ! initialize
 !
    q3=0.
-!
-!dp2   dp2=0.
-!
-!   dp1=0.;  dp3=0.
    qp=0. ;  qt=0. ;  ppi=0.
 #ifdef MP
    utp=0.;  vtp=0.;  qpp=0.;  qtp=0.
 #endif
    uulon=0. ;  vvlon=0. ;  vvlat=0.
    qqlon=0. ;  rrlon=0. ;  qqlat=0.  ; rrlat=0.
-!
-! k-index for q*dp
-!
-!sldp   kqp=levs_
-!
-   kqp=0
 !
 ! latitude band
 !
@@ -153,52 +145,9 @@
    jjend=latg2_
 #endif
 !
-! density (by spectral dynamics)
+! qp=q1
 !
-#ifdef DFS
-!   call nislq_dp(psl1,dp1)   ! dp at time step n-1
-!   call nislq_dp(psl3,dp3)   ! dp at time step n+1
-!
-!sldp   ! dir air (dp) for SL advection
-!sldp   forall(i=1:ib,j=1:jbw,k=1:levs) qp(i,j,k)=dp1(i,j,k)
-!
-!
-! moisture (q*dp) for SL advection
-!
-   do k = 1,levh
-     kk=mod(k-1,levs)+1
-     forall(i=1:ib,j=1:jbw) qp(i,j,kqp+k)=q1(i,j,k)*dp1(i,j,kk)
-   enddo
-#else /* SPH */
-!   call nislq_dp(qm,dp1)   ! dp at time step n-1
-!   call nislq_dp(z ,dp3)   ! dp at time step n+1
-   do j=1,jjend
-#ifdef REDUCE_GRID
-#ifdef MP
-     lonsd=lonfdp(j,mype)*2
-#else
-     lonsd=lonfd(latdef(j))*2
-#endif
-#else
-     lonsd=LONF2S
-#endif /* REDUCE_GRID end */
-#ifdef SLDBG
-     if( iope ) print *,'j,lonsd in nislq_advect',j,lonsd
-#endif
-!
-!sldp     ! dry air (dp) for SL advection
-!sldp     forall(i=1:lonsd,k=1:levs_) qp(i,k,j)=dp1(i,k,j)
-!
-! moisture (q*dp) for SL advection
-!
-     do k = 1,levh_
-       kk=mod(k-1,levs_)+1
-       do i = 1,lonsd
-         qp(i,kqp+k,j)=q1(i,k,j)*dp1(i,kk,j)
-       enddo
-     enddo
-   enddo
-#endif /* DFS end */
+   qp=q1
 #ifdef MP
 !
 ! transpose z-full to x-full
@@ -206,14 +155,14 @@
 #ifdef DFS
    call mpxy2yz(ut,ib,levs ,utp,iba,levsp ,jbw,levs,levsp,1)
    call mpxy2yz(vt,ib,levs ,vtp,iba,levsp ,jbw,levs,levsp,1)
-   call mpxy2yz(qp,ib,nlevs,qpp,iba,nlevsp,jbw,levs,levsp,ncld)
+   call mpxy2yz(qp,ib,ntr*levs_,qpp,iba,ntr*LEVSS,jbw,levs,levsp,ntr)
 #else
    call mpnx2nk(ut,lonf2p_,levs_,utp,lonf2_,levsp_,latg2p_,levs_,levsp_,       &
                                                                  1,1,1)
    call mpnx2nk(vt,lonf2p_,levs_,vtp,lonf2_,levsp_,latg2p_,levs_,levsp_,       &
                                                                  1,1,1)
-   call mpnx2nk(qp,lonf2p_,nlevs,qpp,lonf2_,nlevsp,latg2p_,levs_,levsp_,       &
-                                                                 1,1,ncld)
+   call mpnx2nk(qp,lonf2p_,ntr*levs_,qpp,lonf2_,ntr*LEVSS,latg2p_,levs_,levsp_,       &
+                                                                 1,1,ntr)
 #endif
 #define UU utp
 #define VV vtp
@@ -227,11 +176,11 @@
    if( iope ) then
      print *,' enter nislq_advect  with positive definition '
 #ifdef DFS
-     call print_maxmin_six(qp  ,ib*jbw          ,nlevs  ,1,nlevs ,'qp   input')
+     call print_maxmin_six(qp  ,ib*jbw          ,ntr*levs_  ,1,ntr*levs_ ,'qp   input')
      call print_maxmin_six(ut  ,ib*jbw          ,levs   ,1,levs  ,'ut   input')
      call print_maxmin_six(pdot,ib*jbw          ,levs+1 ,1,levs+1,'pdot input')
 #else
-     call print_maxmin_six(qp  ,LONF2S*nlevs    ,LATG2S ,1,LATG2S,'qp   input')
+     call print_maxmin_six(qp  ,LONF2S*ntr*levs_    ,LATG2S ,1,LATG2S,'qp   input')
      call print_maxmin_six(ut  ,LONF2S*levs_    ,LATG2S ,1,LATG2S,'ut   input')
      call print_maxmin_six(pdot,LONF2S*(levs_+1),LATG2S ,1,LATG2S,'pdot input')
 #endif
@@ -270,15 +219,15 @@
 #endif
        enddo
      enddo
-     ! dp, q*dp at time step n-1 (convert dynamics to SL grid)
-     do k = 1,nlevsp
+     ! at time step n-1 (convert dynamics to SL grid)
+     do k = 1,ntr*LEVSS
        do i = 1,lonsd
 #ifdef DFS
-         qqlon(i,k,j1) = QQ(i,jj      ,k)/sqrt(rbs2(jj))
-         qqlon(i,k,j2) = QQ(i,jbw+1-jj,k)/sqrt(rbs2(jj))
+         qqlon(i,k,j1) = QQ(i,jj      ,k)
+         qqlon(i,k,j2) = QQ(i,jbw+1-jj,k)
 #else
-         qqlon(i,k,j1) = QQ(i      ,k,jj)/sqrt(rbs2(jj))
-         qqlon(i,k,j2) = QQ(lonsd+i,k,jj)/sqrt(rbs2(jj))
+         qqlon(i,k,j1) = QQ(i      ,k,jj)
+         qqlon(i,k,j2) = QQ(lonsd+i,k,jj)
 #endif
        enddo
      enddo
@@ -294,7 +243,7 @@
                                                          'u in dlamda/dt')
          call print_maxmin_six(vvlon(1,1,j1),nx,LEVSS ,1,LEVSS ,               &
                                                          'v in dphi/dt  ')
-         call print_maxmin_six(qqlon(1,1,j1),nx,nlevsp,1,nlevsp,               &
+         call print_maxmin_six(qqlon(1,1,j1),nx,ntr*LEVSS,1,ntr*LEVSS,               &
                                                          'q in dq/dt    ')
        endif
      endif
@@ -308,14 +257,14 @@
 !
      call cyclic_cell_intpx(LEVSS ,lonsd,lonfull,uulon(1,1,j1))
      call cyclic_cell_intpx(LEVSS ,lonsd,lonfull,vvlon(1,1,j1))
-     call cyclic_cell_intpx(nlevsp,lonsd,lonfull,qqlon(1,1,j1))
+     call cyclic_cell_intpx(ntr*LEVSS,lonsd,lonfull,qqlon(1,1,j1))
 !
      call cyclic_cell_intpx(LEVSS ,lonsd,lonfull,uulon(1,1,j2))
      call cyclic_cell_intpx(LEVSS ,lonsd,lonfull,vvlon(1,1,j2))
-     call cyclic_cell_intpx(nlevsp,lonsd,lonfull,qqlon(1,1,j2))
+     call cyclic_cell_intpx(ntr*LEVSS,lonsd,lonfull,qqlon(1,1,j2))
 #endif
 !
-     do k = 1,nlevsp
+     do k = 1,ntr*LEVSS
        do i = 1,lonfull
          rrlon(i,k,j1) = qqlon(i,k,j1)
          rrlon(i,k,j2) = qqlon(i,k,j2)
@@ -324,15 +273,15 @@
 !
 ! first set positive advection in horziontal direction with mass conserving
 !
-     call cyclic_cell_massadvx(LEVSS,ncld,deltim,                              &
+     call cyclic_cell_massadvx(LEVSS,ntr,deltim,                              &
                                           uulon(1,1,j1),rrlon(1,1,j1),mass)
-     call cyclic_cell_massadvx(LEVSS,ncld,deltim,                              &
+     call cyclic_cell_massadvx(LEVSS,ntr,deltim,                              &
                                           uulon(1,1,j2),rrlon(1,1,j2),mass)
    enddo
 #ifdef SLDBG
    if( iope ) then
      print *,' finish cyclic_cell_massadvx'
-     call print_maxmin_six(rrlon,lonfull*nlevsp,latpart,1,latpart,             &
+     call print_maxmin_six(rrlon,lonfull*ntr*LEVSS,latpart,1,latpart,             &
                                                           'r advx 1st     ')
      call print_maxmin_six(vvlon,lonfull*LEVSS ,latpart,1,latpart,             &
                                                           'vv before we2ns')
@@ -345,14 +294,14 @@
 ! para vvlon, qqlon, and rrlon to vvlat, qqlat, rrlat
 !
    call nislq_transpose_we2ns(vvlon,vvlat,LEVSS ,nsize)
-   call nislq_transpose_we2ns(qqlon,qqlat,nlevsp,nsize)
-   call nislq_transpose_we2ns(rrlon,rrlat,nlevsp,nsize)
+   call nislq_transpose_we2ns(qqlon,qqlat,ntr*LEVSS,nsize)
+   call nislq_transpose_we2ns(rrlon,rrlat,ntr*LEVSS,nsize)
 #ifdef SLDBG
    if( iope ) then
      print *,' nislq transport from we to ns '
      call print_maxmin_six(vvlat,latfull*LEVSS ,mylonlen,1,mylonlen,'v we2ns')
-     call print_maxmin_six(qqlat,latfull*nlevsp,mylonlen,1,mylonlen,'q we2ns')
-     call print_maxmin_six(rrlat,latfull*nlevsp,mylonlen,1,mylonlen,'r we2ns')
+     call print_maxmin_six(qqlat,latfull*ntr*LEVSS,mylonlen,1,mylonlen,'q we2ns')
+     call print_maxmin_six(rrlat,latfull*ntr*LEVSS,mylonlen,1,mylonlen,'r we2ns')
    endif
 #endif
 ! ---------------------------------------------------------------------
@@ -368,19 +317,19 @@
 ! 
 ! first set advection in meridional direction in great circle through two poles
 !
-     call cyclic_cell_massadvy(LEVSS,ncld,deltim,vvlat(1,1,i),rrlat(1,1,i),mass)
+     call cyclic_cell_massadvy(LEVSS,ntr,deltim,vvlat(1,1,i),rrlat(1,1,i),mass)
 !
 ! second set advection in meridional direction in great circle through two poles
 !
-     call cyclic_cell_massadvy(LEVSS,ncld,deltim,vvlat(1,1,i),qqlat(1,1,i),mass)
+     call cyclic_cell_massadvy(LEVSS,ntr,deltim,vvlat(1,1,i),qqlat(1,1,i),mass)
 
    enddo
 !
 #ifdef SLDBG
    if( iope ) then
-     call print_maxmin_six(rrlat,latfull*nlevsp,mylonlen,1,mylonlen,           &
+     call print_maxmin_six(rrlat,latfull*ntr*LEVSS,mylonlen,1,mylonlen,           &
                                                            'r advy 1st')
-     call print_maxmin_six(qqlat,latfull*nlevsp,mylonlen,1,mylonlen,           &
+     call print_maxmin_six(qqlat,latfull*ntr*LEVSS,mylonlen,1,mylonlen,           &
                                                            'q advy 2nd')
    endif
 #endif
@@ -390,13 +339,13 @@
 !
 ! para qqlat and rrlat to qqlon and rrlon
 !
-   call nislq_transpose_ns2we(qqlat,qqlon,nlevsp,nsize)
-   call nislq_transpose_ns2we(rrlat,rrlon,nlevsp,nsize)
+   call nislq_transpose_ns2we(qqlat,qqlon,ntr*LEVSS,nsize)
+   call nislq_transpose_ns2we(rrlat,rrlon,ntr*LEVSS,nsize)
 #ifdef SLDBG
    if( iope ) then
      print *,' nislfv_advq transport from ns to we '
-     call print_maxmin_six(qqlon,lonfull*nlevsp,latpart,1,latpart,'q ns2we 2nd')
-     call print_maxmin_six(rrlon,lonfull*nlevsp,latpart,1,latpart,'r ns2we 1st')
+     call print_maxmin_six(qqlon,lonfull*ntr*LEVSS,latpart,1,latpart,'q ns2we 2nd')
+     call print_maxmin_six(rrlon,lonfull*ntr*LEVSS,latpart,1,latpart,'r ns2we 1st')
    endif
 #endif
 ! ---------------------------------------------------------------
@@ -421,11 +370,11 @@
 !
 ! second set advection in x for the second of the pair
 !
-     call cyclic_cell_massadvx(LEVSS,ncld,deltim,                              &
+     call cyclic_cell_massadvx(LEVSS,ntr,deltim,                              &
                                           uulon(1,1,j1),qqlon(1,1,j1),mass)
-     call cyclic_cell_massadvx(LEVSS,ncld,deltim,                              &
+     call cyclic_cell_massadvx(LEVSS,ntr,deltim,                              &
                                           uulon(1,1,j2),qqlon(1,1,j2),mass)
-     do k = 1,nlevsp
+     do k = 1,ntr*LEVSS
        do i = 1,lonsd
          rrlon(i,k,j1) = 0.5 * ( qqlon(i,k,j1) + rrlon(i,k,j1) )
          rrlon(i,k,j2) = 0.5 * ( qqlon(i,k,j2) + rrlon(i,k,j2) )
@@ -435,20 +384,20 @@
 !
 ! full gird to reduced grid
 !
-     call cyclic_cell_intpx(nlevsp,lonfull,lonsd,rrlon(1,1,j1))
-     call cyclic_cell_intpx(nlevsp,lonfull,lonsd,rrlon(1,1,j2))
+     call cyclic_cell_intpx(ntr*LEVSS,lonfull,lonsd,rrlon(1,1,j1))
+     call cyclic_cell_intpx(ntr*LEVSS,lonfull,lonsd,rrlon(1,1,j2))
 #endif
 !
 ! convert SL to dynamics grid
 !
-     do k = 1,nlevsp
+     do k = 1,ntr*LEVSS
        do i = 1,lonsd
 #ifdef DFS
-         qt(i,jj      ,k)=rrlon(i,k,j1)*sqrt(rbs2(jj))
-         qt(i,jbw+1-jj,k)=rrlon(i,k,j2)*sqrt(rbs2(jj))
+         qt(i,jj      ,k)=rrlon(i,k,j1)
+         qt(i,jbw+1-jj,k)=rrlon(i,k,j2)
 #else
-         qt(i      ,k,jj)=rrlon(i,k,j1)*sqrt(rbs2(jj))
-         qt(lonsd+i,k,jj)=rrlon(i,k,j2)*sqrt(rbs2(jj))
+         qt(i      ,k,jj)=rrlon(i,k,j1)
+         qt(lonsd+i,k,jj)=rrlon(i,k,j2)
 #endif
        enddo
      enddo
@@ -458,10 +407,10 @@
 ! transpose x-full to z-full
 !
 #ifdef DFS
-   call mpyz2xy(qt,iba,levsp,qtp,ib,levs,jbw,ncld)
+   call mpyz2xy(qt,iba,levsp,qtp,ib,levs,jbw,ntr)
 #else
-   call mpnk2nx(qt,lonf2_,nlevsp,qtp,lonf2p_,nlevs,latg2p_,levsp_,levs_,       &
-                                                                  1,1,ncld)
+   call mpnk2nx(qt,lonf2_,ntr*LEVSS,qtp,lonf2p_,ntr*levs_,latg2p_,levsp_,levs_,       &
+                                                                  1,1,ntr)
 #endif
 #define QT qtp
 #else
@@ -496,8 +445,12 @@
 #ifdef HYBRID
          ppi(i,k)=ak5(k)+bk5(k)*pt(i,j)
 #else
-         ppi(i,k)=si(lev+2-k)*pt(i,j)
-#endif
+#ifdef DCMIP
+         ppi(i,k)=ptop*1.e-3+si(levs_+2-k)*(pt(i,j)-ptop*1.e-3)  ! cb
+#else
+         ppi(i,k)=si(levs_+2-k)*pt(i,j)
+#endif /* DCMIP end */
+#endif /* HYBRID end */
 #ifdef DFS
          pdot2(i,k)=pdot(i,j,k)
 #else
@@ -505,18 +458,13 @@
 #endif
        enddo
      enddo
-!dp2     ! dp at time step n
-!dp2     forall(i=1:lonsd,k=1:levs_) dp2(i,k)=ppi(i,k+1)-ppi(i,k)
-     ! q*dp weighted by dp(n) before vertical advection
-     do k = 1,nlevs
-       kk=mod(k-1,levs_)+1
+!
+     do k = 1,ntr*levs_
        do i = 1,lonsd
 #ifdef DFS
-         qtn(i,k)=QT(i,j,k)/dp3(i,j,kk)
-!dp2         qtn(i,k)=QT(i,j,k)/dp2(i,kk)
+         qtn(i,k)=QT(i,j,k)
 #else
-         qtn(i,k)=QT(i,k,j)/dp3(i,kk,j)
-!dp2         qtn(i,k)=QT(i,k,j)/dp2(i,kk)
+         qtn(i,k)=QT(i,k,j)
 #endif
        enddo
      enddo
@@ -529,19 +477,16 @@
 !
 ! vertical advection with mass conserving positive advection
 !
-     call vertical_cell_advect(lonsd,LONF2S,lev,ncld,deltim,ppi,pdot2,qtn,mass)
+     call vertical_cell_advect(lonsd,LONF2S,lev,ntr,deltim,ppi,pdot2,qtn,mass)
 !
 !    q update at time step n+1 (bottom to top)
 !
-     do k = 1,levh_
-       kk=mod(k-1,levs_)+1
+     do k = 1,levs_*ntr
        do i = 1,lonsd
 #ifdef DFS
-         q3(i,j,levh+1-k)=qtn(i,kqp+k)
-!sldp         q3(i,j,levh+1-k)=qtn(i,kqp+k)/qtn(i,kk)
+         q3(i,j,levs*ntr+1-k)=qtn(i,k)
 #else
-         q3(i,levh_+1-k,j)=qtn(i,kqp+k)
-!sldp         q3(i,levh_+1-k,j)=qtn(i,kqp+k)/qtn(i,kk)
+         q3(i,levs_*ntr+1-k,j)=qtn(i,k)
 #endif
        enddo
      enddo
@@ -549,14 +494,14 @@
 !
 #ifdef SLDBG
    if( iope ) then
-     call print_maxmin_six(qqlon,lonfull*nlevsp,latpart,1,latpart,'q advx 2nd  ')
-     call print_maxmin_six(rrlon,lonfull*nlevsp,latpart,1,latpart,'r after mean')
+     call print_maxmin_six(qqlon,lonfull*ntr*LEVSS,latpart,1,latpart,'q advx 2nd  ')
+     call print_maxmin_six(rrlon,lonfull*ntr*LEVSS,latpart,1,latpart,'r after mean')
 #ifdef DFS
-     call print_maxmin_six(q1   ,ib*jbw       ,levh   ,1,levh   ,'q1 input    ')
-     call print_maxmin_six(q3   ,ib*jbw       ,levh   ,1,levh   ,'q3 output   ')
+     call print_maxmin_six(q1   ,ib*jbw       ,levs*ntr   ,1,levs*ntr   ,'q1 input    ')
+     call print_maxmin_six(q3   ,ib*jbw       ,levs*ntr   ,1,levs*ntr   ,'q3 output   ')
 #else
-     call print_maxmin_six(q1   ,LONF2S*levh_ ,LATG2S ,1,LATG2S ,'q1 input    ')
-     call print_maxmin_six(q3   ,LONF2S*levh_ ,LATG2S ,1,LATG2S ,'q3 output   ')
+     call print_maxmin_six(q1   ,LONF2S*levs_*ntr ,LATG2S ,1,LATG2S ,'q1 input    ')
+     call print_maxmin_six(q3   ,LONF2S*levs_*ntr ,LATG2S ,1,LATG2S ,'q3 output   ')
 #endif
    endif
 #endif
@@ -569,5 +514,5 @@
 #undef levs_
 #undef levh_
 #endif
-#endif /* NISLQ_MASS end */
+#endif /* NISLQ_MONO end */
    end subroutine nislq_chem_advect

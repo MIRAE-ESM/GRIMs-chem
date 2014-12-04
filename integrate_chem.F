@@ -12,7 +12,7 @@
 
       USE BPCH2_MOD,      ONLY : OPEN_BPCH2_FOR_WRITE
       USE CHEMISTRY_MOD,  ONLY : DO_CHEMISTRY
-      USE COMFVER,        ONLY : DELTIM, STEPONE
+      USE COMFVER,        ONLY : STEPONE
       USE CONVECTION_MOD, ONLY : DO_CONVECTION
       USE DAO_MOD,        ONLY : AD, AIRQNT, CONVERT_UNITS, COSSZA
       USE DAO_MOD,        ONLY : MAKE_RH, PS1, SUNCOS, SUNCOS_MID
@@ -23,12 +23,10 @@
       USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FILE_MOD,       ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
       USE GCMLINK_MOD,    ONLY : UPDATE_GCM
-      USE INPUT_MOD,      ONLY : BPCH_FILE
-      USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS, LNLPBL
+      USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
       USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
-      USE RESTART_MOD,    ONLY : LBXHGHT
       USE TIME_MOD,       ONLY : GET_NYMD, GET_NHMS, GET_TAU
       USE TIME_MOD,       ONLY : GET_YEAR, GET_SEASON, GET_MONTH
       USE TIME_MOD,       ONLY : GET_HOUR, GET_MINUTE
@@ -45,7 +43,7 @@
       USE TIME_MOD,       ONLY : SET_CT_DYN, SET_CT_EMIS
       USE TIME_MOD,       ONLY : SET_DIAGb, SET_DIAGe, TIMESTAMP_DIAG
       USE TIME_MOD,       ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
-      USE TIME_MOD,       ONLY : SET_ELAPSED_MIN, SET_TIMESTEPS
+      USE TIME_MOD,       ONLY : SET_ELAPSED_MIN
       USE TIME_MOD,       ONLY : EXPAND_DATE
       USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS
       USE TRACER_MOD,     ONLY : STT1, STT2, STT, TCVV
@@ -60,18 +58,16 @@
 
       IMPLICIT NONE
 
-      INTEGER :: TS
       INTEGER :: DAY_OF_YEAR, ELAPSED_SEC, MONTH, NHMS, NYMD, HOUR
       INTEGER :: MINUTE, YEAR, SEASON, ELAPSED_TODAY
       REAL*8  :: TAU
-      LOGICAL, SAVE :: FIRST = .TRUE.
-      LOGICAL, SAVE :: FIRSTOPEN = .TRUE.
       CHARACTER(LEN=255) :: FILENAME
+      LOGICAL, SAVE :: FIRST = .TRUE.
 
       IF (STEPONE) THEN
 
+         ! Synchronize with shour
          CALL SET_ELAPSED_MIN
-         CALL SET_CURRENT_TIME
 
       ELSE
 
@@ -80,29 +76,20 @@
 
          IF (FIRST) THEN
 
-            TS = DELTIM / 60
-
-            CALL SET_TIMESTEPS( CHEMISTRY  = TS, EMISSION  = TS,
-     &                          DYNAMICS   = TS, UNIT_CONV = TS,
-     &                          CONVECTION = TS, DIAGNOS   = TS )
-
             ! Call AIRQNT to compute air mass quantities from PS1
             CALL SET_FLOATING_PRESSURE( PS1 )
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_FLT_PRS' )
 
             CALL AIRQNT
-            LBXHGHT = .TRUE.
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a AIRQNT' )
 
+            ! Read land types and fractions from "vegtype.global"
+            CALL RDLAND
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a RDLAND' )
+
             ! Initialize PBL quantities but do not do mixing
-            ! Add option for non-local PBL (Lin, 03/31/09) 
-            IF ( .NOT. LNLPBL ) THEN
-              CALL DO_PBL_MIX( .FALSE. )
-              IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
-            ELSE
-!              CALL DO_PBL_MIX_2( .FALSE. )
-!              IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 1' )
-            ENDIF
+            CALL DO_PBL_MIX( .FALSE. )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
 
             FIRST = .FALSE.
 
@@ -131,7 +118,7 @@
          !==============================================================
          !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
          !==============================================================
-         IF ( ITS_TIME_FOR_BPCH() .and. .not. FIRSTOPEN ) THEN
+         IF ( ITS_TIME_FOR_BPCH() ) THEN
 
             ! Set time at end of diagnostic timestep
             CALL SET_DIAGe( TAU )
@@ -148,6 +135,15 @@
             CALL FLUSH( IU_SMV2LOG )          
             CALL FLUSH( IU_DEBUG   )          
 
+            ! Open a new diagnostic file after saving bpch file
+            FILENAME = 'ctm.bpch.YYYYMMDDhh'
+
+            ! Expand YYYYMMDD tokens in the bpch file name
+            CALL EXPAND_DATE( FILENAME, NYMD, NHMS )
+
+            ! Open bpch file
+            CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, FILENAME )
+
             ! Set time at beginning of next diagnostic timestep
             CALL SET_DIAGb( TAU )
 
@@ -156,26 +152,6 @@
             !===========================================================
             CALL INITIALIZE( 2 ) ! Zero arrays
             CALL INITIALIZE( 3 ) ! Zero counters
-         ENDIF
-
-         IF ( ITS_A_NEW_MONTH() ) THEN
-
-            ! Get BPCH_FILE from input_mod.F
-            FILENAME = BPCH_FILE
-
-            ! Expand YYYYMMDD tokens in the bpch file name
-            CALL EXPAND_DATE( FILENAME, NYMD, NHMS )
-
-            ! Open bpch file
-            IF (TRIM(FILENAME) .NE. TRIM(BPCH_FILE) .OR. FIRSTOPEN) THEN
-
-            CLOSE( IU_BPCH )
-            CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, FILENAME )
-
-            FIRSTOPEN = .FALSE.
-
-            ENDIF
-
          ENDIF
 
          !==============================================================
@@ -242,33 +218,6 @@
             IF ( LCONV .or. LWETD ) CALL INIT_WETSCAV
          ENDIF
 
-
-         !-------------------------------
-         ! Test for emission timestep
-         !-------------------------------
-         IF ( LNLPBL .AND. ITS_TIME_FOR_EMIS() ) THEN
-
-            IF ( ITS_TIME_FOR_UNIT() )
-     &         CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT ) ! v/v -> kg
-
-            ! Increment emission counter
-            CALL SET_CT_EMIS( INCREMENT=.TRUE. )
-
-            !========================================================
-            !         ***** D R Y   D E P O S I T I O N *****
-            !========================================================
-            IF ( LDRYD .and. ( .not. ITS_A_H2HD_SIM() ) ) CALL DO_DRYDEP
-
-            !========================================================
-            !             ***** E M I S S I O N S *****
-            !========================================================
-            IF ( LEMIS ) CALL DO_EMISSIONS
-
-            IF ( ITS_TIME_FOR_UNIT() )
-     &         CALL CONVERT_UNITS( 1, N_TRACERS, TCVV, AD, STT ) ! kg -> v/v
-
-         ENDIF
-
          !-------------------------------
          ! Test for convection timestep
          !-------------------------------
@@ -280,14 +229,8 @@
             !===========================================================
             !      ***** M I X E D   L A Y E R   M I X I N G *****
             !===========================================================
-            ! Add option for non-local PBL. (Lin, 03/31/09)
-            IF ( .NOT. LNLPBL ) THEN
-               CALL DO_PBL_MIX( LTURB )
-               IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
-            ELSE
-!               CALL DO_PBL_MIX_2( LTURB )
-!               IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 2' )
-            ENDIF
+            CALL DO_PBL_MIX( LTURB )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
 
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:2' )
@@ -318,7 +261,7 @@
          !-------------------------------
          ! Test for emission timestep
          !-------------------------------
-         IF ( ( .NOT. LNLPBL ) .AND. ITS_TIME_FOR_EMIS() ) THEN
+         IF ( ITS_TIME_FOR_EMIS() ) THEN
             
             ! Increment emission counter
             CALL SET_CT_EMIS( INCREMENT=.TRUE. )

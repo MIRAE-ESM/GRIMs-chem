@@ -149,7 +149,7 @@
 
       ! Assign data from ARRAY to the module variable H2O2
       ! Levels between LLTROP_FIX and LLROP are 0
-      CALL TRANS_REGRID( DBLE(ARRAY), NO3, 2, LT2x25, 6 )
+      CALL TRANS_REGRID( DBLE(ARRAY), NO3, 2, LT2x25, 4 )
 
       END SUBROUTINE GET_GLOBAL_NO3
 !EOC

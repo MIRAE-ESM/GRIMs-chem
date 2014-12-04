@@ -681,16 +681,10 @@
 !$OMP CRITICAL
 
       ! Deallocate all module arrays
-!      CALL CLEANUP
+      CALL CLEANUP
 
       ! Flush all files and stop
-!      CALL EXIT( 99999 )
-
-#ifdef MP
-      CALL MPABORT
-#else
-      STOP
-#endif
+      CALL EXIT( 99999 )
 
 !$OMP END CRITICAL
 

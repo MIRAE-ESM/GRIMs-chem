@@ -654,7 +654,7 @@
 ! !USES:
 !
       USE GLOBAL_HNO3_MOD, ONLY : GET_HNO3_UGM3
-      USE TIME_MOD,        ONLY : GET_ELAPSED_MIN, FIRSTTIME
+      USE TIME_MOD,        ONLY : GET_ELAPSED_MIN
 !
 ! !INPUT PARAMETERS: 
 !
@@ -676,6 +676,7 @@
 ! !LOCAL VARIABLES:
 !
       REAL*8 :: HNO3_UGM3
+      LOGICAL, SAVE :: FIRST = .TRUE.
 
       !=================================================================
       ! GET_HNO3 begins here!
@@ -683,11 +684,13 @@
 
       ! Relax to monthly mean HNO3 concentrations every 3 hours
       ! Otherwise just return the concentration in HNO3_sav
-      IF ( MOD( GET_ELAPSED_MIN(), 180 ) == 0 .or. FIRSTTIME ) THEN
+      IF ( MOD( GET_ELAPSED_MIN(), 180 ) == 0 .or. FIRST ) THEN
          HNO3_UGM3 = GET_HNO3_UGM3( I, J, L )
       ELSE
          HNO3_UGM3 = HNO3_sav(I,J,L)
       ENDIF
+
+      FIRST = .FALSE.
 
       ! Return to calling program
       END FUNCTION GET_HNO3

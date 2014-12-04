@@ -223,7 +223,8 @@
       ! Astronomical Julian Date at 0 GMT, 1 Jan 1985
       REAL*8, PARAMETER :: JD85 = 2446066.5d0
 
-      LOGICAL, PUBLIC   :: FIRSTTIME = .TRUE.
+      ! First Time?
+      LOGICAL           :: FIRSTTIME = .TRUE.
 
       CONTAINS
 !EOC
@@ -1057,10 +1058,12 @@
 !EOP
 !------------------------------------------------------------------------------
 !BOC
-      ELAPSED_MIN = ELAPSED_MIN + TS_DYN
-
-      IF (STEPONE) ELAPSED_MIN = NINT( SHOUR / 60d0 )
-      IF (.NOT. STEPONE) FIRSTTIME = .FALSE.
+      IF ( STEPONE ) THEN
+         ELAPSED_MIN = NINT( SHOUR / 60d0 )
+      ELSE
+         ELAPSED_MIN = ELAPSED_MIN + TS_DYN
+         FIRSTTIME = .FALSE.
+      ENDIF
 
       END SUBROUTINE SET_ELAPSED_MIN
 !EOC
@@ -4245,8 +4248,8 @@
       ! Hours since start of run
       E_HOURS = REAL( ELAPSED_MIN ) / 60e0 
 
-      ! Write quantities
 #ifdef DBG_CHEM
+      ! Write quantities
       IF (MASTER) THEN
       WRITE( 6, 100 ) YEAR, MONTH, DAY, HOUR, MINUTE, E_HOURS
       ENDIF

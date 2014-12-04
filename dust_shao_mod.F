@@ -1105,11 +1105,7 @@ ctdf        print *,' no mobilisation candidates'
       REAL*8 :: SM
       IF (SM .lt. 0.) THEN
         WRITE(*,*) 'h_c, SM = ', SM, ' less than 0 at dust_shao_mod.f'
-#ifdef MP
-        CALL MPABORT
-#else
         STOP
-#endif
       ENDIF
 
       H_C = dexp(22.7*SM)

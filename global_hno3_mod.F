@@ -221,7 +221,7 @@
      &                 L2x25,     ARRAY,     QUIET=.TRUE. )
 
       ! Assign data from ARRAY to the module variable HNO3
-      CALL TRANS_REGRID( DBLE(ARRAY), HNO3, 2, L2x25, 6 )
+      CALL TRANS_REGRID( DBLE(ARRAY), HNO3, 2, L2x25, 4 )
 
 #endif
 

@@ -282,6 +282,7 @@
 ! !USES:
 !
       USE FILE_MOD,    ONLY : IOERROR, IU_FILE
+      USE FLEXAOD,     ONLY : NBND
       USE LOGICAL_MOD, ONLY : LSOA
 ! 
 ! !REVISION HISTORY: 
@@ -539,7 +540,7 @@
 
       CALL WRITE_SEPARATOR( 700 )
 
-      DO T = 1, 8
+      DO T = 1, NBND
 
          N = ( SPACING * 52 ) + T
 
@@ -547,12 +548,12 @@
 
          NAME_NEW = 'AOD' // C
 
-         CALL WRITE_TINFO( NAME_NEW, FNAME(T,70), 1e0,
+         CALL WRITE_TINFO( NAME_NEW, FNAME(1,70), 1e0,
      &                     1,        1e0,         'unitless', N )
 
       ENDDO
 
-      DO T = 1, 8
+      DO T = 1, NBND
 
          N = ( SPACING * 53 ) + T
 
@@ -560,12 +561,12 @@
 
          NAME_NEW = 'SSA' // C
 
-         CALL WRITE_TINFO( NAME_NEW, FNAME(T+10,70), 1e0,
-     &                     1,        1e0,            'unitless', N )
+         CALL WRITE_TINFO( NAME_NEW, FNAME(2,70), 1e0,
+     &                     1,        1e0,         'unitless', N )
 
       ENDDO
 
-      DO T = 1, 8
+      DO T = 1, NBND
 
          N = ( SPACING * 54 ) + T
 
@@ -573,8 +574,8 @@
 
          NAME_NEW = 'ASM' // C
 
-         CALL WRITE_TINFO( NAME_NEW, FNAME(T+20,70), 1e0,
-     &                     1,        1e0,            'unitless', N )
+         CALL WRITE_TINFO( NAME_NEW, FNAME(3,70), 1e0,
+     &                     1,        1e0,         'unitless', N )
 
       ENDDO
 
@@ -3884,30 +3885,9 @@
       !-------------------------------------      
       ! DIAGAOD, DIAGSSA, DIAGASM
       !-------------------------------------      
-      FNAME(1,70) = 'AOD at 255 nm'
-      FNAME(2,70) = 'AOD at 292.5 nm'
-      FNAME(3,70) = 'AOD at 312.5 nm'
-      FNAME(4,70) = 'AOD at 507.5 nm'
-      FNAME(5,70) = 'AOD at 3.135 um'
-      FNAME(6,70) = 'AOD at 1.745 um'
-      FNAME(7,70) = 'AOD at 0.96 um'
-      FNAME(8,70) = 'AOD at 2.35 um'
-      FNAME(11,70) = 'SSA at 255 nm'
-      FNAME(12,70) = 'SSA at 292.5 nm'
-      FNAME(13,70) = 'SSA at 312.5 nm'
-      FNAME(14,70) = 'SSA at 507.5 nm'
-      FNAME(15,70) = 'SSA at 3.135 um'
-      FNAME(16,70) = 'SSA at 1.745 um'
-      FNAME(17,70) = 'SSA at 0.96 um'
-      FNAME(18,70) = 'SSA at 2.35 um'
-      FNAME(21,70) = 'ASM at 255 nm'
-      FNAME(22,70) = 'ASM at 292.5 nm'
-      FNAME(23,70) = 'ASM at 312.5 nm'
-      FNAME(24,70) = 'ASM at 507.5 nm'
-      FNAME(25,70) = 'ASM at 3.135 um'
-      FNAME(26,70) = 'ASM at 1.745 um'
-      FNAME(27,70) = 'ASM at 0.96 um'
-      FNAME(28,70) = 'ASM at 2.35 um'
+      FNAME(1,70) = 'Aerosol Optical Depth'
+      FNAME(2,70) = 'Single Scattering Albedo'
+      FNAME(3,70) = 'Asymmetry Parameter'
 
       END SUBROUTINE INIT_TRACERINFO
 !EOC

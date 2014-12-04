@@ -669,7 +669,7 @@
       USE PRESSURE_MOD,  ONLY : GET_PCENTER
       USE TRACER_MOD,    ONLY : SALA_REDGE_um,   SALC_REDGE_um,  XNUMOL
       USE TRACERID_MOD,  ONLY : IDTSO4s,         IDTNITs
-      USE TIME_MOD,      ONLY : GET_ELAPSED_SEC, GET_TS_CHEM, FIRSTTIME
+      USE TIME_MOD,      ONLY : GET_ELAPSED_SEC, GET_TS_CHEM
       USE GRID_MOD,      ONLY : GET_AREA_CM2
 
       USE CMN_SIZE_MOD        ! Size parameters
@@ -710,7 +710,7 @@
       IF ( IDTSO4s == 0 .and. IDTNITs == 0 ) RETURN
 
       ! Return if it's the start of the run
-      IF ( GET_ELAPSED_SEC() == 0 .or. FIRSTTIME ) RETURN
+      IF ( GET_ELAPSED_SEC() == 0 ) RETURN
 
       ! Chemistry timestep [s]
       DTCHEM = GET_TS_CHEM() * 2d0 * 60d0
@@ -1258,7 +1258,7 @@
 
 
          ! Cast to REAL*8 and resize if necessary
-         CALL TRANS_REGRID( DBLE(ARRAY), JH2O2, 2, LT2x25, 8 )
+         CALL TRANS_REGRID( DBLE(ARRAY), JH2O2, 2, LT2x25, 6 )
             
          ! Reset LASTMONTH
          !LASTMONTH = GET_MONTH()
@@ -7656,7 +7656,7 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), PH2O2m, 2, LT2x25, 8 )
+      CALL TRANS_REGRID( DBLE(ARRAY), PH2O2m, 2, LT2x25, 6 )
             
       !=================================================================
       ! Read monthly mean O3 [v/v]
@@ -7681,7 +7681,7 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), O3m, 2, LT2x25, 6 )
+      CALL TRANS_REGRID( DBLE(ARRAY), O3m, 2, LT2x25, 4 )
       
       ! Return to calling program
       END SUBROUTINE READ_OXIDANT

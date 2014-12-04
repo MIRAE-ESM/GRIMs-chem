@@ -1874,11 +1874,7 @@
      x              'XCKMAN= ',E12.4,1X,'USTAR(IJLOOP)= ',
      x              E12.4)
                CLOSE(98)
-#ifdef MP
-               CALL MPABORT
-#else
                STOP             ! debug
-#endif
             ENDIF
 !
 !
@@ -2035,12 +2031,8 @@
                PRINT*, 'LRGERA   = ', LRGERA(IJLOOP)
                PRINT*, 'ZO       = ', ZO(IJLOOP)
                PRINT*, 'STOP in depvel.f!'
-!               CALL CLEANUP
-#ifdef MP
-               CALL MPABORT
-#else
+               CALL CLEANUP
                STOP
-#endif
 !$OMP END CRITICAL
             ENDIF
 
@@ -2063,12 +2055,8 @@
                PRINT*, 'ZH       = ', ZH(IJLOOP)
                PRINT*, 'LRGERA   = ', LRGERA(IJLOOP)
                PRINT*, 'ZO       = ', ZO(IJLOOP)
-!               CALL CLEANUP
-#ifdef MP
-               CALL MPABORT
-#else
+               CALL CLEANUP
                STOP
-#endif
 !$OMP END CRITICAL
             ENDIF
  550     CONTINUE

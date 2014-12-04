@@ -2175,11 +2175,7 @@
 #elif defined( GRIMS )
       PRINT*, 'Need to compute CONVERT_LON for GRIMS!'
       PRINT*, 'STOP in TOMSAI (biomass_mod.f)'
-#ifdef MP
-      CALL MPABORT
-#else
       STOP
-#endif
 
 #endif
 
@@ -2273,11 +2269,7 @@
          PRINT*,'Error in SR TOMSAI:  Value of IMONTH is wrong.'
          PRINT*,'IMONTH = ',IMONTH
          ENDIF
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
 
       !=================================================================
@@ -2314,11 +2306,7 @@
             PRINT*,'good for 1979-1999. You may need to comment out'
             PRINT*,'the call to this SR in SR bioburn.'
             PRINT*,'Your year is ',JYEAR,'.'
-#ifdef MP
-            CALL MPABORT
-#else
             STOP
-#endif
          ENDIF
 
          ! Do not adjust Africa with TOMSAI!!!!

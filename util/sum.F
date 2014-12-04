@@ -1,4 +1,18 @@
 #include "define.h"
+!=====================================================================
+!
+!     FUNCTION MAKE_SUM
+!
+!        This function returns the sum of input array.
+!
+!     FUNCTION MPISUM
+!
+!        This function gathers the value saved in each pes,
+!        and then returns the sum of them.
+!
+!                                            Written by Seungun Lee
+!
+!=====================================================================
       FUNCTION MAKE_SUM( ARRAY, VERT ) RESULT( TOTAL )
 
       USE CMN_SIZE_MOD

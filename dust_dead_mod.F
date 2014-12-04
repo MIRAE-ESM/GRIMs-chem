@@ -530,10 +530,10 @@
       DO I = 1, LONLOOP
 
          ! Stop occasional haywire model runs
-         IF ( TPT_MDP(I) > 350.0d0 ) THEN
-            CALL ERROR_STOP( 'TPT_MDP(i) > 350.0',
-     &                       'DST_MBL ("dust_dead_mod.f")' )
-         ENDIF
+!         IF ( TPT_MDP(I) > 350.0d0 ) THEN
+!            CALL ERROR_STOP( 'TPT_MDP(i) > 350.0',
+!     &                       'DST_MBL ("dust_dead_mod.f")' )
+!         ENDIF
 
          ! Midlayer virtual temperature [K]
          TPT_VRT_MDP = TPT_MDP(I)

@@ -25,7 +25,6 @@
 ! !PUBLIC MEMBER FUNCTIONS:
 !  
       PUBLIC  :: READ_INPUT_FILE
-      PUBLIC  :: BPCH_FILE
 !
 ! !PRIVATE MEMBER FUNCTIONS:
 !
@@ -427,11 +426,7 @@
             WRITE( 6, '(a)' ) 'STOP in READ_ONE_LINE (input_mod.f)'
             WRITE( 6, '(a)' ) REPEAT( '=', 79 )
             ENDIF
-#ifdef MP
-            CALL MPABORT
-#else
             STOP
-#endif
          ELSE
             RETURN
          ENDIF
@@ -520,11 +515,7 @@
          WRITE( 6, '(a)' ) 'STOP in SPLIT_ONE_LINE (input_mod.f)!'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          ENDIF
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
 
       !=================================================================
@@ -544,11 +535,7 @@
          WRITE( 6, '(a)' ) 'STOP in SPLIT_ONE_LINE (input_mod.f)!'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          ENDIF
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
  100     FORMAT( 'Expected ',i2, ' substrs but found ',i3 )
       ENDIF
        
@@ -692,16 +679,19 @@
 !      READ( SUBSTRS(1:N), *     ) LWAIT
 
       ! Variable Tropopause
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:17' )
-      READ( SUBSTRS(1:N), *     ) LVARTROP
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:17' )
+!      READ( SUBSTRS(1:N), *     ) LVARTROP
+      LVARTROP = .TRUE.
 
       ! LINOZ chemistry in the stratosphere
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:18' )
       READ( SUBSTRS(1:N), *     ) LLINOZ  
 
       ! I0, J0
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_simulation_menu:19' )
-      READ( SUBSTRS(1:N), *     ) I0, J0
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2, 'read_simulation_menu:19' )
+!      READ( SUBSTRS(1:N), *     ) I0, J0
+      I0 = 0
+      J0 = 0
 
       ! Separator line (start of aerosol direct effect)
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:20' )
@@ -1487,7 +1477,7 @@
       USE EMISSIONS_MOD, ONLY : ISOP_SCALING 
       USE EMISSIONS_MOD, ONLY : NOx_SCALING
       USE LOGICAL_MOD, ONLY : LRETRO  !(wfr, 3/8/11)
-      USE COMFVER,     ONLY : DELTIM
+      USE COMCON,      ONLY : CON
       
 
       USE CMN_SIZE_MOD      ! Size parameters
@@ -1568,7 +1558,7 @@
       ! Emissions timestep
 !      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_emissions_menu:2' )
 !      READ( SUBSTRS(1:N), * ) TS_EMIS
-      TS_EMIS = DELTIM / 60
+      TS_EMIS = CON(1) / 60
 
       ! Include anthropogenic emissions?
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_emissions_menu:3' )
@@ -2536,7 +2526,7 @@
       USE LOGICAL_MOD, ONLY : LSVCSPEC, LKPP
       USE TIME_MOD,    ONLY : SET_CT_CHEM
       USE TRACER_MOD,  ONLY : N_TRACERS
-      USE COMFVER,     ONLY : DELTIM
+      USE COMCON,      ONLY : CON
 
       USE CMN_SIZE_MOD      ! Size parameters
 ! 
@@ -2572,7 +2562,7 @@
       ! Chemistry timestep
 !      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:2' )
 !      READ( SUBSTRS(1:N), * ) TS_CHEM
-      TS_CHEM = DELTIM / 60
+      TS_CHEM = CON(1) / 60
 
       ! Read and save CSPEC ?
 !      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:3' )
@@ -2767,7 +2757,7 @@
       USE ERROR_MOD,   ONLY : ERROR_STOP
       USE LOGICAL_MOD, ONLY : LCONV, LTURB
       USE LOGICAL_MOD, ONLY : LNLPBL        ! (Lin, 03/31/09)
-      USE COMFVER,     ONLY : DELTIM
+      USE COMCON,      ONLY : CON
 ! 
 ! !REVISION HISTORY: 
 !  20 Jul 2004 - R. Yantosca - Initial version
@@ -2809,7 +2799,7 @@
       ! Convection timestep
 !      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:4' )
 !      READ( SUBSTRS(1:N), * ) TS_CONV
-      TS_CONV = DELTIM / 60
+      TS_CONV = CON(1) / 60
       TS_DYN  = TS_CONV
 
       ! Separator line
@@ -3211,8 +3201,9 @@
       N_MAX = MIN( N_TRACERS, NNPAR )
 
       ! Binary punch file name
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1,  'read_diagnostic_menu:1' )
-      READ( SUBSTRS(1:N), '(a)' ) BPCH_FILE
+!      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1,  'read_diagnostic_menu:1' )
+!      READ( SUBSTRS(1:N), '(a)' ) BPCH_FILE
+      BPCH_FILE = 'ctm.bpch.YYYYMMDDhh'
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:2' )
@@ -3721,10 +3712,10 @@
 !      CALL INIT_DIAG_OH 
 
       ! Expand YYYYMMDD tokens in the bpch file name
-!      CALL EXPAND_DATE( BPCH_FILE, GET_NYMDb(), GET_NHMSb() )
+      CALL EXPAND_DATE( BPCH_FILE, GET_NYMDb(), GET_NHMSb() )
 
       ! Open the binary punch file for output 
-!      CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, BPCH_FILE )
+      CALL OPEN_BPCH2_FOR_WRITE( IU_BPCH, BPCH_FILE )
 
       END SUBROUTINE READ_DIAGNOSTIC_MENU
 !EOC
@@ -3783,11 +3774,7 @@
          WRITE( 6, '(a)' ) 'STOP in SET_TINDEX (input_mod.f)'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          ENDIF
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
 
       !=================================================================

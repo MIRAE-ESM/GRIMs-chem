@@ -20,8 +20,6 @@
 
       IMPLICIT NONE
 
-      LOGICAL :: LBXHGHT = .FALSE.
-
       CONTAINS
 
 !======================================================================
@@ -48,7 +46,7 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY READ : chemi'
+      WRITE(6,*) '    - RESTART_MOD: Reading chemi'
       ENDIF
 
       IF (MASTER) THEN
@@ -71,7 +69,7 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY READ : chemidt'
+      WRITE(6,*) '    - RESTART_MOD: Reading chemidt'
       ENDIF
 
       IF (MASTER) THEN
@@ -99,10 +97,8 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY READ : bxhght'
+      WRITE(6,*) '    - RESTART_MOD: Reading bxhght'
       ENDIF
-
-      LBXHGHT = .TRUE.
 
       END SUBROUTINE READ_RESTART
 
@@ -124,7 +120,7 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY WRITTEN : chemi'
+      WRITE(6,*) '    - RESTART_MOD: Restart chemi written!'
       ENDIF
 
       IF (MASTER) THEN
@@ -138,7 +134,7 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY WRITTEN : chemidt'
+      WRITE(6,*) '    - RESTART_MOD: Restart chemidt written!'
       ENDIF
 
       IF (MASTER) THEN
@@ -160,7 +156,7 @@
 
       IF (MASTER) THEN
       CLOSE(9999)
-      WRITE(6,*) 'CHEM RESTART FILE IS SUCCESSFULLY WRITTEN : bxhght'
+      WRITE(6,*) '    - RESTART_MOD: Restart bxhght written!'
       ENDIF
 
       END SUBROUTINE WRITE_RESTART
@@ -189,11 +185,7 @@
          WRITE(6,*) ' '
          WRITE(6,*) "CANNOT READ : GET_RESTART_DATA"
          CALL FLUSH(6)
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
       ENDIF
 
@@ -223,11 +215,7 @@
          WRITE(6,*) ' '
          WRITE(6,*) "CANNOT WRITE : PUT_RESTART_DATA"
          CALL FLUSH(6)
-#ifdef MP
-         CALL MPABORT
-#else
          STOP
-#endif
       ENDIF
       ENDIF
 

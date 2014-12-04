@@ -1,4 +1,3 @@
-#include "define.h"
 !=====================================================================
 !
 !     SUBROUTINE START_CHEM
@@ -14,29 +13,19 @@
       USE COMODE_MOD,     ONLY : INIT_COMODE
       USE DAO_MOD,        ONLY : INIT_DAO
       USE DIAG_AOD_MOD,   ONLY : INIT_DIAG_AOD
-      USE ERROR_MOD,      ONLY : DEBUG_MSG, ERROR_STOP
+      USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FLEXAOD,        ONLY : MIE_CALC
       USE GCMLINK_MOD,    ONLY : INIT_GCMLINK
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
-      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LPRT, LVARTROP
+      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LPRT
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
       USE RESTART_MOD,    ONLY : READ_RESTART
-      USE TRACER_MOD,     ONLY : ITS_A_FULLCHEM_SIM, ITS_AN_AEROSOL_SIM
-      USE CMN_SIZE_MOD,   ONLY : MASTER
 
       IMPLICIT NONE
-
-      INTEGER :: RC
-
-      RC=0 ! Error flag. Default 0 is "no error"
 
       ! Initialize header modules
       CALL INIT_HEADER
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_HEADER' )
-
-      ! Read input file and call init routines from other modules
-      CALL READ_INPUT_FILE
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_INPUT_FILE' )
 
       ! Initialize GRIMs coupling module
       CALL INIT_GCMLINK
@@ -45,6 +34,10 @@
       ! Initialize AOD diagnostic module
       CALL INIT_DIAG_AOD
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
+
+      ! Read input file and call init routines from other modules
+      CALL READ_INPUT_FILE
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_INPUT_FILE' )
 
       ! Initialize met field arrays from "dao_mod.f"
       CALL INIT_DAO
@@ -59,38 +52,18 @@
       CALL INIT_PRESSURE
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_PRESSURE' )
 
-      ! Read annual mean tropopause if not a variable tropopause
-      ! read_tropopause is obsolete with variable tropopause
-      IF ( .not. LVARTROP ) THEN
-!         CALL READ_TROPOPAUSE
-!         IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_TROPOPAUSE' )
-         IF(MASTER) THEN
-         WRITE(6,*) 'GRIMs-Chem uses online tropopopause level.'
-         WRITE(6,*) 'LVARTROP should be T'
-         ENDIF
-#ifdef MP
-         CALL MPABORT
-#else
-         STOP
-#endif
-      ENDIF
-
       ! Initialize allocatable SMVGEAR/KPP arrays
       IF ( LEMIS .or. LCHEM ) THEN
-         IF ( ITS_A_FULLCHEM_SIM() ) CALL INIT_COMODE
-         IF ( ITS_AN_AEROSOL_SIM() ) CALL INIT_COMODE
-!         IF ( LKPP )  CALL INIT_GCKPP_COMODE( IIPAR, JJPAR, LLTROP,
-!     $        ITLOOP, NMTRATE, IGAS, RC )
-         IF ( RC == 1 )
-     $        CALL ERROR_STOP( "Alloc error", "INIT_GCKPP_COMODE" )
+         CALL INIT_COMODE
          IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_COMODE' )
       ENDIF
 
-      ! Read land types and fractions from "vegtype.global"
-      CALL RDLAND
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a RDLAND' )
-
+      ! Read restart file from the disk
       CALL READ_RESTART
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_RESTART' )
+
+      ! MIE calculation for aerosol direct effect
       CALL MIE_CALC
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a MIE_CALC' )
 
       END SUBROUTINE START_CHEM
