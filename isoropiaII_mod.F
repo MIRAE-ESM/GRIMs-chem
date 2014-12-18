@@ -197,11 +197,11 @@
       IF ( FIRST ) THEN
 
          ! Make sure certain tracers are defined
-         IF ( IDTSO4  == 0 ) CALL ERROR_STOP( 'IDTSO4 is undefined!', X)
-         IF ( IDTNH3  == 0 ) CALL ERROR_STOP( 'IDTNH3 is undefined!', X)
-         IF ( IDTNH4  == 0 ) CALL ERROR_STOP( 'IDTNH4 is undefined!', X)
-         IF ( IDTNIT  == 0 ) CALL ERROR_STOP( 'IDTNIT is undefined!', X)
-         IF ( IDTSALA == 0 ) CALL ERROR_STOP( 'IDTSALA is undefined!',X)
+         IF ( IDTSO4  == 0 ) RETURN !CALL ERROR_STOP( 'IDTSO4 is undefined!', X)
+         IF ( IDTNH3  == 0 ) RETURN !CALL ERROR_STOP( 'IDTNH3 is undefined!', X)
+         IF ( IDTNH4  == 0 ) RETURN !CALL ERROR_STOP( 'IDTNH4 is undefined!', X)
+         IF ( IDTNIT  == 0 ) RETURN !CALL ERROR_STOP( 'IDTNIT is undefined!', X)
+         IF ( IDTSALA == 0 ) RETURN !CALL ERROR_STOP( 'IDTSALA is undefined!',X)
 
          ! Initialize arrays
          CALL INIT_ISOROPIAII

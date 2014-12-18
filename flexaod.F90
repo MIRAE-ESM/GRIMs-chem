@@ -425,11 +425,22 @@ module flexaod
 
   subroutine calc_aod
 
+  ! Initialize
+  conc = 0d0
+
   ! Tracer concentrations (kg/kg)
-  if (idtso4 .ne. 0 .and. idtnh4 .ne. 0 .and. idtnit .ne. 0) then
-    conc(:,:,:,1) = stt2(:,:,:,idtso4) * 96.0 / 28.97 &
-                  + stt2(:,:,:,idtnh4) * 18.0 / 28.97 &
-                  + stt2(:,:,:,idtnit) * 62.0 / 28.97
+  if (idtso4 .ne. 0) then
+    if (idtnh4 .eq. 0) then
+      conc(:,:,:,1) = stt2(:,:,:,idtso4) * ( 96.0 + 36.0 ) / 28.97
+    else
+      conc(:,:,:,1) = stt2(:,:,:,idtso4) * 96.0 / 28.97
+    endif
+  endif
+  if (idtnh4 .ne. 0) then
+    conc(:,:,:,1) = conc(:,:,:,1) + stt2(:,:,:,idtnh4) * 18.0 / 28.97
+  endif
+  if (idtnit .ne. 0) then
+    conc(:,:,:,1) = conc(:,:,:,1) + stt2(:,:,:,idtnit) * 62.0 / 28.97
   endif
   if (idtocpi .ne. 0) then
     conc(:,:,:,2) = stt2(:,:,:,idtocpi) * 12.0 * 2.1 / 28.97
@@ -449,6 +460,11 @@ module flexaod
   if (idtbcpo .ne. 0) then
     conc(:,:,:,7) = stt2(:,:,:,idtbcpo) * 12.0 / 28.97
   endif
+#ifdef DST1BIN
+  if (idtdst1 .ne. 0) then
+    conc(:,:,:,13) = stt2(:,:,:,idtdst1) * 29.0 / 28.97
+  endif
+#else
   if (idtdst1 .ne. 0) then
     conc(:,:,:,8) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
     conc(:,:,:,9) = stt2(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
@@ -464,6 +480,7 @@ module flexaod
   if (idtdst4 .ne. 0) then
     conc(:,:,:,14) = stt2(:,:,:,idtdst4) * 29.0 / 28.97
   endif
+#endif
 
   ! RH (%)
   relh = rh

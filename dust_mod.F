@@ -152,9 +152,11 @@
 
          ! This may lead to out of bounds errors
          IDDEP(1) = DRYDST1
+#ifndef DST1BIN
          IDDEP(2) = DRYDST2
          IDDEP(3) = DRYDST3
          IDDEP(4) = DRYDST4
+#endif
  
          ! Reset first-time flag
          FIRST = .FALSE.
@@ -165,11 +167,19 @@
       !=================================================================
 
       ! Dust settling
+#ifdef DST1BIN
+      CALL DRY_SETTLING(   STT(:,:,:,IDTDST1) )
+#else
       CALL DRY_SETTLING(   STT(:,:,:,IDTDST1:IDTDST4) )
+#endif
 
       ! Dust deposition
       IF ( LDRYD ) THEN
+#ifdef DST1BIN
+         CALL DRY_DEPOSITION( STT(:,:,:,IDTDST1) )
+#else
          CALL DRY_DEPOSITION( STT(:,:,:,IDTDST1:IDTDST4) )
+#endif
       ENDIF
 
       END SUBROUTINE CHEMDUST
@@ -566,7 +576,11 @@
       ELSE
 
          ! Use Paul Ginoux's dust source function
+#ifdef DST1BIN
+         CALL SRC_DUST_GINOUX( STT(:,:,:,IDTDST1) )
+#else
          CALL SRC_DUST_GINOUX( STT(:,:,:,IDTDST1:IDTDST4) )
+#endif
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### EMISSDUST: a SRC_DUST_GINOUX')
@@ -1218,7 +1232,11 @@
 !
       LOGICAL, SAVE          :: FIRST = .TRUE.
       INTEGER                :: I, J, N, M, IOS
+#ifdef DST1BIN
+      INTEGER                :: IPOINT(NDSTBIN) = (/2/)
+#else
       INTEGER                :: IPOINT(NDSTBIN) = (/3, 2, 2, 2/)
+#endif
       REAL*4                 :: ARRAY(I2x25,J2x25,3)
       REAL*8, SAVE, ALLOCATABLE :: SRCE_FUNC(:,:,:)
       REAL*8                 :: W10M,   DEN,  DIAM,   U_TS0, U_TS
@@ -2004,18 +2022,30 @@
       ! Dust radii
       ALLOCATE( DUSTREFF( NDSTBIN ), STAT=AS )
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'DUSTREFF' )
+#ifdef DST1BIN
+      DUSTREFF(1:NDSTBIN) = (/ 2.4d-6 /)
+#else
       DUSTREFF(1:NDSTBIN) = (/ 0.73d-6, 1.4d-6,  2.4d-6,  4.5d-6  /)
+#endif
 
       ! Dust density
       ALLOCATE( DUSTDEN( NDSTBIN ), STAT=AS )
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'DUSTREFF' )
+#ifdef DST1BIN
+      DUSTDEN(1:NDSTBIN) = (/ 2650.d0 /)
+#else
       DUSTDEN(1:NDSTBIN) = (/ 2500.d0, 2650.d0, 2650.d0, 2650.d0 /)
+#endif
 
       ! These only have to be allocated for the Ginoux source function
       IF ( .not. LDEAD ) THEN
          ALLOCATE( FRAC_S( NDSTBIN ), STAT=AS )
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'FRAC_S' )
+#ifdef DST1BIN
+         FRAC_S(1:NDSTBIN)   = (/ 1d0 /)
+#else
          FRAC_S(1:NDSTBIN)   = (/ 0.095d0, 0.3d0, 0.3d0, 0.3d0 /)
+#endif
       ENDIF
 
       ! Reset flag

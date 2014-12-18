@@ -144,10 +144,10 @@
       
       ! Error check tracer ID's
       X = 'DO_RPMARES (rpmares_mod.f)'
-      IF ( IDTSO4 == 0 ) CALL ERROR_STOP( 'IDTSO4 is not defined!', X )
-      IF ( IDTNH3 == 0 ) CALL ERROR_STOP( 'IDTNH3 is not defined!', X )
-      IF ( IDTNH4 == 0 ) CALL ERROR_STOP( 'IDTNH4 is not defined!', X )
-      IF ( IDTNIT == 0 ) CALL ERROR_STOP( 'IDTNIT is not defined!', X )
+      IF ( IDTSO4 == 0 ) RETURN !CALL ERROR_STOP( 'IDTSO4 is not defined!', X )
+      IF ( IDTNH3 == 0 ) RETURN !CALL ERROR_STOP( 'IDTNH3 is not defined!', X )
+      IF ( IDTNH4 == 0 ) RETURN !CALL ERROR_STOP( 'IDTNH4 is not defined!', X )
+      IF ( IDTNIT == 0 ) RETURN !CALL ERROR_STOP( 'IDTNIT is not defined!', X )
     
       ! Check to see if we have to read in monthly mean HNO3
       IF ( IDTHNO3 == 0 ) THEN

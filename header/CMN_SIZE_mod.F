@@ -453,7 +453,11 @@
 #else
 
       ! NDSTBIN -- number of dust size bins for transport (tdf, bmy, 3/31/04)
+#ifdef DST1BIN
+      INTEGER, PARAMETER :: NDSTBIN   = 1
+#else
       INTEGER, PARAMETER :: NDSTBIN   = 4
+#endif
 
 #endif
 

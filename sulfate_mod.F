@@ -1441,6 +1441,7 @@
       USE ERROR_MOD,       ONLY : SAFE_DIV
       USE GLOBAL_HNO3_MOD, ONLY : GET_GLOBAL_HNO3
       USE GRID_MOD,        ONLY : GET_AREA_CM2
+      USE LOGICAL_MOD,     ONLY : LSSALT
       USE PBL_MIX_MOD,     ONLY : GET_FRAC_UNDER_PBLTOP
       USE PRESSURE_MOD,    ONLY : GET_PCENTER
       USE TIME_MOD,        ONLY : GET_TS_CHEM, GET_MONTH
@@ -1591,11 +1592,19 @@
          ! Update SO2 conc. after seasalt chemistry (bec, 12/7/04)
          !==============================================================
 
-         ! Get alkalinity of accum (ALK1) and coarse (ALK2) [kg]
-         CALL GET_ALK( I, J, L, ALK1, ALK2, Kt1, Kt2, Kt1N, Kt2N )
+         IF (LSSALT) THEN
 
-         ! Total alkalinity [kg]
-         ALK = ALK1 + ALK2
+            ! Get alkalinity of accum (ALK1) and coarse (ALK2) [kg]
+            CALL GET_ALK( I, J, L, ALK1, ALK2, Kt1, Kt2, Kt1N, Kt2N )
+
+            ! Total alkalinity [kg]
+            ALK = ALK1 + ALK2
+
+         ELSE
+
+            ALK = 0d0
+
+         ENDIF
 
          ! If (1) there is alkalinity, (2) there is SO2 present, and 
          ! (3) O3 is in excess, then compute seasalt SO2 chemistry
@@ -1650,8 +1659,13 @@
          ! Otherwise, compute FC, LWC as before
          !---------------------------------------------
 
+#if   defined ( GRIMS )
+         ! Get cloud fraction from met fields
+         FC      = CLDF(L,I,J)
+#else
          ! Volume cloud fraction (Sundqvist et al 1989) [unitless]
          FC      = VCLDF(I,J,L)
+#endif
 
          ! Liquid water content in cloudy area of grid box [m3/m3]
          ! LWC as returned from the GET_LWC function is the in-cloud liquid
@@ -2575,8 +2589,8 @@
       !=================================================================
 
       ! Return if tracers are not defined
-      IF ( IDTSO4 == 0 .or. IDTSO4s == 0 ) RETURN
-      IF ( DRYSO4 == 0 .or. DRYSO4s == 0 ) RETURN
+      IF ( IDTSO4 == 0 ) RETURN
+      IF ( DRYSO4 == 0 ) RETURN
 
       ! DTCHEM is the chemistry timestep in seconds
       DTCHEM = GET_TS_CHEM() * 2d0 * 60d0
@@ -2658,8 +2672,10 @@
          ! SO4 [v/v]
          SO40  = STT(I,J,L,IDTSO4)
          
-         ! SO4 within coarse seasalt aerosol [v/v]
-         SO40s = STT(I,J,L,IDTSO4s)
+         IF ( IDTSO4s /= 0 ) THEN
+            ! SO4 within coarse seasalt aerosol [v/v]
+            SO40s = STT(I,J,L,IDTSO4s)
+         ENDIF
 
 !------------------------------------------------------------------------------
 !%%% Currently under development (rjp, bmy, 3/15/05)
@@ -2753,6 +2769,8 @@
 
          ENDIF
 
+         IF ( IDTSO4s == 0 ) GOTO 100
+
          !==============================================================
          ! SO4s (SO4 w/in seasalt aerosol) chemistry: 
          !
@@ -2797,6 +2815,8 @@
 
          ENDIF
 
+100      CONTINUE
+
          !==============================================================
          ! Final concentrations after chemistry
          !==============================================================
@@ -2807,7 +2827,9 @@
 
          ! Final concentrations [v/v]
          STT(I,J,L,IDTSO4)  = SO4
-         STT(I,J,L,IDTSO4s) = SO4s
+         IF ( IDTSO4s /= 0 ) THEN
+            STT(I,J,L,IDTSO4s) = SO4s
+         ENDIF
 
 !-----------------------------------------------------------------------------
 !%%% Currently under development (bmy, 3/15/05)
@@ -2844,11 +2866,13 @@
             FLUX = FLUX  * XNUMOL(IDTSO4)  / AREA_CM2 / DTCHEM
             T44(I,J,L,1) = T44(I,J,L,1) + FLUX
 
-            ! SO4s drydep flux [molec/cm2/s]
-            FLUX = SO40s - SO4s + PSO4_ss(I,J,L) 
-            FLUX = FLUX  * AD(I,J,L)       / TCVV(IDTSO4s)
-            FLUX = FLUX  * XNUMOL(IDTSO4s) / AREA_CM2 / DTCHEM
-            T44(I,J,L,2) = T44(I,J,L,2) + FLUX
+            IF ( IDTSO4s /= 0 ) THEN
+               ! SO4s drydep flux [molec/cm2/s]
+               FLUX = SO40s - SO4s + PSO4_ss(I,J,L) 
+               FLUX = FLUX  * AD(I,J,L)       / TCVV(IDTSO4s)
+               FLUX = FLUX  * XNUMOL(IDTSO4s) / AREA_CM2 / DTCHEM
+               T44(I,J,L,2) = T44(I,J,L,2) + FLUX
+            ENDIF
 
 !------------------------------------------------------------------------------
 !%%% Currently under development (rjp, bmy, 3/15/05)
@@ -2901,7 +2925,9 @@
 
             ! Sum SO4, SO4s drydep fluxes in the vertical [molec/cm2/s]
             AD44(I,J,DRYSO4, 1) = AD44(I,J,DRYSO4, 1) + T44(I,J,L,1)
-            AD44(I,J,DRYSO4s,1) = AD44(I,J,DRYSO4s,1) + T44(I,J,L,2)
+            IF ( IDTSO4s /= 0 ) THEN
+               AD44(I,J,DRYSO4s,1) = AD44(I,J,DRYSO4s,1) + T44(I,J,L,2)
+            ENDIF
 
 !------------------------------------------------------------------------------
 !%%% Currently under development (rjp, bmy, 3/15/05)
@@ -3929,6 +3955,7 @@
       MONTH   = GET_MONTH()
       YEAR    = GET_YEAR()
 
+#ifndef VOLCOFF
       !=================================================================
       ! If this is a new day, read in the volcanic emissions 
       ! (jaf, bmy, 10/15/09)
@@ -3940,6 +3967,7 @@
          CALL READ_ERUP_VOLC(    DAY, MONTH, YEAR )
 
       ENDIF
+#endif
 
       !=================================================================
       ! If this is a new month, read in the monthly mean quantities
@@ -7981,7 +8009,7 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'SOx_SCALE' )
       SOx_SCALE = 0d0
 
-#if   !defined( GEOS_5 ) && !defined( MERRA )
+#if   !defined( GEOS_5 ) && !defined( MERRA ) && !defined( GRIMS )
       ! If we are using GEOS-5 or MERRA met, then get the cloud fraction 
       ! directly from the met fields.  (skim, bmy, 1/14/10)
       ALLOCATE( VCLDF( IIPAR, JJPAR, LLTROP ), STAT=AS )

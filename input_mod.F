@@ -1303,10 +1303,10 @@
 
          ! We now compute the production of SO4s and NITs, so when 
          ! LSULF=T, then we must also have LSSALT=T (bec, bmy, 4/13/05)
-         IF ( .not. LSSALT ) THEN 
-            MSG = 'LSULF=T now also requires LSSALT=T!'
-            CALL ERROR_STOP( MSG, LOCATION )
-         ENDIF
+!         IF ( .not. LSSALT ) THEN 
+!            MSG = 'LSULF=T now also requires LSSALT=T!'
+!            CALL ERROR_STOP( MSG, LOCATION )
+!         ENDIF
 
          ! Stop w/ error if everything is undefined
          IF ( I == 0 ) THEN
@@ -1396,6 +1396,19 @@
             CALL ERROR_STOP( MSG, LOCATION )
          ENDIF
       ENDIF
+
+#ifdef DST1BIN
+      I = IDTDST2 + IDTDST3 + IDTDST4
+
+      IF ( LDEAD .or. LSHAO ) THEN
+         MSG = 'Cannot use DEAD or SHAO scheme if DST1BIN is defined!'
+         CALL ERROR_STOP( MSG, LOCATION )
+      ENDIF
+      IF ( I /= 0 ) THEN
+         MSG = 'DST1BIN is defined but # of dust bin is not 1!'
+         CALL ERROR_STOP( MSG, LOCATION )
+      ENDIF
+#endif
 
       !---------------------------------
       ! Error check SEASALT AEROSOLS
