@@ -15,7 +15,6 @@
       USE DIAG_AOD_MOD,   ONLY : INIT_DIAG_AOD
       USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FLEXAOD,        ONLY : MIE_CALC
-      USE GCMLINK_MOD,    ONLY : INIT_GCMLINK
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
       USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LPRT
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
@@ -26,10 +25,6 @@
       ! Initialize header modules
       CALL INIT_HEADER
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_HEADER' )
-
-      ! Initialize GRIMs coupling module
-      CALL INIT_GCMLINK
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_GCMLINK' )
 
       ! Initialize AOD diagnostic module
       CALL INIT_DIAG_AOD

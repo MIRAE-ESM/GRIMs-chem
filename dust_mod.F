@@ -507,10 +507,14 @@
 !
 ! !USES:
 !
-      USE ERROR_MOD,    ONLY : ERROR_STOP, DEBUG_MSG
-      USE LOGICAL_MOD,  ONLY : LDEAD, LSHAO, LDUST, LPRT
-      USE TRACER_MOD,   ONLY : STT
-      USE TRACERID_MOD, ONLY : IDTDST1, IDTDST2, IDTDST3, IDTDST4
+      USE BPCH2_MOD,     ONLY : GET_TAU0, READ_BPCH2
+      USE DAO_MOD,       ONLY : GWETTOP
+      USE DIRECTORY_MOD, ONLY : DATA_DIR
+      USE ERROR_MOD,     ONLY : ERROR_STOP, DEBUG_MSG
+      USE LOGICAL_MOD,   ONLY : LDEAD, LSHAO, LDUST, LPRT
+      USE TIME_MOD,      ONLY : ITS_A_NEW_MONTH, GET_MONTH
+      USE TRACER_MOD,    ONLY : STT
+      USE TRACERID_MOD,  ONLY : IDTDST1, IDTDST2, IDTDST3, IDTDST4
 
       USE CMN_SIZE_MOD       ! Size parameters
 ! 
@@ -526,7 +530,10 @@
 !
 ! !LOCAL VARIABLES:
 !
+      REAL*4 :: ARRAY(I1x1,J1x1,1)
+      REAL*8 :: XTAU
       LOGICAL, SAVE :: FIRST = .TRUE.
+      CHARACTER(LEN=255) :: FILENAME
       
       !=================================================================
       ! EMISSDUST begins here!
@@ -550,6 +557,22 @@
 
          ! Reset first-time flag
          FIRST = .FALSE.
+      ENDIF
+
+      ! Get GWETTOP from bpch file
+      IF ( ITS_A_NEW_MONTH() ) THEN
+
+         FILENAME = TRIM( DATA_DIR )                    //
+     &              'MERRA/GWETTOP.clim.merra.1x1.bpch'
+
+         XTAU = GET_TAU0( GET_MONTH(), 1, 1985 )
+
+         CALL READ_BPCH2( FILENAME, 'DAO-FLDS',    22,
+     &                    XTAU,      I1x1,         J1x1,
+     &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
+
+         CALL TRANS_REGRID( DBLE(ARRAY), GWETTOP, 1, 1, 2 )
+
       ENDIF
 
       !=================================================================
