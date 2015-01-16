@@ -224,7 +224,7 @@
       REAL*8, PARAMETER :: JD85 = 2446066.5d0
 
       ! First Time?
-      LOGICAL           :: FIRSTTIME = .TRUE.
+      LOGICAL, PUBLIC   :: FIRSTTIME = .TRUE.
 
       CONTAINS
 !EOC
