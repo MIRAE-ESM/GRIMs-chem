@@ -14,7 +14,7 @@
 !
 !=====================================================================
 
-      FUNCTION CLX( X, Y ) RESULT( CLX )
+      FUNCTION CLX( X, Y ) RESULT( XID )
 
       USE GRID_MOD, ONLY : GET_XMID
 
@@ -22,7 +22,7 @@
 
       INTEGER, INTENT(IN)  :: X
       INTEGER, INTENT(IN)  :: Y
-      INTEGER, INTENT(OUT) :: CLX
+      INTEGER :: XID
       INTEGER :: I2x25=144
       INTEGER :: I
       REAL*8 :: LON1, LON2, DIFF, DIFF_SAVE
@@ -39,14 +39,14 @@
 
          IF (DIFF .LE. DIFF_SAVE) THEN
             DIFF_SAVE = DIFF
-            CLX = I
+            XID = I
          ENDIF
 
       ENDDO
 
       END FUNCTION CLX
 
-      FUNCTION CLY( X, Y ) RESULT( CLY )
+      FUNCTION CLY( X, Y ) RESULT( YID )
 
       USE GRID_MOD, ONLY : GET_YMID
 
@@ -54,7 +54,7 @@
 
       INTEGER, INTENT(IN)  :: X
       INTEGER, INTENT(IN)  :: Y
-      INTEGER, INTENT(OUT) :: CLY
+      INTEGER :: YID
       INTEGER :: J2x25=91
       INTEGER :: J
       REAL*8 :: LAT1, LAT2, DIFF, DIFF_SAVE
@@ -71,7 +71,7 @@
 
          IF (DIFF .LE. DIFF_SAVE) THEN
             DIFF_SAVE = DIFF
-            CLY = J
+            YID = J
          ENDIF
 
       ENDDO

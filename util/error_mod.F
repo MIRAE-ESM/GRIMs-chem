@@ -157,7 +157,7 @@
 !------------------------------------------------------------------------------
 !BOC
 
-#if   defined( LINUX_IFORT )
+#if   defined( LINUX_INTEL )
       IT_IS_A_NAN = ISNAN( VALUE )    
 
 #elif defined( LINUX_PGI )
@@ -247,7 +247,7 @@
 !------------------------------------------------------------------------------
 !BOC
 !
-#if   defined( LINUX_IFORT )
+#if   defined( LINUX_INTEL )
       IT_IS_A_NAN = ISNAN( VALUE )      
 
 #elif defined( LINUX_PGI )
@@ -337,7 +337,7 @@
 !------------------------------------------------------------------------------
 !BOC
 
-#if   defined( LINUX_IFORT )
+#if   defined( LINUX_INTEL )
 
       ! Local variables (parameters copied from "fordef.for")
       INTEGER, PARAMETER :: SNAN=0, QNAN=1, POS_INF=2, NEG_INF=3
@@ -438,7 +438,7 @@
 !------------------------------------------------------------------------------
 !BOC
 
-#if   defined( LINUX_IFORT )
+#if   defined( LINUX_INTEL )
 
       ! Local variables (parameters copied from "fordef.for")
       INTEGER, PARAMETER :: SNAN=0, QNAN=1, POS_INF=2, NEG_INF=3
@@ -732,7 +732,7 @@
       ! ALLOC_ERR begins here!
       !=================================================================
 
-#if   defined( LINUX_IFORT )
+#if   defined( LINUX_INTEL )
      
       !-----------------------
       ! Linux/IFORT compiler 

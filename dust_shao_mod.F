@@ -355,8 +355,8 @@
        REAL*8 :: A1, A2, A3
        REAL*8 :: ZETA, SIGMA_M                      ! u*sqrt(rhos/p), bombardment coefficient
 !
-       REAL*8 :: R_C, H_C
-       REAL*8 :: QWHITE, USTART0
+!       REAL*8 :: R_C, H_C
+!       REAL*8 :: QWHITE, USTART0
 !       external R_C, H_C, QWHITE, USTART0
 
 !**********FROM SOILPSD.INC*******  start**************************************************

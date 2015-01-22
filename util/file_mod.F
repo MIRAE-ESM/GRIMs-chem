@@ -190,7 +190,7 @@
       WRITE( 6, 120 ) TRIM( ERROR_MSG )
  120  FORMAT( /, 'Error: ', a )
 
-#elif defined( LINUX_IFORT ) 
+#elif defined( LINUX_INTEL ) 
 
       !=================================================================
       ! For LINUX platform w/ IFORT v8/v9 compiler:
@@ -304,7 +304,7 @@
       ! Test whether directory exists w/ F90 INQUIRE function
       INQUIRE( FILE=TRIM( FILENAME ), EXIST=IT_EXISTS )
 
-#if   defined( LINUX_IFORT ) 
+#if   defined( LINUX_INTEL ) 
       
       ! Intel IFORT v9 compiler requires use of the DIRECTORY keyword to 
       ! INQUIRE for checking existence of directories.  (bmy, 11/2/05)
