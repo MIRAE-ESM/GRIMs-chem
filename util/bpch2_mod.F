@@ -706,7 +706,14 @@
       MODELNAME = 'MERRA'
 
 #elif defined( GRIMS )
-      MODELNAME = 'GRIMS'
+      SELECT CASE( LLPAR )
+         CASE( 28 )
+            MODELNAME = 'GRIMS_28L'
+         CASE( 64 )
+            MODELNAME = 'GRIMS_64L'
+         CASE DEFAULT
+            MODELNAME = 'GRIMS'
+      END SELECT
 
 #endif
 
