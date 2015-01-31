@@ -42,27 +42,29 @@ UTILS = ${UTILDIR}/error_mod.o \
         ${UTILDIR}/xshift.o \
         ${UTILDIR}/yrev.o
 
-OBJS = tracer_mod.o logical_mod.o tracerid_mod.o scale_anthro_mod.o arctas_ship_emiss_mod.o \
-       biofit.o diag_mod.o gc_biomass_mod.o gfed2_biomass_mod.o gfed3_biomass_mod.o biomass_mod.o \
-       dao_mod.o boxvl.o bravo_mod.o cac_anthro_mod.o pbl_mix_mod.o meganut_mod.o comode_mod.o \
-       drydep_mod.o global_oh_mod.o global_no3_mod.o carbon_mod.o dust_dead_mod.o dust_shao_mod.o dust_mod.o \
-       global_hno3_mod.o tropopause_mod.o isoropiaII_mod.o rpmares_mod.o seasalt_mod.o wetscav_mod.o \
-       epa_nei_mod.o nei2005_anthro_mod.o edgar_mod.o emep_mod.o streets_anthro_mod.o icoads_ship_mod.o \
-       sulfate_mod.o chemistry_mod.o convection_mod.o diag1.o diag_2pm.o diag41_mod.o diag3.o restart_mod.o \
-       flexaod.o diag_aod_mod.o emissions_mod.o cleanup.o emmonot.o findmon.o gamap_mod.o initialize.o \
-       input_mod.o isoropiaIIcode.o make_cldf.o mie_spher.o ndxx_setup.o rdisopt.o rdlai.o rdland.o \
-       rdmonot.o readlai.o setbase.o sfcwindsqr.o sunparam.o nislq_chem_advect.o transport_chem.o \
-       start_chem.o integrate_chem.o end_chem.o
+MODS = tracer_mod.o logical_mod.o tracerid_mod.o scale_anthro_mod.o arctas_ship_emiss_mod.o \
+       diag_mod.o gc_biomass_mod.o gfed2_biomass_mod.o gfed3_biomass_mod.o biomass_mod.o \
+       bravo_mod.o cac_anthro_mod.o dao_mod.o pbl_mix_mod.o meganut_mod.o comode_mod.o \
+       drydep_mod.o global_oh_mod.o global_no3_mod.o carbon_mod.o dust_dead_mod.o dust_shao_mod.o \
+       dust_mod.o global_hno3_mod.o tropopause_mod.o isoropiaII_mod.o rpmares_mod.o seasalt_mod.o \
+       wetscav_mod.o epa_nei_mod.o nei2005_anthro_mod.o edgar_mod.o emep_mod.o streets_anthro_mod.o \
+       icoads_ship_mod.o sulfate_mod.o chemistry_mod.o convection_mod.o diag41_mod.o flexaod.o \
+       diag_aod_mod.o emissions_mod.o gamap_mod.o input_mod.o linoz_mod.o restart_mod.o
+
+OBJS = biofit.o boxvl.o cleanup.o diag1.o diag_2pm.o diag3.o emmonot.o end_chem.o findmon.o \
+       initialize.o integrate_chem.o isoropiaIIcode.o make_cldf.o mie_spher.o ndxx_setup.o \
+       nislq_chem_advect.o rdisopt.o rdlai.o rdland.o rdmonot.o readlai.o setbase.o sfcwindsqr.o \
+       start_chem.o sunparam.o transport_chem.o
 
 CP = @CP@
 CC = @CC@
 F77 = @F77_FCST@
-FORT_FLAGS = @FORT_FLAGS@ -Mpreprocess
+FORT_FLAGS = @FORT_FLAGS@
 INCLUDE_DIR = @INCLUDE_DIR@
 INSTALLDLIB = @INSTALLDLIB@
 
-chemistry.a : ${HEADERS} ${UTILS} ${OBJS}
-	${AR} -r $@ ${HEADERS} ${UTILS} ${OBJS}
+chemistry.a : ${HEADERS} ${UTILS} ${MODS} ${OBJS}
+	${AR} -r $@ ${HEADERS} ${UTILS} ${MODS} ${OBJS}
 	${CP} $@ ${INSTALLDLIB}
 
 clean :

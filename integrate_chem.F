@@ -23,7 +23,8 @@
       USE EMISSIONS_MOD,  ONLY : DO_EMISSIONS
       USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FILE_MOD,       ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
-      USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS
+      USE LINOZ_MOD,      ONLY : DO_LINOZ
+      USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS, LLINOZ
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
       USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
@@ -204,6 +205,11 @@
          ! Placed after interpolation to get correct value of TROPP. 
          ! (ccc, 12/9/08)
          CALL DIAG_2PM
+
+         !==============================================================
+         !     ***** S T R A T O S P H E R I C   O Z O N E S *****
+         !==============================================================
+         IF ( LLINOZ ) CALL DO_LINOZ
 
          !==============================================================
          !              ***** T R A N S P O R T *****

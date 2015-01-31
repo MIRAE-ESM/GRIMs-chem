@@ -16,7 +16,8 @@
       USE ERROR_MOD,      ONLY : DEBUG_MSG
       USE FLEXAOD,        ONLY : MIE_CALC
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
-      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LPRT
+      USE LINOZ_MOD,      ONLY : LINOZ_READ
+      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LPRT
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
       USE RESTART_MOD,    ONLY : READ_RESTART
 
@@ -52,6 +53,9 @@
          CALL INIT_COMODE
          IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_COMODE' )
       ENDIF
+
+      ! Added to read input file for linoz strat (dbj, jliu, bmy, 10/16/09)
+      IF ( LLINOZ ) CALL LINOZ_READ
 
       ! Read restart file from the disk
       CALL READ_RESTART
