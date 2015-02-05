@@ -709,6 +709,8 @@
       SELECT CASE( LLPAR )
          CASE( 28 )
             MODELNAME = 'GRIMS_28L'
+         CASE( 42 )
+            MODELNAME = 'GRIMS_42L'
          CASE( 64 )
             MODELNAME = 'GRIMS_64L'
          CASE DEFAULT
