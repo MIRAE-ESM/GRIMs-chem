@@ -3,5 +3,4 @@ util/*.o
 *.o
 *.a
 Makefile
-GEOS-Chem
 .svn
