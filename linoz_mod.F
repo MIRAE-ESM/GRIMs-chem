@@ -342,6 +342,15 @@
 
             ENDDO       ! loop over L
 
+            ! Remove Tropospheric Ozone
+            DO L = LBOT-1,1,-1
+
+               ! Lifetime = 22.3day
+               STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER)
+     &                            * EXP( - DTCHEM / 22.3d0 / 86400d0 )
+
+            ENDDO       ! loop over L
+
          ENDDO          ! loop over I
 
       ENDDO             ! loop pver J
