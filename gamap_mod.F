@@ -282,7 +282,6 @@
 ! !USES:
 !
       USE FILE_MOD,    ONLY : IOERROR, IU_FILE
-      USE FLEXAOD,     ONLY : NBND
       USE LOGICAL_MOD, ONLY : LSOA
 ! 
 ! !REVISION HISTORY: 
@@ -540,44 +539,26 @@
 
       CALL WRITE_SEPARATOR( 700 )
 
-      DO T = 1, NBND
+      N = ( SPACING * 52 ) + 1
 
-         N = ( SPACING * 52 ) + T
+      NAME_NEW = 'DIAGAOD'
 
-         WRITE( C, '(i2.2)' ) T
+      CALL WRITE_TINFO( NAME_NEW, FNAME(1,70), 1e0,
+     &                  1,        1e0,         'unitless', N )
 
-         NAME_NEW = 'AOD' // C
+      N = ( SPACING * 53 ) + 1
 
-         CALL WRITE_TINFO( NAME_NEW, FNAME(1,70), 1e0,
-     &                     1,        1e0,         'unitless', N )
+      NAME_NEW = 'DIAGSSA'
 
-      ENDDO
+      CALL WRITE_TINFO( NAME_NEW, FNAME(2,70), 1e0,
+     &                  1,        1e0,         'unitless', N )
 
-      DO T = 1, NBND
+      N = ( SPACING * 54 ) + 1
 
-         N = ( SPACING * 53 ) + T
+      NAME_NEW = 'DIAGASM'
 
-         WRITE( C, '(i2.2)' ) T
-
-         NAME_NEW = 'SSA' // C
-
-         CALL WRITE_TINFO( NAME_NEW, FNAME(2,70), 1e0,
-     &                     1,        1e0,         'unitless', N )
-
-      ENDDO
-
-      DO T = 1, NBND
-
-         N = ( SPACING * 54 ) + T
-
-         WRITE( C, '(i2.2)' ) T
-
-         NAME_NEW = 'ASM' // C
-
-         CALL WRITE_TINFO( NAME_NEW, FNAME(3,70), 1e0,
-     &                     1,        1e0,         'unitless', N )
-
-      ENDDO
+      CALL WRITE_TINFO( NAME_NEW, FNAME(3,70), 1e0,
+     &                  1,        1e0,         'unitless', N )
 
       !------------------------------
       ! All other diagnostics 
@@ -3885,9 +3866,15 @@
       !-------------------------------------      
       ! DIAGAOD, DIAGSSA, DIAGASM
       !-------------------------------------      
-      FNAME(1,70) = 'Aerosol Optical Depth'
-      FNAME(2,70) = 'Single Scattering Albedo'
-      FNAME(3,70) = 'Asymmetry Parameter'
+#if defined (RRTMGSW) && defined (RRTMGLW)
+      FNAME(1,70) = 'Aerosol Optical Depth at 533nm'
+      FNAME(2,70) = 'Single Scattering Albedo at 533nm'
+      FNAME(3,70) = 'Asymmetry Parameter at 533nm'
+#else
+      FNAME(1,70) = 'Aerosol Optical Depth at 508nm'
+      FNAME(2,70) = 'Single Scattering Albedo at 508nm'
+      FNAME(3,70) = 'Asymmetry Parameter at 508nm'
+#endif
 
       END SUBROUTINE INIT_TRACERINFO
 !EOC

@@ -32,8 +32,8 @@ module flexaod
   integer,parameter :: nwl = 61        ! number input wavelengths
   integer,parameter :: nrh = 5         ! number of input RH bins
   integer,parameter :: nsinyuk = 109
-#ifdef RRTMGSW
-  integer,parameter :: nbnd = 14
+#if defined (RRTMGSW) && defined (RRTMGLW)
+  integer,parameter :: nbnd = 30
 #else
   integer,parameter :: nbnd = 8
 #endif
@@ -86,7 +86,7 @@ module flexaod
   subroutine mie_calc
 
   ! Wavelenght in microns (um)
-#ifdef RRTMGSW
+#if defined (RRTMGSW) && defined (RRTMGLW)
   wl_um(1)  = (  3.846  +  3.077  ) / 2d0
   wl_um(2)  = (  3.077  +  2.500  ) / 2d0
   wl_um(3)  = (  2.500  +  2.150  ) / 2d0
@@ -101,6 +101,22 @@ module flexaod
   wl_um(12) = (  0.3448 +  0.2632 ) / 2d0
   wl_um(13) = (  0.2632 +  0.2000 ) / 2d0
   wl_um(14) = ( 12.195  +  3.846  ) / 2d0
+  wl_um(15) = ( 1000.0  + 28.571  ) / 2d0
+  wl_um(16) = ( 28.571  + 20.000  ) / 2d0
+  wl_um(17) = ( 20.000  + 15.873  ) / 2d0
+  wl_um(18) = ( 15.873  + 14.286  ) / 2d0
+  wl_um(19) = ( 14.286  + 12.195  ) / 2d0
+  wl_um(20) = ( 12.195  + 10.204  ) / 2d0
+  wl_um(21) = ( 10.204  +  9.259  ) / 2d0
+  wl_um(22) = (  9.259  +  8.475  ) / 2d0
+  wl_um(23) = (  8.475  +  7.194  ) / 2d0
+  wl_um(24) = (  7.194  +  6.757  ) / 2d0
+  wl_um(25) = (  6.757  +  5.556  ) / 2d0
+  wl_um(26) = (  5.556  +  4.808  ) / 2d0
+  wl_um(27) = (  4.808  +  4.444  ) / 2d0
+  wl_um(28) = (  4.444  +  4.202  ) / 2d0
+  wl_um(29) = (  4.202  +  3.846  ) / 2d0
+  wl_um(30) = (  3.846  +  3.077  ) / 2d0
 #else
   wl_um(1) = ( 0.225 + 0.285 ) / 2d0
   wl_um(2) = ( 0.285 + 0.300 ) / 2d0
@@ -339,7 +355,7 @@ module flexaod
   !--------------------------------------------------------------------
 
     if (master) then
-#ifdef RRTMGSW
+#if defined (RRTMGSW) && defined (RRTMGLW)
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
 #else
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'
@@ -403,7 +419,7 @@ module flexaod
     endif
 
     if (master) then
-#ifdef RRTMGSW
+#if defined (RRTMGSW) && defined (RRTMGLW)
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
 #else
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'

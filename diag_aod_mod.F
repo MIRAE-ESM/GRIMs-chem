@@ -10,15 +10,14 @@
 
       MODULE DIAG_AOD_MOD
 
-      USE FLEXAOD, ONLY : NBND
       USE CMN_SIZE_MOD
 
       IMPLICIT NONE
 
-      INTEGER, DIMENSION(:,:,:),   ALLOCATABLE :: SCALEAOD
-      REAL*8,  DIMENSION(:,:,:,:), ALLOCATABLE :: DIAGAOD
-      REAL*8,  DIMENSION(:,:,:,:), ALLOCATABLE :: DIAGSSA
-      REAL*8,  DIMENSION(:,:,:,:), ALLOCATABLE :: DIAGASM
+      INTEGER, DIMENSION(:,:),   ALLOCATABLE :: SCALEAOD
+      REAL*8,  DIMENSION(:,:,:), ALLOCATABLE :: DIAGAOD
+      REAL*8,  DIMENSION(:,:,:), ALLOCATABLE :: DIAGSSA
+      REAL*8,  DIMENSION(:,:,:), ALLOCATABLE :: DIAGASM
 
       CONTAINS
 
@@ -35,7 +34,7 @@
 
       USE CMN_SIZE_MOD  ! Size parameters
 
-      INTEGER            :: I,         J,           L,      N
+      INTEGER            :: I,         J,           L
       INTEGER            :: CENTER180, HALFPOLAR
       REAL*4             :: ARRAY(IIPAR,JJPAR,LLPAR)
       REAL*4             :: LONRES,    LATRES
@@ -63,68 +62,56 @@
       ! AOD
       CATEGORY  = 'DIAGAOD'
 
-      DO N = 1, NBND
-
       ! Divide by SCALEAOD
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
-         ARRAY(I,J,:) = DIAGAOD(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
-         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
+         ARRAY(I,J,:) = DIAGAOD(I,J,:) / DBLE(SCALEAOD(I,J))
+         IF (SCALEAOD(I,J) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 
       ! Write to bpch file
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &            HALFPOLAR, CENTER180, CATEGORY, N,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
-
-      ENDDO
 
       ! SSA
       CATEGORY  = 'DIAGSSA'
 
-      DO N = 1, NBND
-
       ! Divide by SCALEAOD
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
-         ARRAY(I,J,:) = DIAGSSA(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
-         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
+         ARRAY(I,J,:) = DIAGSSA(I,J,:) / DBLE(SCALEAOD(I,J))
+         IF (SCALEAOD(I,J) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 
       ! Write to bpch file
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &            HALFPOLAR, CENTER180, CATEGORY, N,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
-
-      ENDDO
 
       ! ASM
       CATEGORY  = 'DIAGASM'
 
-      DO N = 1, NBND
-
       ! Divide by SCALEAOD
       DO J = 1, LATLOOP
       DO I = 1, LONLOOP
-         ARRAY(I,J,:) = DIAGASM(I,J,:,N) / DBLE(SCALEAOD(I,J,N))
-         IF (SCALEAOD(I,J,N) .EQ. 0) ARRAY(I,J,:) = 0e0
+         ARRAY(I,J,:) = DIAGASM(I,J,:) / DBLE(SCALEAOD(I,J))
+         IF (SCALEAOD(I,J) .EQ. 0) ARRAY(I,J,:) = 0e0
       ENDDO
       ENDDO
 
       ! Write to bpch file
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &            HALFPOLAR, CENTER180, CATEGORY, N,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
-
-      ENDDO
 
       IF (MASTER) THEN
       WRITE( 6, '(a)' ) '     - DIAG_AOD: Diagnostics written to bpch!'
@@ -141,10 +128,10 @@
 
       SUBROUTINE INIT_DIAG_AOD
 
-      ALLOCATE( SCALEAOD(IIPAR,JJPAR,NBND) )
-      ALLOCATE( DIAGAOD(IIPAR,JJPAR,LLPAR,NBND) )
-      ALLOCATE( DIAGSSA(IIPAR,JJPAR,LLPAR,NBND) )
-      ALLOCATE( DIAGASM(IIPAR,JJPAR,LLPAR,NBND) )
+      ALLOCATE( SCALEAOD(IIPAR,JJPAR) )
+      ALLOCATE( DIAGAOD(IIPAR,JJPAR,LLPAR) )
+      ALLOCATE( DIAGSSA(IIPAR,JJPAR,LLPAR) )
+      ALLOCATE( DIAGASM(IIPAR,JJPAR,LLPAR) )
 
       SCALEAOD = 0
       DIAGAOD = 0d0
