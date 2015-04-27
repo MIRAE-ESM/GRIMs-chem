@@ -1377,7 +1377,7 @@
       USE DIAG41_MOD,   ONLY : ND41
 !      USE DIAG42_MOD,   ONLY : ND42
 !      USE DIAG48_MOD,   ONLY : DO_SAVE_DIAG48
-!      USE DIAG49_MOD,   ONLY : DO_SAVE_DIAG49
+      USE DIAG49_MOD,   ONLY : DO_SAVE_DIAG49
 !      USE DIAG50_MOD,   ONLY : DO_SAVE_DIAG50
 !      USE DIAG51_MOD,   ONLY : DO_SAVE_DIAG51
 !      USE DIAG51b_MOD,  ONLY : DO_SAVE_DIAG51b
@@ -1454,7 +1454,7 @@
       !=================================================================
 
       ! Set a flag if any timeseries diagnostics are turned on
-      DO_TIMESERIES = .FALSE.
+      DO_TIMESERIES = DO_SAVE_DIAG49
 
       !----------------------------------
       ! General tracer information
@@ -2792,7 +2792,7 @@
       !-------------------------------------      
       ! Surface pressure (ND31)
       !-------------------------------------   
-      IF ( ND31 > 0 ) THEN
+      IF ( ND31 > 0 .or. DO_SAVE_DIAG49 ) THEN
          T           = 1
          NTRAC(31)   = T
          NAME (T,31) = 'PSURF'

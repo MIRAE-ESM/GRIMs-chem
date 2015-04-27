@@ -18,6 +18,7 @@
       USE DAO_MOD,        ONLY : MAKE_RH, PS1, SUNCOS, SUNCOS_MID
       USE DAO_MOD,        ONLY : T, TROPP
       USE DIAG41_MOD,     ONLY : DIAG41, ND41
+      USE DIAG49_MOD,     ONLY : DIAG49, ITS_TIME_FOR_DIAG49
       USE DIAG_AOD_MOD,   ONLY : WRITE_DIAG_AOD
       USE DRYDEP_MOD,     ONLY : DO_DRYDEP
       USE EMISSIONS_MOD,  ONLY : DO_EMISSIONS
@@ -347,6 +348,23 @@
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a DIAGNOSTICS' )
          ENDIF
+
+         !==============================================================
+         !   ***** T I M E S E R I E S   D I A G N O S T I C S  *****
+         !
+         ! NOTE: Since we are saving soluble tracers, we must move
+         !       the ND40, ND49, and ND52 timeseries diagnostics
+         !       to after the call to DO_WETDEP (bmy, 4/22/04)
+         !============================================================== 
+
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: before TIMESERIES' )
+
+         ! 3-D timeseries
+         IF ( ITS_TIME_FOR_DIAG49() ) CALL DIAG49
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after DIAG49' )
+
+         !### After diagnostics
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after TIMESERIES' )
 
          !==============================================================
          !   ***** U N I T   C O N V E R S I O N  ( kg -> v/v ) *****

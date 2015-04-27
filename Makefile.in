@@ -49,7 +49,7 @@ MODS = tracer_mod.o logical_mod.o tracerid_mod.o scale_anthro_mod.o arctas_ship_
        dust_mod.o global_hno3_mod.o tropopause_mod.o isoropiaII_mod.o rpmares_mod.o seasalt_mod.o \
        wetscav_mod.o epa_nei_mod.o nei2005_anthro_mod.o edgar_mod.o emep_mod.o streets_anthro_mod.o \
        icoads_ship_mod.o sulfate_mod.o chemistry_mod.o convection_mod.o diag41_mod.o flexaod.o \
-       diag_aod_mod.o emissions_mod.o gamap_mod.o input_mod.o linoz_mod.o restart_mod.o
+       diag49_mod.o diag_aod_mod.o emissions_mod.o gamap_mod.o input_mod.o linoz_mod.o restart_mod.o
 
 OBJS = biofit.o boxvl.o cleanup.o diag1.o diag_2pm.o diag3.o emmonot.o end_chem.o findmon.o \
        initialize.o integrate_chem.o isoropiaIIcode.o make_cldf.o mie_spher.o ndxx_setup.o \

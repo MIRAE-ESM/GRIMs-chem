@@ -42,7 +42,7 @@
       PRIVATE :: READ_OUTPUT_MENU
       PRIVATE :: READ_DIAGNOSTIC_MENU
       PRIVATE :: SET_TINDEX
-!      PRIVATE :: READ_ND49_MENU      
+      PRIVATE :: READ_ND49_MENU      
 !      PRIVATE :: READ_ND50_MENU  
 !      PRIVATE :: READ_ND51_MENU  
 !      PRIVATE :: READ_ND51b_MENU  
@@ -283,8 +283,8 @@
 !         ELSE IF ( INDEX( LINE, 'ND48 MENU'        ) > 0 ) THEN
 !            CALL READ_ND48_MENU                  
 
-!         ELSE IF ( INDEX( LINE, 'ND49 MENU'        ) > 0 ) THEN
-!            CALL READ_ND49_MENU                   
+         ELSE IF ( INDEX( LINE, 'ND49 MENU'        ) > 0 ) THEN
+            CALL READ_ND49_MENU                   
                                                   
 !         ELSE IF ( INDEX( LINE, 'ND50 MENU'        ) > 0 ) THEN
 !            CALL READ_ND50_MENU                   
@@ -4071,6 +4071,7 @@
 
       END SUBROUTINE READ_ND48_MENU
 !EOC
+#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -4162,6 +4163,7 @@
       !=================================================================
       ! Print to screen
       !=================================================================
+      IF (MASTER) THEN
       WRITE( 6, '(/,a)' ) 'ND49 3-D INSTANTANEOUS TIMESERIES MENU'
       WRITE( 6, '(  a)' ) '--------------------------------------'
       WRITE( 6, 100     ) 'Turn on ND49 timeseries?    : ', DO_ND49
@@ -4172,6 +4174,7 @@
       WRITE( 6, 130     ) 'ND49 longitude limits       : ', IMIN, IMAX
       WRITE( 6, 130     ) 'ND49 latitude  limits       : ', JMIN, JMAX
       WRITE( 6, 130     ) 'ND49 level     limits       : ', LMIN, LMAX
+      ENDIF
 
       ! FORMAT statements
  100  FORMAT( A, L5    )
@@ -4190,6 +4193,7 @@
 
       END SUBROUTINE READ_ND49_MENU
 !EOC
+#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------

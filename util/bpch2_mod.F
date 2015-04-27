@@ -333,6 +333,7 @@
 ! !USES:
 !
       USE FILE_MOD, ONLY : IOERROR
+      USE FILE_MOD, ONLY : IU_ND49
 !
 ! !INPUT PARAMETERS: 
 !
@@ -376,6 +377,41 @@
 
       REAL*8 :: F_ARRAY(IGLOB*JGLOB,NL)
       REAL*4 :: F_ARRAY4(IGLOB*JGLOB,NL)
+
+      IF ( IUNIT .EQ. IU_ND49 ) THEN
+
+      IF (MASTER) THEN
+      !=================================================================
+      ! BPCH2 begins here!!  
+      !
+      ! Compute the number of bytes to skip between the end of one 
+      ! data block and the beginning of the next data header line
+      !=================================================================
+      NSKIP = ( BYTES_PER_NUMBER * ( NI * NJ * NL ) ) + END_OF_RECORD
+
+      !=================================================================
+      ! Write data block to binary punch file
+      ! Check for I/O errors
+      !=================================================================
+      WRITE( IUNIT, IOSTAT=IOS ) 
+     &     MODELNAME, LONRES, LATRES, HALFPOLAR, CENTER180
+
+      IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:1' )
+
+      WRITE( IUNIT, IOSTAT = IOS ) 
+     &     CATEGORY, NTRACER,  UNIT, TAU0,   TAU1,   RESERVED,
+     &     NI,       NJ,       NL,   IFIRST, JFIRST, LFIRST,
+     &     NSKIP
+
+      IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:2' )
+
+      WRITE( IUNIT, IOSTAT=IOS )
+     &     ( ( ( ARRAY(I,J,L), I=1,NI ), J=1,NJ ), L=1,NL )
+
+      IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:3' )
+      ENDIF
+
+      ELSE
 
 #ifdef MP
       CALL MPGP2F(DBLE(ARRAY),NI,NJ,F_ARRAY,IGLOB*2,JGLOB/2,NL)
@@ -424,6 +460,8 @@
      &     ( ( F_ARRAY4(I,L), I=1,IGLOB*JGLOB ), L=1,NL )
 
       IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'bpch2:3' )
+      ENDIF
+
       ENDIF
 
       !=================================================================
