@@ -1919,13 +1919,13 @@
       
 #if !defined(GRID2x25) && !defined(GRID4x5)
       
-      IF ( LICARTT ) THEN
-         LICARTT = .FALSE.
-         IF (MASTER) THEN
-         WRITE( 6, '(/,a,/)' ) ' ICARTT-based corrections to  ' //
-     $        'EPA-NEI99 are not available at high resolution.'
-         ENDIF
-      ENDIF
+!      IF ( LICARTT ) THEN
+!         LICARTT = .FALSE.
+!         IF (MASTER) THEN
+!         WRITE( 6, '(/,a,/)' ) ' ICARTT-based corrections to  ' //
+!     $        'EPA-NEI99 are not available at high resolution.'
+!         ENDIF
+!      ENDIF
          
 #endif
 
@@ -5614,9 +5614,9 @@
       ! Check directories
       CALL CHECK_DIRECTORY( DATA_DIR     )
       CALL CHECK_DIRECTORY( DATA_DIR_1x1 )
-      CALL CHECK_DIRECTORY( RUN_DIR      )
+!      CALL CHECK_DIRECTORY( RUN_DIR      )
       CALL CHECK_DIRECTORY( OH_DIR       )
-      CALL CHECK_DIRECTORY( O3PL_DIR     )
+!      CALL CHECK_DIRECTORY( O3PL_DIR     )
 
       ! Only validate the TEMP_DIR if we are unzipping met fields
       IF ( LUNZIP ) CALL CHECK_DIRECTORY( TEMP_DIR )

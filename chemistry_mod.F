@@ -255,8 +255,8 @@
  
                 ! Reset NTLOOP and NTTLOOP after call to READER
                 ! with the actual # of boxes w/in the ann mean trop
-                NTLOOP  = N_TROP
-                NTTLOOP = N_TROP
+!                NTLOOP  = N_TROP
+!                NTTLOOP = N_TROP
  
                 ! Reset first-time flag
                 FIRST = .FALSE.

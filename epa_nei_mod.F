@@ -1137,6 +1137,7 @@
       CHARACTER(LEN=40) :: UNIT     
       CHARACTER(LEN=40) :: RESERVED
 
+      REAL*8            :: ARRAY8(I2x25,J2x25,1)
       REAL*8            :: F_ARRAY1(IGLOB*2,JGLOB/2)
       REAL*8            :: F_ARRAY2(IGLOB*2,JGLOB/2)
       REAL*8            :: F_ARRAY3(IGLOB*2,JGLOB/2)
@@ -1195,6 +1196,9 @@
      &        NI,       NJ,       NL,   IFIRST, JFIRST, LFIRST,
      &        NSKIP
 
+         ! Double
+         ARRAY8 = DBLE(ARRAY)
+
          ! Error check
          IF ( IOS /= 0 ) CALL IOERROR( IOS, IU_FILE, 'read_data:3' )
 
@@ -1210,84 +1214,84 @@
          !==============================================================
          SELECT CASE ( NTRACER )
             CASE( 1  )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY1, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY1, 2 )
 
                CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY1,1)
             CASE( 4  )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY2, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY2, 2 )
 
                CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY2,1)
             CASE( 5  )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY3, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY3, 2 )
 
                CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY3,1)
             CASE( 9  )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY4, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY4, 2 )
 
                CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY4,1)
             CASE( 10 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY5, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY5, 2 )
 
                CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY5,1)
             CASE( 18 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY6, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY6, 2 )
 
                CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY6,1)
             CASE( 19 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY7, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY7, 2 )
 
                CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY7,1)
             CASE( 20 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY8, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY8, 2 )
 
                CALL XSHIFT( F_ARRAY8, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY8, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY8,1)
             CASE( 21 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY9, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY9, 2 )
 
                CALL XSHIFT( F_ARRAY9, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY9, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY9,1)
             CASE( 26 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY10, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY10, 2 )
 
                CALL XSHIFT( F_ARRAY10, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY10, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY10,1)
             CASE( 27 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY11, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY11, 2 )
 
                CALL XSHIFT( F_ARRAY11, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY11, IGLOB, JGLOB, 1 )
 
                CALL DYN_TRANS2MODEL_GRID(F_ARRAY11,1)
             CASE( 29 )
-               CALL REGRID_2x25( DBLE(ARRAY), F_ARRAY12, 2 )
+               CALL REGRID_2x25( ARRAY8, F_ARRAY12, 2 )
 
                CALL XSHIFT( F_ARRAY12, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY12, IGLOB, JGLOB, 1 )
@@ -1583,6 +1587,8 @@
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=14 ) :: MASK_DIR
 
+      REAL*8            :: ARRAY8(I2x25,J2x25,1)
+
       !=================================================================
       ! READ_USA_MASK begins here!
       !=================================================================
@@ -1623,8 +1629,11 @@
      &                 XTAU,      I2x25,    J2x25,     
      &                 1,         ARRAY,    QUIET=.TRUE. ) 
 
+      ! Double
+      ARRAY8 = DBLE(ARRAY)
+
       ! Cast to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), USA_MASK, 2, 1, 2 )
+      CALL TRANS_REGRID( ARRAY8, USA_MASK, 2, 1, 2 )
 
       END SUBROUTINE READ_USA_MASK
 !EOC

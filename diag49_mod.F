@@ -254,6 +254,7 @@
       ! Aerosol types (rvm, aad, bmy, 7/20/04)
       INTEGER                  :: IND(6) = (/ 22, 29, 36, 43, 50, 15 /)
 
+      REAL*4 :: ARRAY4(ND49_NI,ND49_NJ,ND49_NL)
       REAL*8 :: P_ARRAY(IIPAR,JJPAR,LLPAR)
       REAL*8 :: F_ARRAY(IGLOB*JGLOB,LLPAR)
 
@@ -1651,6 +1652,9 @@
 
          ENDIF
 
+         ! Single
+         ARRAY4 = REAL(Q,4)
+
          !==============================================================
          ! Save this data block to the ND49 timeseries file
          !==============================================================
@@ -1660,7 +1664,7 @@
      &               TAU,          TAU,          RESERVED,  
      &               ND49_NI,      ND49_NJ,      GMNL,  
      &               ND49_IMIN+I0, ND49_JMIN+J0, ND49_LMIN, 
-     &               REAL( Q(1:ND49_NI, 1:ND49_NJ, 1:GMNL),4 ) )
+     &               ARRAY4(1:ND49_NI, 1:ND49_NJ, 1:GMNL) )
       ENDDO
             
       !=================================================================

@@ -864,7 +864,7 @@
          ! Finding GEOS-5 reduced pressure level indices
          ! which correspond to the tip of GRIMs pressure level
          !=====================================================
-         DO ID=1, 48
+         DO ID=1, 47
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
      &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
             ID1=ID
@@ -1034,7 +1034,7 @@
          ! Finding GEOS-5 reduced pressure level indices
          ! which correspond to the tip of GRIMs pressure level
          !=====================================================
-         DO ID=1, 73
+         DO ID=1, 72
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
      &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
             ID1=ID

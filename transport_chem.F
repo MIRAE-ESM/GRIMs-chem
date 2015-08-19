@@ -24,6 +24,8 @@
       INTEGER :: I, J, L, N
       REAL*8 :: WORK1(IIPAR,N_TRACERS*LLPAR,JJPAR)
       REAL*8 :: WORK2(IIPAR,N_TRACERS*LLPAR,JJPAR)
+      REAL*8 :: TR1(IIPAR,JJPAR,LLPAR)
+      REAL*8 :: TR2(IIPAR,JJPAR,LLPAR)
       REAL*8 :: MASS1, MASS2, FAC
       REAL*8, EXTERNAL :: MAKE_SUM
 
@@ -60,8 +62,10 @@
 
       DO N = 1, N_TRACERS
 
-         MASS1 = MAKE_SUM( STT1(:,:,:,N) * AD(:,:,:), LLPAR )
-         MASS2 = MAKE_SUM( STT (:,:,:,N) * AD(:,:,:), LLPAR )
+         TR1 = STT1(:,:,:,N) * AD(:,:,:)
+         TR2 = STT (:,:,:,N) * AD(:,:,:)
+         MASS1 = MAKE_SUM( TR1, LLPAR )
+         MASS2 = MAKE_SUM( TR2, LLPAR )
 
          IF ( MASS2 .EQ. 0d0 ) THEN
             FAC = 1d0

@@ -219,7 +219,7 @@
 !
 ! !LOCAL VARIABLES:
 ! 
-      INTEGER :: I, J
+      INTEGER :: I, J, LOC(4)
 
       !=================================================================
       ! SET_FLOATING_PRESSURE begins here!
@@ -233,8 +233,11 @@
          ! Assign into PFLT array
          PFLT(I,J) = PS(I,J) 
 
+         ! Location
+         LOC = (/I,J,0,0/)
+
          ! Check for NaN or Infinities
-         CALL CHECK_VALUE( PFLT(I,J), (/I,J,0,0/), 
+         CALL CHECK_VALUE( PFLT(I,J), LOC, 
      &                    'PFLT',   'set_floating_pressure:1' )
       ENDDO
       ENDDO

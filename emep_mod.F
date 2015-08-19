@@ -350,6 +350,7 @@
       CHARACTER(LEN=40)       :: UNIT     
       CHARACTER(LEN=40)       :: RESERVED
 
+      REAL*8                  :: ARRAY8(I1x1,J1x1,1)
       REAL*8                  :: F_ARRAY1(IGLOB*2,JGLOB/2)
       REAL*8                  :: F_ARRAY2(IGLOB*2,JGLOB/2)
       REAL*8                  :: F_ARRAY3(IGLOB*2,JGLOB/2)
@@ -435,6 +436,9 @@
          READ( IU_FILE, IOSTAT=IOS ) 
      &        ( ( ( ARRAY(I,J,L), I=1,NI ), J=1,NJ ), L=1,NL )
 
+         ! Double
+         ARRAY8 = DBLE(ARRAY)
+
          ! Error check
          IF ( IOS /= 0 ) CALL IOERROR( IOS, IU_FILE, 'emiss_emep:4' )
 
@@ -443,7 +447,7 @@
 
             ! NOx [molec/cm2/s]
             CASE( 1  )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY1, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY1, 2 )
 
                CALL XSHIFT( F_ARRAY1, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY1, IGLOB, JGLOB, 1 )
@@ -452,7 +456,7 @@
 
             ! CO [molec/cm2/s]
             CASE( 4  )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY2, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY2, 2 )
 
                CALL XSHIFT( F_ARRAY2, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY2, IGLOB, JGLOB, 1 )
@@ -461,7 +465,7 @@
 
             ! ALK4 [atoms C/cm2/s]
             CASE( 5  )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY3, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY3, 2 )
 
                CALL XSHIFT( F_ARRAY3, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY3, IGLOB, JGLOB, 1 )
@@ -470,7 +474,7 @@
 
             ! MEK [atoms C/cm2/s]
             CASE( 10 )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY4, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY4, 2 )
 
                CALL XSHIFT( F_ARRAY4, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY4, IGLOB, JGLOB, 1 )
@@ -479,7 +483,7 @@
 
             ! ALD2 [atoms C/cm2/s]
             CASE( 11 )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY5, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY5, 2 )
 
                CALL XSHIFT( F_ARRAY5, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY5, IGLOB, JGLOB, 1 )
@@ -488,7 +492,7 @@
 
             ! PRPE [atoms C/cm2/s]
             CASE( 18 )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY6, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY6, 2 )
 
                CALL XSHIFT( F_ARRAY6, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY6, IGLOB, JGLOB, 1 )
@@ -497,7 +501,7 @@
 
             ! C2H6 [atoms C/cm2/s]
             CASE( 21 )
-               CALL REGRID_1x1( DBLE(ARRAY), F_ARRAY7, 2 )
+               CALL REGRID_1x1( ARRAY8, F_ARRAY7, 2 )
 
                CALL XSHIFT( F_ARRAY7, IGLOB, JGLOB, 1 )
                CALL YREV( F_ARRAY7, IGLOB, JGLOB, 1 )
@@ -1067,6 +1071,8 @@
       REAL*4                  :: ARRAY(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
 
+      REAL*8                  :: ARRAY8(I1x1,J1x1,1)
+
       !=================================================================
       ! READ_EUROPE_MASK begins here!
       !=================================================================
@@ -1092,8 +1098,11 @@
      &                 0d0,       I1x1,     J1x1,     
      &                 1,         ARRAY,    QUIET=.TRUE. ) 
 
+      ! Double
+      ARRAY8 = DBLE(ARRAY)
+
       ! Regrid from GEOS 1x1 GRID to current model resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), EUROPE_MASK, 1, 1, 2 )
+      CALL TRANS_REGRID( ARRAY8, EUROPE_MASK, 1, 1, 2 )
 
       END SUBROUTINE READ_EUROPE_MASK
 !EOC
@@ -1213,6 +1222,8 @@
       REAL*8                        :: EMEP_TAU, TAU, A, B
       INTEGER                       :: EMEP_NYMD, MN, RATIOID, I, J
 
+      REAL*8                        :: ARRAY8(I1x1,J1x1,1)
+
       ARRAY_1x1_SHIP(:,:,:) = 0.d0
       ARRAY_1x1_LAND(:,:,:) = 0.d0
 
@@ -1326,6 +1337,9 @@
       IF ( wSHIP .eq. 1 ) ARRAY_1x1(:,:,1) = ARRAY_1x1_LAND(:,:,1) + 
      &                                       ARRAY_1x1_SHIP(:,:,1)
       IF ( wSHIP .eq. 2 ) ARRAY_1x1(:,:,1) = ARRAY_1x1_SHIP(:,:,1)
+
+      ! Double
+      ARRAY8 = DBLE(ARRAY_1x1)
 
       CALL TRANS_REGRID( DBLE(ARRAY_1x1), ARRAY, 1, 1, 1 )
 

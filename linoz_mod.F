@@ -682,8 +682,8 @@ c-------- K=1 is at the top of atmosphere ------------------------------
       INTEGER, INTENT(IN)  :: NL
       REAL*8,  INTENT(IN)  :: F(NL)
       REAL*8,  INTENT(IN)  :: PS(NL+1)
-      REAL*8,  INTENT(OUT) :: P1
-      REAL*8,  INTENT(OUT) :: P2
+      REAL*8,  INTENT(IN) :: P1
+      REAL*8,  INTENT(IN) :: P2
 !
 ! !OUTPUT PARAMETERS:
 !
