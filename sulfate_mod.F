@@ -3664,8 +3664,8 @@
       !=================================================================
 
       ! Return if tracers are not defined
-      IF ( IDTNIT == 0 .or. IDTNITs == 0 ) RETURN
-      IF ( DRYNIT == 0 .or. DRYNITs == 0 ) RETURN
+      IF ( IDTNIT == 0 ) RETURN
+      IF ( DRYNIT == 0 ) RETURN
 
       ! DTCHEM is the chemistry interval in seconds
       DTCHEM = GET_TS_CHEM() * 2d0 * 60d0 
@@ -3706,8 +3706,10 @@
          ! Initial NITRATE [v/v]
          NIT0  = STT(I,J,L,IDTNIT)
 
-         ! Initial NITRATE w/in seasalt [v/v]
-         NIT0s = STT(I,J,L,IDTNITs)
+         IF ( IDTNITs /= 0 ) THEN
+            ! Initial NITRATE w/in seasalt [v/v]
+            NIT0s = STT(I,J,L,IDTNITs)
+         ENDIF
 
          ! Initialize variables
          NIT   = 0d0
@@ -3757,6 +3759,8 @@
 
             ENDIF
 
+            IF ( IDTNITs == 0 ) GOTO 100
+
             !===========================================================
             ! NITs chemistry
             !===========================================================
@@ -3792,6 +3796,8 @@
             ! Store final concentration in STT [v/v]
             STT(I,J,L,IDTNITs) = NITs
             
+100         CONTINUE
+
             !========================================================
             ! ND44 Diagnostic: Drydep flux of NIT [molec/cm2/s]
             !========================================================
@@ -3816,20 +3822,22 @@
 
                ENDIF
                   
-               !-------------
-               ! NITs drydep
-               !-------------
+               IF ( IDTNITs /= 0 ) THEN
+                  !-------------
+                  ! NITs drydep
+                  !-------------
 
-               ! NOTE: if drydep doesn't occur then we still have
-               ! production from seasalt (bec, bmy, 4/13/05)
+                  ! NOTE: if drydep doesn't occur then we still have
+                  ! production from seasalt (bec, bmy, 4/13/05)
 
-               ! Convert from [v/v/timestep] to [molec/cm2/s]
-               FLUX = NIT0s - NITs + PNITs(I,J,L) 
-               FLUX = FLUX * AD(I,J,L)       / TCVV(IDTNITs)
-               FLUX = FLUX * XNUMOL(IDTNITs) / AREA_CM2 / DTCHEM
+                  ! Convert from [v/v/timestep] to [molec/cm2/s]
+                  FLUX = NIT0s - NITs + PNITs(I,J,L) 
+                  FLUX = FLUX * AD(I,J,L)       / TCVV(IDTNITs)
+                  FLUX = FLUX * XNUMOL(IDTNITs) / AREA_CM2 / DTCHEM
 
-               ! Store dryd flx in ND44_TMP as a placeholder
-               T44(I,J,L,2) = T44(I,J,L,2) + FLUX
+                  ! Store dryd flx in ND44_TMP as a placeholder
+                  T44(I,J,L,2) = T44(I,J,L,2) + FLUX
+               ENDIF
 
             ENDIF
          ENDIF
@@ -3850,7 +3858,9 @@
          DO I = 1, LONLOOP
          DO L = 1, PBL_MAX
             AD44(I,J,DRYNIT, 1) = AD44(I,J,DRYNIT, 1) + T44(I,J,L,1)
-            AD44(I,J,DRYNITs,1) = AD44(I,J,DRYNITs,1) + T44(I,J,L,2)
+            IF ( IDTNITs /= 0 ) THEN
+               AD44(I,J,DRYNITs,1) = AD44(I,J,DRYNITs,1) + T44(I,J,L,2)
+            ENDIF
          ENDDO
          ENDDO
          ENDDO
