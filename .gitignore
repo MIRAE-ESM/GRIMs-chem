@@ -1,6 +1,4 @@
-header/*.o
-util/*.o
-*.o
-*.a
-Makefile
 .svn
+*.a
+*.o
+Makefile
