@@ -15,15 +15,20 @@
       USE FILE_MOD,     ONLY : CLOSE_FILES
       USE FILE_MOD,     ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
       USE LOGICAL_MOD,  ONLY : LPRT
+      USE METEO_MOD,    ONLY : SAVE_A3, SAVE_I6, SAVE_A6
       USE TIME_MOD,     ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
-      USE TIME_MOD,     ONLY : GET_TAU, SET_DIAGe
+      USE TIME_MOD,     ONLY : GET_TAU, SET_DIAGe, GET_NHMS
       USE RESTART_MOD,  ONLY : WRITE_RESTART
 
       IMPLICIT NONE
 
+      INTEGER :: NHMS
+
       ! Compute & print time quantities at start of dyn step
       CALL SET_CURRENT_TIME
       CALL PRINT_CURRENT_TIME
+
+      NHMS = GET_NHMS()
 
       !==============================================================
       !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
@@ -49,6 +54,15 @@
       !===========================================================
       CALL INITIALIZE( 2 ) ! Zero arrays
       CALL INITIALIZE( 3 ) ! Zero counters
+
+      ! Meteo
+      IF ( MOD(NHMS,030000) .EQ. 0 ) THEN
+         CALL SAVE_A3
+      ENDIF
+      IF ( MOD(NHMS,060000) .EQ. 0 ) THEN
+         CALL SAVE_I6
+         CALL SAVE_A6
+      ENDIF
 
       ! Write restart file
       CALL WRITE_RESTART

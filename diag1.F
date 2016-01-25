@@ -18,7 +18,7 @@
       ! References to F90 modules
       USE DAO_MOD,        ONLY : AD,  AIRDEN, AVGW,     BXHEIGHT 
       USE DAO_MOD,        ONLY : PBL, IS_ICE, IS_WATER, IS_LAND
-      USE DAO_MOD,        ONLY : UWND, VWND, T, SPHU, CMFMC, DTRAIN
+      USE DAO_MOD,        ONLY : UWND, VWND, T, SPHU, CLDMAS, DTRAIN
       USE DAO_MOD,        ONLY : HFLUX, RADSWG, PREACC, PRECON, TS
       USE DAO_MOD,        ONLY : USTAR, Z0, CLDFRC, U10M, V10M
       USE DAO_MOD,        ONLY : ALBD, PHIS, CLDTOPS, TROPP, SLP
@@ -375,7 +375,7 @@
          AD66(:,:,1:LD66,2) = AD66(:,:,1:LD66,2) + VWND(:,:,1:LD66)
          AD66(:,:,1:LD66,3) = AD66(:,:,1:LD66,3) + T(:,:,1:LD66)
          AD66(:,:,1:LD66,4) = AD66(:,:,1:LD66,4) + SPHU(:,:,1:LD66)
-         AD66(:,:,1:LD66,5) = AD66(:,:,1:LD66,5) + CMFMC(:,:,1:LD66)
+         AD66(:,:,1:LD66,5) = AD66(:,:,1:LD66,5) + CLDMAS(:,:,1:LD66)
          AD66(:,:,1:LD66,6) = AD66(:,:,1:LD66,6) + DTRAIN(:,:,1:LD66)
       ENDIF    
 
@@ -407,7 +407,6 @@
          AD67(:,:,3 ) = AD67(:,:,3 ) + PREACC
          AD67(:,:,4 ) = AD67(:,:,4 ) + PRECON
          AD67(:,:,5 ) = AD67(:,:,5 ) + TS
-         AD67(:,:,6 ) = AD67(:,:,6 ) + 0e0
          AD67(:,:,7 ) = AD67(:,:,7 ) + USTAR
          AD67(:,:,8 ) = AD67(:,:,8 ) + Z0
          AD67(:,:,9 ) = AD67(:,:,9 ) + PBL
@@ -415,15 +414,11 @@
          AD67(:,:,11) = AD67(:,:,11) + U10M
          AD67(:,:,12) = AD67(:,:,12) + V10M
          AD67(:,:,14) = AD67(:,:,14) + ALBD
-         AD67(:,:,15) = AD67(:,:,15) + PHIS
-         AD67(:,:,16) = AD67(:,:,16) + CLDTOPS
          AD67(:,:,17) = AD67(:,:,17) + TROPP
-         AD67(:,:,18) = AD67(:,:,18) + SLP
          AD67(:,:,19) = AD67(:,:,19) + TSKIN
          AD67(:,:,20) = AD67(:,:,20) + PARDF
          AD67(:,:,21) = AD67(:,:,21) + PARDR
          AD67(:,:,22) = AD67(:,:,22) + GWETTOP
-         AD67(:,:,23) = AD67(:,:,23) + EFLUX
 
       ENDIF
 

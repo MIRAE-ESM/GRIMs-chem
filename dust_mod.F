@@ -833,7 +833,7 @@
             ORO(I)         = OROGRAPHY(I,J) 
 
             ! Snow height [m H2O]
-#if   defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
+#if   defined( GEOS_5 ) || defined( MERRA )
             SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
 #else
             SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0
@@ -1108,7 +1108,7 @@
             ORO(I)         = OROGRAPHY(I,J) 
 
             ! Snow height [m H2O]
-#if   defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
+#if   defined( GEOS_5 ) || defined( MERRA )
             SNW_HGT_LQD(I) = SNOMAS(I,J) / 1000d0
 #else
             SNW_HGT_LQD(I) = SNOW(I,J) / 1000d0

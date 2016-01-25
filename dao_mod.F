@@ -143,6 +143,7 @@
       REAL*8,  ALLOCATABLE, PUBLIC :: MFYC    (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: MFZ     (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: MOISTQ  (:,:,:)
+      REAL*8,  ALLOCATABLE, PUBLIC :: OMEGA   (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: OPTDEP  (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: OPTD    (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: PFICU   (:,:,:)
@@ -2137,6 +2138,11 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'MOISTQ' )
       MOISTQ = 0d0
 
+      ! Vertical velocity
+      ALLOCATE( OMEGA( IIPAR, JJPAR, LLPAR+1 ), STAT=AS ) 
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'OMEGA' )
+      OMEGA = 0d0
+
       ! Optical depth
       ALLOCATE( OPTDEP( LLPAR, IIPAR, JJPAR ), STAT=AS )
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'OPTDEP' )
@@ -2309,7 +2315,7 @@
 
 #endif
 
-#if   !defined( GEOS_5 ) && !defined( GRIMS )
+#if   !defined( GEOS_5 )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays for everything EXCEPT GEOS-5
@@ -2332,7 +2338,7 @@
 
 #endif
 
-#if   defined( GEOS_3 )
+#if   defined( GEOS_3 ) || defined( GRIMS )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays that are only used for GEOS-3
@@ -2429,7 +2435,7 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'ZMMU' )
       ZMMU = 0d0
 
-#elif defined( GEOS_5 ) || defined( MERRA ) || defined( GRIMS )
+#elif defined( GEOS_5 ) || defined( MERRA )
 
       !-----------------------------------------------------------------
       ! Allocate met field arrays that are used for GEOS-5 or MERRA
@@ -2865,6 +2871,7 @@
       IF ( ALLOCATED( MOLENGTH ) ) DEALLOCATE( MOLENGTH ) 
       IF ( ALLOCATED( MOISTQ   ) ) DEALLOCATE( MOISTQ   )
       IF ( ALLOCATED( OICE     ) ) DEALLOCATE( OICE     )  
+      IF ( ALLOCATED( OMEGA    ) ) DEALLOCATE( OMEGA   )
       IF ( ALLOCATED( OPTD     ) ) DEALLOCATE( OPTD     )
       IF ( ALLOCATED( OPTDEP   ) ) DEALLOCATE( OPTDEP   )
       IF ( ALLOCATED( PARDF    ) ) DEALLOCATE( PARDF    )

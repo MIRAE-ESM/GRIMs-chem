@@ -27,6 +27,7 @@
       USE LINOZ_MOD,      ONLY : DO_LINOZ
       USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS, LLINOZ
       USE LOGICAL_MOD,    ONLY : LPRT, LTURB, LVARTROP, LWETD
+      USE METEO_MOD,      ONLY : DO_METEO, SAVE_A3, SAVE_I6, SAVE_A6
       USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
       USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
       USE TIME_MOD,       ONLY : GET_NYMD, GET_NHMS, GET_TAU
@@ -68,17 +69,41 @@
 
       IF (STEPONE) THEN
 
-         ! Synchronize with shour
-         CALL SET_ELAPSED_MIN
+         IF (FIRST) THEN
 
-      ELSE
+            ! Call AIRQNT to compute air mass quantities from PS1
+            CALL SET_FLOATING_PRESSURE( PS1 )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_FLT_PRS' )
 
-         ! 3-D Cloud Voluem Fraction
-         CALL MAKE_CLDF
+            CALL AIRQNT
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a AIRQNT' )
+
+            ! Read land types and fractions from "vegtype.global"
+            CALL RDLAND
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a RDLAND' )
+
+            ! Initialize PBL quantities but do not do mixing
+            CALL DO_PBL_MIX( .FALSE. )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
+
+            FIRST = .FALSE.
+
+         ENDIF
 
          ! Tropopause [hPa]
          CALL TPP_REICHLER( T, TROPP )
          TROPP = TROPP * 1d-2
+
+         ! Meteo
+         IF ( MOD(GET_NHMS(),060000) .EQ. 0 ) THEN
+            CALL SAVE_I6
+         ENDIF
+
+         ! Synchronize with shour
+         CALL SET_ELAPSED_MIN
+         CALL SET_CURRENT_TIME
+
+      ELSE
 
          IF (FIRST) THEN
 
@@ -100,6 +125,10 @@
             FIRST = .FALSE.
 
          ENDIF
+
+         ! Tropopause [hPa]
+         CALL TPP_REICHLER( T, TROPP )
+         TROPP = TROPP * 1d-2
 
          ! Compute & print time quantities at start of dyn step
          CALL SET_CURRENT_TIME
@@ -158,6 +187,15 @@
             !===========================================================
             CALL INITIALIZE( 2 ) ! Zero arrays
             CALL INITIALIZE( 3 ) ! Zero counters
+         ENDIF
+
+         ! Meteo
+         IF ( MOD(NHMS,030000) .EQ. 0 ) THEN
+            CALL SAVE_A3
+         ENDIF
+         IF ( MOD(NHMS,060000) .EQ. 0 ) THEN
+            CALL SAVE_I6
+            CALL SAVE_A6
          ENDIF
 
          !==============================================================
@@ -341,6 +379,9 @@
             ! (for comparison w/ Holzworth, 1967)
             IF ( ND41 > 0 ) CALL DIAG41
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: after DIAG41' )
+
+            ! Meteo
+            CALL DO_METEO
 
             ! Increment diagnostic timestep counter. (ccc, 5/13/09)
             CALL SET_CT_DIAG( INCREMENT=.TRUE. )

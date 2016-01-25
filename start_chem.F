@@ -18,6 +18,7 @@
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
       USE LINOZ_MOD,      ONLY : LINOZ_READ
       USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LPRT
+      USE METEO_MOD,      ONLY : INIT_METEO
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
       USE RESTART_MOD,    ONLY : READ_RESTART
 
@@ -64,5 +65,8 @@
       ! MIE calculation for aerosol direct effect
       CALL MIE_CALC
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a MIE_CALC' )
+
+      ! Meteo
+      CALL INIT_METEO
 
       END SUBROUTINE START_CHEM

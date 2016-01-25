@@ -160,7 +160,7 @@
       ! Call GCAP driver routine
       CALL DO_GCAP_CONVECT
 
-#elif defined( GEOS_3 )
+#elif defined( GEOS_3 ) || defined( GRIMS )
 
       !=================================================================
       ! GEOS-3 met fields
@@ -185,7 +185,7 @@
       ! Call GEOS-4 driver routine
       CALL DO_GEOS4_CONVECT
 
-#elif defined( GEOS_5 ) || defined( GRIMS )
+#elif defined( GEOS_5 )
 
       !=================================================================
       ! GEOS-5 met fields
@@ -1338,16 +1338,16 @@
 !==============================================================================
 
                   IF ( CLDMAS(I,J,K-1) .gt. TINY ) THEN
-!                     CMOUT    = CLDMAS(I,J,K) + DTRN(I,J,K)
-!                     ENTRN    = CMOUT         - CLDMAS(I,J,K-1)
+                     CMOUT    = CLDMAS(I,J,K) + DTRN(I,J,K)
+                     ENTRN    = CMOUT         - CLDMAS(I,J,K-1)
                      QC_PRES  = QC(I,J) * ( 1d0 - F(I,J,K,IC) )
                      QC_SCAV  = QC(I,J) * F(I,J,K,IC)
 
-!                     IF ( ENTRN .ge. 0 ) THEN
-!                        QC(I,J) = ( CLDMAS(I,J,K-1) * QC_PRES       + 
-!     &                              ENTRN           * Q(I,J,K,IC) ) / 
-!     &                              CMOUT
-!                     ENDIF   
+                     IF ( ENTRN .ge. 0 ) THEN
+                        QC(I,J) = ( CLDMAS(I,J,K-1) * QC_PRES       + 
+     &                              ENTRN           * Q(I,J,K,IC) ) / 
+     &                              CMOUT
+                     ENDIF   
 
 !==============================================================================
 !  (5.2)  M a s s   B a l a n c e   i n   L e v e l  ===>  Q(I,J,K,IC)
