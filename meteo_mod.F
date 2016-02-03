@@ -73,12 +73,14 @@
 
       IMPLICIT NONE
 
-      CHARACTER(LEN=255) :: FILENAME
+      CHARACTER(LEN=255) :: FILE_GLOB
+      CHARACTER(LEN=255) :: FILE_NESTED
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
       CHARACTER(LEN=8) :: IDENT, NAME(N_A3_FIELDS)
       REAL*8 :: F_ARRAY(IGLOB*JGLOB,N_A3_FIELDS)
       REAL*8 :: ARRAY8(I2x25,J2x25,N_A3_FIELDS)
       REAL*4 :: ARRAY4(I2x25,J2x25,N_A3_FIELDS)
+      REAL*8 :: ARRAY_NESTED(257,161,N_A3_FIELDS)
       INTEGER :: DATE(2), I, J, N
 
       NAME = (/ 'ALBEDO', 'CLDFRC', 'GWETTOP', 'HFLUX',
@@ -88,19 +90,25 @@
 
       DATE = GET_TIME_AHEAD(-90)
 
-      WRITE(FILENAME, '(i8,".a3.2x25")') DATE(1)
+      WRITE(FILE_GLOB, '(i8,".a3.2x25")') DATE(1)
+      WRITE(FILE_NESTED, '(i8,".a3.025x03125")') DATE(1)
 
-      IF (FILENAME .NE. FILENAME_SAVE) THEN
+      IF (FILE_GLOB .NE. FILENAME_SAVE) THEN
 
          IF (MASTER) THEN
          CLOSE(3001)
-         OPEN(3001, FILE=TRIM(FILENAME), STATUS='NEW',
+         OPEN(3001, FILE=TRIM(FILE_GLOB), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
          WRITE(IDENT, '("GR 22",1x,i2.2)') N_A3_FIELDS
          WRITE(3001) IDENT
+         CLOSE(4001)
+         OPEN(4001, FILE=TRIM(FILE_NESTED), STATUS='REPLACE',
+     &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
+         WRITE(IDENT, '("GR 23",1x,i2.2)') N_A3_FIELDS
+         WRITE(4001) IDENT
          ENDIF
 
-         FILENAME_SAVE = FILENAME
+         FILENAME_SAVE = FILE_GLOB
 
       ENDIF
 
@@ -125,6 +133,7 @@
 
       DO N = 1, N_A3_FIELDS
          CALL REGRID_METEO( F_ARRAY(:,N), ARRAY8(:,:,N) )
+         CALL REGRID_METEO_NESTED( F_ARRAY(:,N), ARRAY_NESTED(:,:,N) )
       ENDDO
 
       ARRAY4 = ARRAY8
@@ -132,6 +141,9 @@
       DO N = 1, N_A3_FIELDS
          WRITE(3001) NAME(N)
          WRITE(3001) DATE(1), DATE(2), ARRAY4(:,:,N)
+
+         WRITE(4001) NAME(N)
+         WRITE(4001) DATE(1), DATE(2), REAL(ARRAY_NESTED(:,:,N),4)
       ENDDO
       ENDIF
 
@@ -146,31 +158,39 @@
 
       IMPLICIT NONE
 
-      CHARACTER(LEN=255) :: FILENAME
+      CHARACTER(LEN=255) :: FILE_GLOB
+      CHARACTER(LEN=255) :: FILE_NESTED
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
       CHARACTER(LEN=8) :: IDENT, NAME(N_I6_FIELDS)
       REAL*8 :: F_ARRAY(IGLOB*JGLOB,N_I6_FIELDS)
       REAL*8 :: ARRAY8(I2x25,J2x25,N_I6_FIELDS)
       REAL*4 :: ARRAY4(I2x25,J2x25,N_I6_FIELDS)
+      REAL*8 :: ARRAY_NESTED(257,161,N_I6_FIELDS)
       INTEGER :: DATE(2), I, J, N
 
       NAME = (/ 'LWI', 'PS', 'TROPP' /)
 
       DATE = GET_TIME_AHEAD(0)
 
-      WRITE(FILENAME, '(i8,".i6.2x25")') DATE(1)
+      WRITE(FILE_GLOB, '(i8,".i6.2x25")') DATE(1)
+      WRITE(FILE_NESTED, '(i8,".i6.025x03125")') DATE(1)
 
-      IF (FILENAME .NE. FILENAME_SAVE) THEN
+      IF (FILE_GLOB .NE. FILENAME_SAVE) THEN
 
          IF (MASTER) THEN
          CLOSE(3002)
-         OPEN(3002, FILE=TRIM(FILENAME), STATUS='NEW',
+         OPEN(3002, FILE=TRIM(FILE_GLOB), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
          WRITE(IDENT, '("GR 22",1x,i2.2)') N_I6_FIELDS
          WRITE(3002) IDENT
+         CLOSE(4002)
+         OPEN(4002, FILE=TRIM(FILE_NESTED), STATUS='REPLACE',
+     &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
+         WRITE(IDENT, '("GR 23",1x,i2.2)') N_I6_FIELDS
+         WRITE(4002) IDENT
          ENDIF
 
-         FILENAME_SAVE = FILENAME
+         FILENAME_SAVE = FILE_GLOB
 
       ENDIF
 
@@ -197,6 +217,7 @@
 
       DO N = 1, N_I6_FIELDS
          CALL REGRID_METEO( F_ARRAY(:,N), ARRAY8(:,:,N) )
+         CALL REGRID_METEO_NESTED( F_ARRAY(:,N), ARRAY_NESTED(:,:,N) )
       ENDDO
 
       ARRAY4 = ARRAY8
@@ -204,6 +225,9 @@
       DO N = 1, N_I6_FIELDS
          WRITE(3002) NAME(N)
          WRITE(3002) DATE(1), DATE(2), ARRAY4(:,:,N)
+
+         WRITE(4002) NAME(N)
+         WRITE(4002) DATE(1), DATE(2), REAL(ARRAY_NESTED(:,:,N),4)
       ENDDO
       ENDIF
 
@@ -215,12 +239,14 @@
 
       IMPLICIT NONE
 
-      CHARACTER(LEN=255) :: FILENAME
+      CHARACTER(LEN=255) :: FILE_GLOB
+      CHARACTER(LEN=255) :: FILE_NESTED
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
       CHARACTER(LEN=8) :: IDENT, NAME(N_A6_FIELDS)
       REAL*8 :: F_ARRAY(IGLOB*JGLOB,LLPAR,N_A6_FIELDS)
       REAL*8 :: ARRAY8(I2x25,J2x25,LLPAR,N_A6_FIELDS)
       REAL*4 :: ARRAY4(I2x25,J2x25,LLPAR,N_A6_FIELDS)
+      REAL*8 :: ARRAY_NESTED(257,161,LLPAR,N_A6_FIELDS)
       INTEGER :: DATE(2), I, J, L, N
 
       NAME = (/ 'CLDTOT', 'CLDMAS', 'DTRAIN', 'MOISTQ',
@@ -228,19 +254,25 @@
 
       DATE = GET_TIME_AHEAD(-180)
 
-      WRITE(FILENAME, '(i8,".a6.2x25")') DATE(1)
+      WRITE(FILE_GLOB, '(i8,".a6.2x25")') DATE(1)
+      WRITE(FILE_NESTED, '(i8,".a6.025x03125")') DATE(1)
 
-      IF (FILENAME .NE. FILENAME_SAVE) THEN
+      IF (FILE_GLOB .NE. FILENAME_SAVE) THEN
 
          IF (MASTER) THEN
          CLOSE(3003)
-         OPEN(3003, FILE=TRIM(FILENAME), STATUS='NEW',
+         OPEN(3003, FILE=TRIM(FILE_GLOB), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
          WRITE(IDENT, '("GR 22",1x,i2.2)') N_A6_FIELDS
          WRITE(3003) IDENT
+         CLOSE(4003)
+         OPEN(4003, FILE=TRIM(FILE_NESTED), STATUS='REPLACE',
+     &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
+         WRITE(IDENT, '("GR 23",1x,i2.2)') N_A6_FIELDS
+         WRITE(4003) IDENT
          ENDIF
 
-         FILENAME_SAVE = FILENAME
+         FILENAME_SAVE = FILE_GLOB
 
       ENDIF
 
@@ -266,6 +298,8 @@
       DO N = 1, N_A6_FIELDS
       DO L = 1, LLPAR
          CALL REGRID_METEO( F_ARRAY(:,L,N), ARRAY8(:,:,L,N) )
+         CALL REGRID_METEO_NESTED( F_ARRAY(:,L,N),
+     &                             ARRAY_NESTED(:,:,L,N) )
       ENDDO
       ENDDO
 
@@ -274,6 +308,8 @@
       DO N = 1, N_A6_FIELDS
          WRITE(3003) NAME(N)
          WRITE(3003) DATE(1), DATE(2), ARRAY4(:,:,:,N)
+         WRITE(4003) NAME(N)
+         WRITE(4003) DATE(1), DATE(2), REAL(ARRAY_NESTED(:,:,:,N),4)
       ENDDO
       ENDIF
 
@@ -346,6 +382,70 @@
       DEALLOCATE( LON1, LON2, SIN1, SIN2, Q1, Q2 )
 
       END SUBROUTINE REGRID_METEO
+
+!------------------------------------------------------------------------
+
+      SUBROUTINE REGRID_METEO_NESTED( INDATA, OUTDATA )
+
+      USE REGRID_A2A_MOD, ONLY : MAP_A2A
+      USE COMFGRID,       ONLY : COLRAD
+
+      USE CMN_GCTM_MOD
+
+      REAL*8 :: INDATA(IGLOB,JGLOB)
+      REAL*8 :: OUTDATA(257,161)
+      REAL*8, ALLOCATABLE, DIMENSION(:)   :: LON1, LON2, SIN1, SIN2
+      REAL*8, ALLOCATABLE, DIMENSION(:,:) :: Q1, Q2
+      INTEGER :: IM, JM, IN, JN
+      INTEGER :: I, J, L, N
+
+      IM = IGLOB
+      JM = JGLOB
+
+      ALLOCATE( LON1(IM+1) )
+      ALLOCATE( SIN1(IM+1) )
+      ALLOCATE( Q1(IM,JM) )
+
+      LON1(1) = -180d0 - ( DISIZE / 2d0 )
+      DO I = 2, IM+1
+         LON1(I) = LON1(I-1) + DISIZE
+      ENDDO
+
+      SIN1(1) = -1d0
+      DO J = 2, JM/2
+         SIN1(J) = -1d0 * COS( ( COLRAD(J-1) + COLRAD(J) ) / 2d0 )
+      ENDDO
+
+      SIN1(JM/2+1) = 0d0
+      DO J = JM/2+2, JM+1
+         SIN1(J) = -1d0 * SIN1(JM+2-J)
+      ENDDO
+
+      IN = 257
+      JN = 161
+
+      ALLOCATE( LON2(IN+1) )
+      ALLOCATE( SIN2(JN+1) )
+      ALLOCATE( Q2(IN,JN) )
+
+      LON2(1) = 70d0 - ( 0.3125d0 / 2d0 )
+      DO I = 2, IN+1
+         LON2(I) = LON2(I-1) + 0.3125d0
+      ENDDO
+
+      SIN2(1) = SIND( 15d0 - ( 0.25d0 / 2d0 ) )
+      DO J = 2, JN+1
+         SIN2(J) = SIND( 15d0 - ( 0.25d0 / 2d0 ) + 0.25d0 * (J-1) )
+      ENDDO
+
+      Q1 = INDATA
+      CALL MAP_A2A( IM, JM, LON1, SIN1, Q1,
+     &              IN, JN, LON2, SIN2, Q2, 0, 1 )
+      OUTDATA = Q2
+
+      DEALLOCATE( LON1, LON2, SIN1, SIN2, Q1, Q2 )
+
+      END SUBROUTINE REGRID_METEO_NESTED
 
 !------------------------------------------------------------------------
 
