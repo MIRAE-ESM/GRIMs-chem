@@ -1,17 +1,18 @@
-HEADERDIR = header
-UTILDIR = util
+HEADERDIR = Headers
+UTILDIR = GeosUtil
+COREDIR = GeosCore
 
 HEADERS = ${HEADERDIR}/CMN_SIZE_mod.o \
           ${HEADERDIR}/CMN_DEP_mod.o \
           ${HEADERDIR}/CMN_DIAG_mod.o \
-          ${HEADERDIR}/cmn_fj_mod.o \
           ${HEADERDIR}/CMN_GCTM_mod.o \
           ${HEADERDIR}/CMN_ISOP_mod.o \
-          ${HEADERDIR}/CMN_mod.o \
           ${HEADERDIR}/CMN_MONOT_mod.o \
           ${HEADERDIR}/CMN_NOX_mod.o \
           ${HEADERDIR}/CMN_O3_mod.o \
           ${HEADERDIR}/CMN_VEL_mod.o \
+          ${HEADERDIR}/CMN_mod.o \
+          ${HEADERDIR}/cmn_fj_mod.o \
           ${HEADERDIR}/commsoil_mod.o \
           ${HEADERDIR}/comode_loop_mod.o \
           ${HEADERDIR}/jv_cmn_mod.o \
@@ -30,33 +31,94 @@ UTILS = ${UTILDIR}/error_mod.o \
         ${UTILDIR}/grid_mod.o \
         ${UTILDIR}/hdf_mod.o \
         ${UTILDIR}/pressure_mod.o \
-        ${UTILDIR}/regrid_a2a_mod.o \
         ${UTILDIR}/regrid_1x1_mod.o \
+        ${UTILDIR}/regrid_a2a_mod.o \
         ${UTILDIR}/time_mod.o \
-        ${UTILDIR}/trans_regrid_mod.o \
         ${UTILDIR}/unix_cmds_mod.o \
-        ${UTILDIR}/closest.o \
+        ${UTILDIR}/debug.o \
         ${UTILDIR}/ifort_errmsg.o \
         ${UTILDIR}/linux_err.o \
         ${UTILDIR}/sum.o \
-        ${UTILDIR}/tpp_reichler.o \
+        ${UTILDIR}/trans_index.o \
+        ${UTILDIR}/trans_output.o \
+        ${UTILDIR}/trans_regrid.o \
         ${UTILDIR}/xshift.o \
         ${UTILDIR}/yrev.o
 
-MODS = tracer_mod.o logical_mod.o tracerid_mod.o scale_anthro_mod.o arctas_ship_emiss_mod.o \
-       diag_mod.o gc_biomass_mod.o gfed2_biomass_mod.o gfed3_biomass_mod.o biomass_mod.o \
-       bravo_mod.o cac_anthro_mod.o dao_mod.o pbl_mix_mod.o meganut_mod.o comode_mod.o \
-       drydep_mod.o global_oh_mod.o global_no3_mod.o carbon_mod.o dust_dead_mod.o dust_shao_mod.o \
-       dust_mod.o global_hno3_mod.o tropopause_mod.o isoropiaII_mod.o rpmares_mod.o seasalt_mod.o \
-       wetscav_mod.o epa_nei_mod.o nei2005_anthro_mod.o edgar_mod.o emep_mod.o streets_anthro_mod.o \
-       icoads_ship_mod.o sulfate_mod.o chemistry_mod.o convection_mod.o diag41_mod.o flexaod.o \
-       diag49_mod.o diag_aod_mod.o emissions_mod.o gamap_mod.o input_mod.o linoz_mod.o restart_mod.o \
-       meteo_mod.o
+CORES = ${COREDIR}/tracer_mod.o \
+        ${COREDIR}/logical_mod.o \
+        ${COREDIR}/tracerid_mod.o \
+        ${COREDIR}/scale_anthro_mod.o \
+        ${COREDIR}/arctas_ship_emiss_mod.o \
+        ${COREDIR}/diag_mod.o \
+        ${COREDIR}/gc_biomass_mod.o \
+        ${COREDIR}/gfed2_biomass_mod.o \
+        ${COREDIR}/gfed3_biomass_mod.o \
+        ${COREDIR}/biomass_mod.o \
+        ${COREDIR}/bravo_mod.o \
+        ${COREDIR}/cac_anthro_mod.o \
+        ${COREDIR}/dao_mod.o \
+        ${COREDIR}/pbl_mix_mod.o \
+        ${COREDIR}/meganut_mod.o \
+        ${COREDIR}/comode_mod.o \
+        ${COREDIR}/drydep_mod.o \
+        ${COREDIR}/global_oh_mod.o \
+        ${COREDIR}/global_no3_mod.o \
+        ${COREDIR}/carbon_mod.o \
+        ${COREDIR}/dust_dead_mod.o \
+        ${COREDIR}/dust_shao_mod.o \
+        ${COREDIR}/dust_mod.o \
+        ${COREDIR}/global_hno3_mod.o \
+        ${COREDIR}/tropopause_mod.o \
+        ${COREDIR}/isoropiaII_mod.o \
+        ${COREDIR}/rpmares_mod.o \
+        ${COREDIR}/seasalt_mod.o \
+        ${COREDIR}/wetscav_mod.o \
+        ${COREDIR}/epa_nei_mod.o \
+        ${COREDIR}/nei2005_anthro_mod.o \
+        ${COREDIR}/edgar_mod.o \
+        ${COREDIR}/emep_mod.o \
+        ${COREDIR}/streets_anthro_mod.o \
+        ${COREDIR}/icoads_ship_mod.o \
+        ${COREDIR}/sulfate_mod.o \
+        ${COREDIR}/chemistry_mod.o \
+        ${COREDIR}/convection_mod.o \
+        ${COREDIR}/diag41_mod.o \
+        ${COREDIR}/flexaod.o \
+        ${COREDIR}/diag49_mod.o \
+        ${COREDIR}/diag_aod_mod.o \
+        ${COREDIR}/emissions_mod.o \
+        ${COREDIR}/gamap_mod.o \
+        ${COREDIR}/input_mod.o \
+        ${COREDIR}/linoz_mod.o \
+        ${COREDIR}/meteo_mod.o \
+        ${COREDIR}/restart_mod.o \
+        ${COREDIR}/transport_mod.o \
+        ${COREDIR}/biofit.o \
+        ${COREDIR}/boxvl.o \
+        ${COREDIR}/cleanup.o \
+        ${COREDIR}/diag1.o \
+        ${COREDIR}/diag3.o \
+        ${COREDIR}/diag_2pm.o \
+        ${COREDIR}/emmonot.o \
+        ${COREDIR}/findmon.o \
+        ${COREDIR}/initialize.o \
+        ${COREDIR}/mie_spher.o \
+        ${COREDIR}/ndxx_setup.o \
+        ${COREDIR}/nislq_chem_advect.o \
+        ${COREDIR}/rdisopt.o \
+        ${COREDIR}/rdlai.o \
+        ${COREDIR}/rdland.o \
+        ${COREDIR}/rdmonot.o \
+        ${COREDIR}/readlai.o \
+        ${COREDIR}/setbase.o \
+        ${COREDIR}/sfcwindsqr.o \
+        ${COREDIR}/sunparam.o \
+        ${COREDIR}/tpp_reichler.o
 
-OBJS = biofit.o boxvl.o cleanup.o diag1.o diag_2pm.o diag3.o emmonot.o end_chem.o findmon.o \
-       initialize.o integrate_chem.o isoropiaIIcode.o mie_spher.o ndxx_setup.o \
-       nislq_chem_advect.o rdisopt.o rdlai.o rdland.o rdmonot.o readlai.o setbase.o sfcwindsqr.o \
-       start_chem.o sunparam.o transport_chem.o
+ISOROPIA = ISOROPIA/isoropiaIIcode.o
+
+OBJS = start_chem.o integrate_chem.o end_chem.o
 
 CP = @CP@
 CC = @CC@
@@ -65,12 +127,12 @@ FORT_FLAGS = @FORT_FLAGS@
 INCLUDE_DIR = @INCLUDE_DIR@
 INSTALLDLIB = @INSTALLDLIB@
 
-chemistry.a : ${HEADERS} ${UTILS} ${MODS} ${OBJS}
-	${AR} -r $@ ${HEADERS} ${UTILS} ${MODS} ${OBJS}
+chemistry.a : ${HEADERS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
+	${AR} -r $@ ${HEADERS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
 	${CP} $@ ${INSTALLDLIB}
 
 clean :
-	rm -f *.o *.a ${HEADERDIR}/*.o ${UTILDIR}/*.o
+	rm -f *.o *.a ${HEADERDIR}/*.o ${UTILDIR}/*.o ${COREDIR}/*.o ISOROPIA/*.o
 
 .SUFFIXES : .o .F .F90 .c
 

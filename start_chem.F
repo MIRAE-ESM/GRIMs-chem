@@ -4,7 +4,7 @@
 !
 !        This subroutine is a driver subroutine for gmp_start.F90.
 !
-!                                            written by Seungun Lee
+!                                                       Seungun Lee
 !
 !=====================================================================
 
@@ -14,10 +14,11 @@
       USE DAO_MOD,        ONLY : INIT_DAO
       USE DIAG_AOD_MOD,   ONLY : INIT_DIAG_AOD
       USE ERROR_MOD,      ONLY : DEBUG_MSG
-      USE FLEXAOD,        ONLY : MIE_CALC
+      USE FLEXAOD,        ONLY : READ_MIE
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
       USE LINOZ_MOD,      ONLY : LINOZ_READ
       USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LPRT
+      USE LOGICAL_MOD,    ONLY : LSVMET, LSVMETNEST
       USE METEO_MOD,      ONLY : INIT_METEO
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
       USE RESTART_MOD,    ONLY : READ_RESTART
@@ -27,10 +28,6 @@
       ! Initialize header modules
       CALL INIT_HEADER
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_HEADER' )
-
-      ! Initialize AOD diagnostic module
-      CALL INIT_DIAG_AOD
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
 
       ! Read input file and call init routines from other modules
       CALL READ_INPUT_FILE
@@ -62,11 +59,18 @@
       CALL READ_RESTART
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_RESTART' )
 
-      ! MIE calculation for aerosol direct effect
-      CALL MIE_CALC
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a MIE_CALC' )
+      ! Read MIE tables for aerosol direct effect
+      CALL READ_MIE
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_MIE' )
 
-      ! Meteo
-      CALL INIT_METEO
+      ! Initialize METEO module
+      IF ( LSVMET .or. LSVMETNEST ) THEN
+         CALL INIT_METEO
+         IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_METEO' )
+      ENDIF
+
+      ! Initialize AOD diagnostic module
+      CALL INIT_DIAG_AOD
+      IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
 
       END SUBROUTINE START_CHEM
