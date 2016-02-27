@@ -214,6 +214,9 @@
       USE CMN_DIAG_MOD         ! NDxx flags
       USE CMN_GCTM_MOD         ! Physical constants
       USE paramodel
+#ifdef MP
+      USE commpi
+#endif
 ! 
 ! !REVISION HISTORY: 
 !  30 Oct 2007 - R. Yantosca - Initial version
@@ -248,10 +251,10 @@
       REAL*8  :: VTMP(IIPAR,JJPAR,LLPAR)
       REAL*8  :: XMASS(IIPAR,JJPAR,LLPAR) 
       REAL*8  :: YMASS(IIPAR,JJPAR,LLPAR) 
-      REAL*8  :: SUM_ARRAY, SUM_VALUE
 
       ! Variable to ensure mass conservation (ccc, 2/17/09)
       REAL*8  :: SUMADA
+      REAL*16 :: SUMALL(N_TRACERS,3)
 
       ! For NISLQ
       REAL*8  :: deltim
@@ -262,9 +265,18 @@
       REAL*8  :: q1(LONF2S,LLPAR*N_TRACERS,LATG2S)
       REAL*8  :: q3(LONF2S,LLPAR*N_TRACERS,LATG2S)
 
+#ifdef MP
+      ! For MPI
+      INTEGER :: IERR
+      REAL*16 :: BUFFER(N_TRACERS,3,npes)
+#endif
+
       !=================================================================
       ! GEOS4_GEOS5_GLOBAL_ADV begins here!
       !=================================================================
+
+      ! Initialize
+      SUMALL = 0d0
 
       ! Pick the proper # of tracers
 #if   defined( APM )
@@ -331,6 +343,7 @@
       DO J = 1, JJPAR
       DO I = 1, IIPAR
          TR_B(I,J,L,N) = STT(I,J,L,N) * AD_B(I,J,L) / TCVV(N)
+         SUMALL(N,1) = SUMALL(N,1) + TR_B(I,J,L,N)
       ENDDO
       ENDDO
       ENDDO
@@ -465,26 +478,41 @@
          
             ! Tracer mass [kg] after transport
             TR_A(I,J,L) = STT(I,J,L,N) * AD_A(I,J,L) / TCVV(N)
+            SUMALL(N,2) = SUMALL(N,2) + TR_A(I,J,L)
 
             ! We apply mass conservation only on cells w/
             ! nonzero tracer (ccc, 2/17/09)
             IF ( STT(I,J,L,N) > 0.d0 .or. STT(I,J,L,N) < 0.d0 ) THEN
                SUMADA = SUMADA + AD_A(I,J,L)
+               SUMALL(N,3) = SUMALL(N,3) + AD_A(I,J,L)
             ENDIF
          ENDDO
          ENDDO
          ENDDO
 
-         ! Residual mass difference [kg]: before - after
-         TR_DIFF = SUM_ARRAY( TR_B(:,:,:,N), LLPAR ) -
-     &             SUM_ARRAY( TR_A, LLPAR )
-
-         ! Convert from [kg] to [v/v]
-         TR_DIFF = SAFE_DIV(TR_DIFF, SUM_VALUE(SUMADA), 0.d0) * TCVV(N)
+      ENDDO
+!$OMP END PARALLEL DO
 
 #ifdef MP
-         CALL mpbcastr(TR_DIFF,1)
+      ! Gather values from all PE
+      CALL MPI_GATHER( SUMALL, N_TOT_TRC*3, MPI_REAL16,
+     &                 BUFFER, N_TOT_TRC*3, MPI_REAL16,
+     &                 0, MPI_COMM_WORLD, IERR )
+      SUMALL = SUM( BUFFER, DIM=3 )
+      CALL MPI_BCAST( SUMALL, N_TOT_TRC*3, MPI_REAL16,
+     &                0, MPI_COMM_WORLD, IERR )
 #endif
+
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I, J, L, N, SUMADA, AD_A, TR_A, TR_DIFF )
+      DO N = 1, N_TOT_TRC
+
+         ! Residual mass difference [kg]: before - after
+         TR_DIFF = DBLE(SUMALL(N,1)) - DBLE(SUMALL(N,2))
+
+         ! Convert from [kg] to [v/v]
+         TR_DIFF = SAFE_DIV(TR_DIFF, DBLE(SUMALL(N,3)), 0.d0) * TCVV(N)
 
          ! Add mass difference [v/v] back to STT
          DO L = 1, LLPAR

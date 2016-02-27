@@ -12,35 +12,16 @@
       FUNCTION SUM_ARRAY( ARRAY, NL ) RESULT( TOTAL )
 
       USE CMN_SIZE_MOD
-      USE paramodel
 
       IMPLICIT NONE
 
       INTEGER :: NL
-      INTEGER :: I, J, L
       REAL*8  :: ARRAY(IIPAR,JJPAR,NL)
-      REAL*8  :: P_ARRAY(LONF2S,LATG2S,NL)
-      REAL*8  :: F_ARRAY(lonf2_,latg2_,NL)
       REAL*8  :: TOTAL
+      REAL*8  :: SUM_VALUE
 
-      ! Copy
-      DO L = 1, NL
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
-         P_ARRAY(I,J,L) = ARRAY(I,J,L)
-      ENDDO
-      ENDDO
-      ENDDO
-
-#ifdef MP
-      ! MPI partial grid to full grid
-      CALL mpgp2f(P_ARRAY,LONF2S,LATG2S,F_ARRAY,lonf2_,latg2_,NL)
-#else
-      F_ARRAY = P_ARRAY
-#endif
-
-      ! Sum
-      TOTAL = SUM( F_ARRAY )
+      ! Make sum at each node and then gather the values
+      TOTAL = SUM_VALUE( SUM( ARRAY ) )
 
       END FUNCTION SUM_ARRAY
 
@@ -80,7 +61,7 @@
       TOTAL = VALUE
 #endif
 
-      ! Remove numerical noise
+      ! Remove floating-point error
       TOTAL = DBLE( REAL( TOTAL, 4 ) )
 
       END FUNCTION SUM_VALUE
