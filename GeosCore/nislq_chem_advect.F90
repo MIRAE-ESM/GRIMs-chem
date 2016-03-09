@@ -9,8 +9,8 @@
 ! <in : top to bottom>
 ! deltim  time step from n to n+1
 ! pt      surface pressure in cb
-! ut      horizontal u wind scaled without earth radius cos(phi)^2d(lamda)/dt
-! vt      horizontal v wind scaled without earth radius cos(phi)d(phi)/dt
+! ut      horizontal u wind in m/s
+! vt      horizontal v wind in m/s
 ! pdot    vertical wind in dp/dt in cb
 !
 ! <in : bottom to top>
@@ -127,10 +127,10 @@
      ! u,v at time step n (convert dynamics to SL grid)
      do k = 1,LEVSS
        do i = 1,lonsd
-         uulon(i,k,j1) = UU(i      ,k,jj) * (rrerth_*rbs2(jj))
-         uulon(i,k,j2) = UU(lonsd+i,k,jj) * (rrerth_*rbs2(jj))
-         vvlon(i,k,j1) = VV(i      ,k,jj) * (rrerth_*sqrt(rbs2(jj)))
-         vvlon(i,k,j2) = VV(lonsd+i,k,jj) * (rrerth_*sqrt(rbs2(jj)))
+         uulon(i,k,j1) = UU(i      ,k,jj) * (rrerth_*sqrt(rbs2(jj)))
+         uulon(i,k,j2) = UU(lonsd+i,k,jj) * (rrerth_*sqrt(rbs2(jj)))
+         vvlon(i,k,j1) = VV(i      ,k,jj) * (rrerth_)
+         vvlon(i,k,j2) = VV(lonsd+i,k,jj) * (rrerth_)
        enddo
      enddo
      ! at time step n-1 (convert dynamics to SL grid)
