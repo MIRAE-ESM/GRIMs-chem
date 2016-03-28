@@ -215,7 +215,7 @@
       ! Read HNO3 data from the binary punch file
       CALL READ_BPCH2( FILENAME, 'IJ-AVG-$', 7,     
      &                 XTAU,      I2x25,     J2x25,      
-     &                 LG5RED,     ARRAY,     QUIET=.TRUE. )
+     &                 LG5RED,    ARRAY,     QUIET=.TRUE. )
 
       ! Assign data from ARRAY to the module variable HNO3
       CALL TRANS_REGRID( DBLE(ARRAY), HNO3,
