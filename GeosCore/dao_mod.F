@@ -1087,6 +1087,7 @@
 
       END FUNCTION IS_WATER
 !EOC
+#undef ICE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
