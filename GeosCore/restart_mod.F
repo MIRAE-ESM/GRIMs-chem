@@ -39,7 +39,11 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcasti(IOS,1)
+#else
+      CALL rmpbcasti(IOS,1)
+#endif
 #endif
 
       ! IOS check
@@ -91,7 +95,11 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcasti(IOS,1)
+#else
+      CALL rmpbcasti(IOS,1)
+#endif
 #endif
 
       ! IOS check

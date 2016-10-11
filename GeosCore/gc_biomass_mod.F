@@ -2141,7 +2141,11 @@
          ENDIF
 
 #ifdef MP
+#ifndef RMP
          CALL mpbcastr(TOMSAISCALE,NAIREGIONS*NAIYEARS*12)
+#else
+         CALL rmpbcastr(TOMSAISCALE,NAIREGIONS*NAIYEARS*12)
+#endif
 #endif
       ENDIF
 

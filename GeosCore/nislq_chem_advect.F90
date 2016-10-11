@@ -1,5 +1,6 @@
 #include <define.h>
    subroutine nislq_chem_advect(deltim,pt,ut,vt,pdot,q1,q3)
+#ifndef RMP
 !-------------------------------------------------------------------------------
 !
 ! a routine to do non-iteration semi-Lagrangain finite volume advection
@@ -269,5 +270,6 @@
    enddo
 !
 !
+#endif
    return
    end subroutine nislq_chem_advect

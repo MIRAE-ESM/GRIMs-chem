@@ -960,8 +960,13 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcastc(GFED3_SPEC_NAME,N_SPEC*4)
       CALL mpbcastr(GFED3_EMFAC,N_SPEC*N_EMFAC)
+#else
+      CALL rmpbcastc(GFED3_SPEC_NAME,N_SPEC*4)
+      CALL rmpbcastr(GFED3_EMFAC,N_SPEC*N_EMFAC)
+#endif
 #endif
 
       !=================================================================

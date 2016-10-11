@@ -889,8 +889,13 @@ c907  FORMAT(20X,6E10.3/(8E10.3))
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcastr(TPARM,NLEVELS_LINOZ*NLAT_LINOZ*
      &              NMONTHS_LINOZ*NFIELDS_LINOZ)
+#else
+      CALL rmpbcastr(TPARM,NLEVELS_LINOZ*NLAT_LINOZ*
+     &              NMONTHS_LINOZ*NFIELDS_LINOZ)
+#endif
 #endif
 
       END SUBROUTINE LINOZ_READ

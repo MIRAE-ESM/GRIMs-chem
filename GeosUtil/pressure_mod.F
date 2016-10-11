@@ -432,7 +432,11 @@
 !
       ! References to F90 modules
       USE ERROR_MOD, ONLY : ALLOC_ERR
+#ifndef RMP
       USE comfver,   ONLY : ak5, bk5
+#else
+      USE rscomfc,   ONLY : si
+#endif
 
       USE CMN_SIZE_MOD  ! LLPAR, PTOP
 !
@@ -890,8 +894,13 @@
 #elif defined( GRIMS )
 
       DO L = 1, LLPAR+1
+#ifndef RMP
          AP(L) = ak5(LLPAR+2-L) * 1d1
          BP(L) = bk5(LLPAR+2-L)
+#else
+         AP(L) = 0d0
+         BP(L) = si(L)
+#endif
       ENDDO
 
 #endif

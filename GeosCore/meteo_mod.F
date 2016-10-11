@@ -23,6 +23,12 @@
       INTEGER, PARAMETER :: N_A3_FIELDS = 18
       INTEGER, PARAMETER :: N_A6_FIELDS = 10
       INTEGER, PARAMETER :: N_I6_FIELDS = 3
+      INTEGER, PARAMETER :: NI_NEST=101
+      INTEGER, PARAMETER :: NJ_NEST=101
+      REAL*8,  PARAMETER :: DI_NEST=0.1d0
+      REAL*8,  PARAMETER :: DJ_NEST=0.1d0
+      REAL*8,  PARAMETER :: I1_NEST=122d0
+      REAL*8,  PARAMETER :: J1_NEST=32d0
 
       ! Accumulated A3, A6
       REAL*8, ALLOCATABLE :: A3_FIELDS(:,:,:)
@@ -268,7 +274,7 @@
       INTEGER :: DATE(2), N
       REAL*8  :: P_ARRAY(IIPAR,JJPAR,N_A3_FIELDS)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,N_A3_FIELDS)
-      REAL*8  :: ARRAY(257,161,N_A3_FIELDS)
+      REAL*8  :: ARRAY(NI_NEST,NJ_NEST,N_A3_FIELDS)
       CHARACTER(LEN=8) :: IDENT, NAME(N_A3_FIELDS)
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
@@ -284,7 +290,7 @@
       DATE = GET_TIME_AHEAD(-90)
 
       ! Filename
-      WRITE(FILENAME, '(i8,".a3.025x03125")') DATE(1)
+      WRITE(FILENAME, '(i8,".a3.01x01")') DATE(1)
 
       ! Open file if it is a new one
       IF (FILENAME .NE. FILENAME_SAVE) THEN
@@ -293,7 +299,7 @@
          CLOSE(4001)
          OPEN(4001, FILE=TRIM(FILENAME), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
-         WRITE(IDENT, '("GR 23",1x,i2.2)') N_A3_FIELDS
+         WRITE(IDENT, '("GR 11",1x,i2.2)') N_A3_FIELDS
          WRITE(4001) IDENT
          ENDIF
 
@@ -329,7 +335,7 @@
       INTEGER :: DATE(2), L, N
       REAL*8  :: P_ARRAY(IIPAR,JJPAR,LLPAR,N_A6_FIELDS)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,LLPAR,N_A6_FIELDS)
-      REAL*8  :: ARRAY(257,161,LLPAR,N_A6_FIELDS)
+      REAL*8  :: ARRAY(NI_NEST,NJ_NEST,LLPAR,N_A6_FIELDS)
       CHARACTER(LEN=8) :: IDENT, NAME(N_A6_FIELDS)
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
@@ -343,7 +349,7 @@
       DATE = GET_TIME_AHEAD(-180)
 
       ! Filename
-      WRITE(FILENAME, '(i8,".a6.025x03125")') DATE(1)
+      WRITE(FILENAME, '(i8,".a6.01x01")') DATE(1)
 
       ! Open file if it is a new one
       IF (FILENAME .NE. FILENAME_SAVE) THEN
@@ -352,7 +358,7 @@
          CLOSE(4002)
          OPEN(4002, FILE=TRIM(FILENAME), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
-         WRITE(IDENT, '("GR 23",1x,i2.2)') N_A6_FIELDS
+         WRITE(IDENT, '("GR 11",1x,i2.2)') N_A6_FIELDS
          WRITE(4002) IDENT
          ENDIF
 
@@ -392,7 +398,7 @@
       INTEGER :: DATE(2), N
       REAL*8  :: P_ARRAY(IIPAR,JJPAR,N_I6_FIELDS)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,N_I6_FIELDS)
-      REAL*8  :: ARRAY(257,161,N_I6_FIELDS)
+      REAL*8  :: ARRAY(NI_NEST,NJ_NEST,N_I6_FIELDS)
       CHARACTER(LEN=8) :: IDENT, NAME(N_I6_FIELDS)
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
@@ -403,7 +409,7 @@
       DATE = GET_TIME_AHEAD(0)
 
       ! Filename
-      WRITE(FILENAME, '(i8,".i6.025x03125")') DATE(1)
+      WRITE(FILENAME, '(i8,".i6.01x01")') DATE(1)
 
       ! Open file if it is a new one
       IF (FILENAME .NE. FILENAME_SAVE) THEN
@@ -412,7 +418,7 @@
          CLOSE(4003)
          OPEN(4003, FILE=TRIM(FILENAME), STATUS='REPLACE',
      &              ACCESS='SEQUENTIAL', FORM='UNFORMATTED')
-         WRITE(IDENT, '("GR 23",1x,i2.2)') N_I6_FIELDS
+         WRITE(IDENT, '("GR 11",1x,i2.2)') N_I6_FIELDS
          WRITE(4003) IDENT
          ENDIF
 
@@ -448,7 +454,9 @@
       SUBROUTINE REGRID_METEO( INDATA, OUTDATA )
 
       USE REGRID_A2A_MOD, ONLY : MAP_A2A
+#ifndef RMP
       USE comfgrid,       ONLY : colrad
+#endif
 
       USE CMN_GCTM_MOD
 
@@ -459,13 +467,14 @@
       REAL*8, ALLOCATABLE, DIMENSION(:)   :: LON1, LON2, SIN1, SIN2
       REAL*8, ALLOCATABLE, DIMENSION(:,:) :: Q1, Q2
 
+#ifndef RMP
       ! Set dimension
       IM = IGLOB
       JM = JGLOB
 
       ! Allocate variables
       ALLOCATE( LON1(IM+1) )
-      ALLOCATE( SIN1(IM+1) )
+      ALLOCATE( SIN1(JM+1) )
       ALLOCATE( Q1(IM,JM) )
 
       ! Longitude
@@ -512,6 +521,7 @@
 
       ! Deallocate variables
       DEALLOCATE( LON1, LON2, SIN1, SIN2, Q1, Q2 )
+#endif
 
       END SUBROUTINE REGRID_METEO
 
@@ -520,16 +530,22 @@
       SUBROUTINE REGRID_METEO_NESTED( INDATA, OUTDATA )
 
       USE REGRID_A2A_MOD, ONLY : MAP_A2A
+#ifndef RMP
       USE comfgrid,       ONLY : colrad
+#endif
 
       USE CMN_GCTM_MOD
 
       INTEGER :: IM, JM, IN, JN
       INTEGER :: I, J, L, N
       REAL*8  :: INDATA(IGLOB,JGLOB)
-      REAL*8  :: OUTDATA(257,161)
+      REAL*8  :: OUTDATA(NI_NEST,NJ_NEST)
       REAL*8, ALLOCATABLE, DIMENSION(:)   :: LON1, LON2, SIN1, SIN2
       REAL*8, ALLOCATABLE, DIMENSION(:,:) :: Q1, Q2
+#ifdef RMP
+      REAL*8  :: flat(IGLOB,JGLOB), flon(IGLOB,JGLOB)
+      REAL*8  :: delx, dely, dlamda0
+#endif
 
       ! Set dimension
       IM = IGLOB
@@ -537,9 +553,10 @@
 
       ! Allocate variables
       ALLOCATE( LON1(IM+1) )
-      ALLOCATE( SIN1(IM+1) )
+      ALLOCATE( SIN1(JM+1) )
       ALLOCATE( Q1(IM,JM) )
 
+#ifndef RMP
       ! Longitude
       DO I = 1, IM+1
          LON1(I) = -180d0 + DISIZE * ( DBLE(I) - 1.5d0 )
@@ -554,10 +571,38 @@
       DO J = JM/2+2, JM+1
          SIN1(J) = -1d0 * SIN1(JM+2-J)
       ENDDO
+#else
+      CALL rmp_setup_rsm_grid(flat,flon,delx,dely,dlamda0)
+
+      ! Longitude
+      LON1(1) = flon(1,1) - ( flon(2,1) - flon(1,1) ) * 0.5d0
+      DO I = 1, IM-1
+         LON1(I+1) = ( flon(I,1) + flon(I+1,1) ) * 0.5d0
+      ENDDO
+      LON1(IM+1) = flon(IM,1) +
+     &                    ( flon(IM,1) - flon(IM-1,1) ) * 0.5d0
+
+      DO I = 1, IM+1
+         LON1(I) = LON1(I) * 180d0 / PI
+      ENDDO
+
+      ! Latitude
+      SIN1(1) = flat(1,1) - ( flat(1,3) - flat(1,1) ) * 0.5d0
+      SIN1(JM+1) = flat(1,2) + ( flat(1,2) - flat(1,4) ) * 0.5d0
+      SIN1(JM/2+1) = ( flat(1,JM/2) + flat(1,JM/2+1) ) * 0.5d0
+      DO J = 1, JM/2-1
+         SIN1(J+1) = ( flat(1,2*J-1) + flat(1,2*J+1) ) * 0.5d0
+         SIN1(JM+1-J) = ( flat(1,2*J) + flat(1,2*J+2) ) * 0.5d0
+      ENDDO
+
+      DO J = 1, JM+1
+         SIN1(J) = SIN( SIN1(J) )
+      ENDDO
+#endif
 
       ! Set dimension
-      IN = 257
-      JN = 161
+      IN = NI_NEST
+      JN = NJ_NEST
 
       ! Allocate variables
       ALLOCATE( LON2(IN+1) )
@@ -566,12 +611,12 @@
 
       ! Longitude
       DO I = 1, IN+1
-         LON2(I) = 70d0 + 0.3125d0 * ( DBLE(I) - 1.5d0 )
+         LON2(I) = I1_NEST + DI_NEST * ( DBLE(I) - 1.5d0 )
       ENDDO
 
       ! Latitude
       DO J = 1, JN+1
-         SIN2(J) = SIND( 15d0 + 0.25d0 * ( DBLE(J) - 1.5d0 ) )
+         SIN2(J) = SIND( J1_NEST + DJ_NEST * ( DBLE(J) - 1.5d0 ) )
       ENDDO
 
       ! Regrid

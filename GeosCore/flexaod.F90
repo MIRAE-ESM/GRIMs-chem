@@ -185,9 +185,15 @@ module flexaod
       enddo
 
 #ifdef MP
+#ifndef RMP
       call mpbcastr(wlbins,nwl)
       call mpbcastr(specmr,nwl*nrh*nspecs)
       call mpbcastr(specmi,nwl*nrh*nspecs)
+#else
+      call rmpbcastr(wlbins,nwl)
+      call rmpbcastr(specmr,nwl*nrh*nspecs)
+      call rmpbcastr(specmi,nwl*nrh*nspecs)
+#endif
 #endif
 
       ! Interpolation of refractive indices onto output wavelength
@@ -220,9 +226,15 @@ module flexaod
     endif
 
 #ifdef MP
+#ifndef RMP
     call mpbcastr(wlbins,nsinyuk)
     call mpbcastr(specmr,nsinyuk)
     call mpbcastr(specmi,nsinyuk)
+#else
+    call rmpbcastr(wlbins,nsinyuk)
+    call rmpbcastr(specmr,nsinyuk)
+    call rmpbcastr(specmi,nsinyuk)
+#endif
 #endif
 
     do ibnd = 1, nbnd
@@ -263,6 +275,7 @@ module flexaod
   endif
 
 #ifdef MP
+#ifndef RMP
   call mpbcastr(rho,nsizspc)
   call mpbcastr(radius,nrh*nsizspc)
   call mpbcastr(sigma,nsizspc)
@@ -270,6 +283,15 @@ module flexaod
   call mpbcastr(gam_b,nsizspc)
   call mpbcastr(rmin,nrh*nsizspc)
   call mpbcastr(rmax,nrh*nsizspc)
+#else
+  call rmpbcastr(rho,nsizspc)
+  call rmpbcastr(radius,nrh*nsizspc)
+  call rmpbcastr(sigma,nsizspc)
+  call rmpbcastr(gam_a,nsizspc)
+  call rmpbcastr(gam_b,nsizspc)
+  call rmpbcastr(rmin,nrh*nsizspc)
+  call rmpbcastr(rmax,nrh*nsizspc)
+#endif
 #endif
 
   !====================================================================
@@ -310,9 +332,15 @@ module flexaod
       endif
 
 #ifdef MP
+#ifndef RMP
   call mpbcastr(radius,nrh*nsizspc)
   call mpbcastr(rmin,nrh*nsizspc)
   call mpbcastr(rmax,nrh*nsizspc)
+#else
+  call rmpbcastr(radius,nrh*nsizspc)
+  call rmpbcastr(rmin,nrh*nsizspc)
+  call rmpbcastr(rmax,nrh*nsizspc)
+#endif
 #endif
 
       ! Hardwire BC hygroscopic growth following Chin et al., 2002
@@ -364,7 +392,11 @@ module flexaod
     endif
 
 #ifdef MP
+#ifndef RMP
     call mpbcasti(ios,1)
+#else
+    call rmpbcasti(ios,1)
+#endif
 #endif
 
     if (ios .ne. 0) then
@@ -381,6 +413,7 @@ module flexaod
     endif
 
 #ifdef MP
+#ifndef RMP
     call mpbcastr(q_ext,nrh*(nspecs-1)*nbnd)
     call mpbcastr(c_ext,nrh*(nspecs-1)*nbnd)
     call mpbcastr(c_sca,nrh*(nspecs-1)*nbnd)
@@ -395,6 +428,22 @@ module flexaod
     call mpbcastr(v_dave,ndust*nbnd)
     call mpbcastr(dssalb,ndust*nbnd)
     call mpbcastr(dasym,ndust*nbnd)
+#else
+    call rmpbcastr(q_ext,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(c_ext,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(c_sca,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(r_eff,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(v_ave,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(ssalb,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(asym,nrh*(nspecs-1)*nbnd)
+    call rmpbcastr(q_dext,ndust*nbnd)
+    call rmpbcastr(c_dext,ndust*nbnd)
+    call rmpbcastr(c_dsca,ndust*nbnd)
+    call rmpbcastr(r_dust,ndust*nbnd)
+    call rmpbcastr(v_dave,ndust*nbnd)
+    call rmpbcastr(dssalb,ndust*nbnd)
+    call rmpbcastr(dasym,ndust*nbnd)
+#endif
 #endif
 
     if (lmaster) then

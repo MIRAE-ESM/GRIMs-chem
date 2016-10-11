@@ -489,22 +489,27 @@
       INTEGER :: I, J
 
       ! GRIMs model grid parameters
-      IGLOB      = lonf_
-      JGLOB      = latg_
+      IGLOB      = LONFD
+      JGLOB      = LATGD
       LGLOB      = levs_
 #ifdef MP
       IIPAR      = lonlen(mype) * 2
       JJPAR      = latlen(mype)
 #else
-      IIPAR      = lonf2_
-      JJPAR      = latg2_
+      IIPAR      = LONF2F
+      JJPAR      = LATG2F
 #endif
       LLPAR      = levs_
       LLTROP     = levs_
       LLTROP_FIX = levs_
       PTOP       = 0.01d0
+#ifndef RMP
       DISIZE     = 360d0 / DBLE(IGLOB)
       DJSIZE     = 180d0 / DBLE(JGLOB)
+#else
+      DISIZE     = 0d0
+      DJSIZE     = 0d0
+#endif
 
       ! Global lon, lat index for MPI
       ALLOCATE( LONID(IIPAR,JJPAR) )
@@ -520,7 +525,11 @@
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR/2
+#ifndef RMP
          LATID(I,J)         = latdef( latstr(mype)-1 + J )
+#else
+         LATID(I,J)         = latstr(mype)-1 + J
+#endif
          LATID(IIPAR/2+I,J) = JGLOB+1 - LATID(I,J)
       ENDDO
       ENDDO

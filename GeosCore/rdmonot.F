@@ -86,7 +86,11 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcastr(GMONOT,NVEGTYPE)
+#else
+      CALL rmpbcastr(GMONOT,NVEGTYPE)
+#endif
 #endif
 
       END SUBROUTINE RDMONOT

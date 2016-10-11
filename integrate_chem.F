@@ -1,3 +1,4 @@
+#include <define.h>
 !=====================================================================
 !
 !     SUBROUTINE INTEGRATE_CHEM
@@ -57,7 +58,9 @@
       USE TRANSPORT_MOD,  ONLY : DO_TRANSPORT
       USE TROPOPAUSE_MOD, ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
       USE WETSCAV_MOD,    ONLY : DO_WETDEP, INIT_WETSCAV
+#ifndef RMP
       USE comfver,        ONLY : stepone
+#endif
 
       USE CMN_SIZE_MOD    ! Size parameters   
       USE COMODE_LOOP_MOD ! SMVGEAR common blocks
@@ -72,7 +75,9 @@
       CHARACTER(LEN=255) :: FILENAME
       LOGICAL, SAVE :: FIRST = .TRUE.
 
+#ifndef RMP
       IF ( stepone .AND. .NOT. FIRST ) RETURN
+#endif
 
       IF (FIRST) THEN
 

@@ -408,8 +408,13 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcasti(IOS,1)
       CALL mpbcastc(LINE,255)
+#else
+      CALL rmpbcasti(IOS,1)
+      CALL rmpbcastc(LINE,255)
+#endif
 #endif
 
       ! IO Status < 0: EOF condition
@@ -576,8 +581,13 @@
       USE TIME_MOD,      ONLY : SET_NDIAGTIME,    GET_TAU
       USE TIME_MOD,      ONLY : GET_JD
 !     USE TRANSFER_MOD,  ONLY : INIT_TRANSFER
+#ifndef RMP
       USE comfspec_vr,   ONLY : idate
       USE comfver,       ONLY : fhour
+#else
+      USE rscomf_rerun,  ONLY : idate
+      USE rscomver,      ONLY : fhour
+#endif
 ! 
 ! !REVISION HISTORY: 
 !  20 Jul 2004 - R. Yantosca - Initial version
@@ -723,6 +733,11 @@
 #if   defined( MERRA )
       ! Turn unzipping off for MERRA met fields
       LUNZIP = .FALSE. 
+#endif
+
+#ifdef RMP
+      ! Turn off LSVMET for RMP
+      LSVMET = .FALSE.
 #endif
 
       !=================================================================
@@ -1554,7 +1569,11 @@
       ! Emissions timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_emissions_menu:2' )
 !     READ( SUBSTRS(1:N), * ) TS_EMIS
+#ifndef RMP
       TS_EMIS = con(1) / 60
+#else
+      TS_EMIS = con(11) / 60
+#endif
 
       ! Include anthropogenic emissions?
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_emissions_menu:3' )
@@ -2556,7 +2575,11 @@
       ! Chemistry timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:2' )
 !     READ( SUBSTRS(1:N), * ) TS_CHEM
+#ifndef RMP
       TS_CHEM = con(1) / 60
+#else
+      TS_CHEM = con(11) / 60
+#endif
 
       ! Read and save CSPEC ?
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:3' )
@@ -2665,7 +2688,11 @@
       ! Transport timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:5' )
 !     READ( SUBSTRS(1:N), * ) TS_DYN
+#ifndef RMP
       TS_DYN  = con(1) / 60
+#else
+      TS_DYN  = con(11) / 60
+#endif
 
       ! Include strat O3/NOy
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:6' )
@@ -2795,7 +2822,11 @@
       ! Convection timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:4' )
 !     READ( SUBSTRS(1:N), * ) TS_CONV
+#ifndef RMP
       TS_CONV = con(1) / 60
+#else
+      TS_CONV = con(11) / 60
+#endif
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:5' )
@@ -3089,7 +3120,11 @@
      &        'OCT--', 31i1, /, 'NOV--', 30i1, /, 'DEC--', 31i1 )
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcasti(NJDAY,366)
+#else
+      CALL rmpbcasti(NJDAY,366)
+#endif
 #endif
 
       ! Make sure we have output at end of run

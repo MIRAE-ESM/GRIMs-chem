@@ -75,7 +75,11 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcastr(CONVERT,NVEGTYPE)
+#else
+      CALL rmpbcastr(CONVERT,NVEGTYPE)
+#endif
 #endif
 
       ! Return to calling program

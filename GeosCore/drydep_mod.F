@@ -2251,6 +2251,7 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcasti(IDEP,NNVEGTYPE)
       CALL mpbcasti(IZO,NNVEGTYPE)
       CALL mpbcasti(NWATER,1)
@@ -2263,6 +2264,20 @@
       CALL mpbcasti(IRCLS,NNTYPE)
       CALL mpbcasti(IRCLO,NNTYPE)
       CALL mpbcasti(IVSMAX,NNTYPE)
+#else
+      CALL rmpbcasti(IDEP,NNVEGTYPE)
+      CALL rmpbcasti(IZO,NNVEGTYPE)
+      CALL rmpbcasti(NWATER,1)
+      CALL rmpbcasti(IWATER,NNVEGTYPE)
+      CALL rmpbcasti(IRI,NNTYPE)
+      CALL rmpbcasti(IRLU,NNTYPE)
+      CALL rmpbcasti(IRAC,NNTYPE)
+      CALL rmpbcasti(IRGSS,NNTYPE)
+      CALL rmpbcasti(IRGSO,NNTYPE)
+      CALL rmpbcasti(IRCLS,NNTYPE)
+      CALL rmpbcasti(IRCLO,NNTYPE)
+      CALL rmpbcasti(IVSMAX,NNTYPE)
+#endif
 #endif
 
       ! Return to calling program
@@ -2337,7 +2352,11 @@
       ENDIF
 
 #ifdef MP
+#ifndef RMP
       CALL mpbcastr(DRYCOEFF,NNPOLY)
+#else
+      CALL rmpbcastr(DRYCOEFF,NNPOLY)
+#endif
 #endif
 
       ! Return to calling program

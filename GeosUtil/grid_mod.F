@@ -115,7 +115,12 @@
 !
 ! !USES:
 !
-      USE comfgrid, ONLY : colrad
+      USE ERROR_MOD, ONLY : ERROR_STOP
+#ifndef RMP
+      USE comfgrid,  ONLY : colrad
+#else
+      USE rscomloc,  ONLY : rproj
+#endif
 
       USE CMN_SIZE_MOD  ! Size parameters
       USE CMN_GCTM_MOD  ! Physical constants
@@ -138,6 +143,10 @@
       LOGICAL, SAVE :: FIRST = .TRUE.
       INTEGER       :: I,    J
       REAL*8        :: FMID, FEDGE
+#ifdef RMP
+      REAL*8        :: flat(IGLOB,JGLOB), flon(IGLOB,JGLOB)
+      REAL*8        :: delx, dely, dlamda0
+#endif
 
       !=================================================================
       ! COMPUTE_GRID begins here!
@@ -202,6 +211,7 @@
       YEDGE_R_G(JJJPAR+1) = PI / 2d0
 #endif
 
+#ifndef RMP
       ! Compute latitude centers in radians
       DO J = 1, JJJPAR/2
          YMID_R_G(J) = 0.5d0 * PI - colrad(J)
@@ -246,6 +256,47 @@
             XEDGE_G(I+1) = XEDGE_G(I+1) - 360d0
          ENDIF
       ENDDO
+#else
+      IF ( rproj .NE. 0 ) THEN
+         CALL ERROR_STOP( 'Map projection must be mercator!',
+     &                    'COMPUTE_GRID ("grid_mod.f")' )
+      ENDIF
+
+      CALL rmp_setup_rsm_grid(flat,flon,delx,dely,dlamda0)
+
+      ! Compute longitude centers
+      DO I = 1, IIIPAR
+         XMID_G(I) = flon(I,1) * 180d0 / PI
+      ENDDO
+
+      ! Compute latitude centers
+      DO J = 1, JJJPAR/2
+         YMID_G(J) = flat(1,2*J-1) * 180d0 / PI
+         YMID_G(JJJPAR+1-J) = flat(1,2*J) * 180d0 / PI
+         YMID_R_G(J) = flat(1,2*J-1)
+         YMID_R_G(JJJPAR+1-J) = flat(1,2*J)
+      ENDDO
+
+      ! Compute longitude edges
+      XEDGE_G(1) = XMID_G(1) - ( XMID_G(2) - XMID_G(1) ) * 0.5d0
+      DO I = 1, IIIPAR-1
+         XEDGE_G(I+1) = ( XMID_G(I) + XMID_G(I+1) ) * 0.5d0
+      ENDDO
+      XEDGE_G(IIIPAR+1) = XMID_G(IIIPAR) +
+     &                    ( XMID_G(IIIPAR) - XMID_G(IIIPAR-1) ) * 0.5d0
+
+      ! Compute latitude edges
+      YEDGE_G(1) = YMID_G(1) - ( YMID_G(2) - YMID_G(1) ) * 0.5d0
+      DO J = 1, JJJPAR-1
+         YEDGE_G(J+1) = ( YMID_G(J) + YMID_G(J+1) ) * 0.5d0
+      ENDDO
+      YEDGE_G(JJJPAR+1) = YMID_G(JJJPAR) +
+     &                    ( YMID_G(JJJPAR) - YMID_G(JJJPAR-1) ) * 0.5d0
+
+      DO J = 1, JJJPAR+1
+         YEDGE_R_G(J) = YEDGE_G(J) * PI / 180d0
+      ENDDO
+#endif
       
       !=================================================================
       ! Compute grid box surface areas (algorithm from old "input.f")
@@ -318,8 +369,13 @@
       DO J = 1, JJJPAR
 
          ! Grid box surface areas [m2]
+#ifndef RMP
          AREA_M2_G(J) = 2d0 * PI * Re * Re / DBLE( IIIPAR ) *
      &                  ( SIN( YEDGE_R_G(J) ) - SIN( YEDGE_R_G(J+1) ) ) 
+#else
+         AREA_M2_G(J) = Re * Re * ( flon(2,1) - flon(1,1) ) *
+     &                  ( SIN( YEDGE_R_G(J+1) ) - SIN( YEDGE_R_G(J) ) ) 
+#endif
 
          ! Grid box surface areas [cm2]
          AREA_CM2_G(J) = AREA_M2_G(J) * 1d4

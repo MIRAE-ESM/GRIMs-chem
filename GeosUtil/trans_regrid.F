@@ -22,6 +22,7 @@
       SUBROUTINE TRANS_REGRID( INDATA, OUTDATA, IN_NI, IN_NJ, IN_NL,
      &                         OUT_NL, RES, VERT, MASS )
 
+#ifndef RMP
       USE CMN_SIZE_MOD
       USE module_trans
       USE paramodel
@@ -35,7 +36,7 @@
       INTEGER :: I, J, L
       REAL*8  :: INDATA(IN_NI,IN_NJ,IN_NL)
       REAL*8  :: OUTDATA(IIPAR,JJPAR,OUT_NL)
-      REAL*8  :: F_ARRAY(lonf2_,latg2_,IN_NL)
+      REAL*8  :: F_ARRAY(LONF2F,LATG2F,IN_NL)
       REAL*8  :: P_ARRAY(LONF2S,LATG2S,IN_NL)
       REAL*8  :: TMP(IIPAR,JJPAR,72)
 
@@ -65,14 +66,14 @@
       ENDIF
 
       ! Transform to model grid
-      CALL XSHIFT(F_ARRAY,lonf_,latg_,IN_NL)
-      CALL YREV(F_ARRAY,lonf_,latg_,IN_NL)
+      CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
+      CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
       CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
       ENDIF
 
 #ifdef MP
       ! MPI full grid to partial grid
-      CALL mpgf2p(F_ARRAY,lonf2_,latg2_,P_ARRAY,LONF2S,LATG2S,IN_NL)
+      CALL mpgf2p(F_ARRAY,LONF2F,LATG2F,P_ARRAY,LONF2S,LATG2S,IN_NL)
 #else
       P_ARRAY = F_ARRAY
 #endif
@@ -119,9 +120,11 @@
          ENDIF
 
       ENDIF
+#endif
 
       END SUBROUTINE TRANS_REGRID
 
+#ifndef RMP
 !=====================================================================
 !
 !     SUBROUTINE REGRID_1x1
@@ -142,15 +145,15 @@
       INTEGER             :: IDM2, JDM2, IDM2P, JDM2P
       INTEGER, INTENT(IN) :: MASS
       REAL, INTENT(IN)    :: INDATA(IDM1,JDM1)
-      REAL, INTENT(OUT)   :: OUTDATA(lonf_,latg_)
+      REAL, INTENT(OUT)   :: OUTDATA(LONFD,LATGD)
       REAL                :: RLON(IDM1P), RLAT(JDM1P)
       REAL, ALLOCATABLE   :: ALON(:), ALAT(:), BLAT(:)
       REAL, ALLOCATABLE   :: IR1(:), IR2(:), JR1(:), JR2(:)
       REAL, ALLOCATABLE   :: FSUM(:,:)
       REAL*8, PARAMETER   :: PI = 3.14159265358979323d0
 
-      IDM2 = lonf_
-      JDM2 = latg_
+      IDM2 = LONFD
+      JDM2 = LATGD
       IDM2P = IDM2+1
       JDM2P = JDM2+1
 
@@ -453,15 +456,15 @@
       INTEGER             :: IDM2, JDM2, IDM2P, JDM2P
       INTEGER, INTENT(IN) :: MASS
       REAL, INTENT(IN)    :: INDATA(IDM1,JDM1)
-      REAL, INTENT(OUT)   :: OUTDATA(lonf_,latg_)
+      REAL, INTENT(OUT)   :: OUTDATA(LONFD,LATGD)
       REAL                :: RLON(IDM1P), RLAT(JDM1P)
       REAL, ALLOCATABLE   :: ALON(:), ALAT(:), BLAT(:)
       REAL, ALLOCATABLE   :: IR1(:), IR2(:), JR1(:), JR2(:)
       REAL, ALLOCATABLE   :: FSUM(:,:)
       REAL*8, PARAMETER   :: PI = 3.14159265358979323d0
 
-      IDM2 = lonf_
-      JDM2 = latg_
+      IDM2 = LONFD
+      JDM2 = LATGD
       IDM2P = IDM2+1
       JDM2P = JDM2+1
 
@@ -1073,3 +1076,4 @@
       ENDIF
 
       END SUBROUTINE INTERP_VER_F
+#endif

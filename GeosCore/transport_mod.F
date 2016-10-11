@@ -384,7 +384,11 @@
 
       ! Do the advection
       ! We use NISLQ advection scheme with GRIMS met-fields.
+#ifndef RMP
       CALL nislq_chem_advect( deltim, pt, ut, vt, pdot, q1, q3 )
+#else
+      q3 = q1
+#endif
 
       DO N = 1, N_TRACERS
       DO L = 1, LLPAR

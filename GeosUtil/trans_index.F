@@ -24,7 +24,11 @@
 
 #ifdef MP
       ! Broadcast
+#ifndef RMP
       CALL mpbcasti(INDATA,IN_NI*IN_NJ)
+#else
+      CALL rmpbcasti(INDATA,IN_NI*IN_NJ)
+#endif
 #endif
 
       DO J = 1, JJPAR
