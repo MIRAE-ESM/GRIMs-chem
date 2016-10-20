@@ -126,11 +126,11 @@
       LOGICAL            :: VERBOSE  = .FALSE.
       INTEGER, PARAMETER :: FIRSTCOL = 26
       INTEGER, PARAMETER :: MAXDIM   = 255
-      INTEGER            :: TS_CHEM
-      INTEGER            :: TS_DYN
-      INTEGER            :: TS_CONV
-      INTEGER            :: TS_EMIS
-      INTEGER            :: TS_UNIT
+      REAL*8             :: TS_CHEM
+      REAL*8             :: TS_DYN
+      REAL*8             :: TS_CONV
+      REAL*8             :: TS_EMIS
+      REAL*8             :: TS_UNIT
       INTEGER            :: CT1, CT2, CT3
       CHARACTER(LEN=255) :: FILENAME = 'input.geos'
       CHARACTER(LEN=255) :: TOPTITLE
@@ -5859,7 +5859,7 @@
 !      INTEGER :: I,           J,       K,       L
 !      INTEGER :: TS_SMALLEST, TS_DIAG, TS_SUN_2
 !------------------------------------------------------------------------------
-      INTEGER :: I, J, K, L, TS_SMALLEST, TS_DIAG
+      REAL*8  :: I, J, K, L, TS_SMALLEST, TS_DIAG
       
       !=================================================================
       ! CHECK_TIME_STEPS begins here!

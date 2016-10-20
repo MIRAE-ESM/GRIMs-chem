@@ -202,14 +202,15 @@
       INTEGER           :: NYMD_DIAG
       INTEGER           :: MONTH,      DAY,         YEAR
       INTEGER           :: HOUR,       MINUTE,      SECOND
-      INTEGER           :: NSEASON,    DAY_OF_YEAR, ELAPSED_MIN
+      INTEGER           :: NSEASON,    DAY_OF_YEAR
+      REAL*8            :: ELAPSED_MIN
       INTEGER           :: NDIAGTIME
       REAL*8            :: TAU,        TAUb,        TAUe  
       REAL*8            :: GMT,        DIAGb,       DIAGe
 
       ! Timesteps
-      INTEGER           :: TS_CHEM,    TS_CONV,     TS_DIAG
-      INTEGER           :: TS_DYN,     TS_EMIS,     TS_UNIT
+      REAL*8            :: TS_CHEM,    TS_CONV,     TS_DIAG
+      REAL*8            :: TS_DYN,     TS_EMIS,     TS_UNIT
 
       ! Timestep counters
       INTEGER           :: CT_CHEM,    CT_CONV,     CT_DYN    
@@ -304,7 +305,7 @@
 #endif
 
       ! Call CALDATE to compute the current YYYYMMDD and HHMMSS
-      CALL CALDATE( JD1, NYMD, NHMS )
+      CALL CALDATE( JD1+0.5d0/86400d0, NYMD, NHMS )
 
       ! Extract current year, month, day from NYMD
       CALL YMD_EXTRACT( NYMD, YEAR, MONTH, DAY )
@@ -342,8 +343,8 @@
       CALL YMD_EXTRACT( NHMS, HOUR, MINUTE, SECOND )
 
       ! Fix minutes & seconds for display purposes (esp. for 1x1)
-      IF ( SECOND              == 59 ) SECOND = 0
-      IF ( MOD( MINUTE+1, 10 ) == 0  ) MINUTE = MINUTE + 1
+      !IF ( SECOND              == 59 ) SECOND = 0
+      !IF ( MOD( MINUTE+1, 10 ) == 0  ) MINUTE = MINUTE + 1
 
       !=================================================================
       ! Compute other GEOS-Chem timing variables
@@ -622,12 +623,12 @@
 !
 ! !INPUT PARAMETERS:
 !
-      INTEGER, INTENT(IN) :: CHEMISTRY    ! Chemistry  timestep [min]
-      INTEGER, INTENT(IN) :: CONVECTION   ! Convection timestep [min]
-      INTEGER, INTENT(IN) :: DYNAMICS     ! Dynamic    timestep [min]
-      INTEGER, INTENT(IN) :: EMISSION     ! Emission   timestep [min]
-      INTEGER, INTENT(IN) :: UNIT_CONV    ! Unit conve timestep [min]
-      INTEGER, INTENT(IN) :: DIAGNOS      ! Diagnostic timestep [min]
+      REAL*8,  INTENT(IN) :: CHEMISTRY    ! Chemistry  timestep [min]
+      REAL*8,  INTENT(IN) :: CONVECTION   ! Convection timestep [min]
+      REAL*8,  INTENT(IN) :: DYNAMICS     ! Dynamic    timestep [min]
+      REAL*8,  INTENT(IN) :: EMISSION     ! Emission   timestep [min]
+      REAL*8,  INTENT(IN) :: UNIT_CONV    ! Unit conve timestep [min]
+      REAL*8,  INTENT(IN) :: DIAGNOS      ! Diagnostic timestep [min]
 !------------------------------------------------------------------------------
 ! Prior to 10/5/11:
 ! Remove SUNCOS argument, it's obsolete (bmy, 10/5/11)
@@ -675,12 +676,12 @@
       IF (LMASTER) THEN
       WRITE( 6, '(/,a)' ) 'SET_TIMESTEPS: setting GRIMs-Chem timesteps!'
       WRITE( 6, '(  a)' ) '-------------------------------------------'
-      WRITE( 6, '(''Chemistry  Timestep [min] : '', i4 )' ) TS_CHEM
-      WRITE( 6, '(''Convection Timestep [min] : '', i4 )' ) TS_CONV
-      WRITE( 6, '(''Dynamics   Timestep [min] : '', i4 )' ) TS_DYN
-      WRITE( 6, '(''Emission   Timestep [min] : '', i4 )' ) TS_EMIS
-      WRITE( 6, '(''Unit Conv  Timestep [min] : '', i4 )' ) TS_UNIT
-      WRITE( 6, '(''Diagnostic Timestep [min] : '', i4 )' ) TS_DIAG
+      WRITE( 6, '(''Chemistry  Timestep [min] : '', f6.1 )' ) TS_CHEM
+      WRITE( 6, '(''Convection Timestep [min] : '', f6.1 )' ) TS_CONV
+      WRITE( 6, '(''Dynamics   Timestep [min] : '', f6.1 )' ) TS_DYN
+      WRITE( 6, '(''Emission   Timestep [min] : '', f6.1 )' ) TS_EMIS
+      WRITE( 6, '(''Unit Conv  Timestep [min] : '', f6.1 )' ) TS_UNIT
+      WRITE( 6, '(''Diagnostic Timestep [min] : '', f6.1 )' ) TS_DIAG
       ENDIF
 !------------------------------------------------------------------------------
 ! Prior to 10/5/11:
@@ -1134,7 +1135,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_ELAPSED_MIN
+      REAL*8  :: THIS_ELAPSED_MIN
 ! 
 ! !REVISION HISTORY: 
 !  05 Feb 2003 - R. Yantosca - Initial Version
@@ -2016,7 +2017,7 @@
 !
 ! !RETURN VALUE:
 ! 
-      INTEGER :: THIS_TS_CHEM   ! ! Chemistry timestep [min]
+      REAL*8  :: THIS_TS_CHEM   ! ! Chemistry timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version
@@ -2045,7 +2046,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_TS_CONV   ! Convective timestep [min]
+      REAL*8  :: THIS_TS_CONV   ! Convective timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version
@@ -2074,7 +2075,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_TS_DIAG   ! Diagnostic timestep [min]
+      REAL*8  :: THIS_TS_DIAG   ! Diagnostic timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version
@@ -2103,7 +2104,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_TS_DYN    ! Dynamic timestep [min]
+      REAL*8  :: THIS_TS_DYN    ! Dynamic timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version
@@ -2132,7 +2133,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_TS_EMIS   ! Emissions timestep [min]
+      REAL*8  :: THIS_TS_EMIS   ! Emissions timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version
@@ -2161,7 +2162,7 @@
 !
 ! !RETURN VALUE:
 !
-      INTEGER :: THIS_TS_UNIT   ! Unit conversion timestep [min]
+      REAL*8  :: THIS_TS_UNIT   ! Unit conversion timestep [min]
 ! 
 ! !REVISION HISTORY: 
 !  21 Mar 2003 - R. Yantosca - Initial Version

@@ -214,7 +214,8 @@
       TYPE(ID_TRAC)      :: IDT
                    
       ! Scalars          
-      INTEGER            :: I, J, L, N, NN, RC, TS_DYN
+      INTEGER            :: I, J, L, N, NN, RC
+      REAL*8             :: TS_DYN
       REAL*8             :: AREA_M2, DT
                          
       ! Arrays           

@@ -1653,7 +1653,8 @@
 ! !LOCAL VARIABLES:
 !      
       INTEGER            :: FACTOR, I,        IJLOOP,  J
-      INTEGER            :: HOUR,   MINUTE,   TS_SUN
+      INTEGER            :: HOUR,   MINUTE
+      REAL*8             :: TS_SUN
       REAL*8             :: AHR,    GMT_MID,  R,       TIMLOC
       REAL*8             :: DEC,    C_DEC,    S_DEC
       REAL*8             :: YMID_R, C_YMID_R, S_YMID_R

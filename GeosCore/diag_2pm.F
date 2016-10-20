@@ -80,7 +80,7 @@
       LOGICAL :: IS_ND47, IS_ND65, ITS_AFTER_DIAG
       LOGICAL :: IS_CHEM
       INTEGER :: I,       J,       L
-      INTEGER :: PREV_TS
+      REAL*8  :: PREV_TS
       REAL*8  :: LT(IIPAR,JJPAR)
 
       !=================================================================

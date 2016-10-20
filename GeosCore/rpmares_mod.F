@@ -304,7 +304,7 @@
 
       ! Relax to monthly mean HNO3 concentrations every 3 hours
       ! Otherwise just return the concentration in HNO3_sav
-      IF ( MOD( GET_ELAPSED_MIN(), 180 ) == 0 ) THEN
+      IF ( MOD( GET_ELAPSED_MIN(), 180d0 ) == 0 ) THEN
          HNO3_UGM3 = GET_HNO3_UGM3( I, J, L )
       ELSE
          HNO3_UGM3 = HNO3_sav(I,J,L)

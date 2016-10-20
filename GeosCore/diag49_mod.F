@@ -145,7 +145,8 @@
       INTEGER            :: ND49_IMIN,      ND49_IMAX
       INTEGER            :: ND49_JMIN,      ND49_JMAX
       INTEGER            :: ND49_LMIN,      ND49_LMAX
-      INTEGER            :: ND49_FREQ,      ND49_NI
+      REAL*8             :: ND49_FREQ
+      INTEGER            :: ND49_NI
       INTEGER            :: ND49_NJ,        ND49_NL
       INTEGER            :: HALFPOLAR
       INTEGER, PARAMETER :: CENTER180=1 
@@ -1700,7 +1701,7 @@
 !
 ! !LOCAL VARIABLES:
 !
-      INTEGER       :: XMIN, TS_DIAG
+      REAL*8        :: XMIN, TS_DIAG
       LOGICAL, SAVE :: FIRST = .TRUE.
 
       !=================================================================
@@ -1717,7 +1718,7 @@
                WRITE( 6, 100 ) 'ND49', ND49_FREQ, TS_DIAG
                ENDIF
  100           FORMAT( 'The ',a,' output frequency must be a multiple '
-     &              'of the largest time step:', i5, i5 )
+     &              'of the largest time step:', f7.1, f7.1 )
                CALL GEOS_CHEM_STOP
             ENDIF
             FIRST = .FALSE.
