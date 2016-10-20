@@ -1101,7 +1101,11 @@
       IF ( ND14 > 0 ) DTCSUM = 0d0
 
       KTOP = NLAY - 1
+#ifndef RMP
       JUMP = JGLOB / 20
+#else
+      JUMP = 0
+#endif
       JS   = 1 + JUMP
       JN   = JGLOB - JS + 1
 
