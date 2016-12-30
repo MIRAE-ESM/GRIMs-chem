@@ -73,7 +73,9 @@
       ENDIF
 
       ! Read
-      READ(9999) F_STT
+      DO N = 1, N_TRACERS
+         READ(9999) F_STT(:,:,:,N)
+      ENDDO
 
       ! Close file
       CLOSE(9999)
@@ -85,7 +87,7 @@
       ! Transform
       DO N = 1, N_TRACERS
          CALL TRANS_REGRID( F_STT(:,:,:,N), STT(:,:,:,N),
-     &                      IGLOB, JGLOB, LLPAR, LLPAR, 0, 0, 0 )
+     &                      IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
       ENDDO
 
       IF (LMASTER) THEN
@@ -139,11 +141,11 @@
 
       ! Transform
       CALL TRANS_REGRID( F_AIRDEN, P_AIRDEN,
-     &                   IGLOB, JGLOB, LLPAR, LLPAR, 0, 0, 0 )
+     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
       CALL TRANS_REGRID( F_BXHEIGHT, BXHEIGHT,
-     &                   IGLOB, JGLOB, LLPAR, LLPAR, 0, 0, 0 )
+     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
       CALL TRANS_REGRID( F_RH, RH,
-     &                   IGLOB, JGLOB, LLPAR, LLPAR, 0, 0, 0 )
+     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
       DO J = 1, JJPAR
       DO I = 1, IIPAR
       DO L = 1, LLPAR
@@ -176,7 +178,9 @@
 
       ! Write
       WRITE(9999) IGLOB, JGLOB, LLPAR, N_TRACERS
-      WRITE(9999) F_STT
+      DO N = 1, N_TRACERS
+         WRITE(9999) F_STT(:,:,:,N)
+      ENDDO
 
       ! Close file
       CLOSE(9999)
