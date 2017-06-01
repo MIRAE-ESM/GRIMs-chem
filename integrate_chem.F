@@ -170,14 +170,14 @@
       IF ( LSVMET .or. LSVMETNEST ) THEN
 
          ! Save A3 fields
-         IF ( MOD(NHMS,030000) .EQ. 0 ) THEN
+         IF ( MOD(NHMS,010000) .EQ. 0 ) THEN
             IF ( LSVMET     ) CALL SAVE_A3
             IF ( LSVMETNEST ) CALL SAVE_A3_NESTED
             CALL INIT_A3
          ENDIF
 
          ! Save A6, I6 fields
-         IF ( MOD(NHMS,060000) .EQ. 0 ) THEN
+         IF ( MOD(NHMS,010000) .EQ. 0 ) THEN
             IF ( LSVMET     ) CALL SAVE_A6
             IF ( LSVMET     ) CALL SAVE_I6
             IF ( LSVMETNEST ) CALL SAVE_A6_NESTED

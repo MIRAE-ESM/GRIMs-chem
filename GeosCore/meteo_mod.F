@@ -105,7 +105,7 @@
      &          'U10M', 'USTAR', 'V10M', 'Z0' /)
 
       ! For timestamp
-      DATE = GET_TIME_AHEAD(-90)
+      DATE = GET_TIME_AHEAD(-30)
 
       ! Filename
       WRITE(FILENAME, '(i8,".a3.2x25")') DATE(1)
@@ -164,7 +164,7 @@
      &          'OPTDEPTH', 'Q', 'T', 'U', 'V', 'OMEGA' /)
 
       ! For timestamp
-      DATE = GET_TIME_AHEAD(-180)
+      DATE = GET_TIME_AHEAD(-30)
 
       ! Filename
       WRITE(FILENAME, '(i8,".a6.2x25")') DATE(1)
@@ -287,7 +287,7 @@
      &          'U10M', 'USTAR', 'V10M', 'Z0' /)
 
       ! For timestamp
-      DATE = GET_TIME_AHEAD(-90)
+      DATE = GET_TIME_AHEAD(-30)
 
       ! Filename
       WRITE(FILENAME, '(i8,".a3.01x01")') DATE(1)
@@ -346,7 +346,7 @@
      &          'OPTDEPTH', 'Q', 'T', 'U', 'V', 'OMEGA' /)
 
       ! For timestamp
-      DATE = GET_TIME_AHEAD(-180)
+      DATE = GET_TIME_AHEAD(-30)
 
       ! Filename
       WRITE(FILENAME, '(i8,".a6.01x01")') DATE(1)
