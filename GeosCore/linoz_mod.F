@@ -330,7 +330,7 @@
                ! LINOX valid only up to 58 km, so do not use above 0.3 hPa
                ! dbj: impose exponential fall off of mixing ratio 
                ! between 0.3 and 0.01 hPa (with fall off of a scale height)
-               IF (GET_PEDGE(I,J,L) .LE. 0.3D0) THEN
+               IF (GET_PEDGE(I,J,L) .LE. 0.3D0 .or. L .EQ. LM) THEN
                   STT(I,J,L,NTRACER) = 
      &                (GET_PCENTER(I,J,L)/GET_PCENTER(I,J,LPOS-1)) * 
      &                STT(I,J,LPOS-1,NTRACER)
