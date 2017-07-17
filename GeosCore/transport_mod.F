@@ -352,6 +352,14 @@
 
 #if   defined( GRIMS )
 
+      ! Initialize
+      pt = 0d0
+      ut = 0d0
+      vt = 0d0
+      pdot = 0d0
+      q1 = 0d0
+      q3 = 0d0
+
       ! Prepare met-fields for NISLQ
       deltim = D_DYN / 2d0
 
