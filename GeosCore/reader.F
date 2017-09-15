@@ -454,7 +454,7 @@
          JLOP_SMV(M1,M2,K) = JLOOP
  220  CONTINUE
 !
-      LLOOP            = JLOP_SMV(LYOUT,LXOUT,LZOUT)
+!     LLOOP            = JLOP_SMV(LYOUT,LXOUT,LZOUT)
 !
 ! *********************************************************************
 !           DETERMINE HOW MANY PROCESSES SOLVED FOR IN SMVGEAR

@@ -216,6 +216,40 @@
       GEMISNOX2   = 0d0
       EMISS_BVOC  = 0d0  ! Add BVOC emissions (mpb,2009)
       
+!-----------------------------------------------------------------------------
+! SOIL EMISSIONS NOX [molecules/cm3/s]
+!
+      IF ( ( LSOILNOX .OR. LFERTILIZERNOX ) )
+!------------------------------------------------------------------------------
+! Prior to 10/7/11:
+! Now call soil NOx emissions with the cos(SZA) computed @ the midpoint of
+! the chemistry timestep (bmy, 10/7/11)
+!     &         CALL SOILNOXEMS( SUNCOS )
+!------------------------------------------------------------------------------
+     &   CALL SOILNOXEMS( SUNCOS_MID )
+!-----------------------------------------------------------------------------
+! AIRCRAFT emissions NOx [molecules/cm3/s]
+!
+      IF ( LAIRNOX ) CALL AIREMISS
+!-----------------------------------------------------------------------------
+! NOx AND CO from biofuel combustion [kg/box]  
+!
+      IF ( LWOODCO ) CALL BIOFUEL_BURN
+!-----------------------------------------------------------------------------
+! BIOGENIC ACETONE EMISSIONS
+!
+      IF ( IDEACET /= 0 ) THEN
+
+         ! Read monthly mean JO1D and leaf respiration values
+         ! These will be stored internally in "acetone_mod.f"
+         IF ( GET_MONTH() /= LASTMONTH ) THEN
+            CALL READ_JO1D( GET_MONTH() )
+            CALL READ_RESP( GET_MONTH() )
+            LASTMONTH = GET_MONTH()
+         ENDIF
+
+      ENDIF
+
       ! Loop over latitudes
       IJLOOP = 0
       DO J = 1, JJPAR
@@ -271,26 +305,6 @@
 ! LIGHTNING EMISSIONS NOX [molecules/cm3/s]
 !
             IF ( LLIGHTNOX ) CALL EMLIGHTNING( I, J )
-!-----------------------------------------------------------------------------
-! SOIL EMISSIONS NOX [molecules/cm3/s]
-!
-            IF ( ( LSOILNOX .OR. LFERTILIZERNOX )
-     &             .AND. I == 1 .AND. J == 1 ) 
-!------------------------------------------------------------------------------
-! Prior to 10/7/11:
-! Now call soil NOx emissions with the cos(SZA) computed @ the midpoint of
-! the chemistry timestep (bmy, 10/7/11)
-!     &         CALL SOILNOXEMS( SUNCOS )
-!------------------------------------------------------------------------------
-     &         CALL SOILNOXEMS( SUNCOS_MID )
-!-----------------------------------------------------------------------------
-! AIRCRAFT emissions NOx [molecules/cm3/s]
-!
-            IF ( LAIRNOX .AND. I == 1 .AND. J == 1 ) CALL AIREMISS
-!-----------------------------------------------------------------------------
-! NOx AND CO from biofuel combustion [kg/box]  
-!
-            IF ( LWOODCO .AND. I == 1 .AND. J == 1 ) CALL BIOFUEL_BURN
 !----------------------------------------------------------------------------
 ! BIOGENIC EMISSIONS OF VARIOUS QUANTITIES [Atoms C/box/time step]
 !
@@ -469,16 +483,6 @@
 ! BIOGENIC ACETONE EMISSIONS
 !
                IF ( IDEACET /= 0 ) THEN
-
-                  ! Read monthly mean JO1D and leaf respiration values
-                  ! These will be stored internally in "acetone_mod.f"
-                  IF ( I==1 .and. J==1 ) THEN
-                     IF ( GET_MONTH() /= LASTMONTH ) THEN
-                        CALL READ_JO1D( GET_MONTH() )
-                        CALL READ_RESP( GET_MONTH() )
-                        LASTMONTH = GET_MONTH()
-                     ENDIF
-                  ENDIF
 
                   ! Compute biogenic acetone emissions [atoms C/box/s]
                   CALL EMISS_BIOACET( I,    J,    TMMP,  EMMO, 
