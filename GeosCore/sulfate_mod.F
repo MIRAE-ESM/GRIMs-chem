@@ -1256,7 +1256,7 @@
 
          ! Cast to REAL*8 and resize if necessary
          CALL TRANS_REGRID( DBLE(ARRAY), JH2O2,
-     &                      I2x25, J2x25, LG5TRO, LLPAR, 2, 1, 0 )
+     &                      I2x25, J2x25, LG5TRO, LLTROP, 2, 1, 0 )
             
          ! Reset LASTMONTH
          !LASTMONTH = GET_MONTH()
@@ -7653,7 +7653,7 @@
 
       ! Cast to REAL*8 and resize if necessary
       CALL TRANS_REGRID( DBLE(ARRAY), PH2O2m,
-     &                   I2x25, J2x25, LG5TRO, LLPAR, 2, 1, 0 )
+     &                   I2x25, J2x25, LG5TRO, LLTROP, 2, 1, 0 )
             
       !=================================================================
       ! Read monthly mean O3 [v/v]
@@ -7679,7 +7679,7 @@
 
       ! Cast to REAL*8 and resize if necessary
       CALL TRANS_REGRID( DBLE(ARRAY), O3m,
-     &                   I2x25, J2x25, LG5TRO, LLPAR, 2, 2, 0 )
+     &                   I2x25, J2x25, LG5TRO, LLTROP, 2, 2, 0 )
       
       ! Return to calling program
       END SUBROUTINE READ_OXIDANT

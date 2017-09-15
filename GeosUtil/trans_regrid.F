@@ -38,7 +38,7 @@
       REAL*8  :: OUTDATA(IIPAR,JJPAR,OUT_NL)
       REAL*8  :: F_ARRAY(LONF2F,LATG2F,IN_NL)
       REAL*8  :: P_ARRAY(LONF2S,LATG2S,IN_NL)
-      REAL*8  :: TMP(IIPAR,JJPAR,72)
+      REAL*8  :: TMP(IIPAR,JJPAR,IN_NL)
 
       IF (LMASTER) THEN
       ! No horizontal regridding
@@ -106,17 +106,17 @@
 
          ! 38 layers -> model grid
          IF ( IN_NL .EQ. 38 ) THEN
-            CALL INTERP_VER_R( TMP(:,:,1:47), OUTDATA, VERT, MASS )
+            CALL INTERP_VER_T( TMP, OUTDATA, VERT, MASS )
          ENDIF
 
          ! 47 layers -> model grid
          IF ( IN_NL .EQ. 47 ) THEN
-            CALL INTERP_VER_R( TMP(:,:,1:47), OUTDATA, VERT, MASS )
+            CALL INTERP_VER_R( TMP, OUTDATA, VERT, MASS )
          ENDIF
 
          ! 72 layers -> model grid
          IF ( IN_NL .EQ. 72 ) THEN
-            CALL INTERP_VER_F( TMP(:,:,1:72), OUTDATA, VERT, MASS )
+            CALL INTERP_VER_F( TMP, OUTDATA, VERT, MASS )
          ENDIF
 
       ENDIF
@@ -746,6 +746,161 @@
       DEALLOCATE(FSUM)
 
       END SUBROUTINE REGRID_2x25
+
+!=====================================================================
+!
+!     SUBROUTINE INTERP_VER_T
+!
+!        This subroutine is for interpolating GEOS-Chem reduced
+!        tropospheric vertical pressure grid to GRIMs vertical
+!        pressure grid.
+!
+!                                                       Seungun Lee
+!
+!=====================================================================
+
+      SUBROUTINE INTERP_VER_T( INDATA, OUTDATA, VERT, MASS )
+
+      USE CMN_SIZE_MOD
+      USE comfver
+
+      IMPLICIT NONE
+
+      INTEGER :: VERT, MASS
+      INTEGER :: I, J, L, ID, ID1, ID2
+      REAL*8  :: INDATA(IIPAR,JJPAR,38)
+      REAL*8  :: OUTDATA(IIPAR,JJPAR,LLTROP)
+      REAL*8  :: AP(39), BP(39)
+      REAL*8  :: PEDGE1(39), PEDGE2(LLTROP+1)
+      REAL*8  :: FSUM(LLTROP)
+      REAL*8  :: FR1, FR2
+
+      AP = (/ 0.000000d+00, 4.804826d-02, 6.593752d+00, 1.313480d+01,
+     &        1.961311d+01, 2.609201d+01, 3.257081d+01, 3.898201d+01,
+     &        4.533901d+01, 5.169611d+01, 5.805321d+01, 6.436264d+01,
+     &        7.062198d+01, 7.883422d+01, 8.909992d+01, 9.936521d+01,
+     &        1.091817d+02, 1.189586d+02, 1.286959d+02, 1.429100d+02,
+     &        1.562600d+02, 1.696090d+02, 1.816190d+02, 1.930970d+02,
+     &        2.032590d+02, 2.121500d+02, 2.187760d+02, 2.238980d+02,
+     &        2.243630d+02, 2.168650d+02, 2.011920d+02, 1.769300d+02,
+     &        1.503930d+02, 1.278370d+02, 1.086630d+02, 9.236572d+01,
+     &        7.851231d+01, 5.638791d+01, 4.017541d+01 /)
+
+      BP = (/ 1.000000d+00, 9.849520d-01, 9.634060d-01, 9.418650d-01,
+     &        9.203870d-01, 8.989080d-01, 8.774290d-01, 8.560180d-01,
+     &        8.346609d-01, 8.133039d-01, 7.919469d-01, 7.706375d-01,
+     &        7.493782d-01, 7.211660d-01, 6.858999d-01, 6.506349d-01,
+     &        6.158184d-01, 5.810415d-01, 5.463042d-01, 4.945902d-01,
+     &        4.437402d-01, 3.928911d-01, 3.433811d-01, 2.944031d-01,
+     &        2.467411d-01, 2.003501d-01, 1.562241d-01, 1.136021d-01,
+     &        6.372006d-02, 2.801004d-02, 6.960025d-03, 8.175413d-09,
+     &        0.000000d+00, 0.000000d+00, 0.000000d+00, 0.000000d+00,
+     &        0.000000d+00, 0.000000d+00, 0.000000d+00 /)
+
+      !================
+      ! Initialization
+      !================
+      OUTDATA = 0d0
+      FSUM = 0d0
+
+      !===============================================
+      ! Set up GEOS-5 reduced vertical pressure level
+      !===============================================
+      DO L=1, 39
+         PEDGE1(L) = AP(L) + BP(L) * 1013.25
+      ENDDO
+
+      !======================================
+      ! Set up GRIMs vertical pressure level
+      !======================================
+      DO L=1, LLTROP+1
+         PEDGE2(L) = ak5(LLPAR+2-L) * 1d1 + bk5(LLPAR+2-L) * 1013.25
+         IF (PEDGE2(L) .LE. 0) PEDGE2(L) = 0.01d0
+      ENDDO
+
+      DO L=1, LLTROP
+
+         ID1=0
+         ID2=0
+
+         !=====================================================
+         ! Finding GEOS-5 reduced pressure level indices
+         ! which correspond to the tip of GRIMs pressure level
+         !=====================================================
+         DO ID=1, 47
+         IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
+     &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
+            ID1=ID
+         ENDIF
+         IF (PEDGE2(L+1) .LE. PEDGE1(ID) .AND.
+     &       PEDGE2(L+1) .GE. PEDGE1(ID+1)) THEN
+            ID2=ID
+         ENDIF
+         ENDDO
+
+         !=======================================================
+         ! Calculate coverage at the tip of GRIMs pressure level
+         !=======================================================
+         IF (VERT .EQ. 1) THEN
+
+            ! z weighted
+            IF (ID1 .EQ. ID2) THEN
+               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE2(L+1)))
+     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
+               FR2 = 0d0
+            ELSE
+               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE1(ID1+1)))
+     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
+               FR2 = (LOG(PEDGE2(L+1))-LOG(PEDGE1(ID2)))
+     &             / (LOG(PEDGE1(ID2+1))-LOG(PEDGE1(ID2)))
+            ENDIF
+
+         ELSEIF (VERT .EQ. 2) THEN
+
+            ! p weighted
+            IF (ID1 .EQ. ID2) THEN
+               FR1 = (PEDGE2(L)-PEDGE2(L+1))
+     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
+               FR2 = 0d0
+            ELSE
+               FR1 = (PEDGE2(L)-PEDGE1(ID1+1))
+     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
+               FR2 = (PEDGE2(L+1)-PEDGE1(ID2))
+     &             / (PEDGE1(ID2+1)-PEDGE1(ID2))
+            ENDIF
+
+         ENDIF
+
+         !============================
+         ! Interpolate pressure level
+         !============================
+         OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID1) * FR1
+         FSUM(L) = FSUM(L) + FR1
+
+         DO ID=ID1+1, ID2-1
+            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID)
+            FSUM(L) = FSUM(L) + 1d0
+         ENDDO
+
+         OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID2) * FR2
+         FSUM(L) = FSUM(L) + FR2
+
+      ENDDO
+
+      !================================
+      ! Average if it is concentration
+      !================================
+      IF (MASS .EQ. 0) THEN
+         DO L=1, LLTROP
+         DO J=1, JJPAR
+         DO I=1, IIPAR
+            OUTDATA(I,J,L) = OUTDATA(I,J,L) / FSUM(L)
+         ENDDO
+         ENDDO
+         ENDDO
+      ENDIF
+
+      END SUBROUTINE INTERP_VER_T
 
 !=====================================================================
 !

@@ -304,7 +304,7 @@
 
       ! Dimension check
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
-     &     NL .NE. LLPAR ) THEN
+     &     NL .NE. LLTROP ) THEN
          WRITE(6,*) '    - RESTART_MOD: Dimension of cspeci is bad!'
          STOP
       ENDIF
@@ -319,8 +319,8 @@
 #endif
 
       ! Allocate
-      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLPAR ) )
-      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLPAR ) )
+      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLTROP ) )
+      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLTROP ) )
 
       ! Read CSPEC_FULL
       DO N = 1, NT
@@ -330,7 +330,7 @@
          ENDIF
 
          CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
+     &                      IGLOB*2, JGLOB/2, LLTROP, LLTROP, 0, 0, 0 )
 
          CSPEC_FULL(:,:,:,N) = P_ARRAY
 
@@ -569,19 +569,19 @@
       OPEN(9999, FILE='cspeci', FORM='UNFORMATTED', STATUS='REPLACE')
 
       ! Write header
-      WRITE(9999) IGLOB, JGLOB, LLPAR, NTSPEC(1)
+      WRITE(9999) IGLOB, JGLOB, LLTROP, NTSPECGAS
       ENDIF
 
       ! Allocate
-      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLPAR ) )
-      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLPAR ) )
+      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLTROP ) )
+      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLTROP ) )
 
       ! Write CSPEC_FULL
       DO N = 1, NTSPECGAS
 
          P_ARRAY = CSPEC_FULL(:,:,:,N)
 
-         CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLPAR )
+         CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLTROP )
 
          IF (LMASTER) THEN
          WRITE(9999) F_ARRAY

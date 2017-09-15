@@ -207,13 +207,13 @@
       IF ( .not. DO_SAVE_OH ) RETURN
 
       ! Total Mass-weighted OH [molec OH/cm3] * [molec air]
-      SUM_OHMASS = SUM_ARRAY( OH_MASS, LLPAR )
+      SUM_OHMASS = SUM_ARRAY( OH_MASS, LLTROP )
 
       ! Atmospheric air mass [molec air]
-      SUM_MASS   = SUM_ARRAY( AIR_MASS, LLPAR ) 
+      SUM_MASS   = SUM_ARRAY( AIR_MASS, LLTROP ) 
 
       ! OH Loss from CH3CCl3 + OH [molec / box / s]
-      SUM_OHLOSS = SUM_ARRAY( OH_LOSS, LLPAR )
+      SUM_OHLOSS = SUM_ARRAY( OH_LOSS, LLTROP )
          
       ! Avoid divide-by-zero errors 
       IF ( SUM_MASS > 0d0 ) THEN 

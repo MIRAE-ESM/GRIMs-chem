@@ -481,12 +481,18 @@
 
       SUBROUTINE INIT_CMN_SIZE
 
+#ifndef RMP
+      USE comfver, ONLY : ak5, bk5
+#else
+      USE rscomfc, ONLY : si
+#endif
       USE paramodel
 #ifdef MP
       USE commpi
 #endif
 
-      INTEGER :: I, J
+      INTEGER :: I, J, L
+      REAL*8  :: PEDGE
 
       ! GRIMs model grid parameters
       IGLOB      = LONFD
@@ -510,6 +516,20 @@
       DISIZE     = 0d0
       DJSIZE     = 0d0
 #endif
+
+      ! Update LLTROP
+      DO L = 1, LLPAR
+#ifndef RMP
+         PEDGE = 1013.25 * bk5(LLPAR+2-L) + ak5(LLPAR+2-L) * 1d1
+#else
+         PEDGE = 1013.25 * si(L)
+#endif
+         IF ( PEDGE < 50d0 ) THEN
+            LLTROP     = L
+            LLTROP_FIX = L
+            EXIT
+         ENDIF
+      ENDDO
 
       ! Global lon, lat index for MPI
       ALLOCATE( LONID(IIPAR,JJPAR) )
