@@ -10,21 +10,29 @@
 
       SUBROUTINE START_CHEM
 
-      USE COMODE_MOD,     ONLY : INIT_COMODE
-      USE DAO_MOD,        ONLY : INIT_DAO
-      USE DIAG_AOD_MOD,   ONLY : INIT_DIAG_AOD
-      USE ERROR_MOD,      ONLY : DEBUG_MSG
-      USE FLEXAOD,        ONLY : READ_MIE
-      USE INPUT_MOD,      ONLY : READ_INPUT_FILE
-      USE LINOZ_MOD,      ONLY : LINOZ_READ
-      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LMEGAN, LPRT
-      USE LOGICAL_MOD,    ONLY : LSVMET, LSVMETNEST
-      USE MEGAN_MOD,      ONLY : INIT_MEGAN
-      USE METEO_MOD,      ONLY : INIT_METEO
-      USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
-      USE RESTART_MOD,    ONLY : READ_RESTART
+      USE COMODE_MOD,       ONLY : INIT_COMODE
+      USE DAO_MOD,          ONLY : INIT_DAO
+      USE DIAG_AOD_MOD,     ONLY : INIT_DIAG_AOD
+      USE ERROR_MOD,        ONLY : DEBUG_MSG, ERROR_STOP
+      USE FLEXAOD,          ONLY : READ_MIE
+      USE GCKPP_COMODE_MOD, ONLY : INIT_GCKPP_COMODE
+      USE INPUT_MOD,        ONLY : READ_INPUT_FILE
+      USE LINOZ_MOD,        ONLY : LINOZ_READ
+      USE LOGICAL_MOD,      ONLY : LCHEM, LEMIS, LLINOZ, LMEGAN, LPRT
+      USE LOGICAL_MOD,      ONLY : LSVMET, LSVMETNEST, LKPP
+      USE MEGAN_MOD,        ONLY : INIT_MEGAN
+      USE METEO_MOD,        ONLY : INIT_METEO
+      USE PRESSURE_MOD,     ONLY : INIT_PRESSURE
+      USE RESTART_MOD,      ONLY : READ_RESTART
+
+      USE CMN_SIZE_MOD    ! Size parameters   
+      USE COMODE_LOOP_MOD ! SMVGEAR common blocks
 
       IMPLICIT NONE
+
+      INTEGER :: RC
+
+      RC=0 ! Error flag. Default 0 is "no error"
 
       ! Initialize header modules
       CALL INIT_HEADER
@@ -50,6 +58,10 @@
       ! Initialize allocatable SMVGEAR/KPP arrays
       IF ( LEMIS .or. LCHEM ) THEN
          CALL INIT_COMODE
+         IF ( LKPP )  CALL INIT_GCKPP_COMODE( IIPAR, JJPAR, LLTROP,
+     $        ITLOOP, NMTRATE, IGAS, RC )
+         IF ( RC == 1 )
+     $        CALL ERROR_STOP( "Alloc error", "INIT_GCKPP_COMODE" )
          IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_COMODE' )
       ENDIF
 

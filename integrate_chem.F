@@ -71,8 +71,6 @@
       USE comfver,           ONLY : stepone
 #endif
 
-      USE CMN_SIZE_MOD    ! Size parameters   
-      USE COMODE_LOOP_MOD ! SMVGEAR common blocks
       USE CMN_DIAG_MOD    ! Diagnostic switches, NJDAY
       USE CMN_GCTM_MOD    ! Physical constants
 

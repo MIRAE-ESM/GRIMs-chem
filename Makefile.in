@@ -1,4 +1,5 @@
 HEADERDIR = Headers
+KPPDIR = KPP
 UTILDIR = GeosUtil
 COREDIR = GeosCore
 
@@ -21,6 +22,25 @@ HEADERS = ${HEADERDIR}/CMN_SIZE_mod.o \
           ${HEADERDIR}/smv_errcode_mod.o \
           ${HEADERDIR}/smv_physconst_mod.o \
           ${HEADERDIR}/init_header.o
+
+KPPS = ${KPPDIR}/gckpp_comode_mod.o \
+       ${KPPDIR}/gckpp_Precision.o \
+       ${KPPDIR}/gckpp_Parameters.o \
+       ${KPPDIR}/gckpp_HessianSP.o \
+       ${KPPDIR}/gckpp_Hessian.o \
+       ${KPPDIR}/gckpp_Global.o \
+       ${KPPDIR}/gckpp_JacobianSP.o \
+       ${KPPDIR}/gckpp_LinearAlgebra.o \
+       ${KPPDIR}/gckpp_Function.o \
+       ${KPPDIR}/gckpp_Jacobian.o \
+       ${KPPDIR}/gckpp_Integrator.o \
+       ${KPPDIR}/gckpp_StoichiomSP.o \
+       ${KPPDIR}/gckpp_Stoichiom.o \
+       ${KPPDIR}/gckpp_Monitor.o \
+       ${KPPDIR}/gckpp_Rates.o \
+       ${KPPDIR}/gckpp_Util.o \
+       ${KPPDIR}/gckpp_Model.o \
+       ${KPPDIR}/gckpp_Initialize.o
 
 UTILS = ${UTILDIR}/error_mod.o \
         ${UTILDIR}/file_mod.o \
@@ -223,12 +243,12 @@ FORT_FLAGS = @FORT_FLAGS@
 INCLUDE_DIR = @INCLUDE_DIR@
 INSTALLDLIB = @INSTALLDLIB@
 
-chemistry.a : ${HEADERS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
-	${AR} -r $@ ${HEADERS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
+chemistry.a : ${HEADERS} ${KPPS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
+	${AR} -r $@ ${HEADERS} ${KPPS} ${UTILS} ${CORES} ${ISOROPIA} ${OBJS}
 	${CP} $@ ${INSTALLDLIB}
 
 clean :
-	rm -f *.o *.a ${HEADERDIR}/*.o ${UTILDIR}/*.o ${COREDIR}/*.o ISOROPIA/*.o
+	rm -f *.o *.a ${HEADERDIR}/*.o ${KPPDIR}/*.o ${UTILDIR}/*.o ${COREDIR}/*.o ISOROPIA/*.o
 
 .SUFFIXES : .o .F .F90 .c
 

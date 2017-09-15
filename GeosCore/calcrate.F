@@ -83,7 +83,7 @@
       USE TRACERID_MOD,    ONLY : IDHO2
       USE DAO_MOD,         ONLY : IS_ICE
       ! KPP interface (phs,ks,dhk, 09/15/09)
-!     USE GCKPP_GLOBAL,    ONLY : IND
+      USE GCKPP_GLOBAL,    ONLY : IND
       USE LOGICAL_MOD,     ONLY : LNLPBL, LKPP ! (Lin, 03/31/09)
 
 
@@ -1228,18 +1228,18 @@ c     $            3.20d-11 * EXP( 70.d0*T3I(KLOOP)) * CONCO2(KLOOP)    )
 
       !*********KPP_INTERFACE************ (phs,ks,dhk, 09/15/09)
       IF ( LKPP ) THEN 
-!        I = 1
-!        DO NK          = 1, NTRATES(NCS)
-!           DO KLOOP    = 1, KTLOOP
-!              IF ( NEWFOLD(NK,NCS) > 0 ) THEN
-!                 IF ( KLOOP.eq.1 ) THEN
-!                    IND(I) = NK
-!                    I      = I +1
-!                 ENDIF
-!                 RRATE_FOR_KPP(KLOOP,NK) = RRATE(KLOOP,NEWFOLD(NK,NCS)) ! Saving rates for KPP
-!              ENDIF
-!           ENDDO
-!        ENDDO
+         I = 1
+         DO NK          = 1, NTRATES(NCS)
+            DO KLOOP    = 1, KTLOOP
+               IF ( NEWFOLD(NK,NCS) > 0 ) THEN
+                  IF ( KLOOP.eq.1 ) THEN
+                     IND(I) = NK
+                     I      = I +1
+                  ENDIF
+                  RRATE_FOR_KPP(KLOOP,NK) = RRATE(KLOOP,NEWFOLD(NK,NCS)) ! Saving rates for KPP
+               ENDIF
+            ENDDO
+         ENDDO
       ENDIF
       !********************************************
 !

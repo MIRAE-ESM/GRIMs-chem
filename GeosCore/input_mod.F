@@ -2586,8 +2586,8 @@
 !     READ( SUBSTRS(1:N), * ) LSVCSPEC
 
       ! Use KPP solver ?
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:4' )
-!     READ( SUBSTRS(1:N), * ) LKPP
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:4' )
+      READ( SUBSTRS(1:N), * ) LKPP
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:5' )
@@ -2601,7 +2601,7 @@
       WRITE( 6, 100     ) 'Turn on chemistry?          : ', LCHEM
 !     WRITE( 6, 110     ) 'Chemistry timestep [min]    : ', TS_CHEM
 !     WRITE( 6, 100     ) 'Use CSPEC restart?          : ', LSVCSPEC
-!     WRITE( 6, 100     ) 'Use solver coded by KPP?    : ', LKPP
+      WRITE( 6, 100     ) 'Use solver coded by KPP?    : ', LKPP
       ENDIF
 
          

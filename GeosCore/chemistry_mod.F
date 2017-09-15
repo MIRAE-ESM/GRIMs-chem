@@ -22,7 +22,7 @@
 ! !PUBLIC MEMBER FUNCTIONS:
 !
       PUBLIC :: DO_CHEMISTRY
-!     PUBLIC :: GCKPP_DRIVER
+      PUBLIC :: GCKPP_DRIVER
       PUBLIC :: RECOMPUTE_OD
 !
 ! !REVISION HISTORY: 
@@ -382,7 +382,6 @@
       ! Return to calling program
       END SUBROUTINE DO_CHEMISTRY
 !EOC
-#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -573,7 +572,7 @@
 
          ! Pass tracer concentrations from CSPEC to KPP working vector V_CSPEC
          DO N =1, NVAR
-            V_CSPEC(N) = CSPEC(JLOOP,N)
+            V_CSPEC(N) = CSPEC(I,J,L,N)
          END DO
 
          ! Pass tracer concentrations from V_CSPEC to KPP working vector VAR.
@@ -667,7 +666,7 @@
 
          ! Pass KPP concentrations V_CSPEC to geos-chem CSPEC
          DO N =1, NSPEC_GC
-            CSPEC(JLOOP,N) = V_CSPEC(N)
+            CSPEC(I,J,L,N) = V_CSPEC(N)
          ENDDO
 
       ENDDO
@@ -675,7 +674,6 @@
       ! Return to calling program
       END SUBROUTINE GCKPP_DRIVER
 !EOC
-#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------

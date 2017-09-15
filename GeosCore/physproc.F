@@ -35,8 +35,8 @@
      &                            IYSAVE, T3,      IZSAVE
       USE LOGICAL_MOD,     ONLY : LKPP
       USE TIME_MOD,        ONLY : TIMESTAMP_STRING
-!     USE CHEMISTRY_MOD,   ONLY : GCKPP_DRIVER
-!     USE GCKPP_GLOBAL,    ONLY : NTT
+      USE CHEMISTRY_MOD,   ONLY : GCKPP_DRIVER
+      USE GCKPP_GLOBAL,    ONLY : NTT
 
 #     include "define.h"
       USE CMN_SIZE_MOD  ! Size parameters
@@ -263,7 +263,7 @@
 ! *********************************************************************
 !
 !--- Moved from chemdr.f (ccc, 12/9/09)
-!         IF ( LKPP) NTT = NTTLOOP
+          IF ( LKPP) NTT = NTTLOOP
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -315,7 +315,7 @@
 !    NSPEC(1) is the # of active species for urban chemistry.
 !    (ccc, 01/20/10)
           IF ( LKPP ) THEN
-!            CALL GCKPP_DRIVER(KTLOOP, JLOOPLO, RRATE_FOR_KPP, NSPEC(1))
+             CALL GCKPP_DRIVER(KTLOOP, JLOOPLO, RRATE_FOR_KPP, NSPEC(1))
 
           ELSE
              CALL SMVGEAR
