@@ -798,7 +798,7 @@
                ! Dry dep flux [molec] for species N = 
                !  CSPEC(JLOOP,JJ) * VOLUME(JLOOP)
                !  [molec/cm3]     * [cm3]  
-               TDRYFX = CSPEC(JLOOP,JJ) * VOLUME(JLOOP)
+               TDRYFX = CSPEC(I,J,L,JJ) * VOLUME(JLOOP)
                     
                ! Convert TDRYFX from [molec] to [molec/cm2/s]        
                TDRYFX = TDRYFX / ( AREA_CM2(I,J) * DTCHEM ) 

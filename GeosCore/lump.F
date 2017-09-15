@@ -66,7 +66,7 @@
             CONCTMP = 0.d0
             DO KK = 1, NMEMBER(N)
                JJ = IDTRMB(N, KK)
-               CONCTMP = CONCTMP + ( 1d0+CTRMB(N,KK) ) * CSPEC(JLOOP,JJ)
+               CONCTMP = CONCTMP + ( 1d0+CTRMB(N,KK) ) * CSPEC(I,J,L,JJ)
             ENDDO
 
             ! Save tracer concentrations back to STT

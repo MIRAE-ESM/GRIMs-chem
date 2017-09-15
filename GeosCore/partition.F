@@ -80,7 +80,7 @@
       INTEGER :: LTEST
       INTEGER :: JLOOP_P 
       REAL*8  :: CONCTMP, CONCNOX, SUM, SUM1
-      REAL*8  :: CSAVE( ITLOOP, IGAS )
+      REAL*8  :: CSAVE( ITLOOP, NTRACER )
       REAL*8  :: QTEMP
 
       !=================================================================
@@ -123,7 +123,7 @@
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, N, JLOOP, JLOOP_P, LTEST )
 !$OMP+SCHEDULE( DYNAMIC )
-      DO N = 1, IGAS
+      DO N = 1, IDNUM
       DO L = 1, NPVERT
       DO J = 1, NLAT
       DO I = 1, NLONG
@@ -140,12 +140,12 @@
          ! grid box (I,J,L) @ previous chemistry timestep
 	 JLOOP_P = JLOP_PREVIOUS(I,J,L)
 
+         ! Start with the current vertical level
+         LTEST = L
+
          ! If the grid box (I,J,L) was in the stratosphere 
          ! at the  previous timestep, then  ...
          IF ( JLOOP_P == 0 ) THEN
-
-            ! Start with the current vertical level
-            LTEST = L
 
             ! Search downward in the column (I,J,:) until we find a grid box 
             ! that was in the troposphere @ the previous chemistry timestep
@@ -177,34 +177,7 @@
          ! in the CSPEC array at the previous chemistry timestep at index
          ! JLOOP_P.  JLOOP_P is guaranteed to be a tropopsheric box.  This
          ! will ensure proper partitioning.
-         CSAVE(JLOOP,N) = CSPEC(JLOOP_P,N)
-
-      ENDDO
-      ENDDO
-      ENDDO
-      ENDDO
-!$OMP END PARALLEL DO
-
-      ! Loop over tracer members and boxes
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, N, JLOOP, JLOOP_P, LTEST )
-!$OMP+SCHEDULE( DYNAMIC )
-      DO N = 1, IGAS
-      DO L = 1, NPVERT
-      DO J = 1, NLAT
-      DO I = 1, NLONG
-
-         ! 1-D index for SMVGEAR/KPP arrays corresponding to 
-         ! grid box (I,J,L) @ current chemistry timestep
-         JLOOP = JLOP(I,J,L)
-
-         ! Exit if grid box (I,J,L) is in the stratosphere 
-         ! at the current chemistry timestep
-         IF ( JLOOP == 0 ) CYCLE
-
-         ! Copy CSAVE array to CSPEC array.
-         CSPEC(JLOOP,N) = CSAVE(JLOOP,N)
+         CSAVE(JLOOP,N) = CSPEC(I,J,LTEST,CSAVEID_JJ(N))
 
       ENDDO
       ENDDO
@@ -266,7 +239,7 @@
 !$OMP END CRITICAL
                   ENDIF
 
-                  SUM = SUM + CSAVE(JLOOP,JJ) * (CTRMB(N,KK)+1)
+                  SUM = SUM + CSAVE(JLOOP,CSAVEID(JJ)) * (CTRMB(N,KK)+1)
                ENDDO
 
             !------------------------
@@ -274,7 +247,7 @@
             !------------------------
             ELSE IF ( IDTOX /= 0 ) THEN
                JJ   = IDTRMB(N,1)
-               SUM  = CSAVE(JLOOP,JJ) * (CTRMB(N,1)+1)
+               SUM  = CSAVE(JLOOP,CSAVEID(JJ)) * (CTRMB(N,1)+1)
                SUM1 = 0.d0
 
 
@@ -283,8 +256,8 @@
                ! based on NOx partitioning
                DO KK = 2, NMEMBER(N)
                   JJ   = IDTRMB(N,KK)
-                  SUM  = SUM + CSAVE(JLOOP,JJ) * (CTRMB(N,KK)+1)
-                  SUM1 = SUM1+ CSPEC(JLOOP,JJ) * (CTRMB(N,KK)+1)
+                  SUM  = SUM + CSAVE(JLOOP,CSAVEID(JJ))*(CTRMB(N,KK)+1)
+                  SUM1 = SUM1+ CSPEC(I,J,L,JJ) * (CTRMB(N,KK)+1)
                ENDDO
 
             ENDIF
@@ -314,12 +287,12 @@
                   ! 1/NMEMBER(N) if the division can't be done, i.e. do a
                   ! uniform paritioning among all member species of the
                   ! given tracer. (phs, bmy, 2/26/08)
-                  QTEMP = SAFE_DIV( CSAVE(JLOOP,JJ),
+                  QTEMP = SAFE_DIV( CSAVE(JLOOP,CSAVEID(JJ)),
      &                              SUM, 1d0/NMEMBER(N) )
                      
                   ! Store the concentration of member species KK
                   ! into the CSPEC array.  Do not allow underflow!
-                  CSPEC(JLOOP,JJ) = MAX( QTEMP*CONCTMP, SMAL2 )
+                  CSPEC(I,J,L,JJ) = MAX( QTEMP*CONCTMP, SMAL2 )
                ENDDO
 
             !----------------------------------------
@@ -329,10 +302,10 @@
 
                ! Find Ox in CSPEC
                JJ              = IDO3
-               CSPEC(JLOOP,JJ) = CONCTMP - SUM1
+               CSPEC(I,J,L,JJ) = CONCTMP - SUM1
 
                ! If Ox partitioning is OK, then skip to next tracer
-               IF ( CSPEC(JLOOP,JJ) > 0.0d0 ) GOTO 220
+               IF ( CSPEC(I,J,L,JJ) > 0.0d0 ) GOTO 220
 
                !---------------------------------------------------------
                ! Ox partitioning failed, we are getting a negative ozone 
@@ -355,12 +328,12 @@
                   ! 1/NMEMBER(N) if the division can't be done, i.e. do a
                   ! uniform paritioning among all member species of the
                   ! given tracer. (phs, bmy, 2/26/08)
-                  QTEMP = SAFE_DIV( CSAVE(JLOOP,JJ),
+                  QTEMP = SAFE_DIV( CSAVE(JLOOP,CSAVEID(JJ)),
      &                              SUM, 1d0/NMEMBER(N) )
 
                   ! Store the concentration of member species KK
                   ! into the CSPEC array.  Do not allow underflow!
-                  CSPEC(JLOOP,JJ) = MAX( QTEMP*CONCTMP, SMAL2 )
+                  CSPEC(I,J,L,JJ) = MAX( QTEMP*CONCTMP, SMAL2 )
                ENDDO
 
                !---------------------------------------------------------
@@ -378,10 +351,10 @@
                   JJ = IDTRMB(IDTNOX, KK)
 
                   IF ( JJ == IDNO .OR. JJ == IDHNO2 ) THEN
-                     SUM = SUM + CSAVE(JLOOP,JJ) *
+                     SUM = SUM + CSAVE(JLOOP,CSAVEID(JJ)) *
      &                           (CTRMB(IDTNOX,KK)+1)
                   ELSE
-                     SUM1 = SUM1 + CSPEC(JLOOP,JJ)*(CTRMB(IDTNOX,KK)+1)
+                     SUM1 = SUM1 + CSPEC(I,J,L,JJ)*(CTRMB(IDTNOX,KK)+1)
                   ENDIF
                ENDDO
 
@@ -418,12 +391,12 @@
                      ! 1/NMEMBER(N) if the division can't be done, i.e. do a
                      ! uniform paritioning among all member species of the
                      ! given tracer. (phs, bmy, 2/26/08)
-                     QTEMP = SAFE_DIV( CSAVE(JLOOP,JJ),
+                     QTEMP = SAFE_DIV( CSAVE(JLOOP,CSAVEID(JJ)),
      &                                 SUM, 1d0/NMEMBER(IDTNOX) )
 
                      ! Store the concentration of member species NO or HNO2
                      ! into the CSPEC array.  Do not allow underflow!
-                     CSPEC(JLOOP,JJ) = MAX(QTEMP*(CONCNOX-SUM1), SMAL2)
+                     CSPEC(I,J,L,JJ) = MAX(QTEMP*(CONCNOX-SUM1), SMAL2)
                   ENDIF
                ENDDO
 

@@ -42,7 +42,7 @@
       !======================================================================
       REAL*8,  ALLOCATABLE, PUBLIC :: ABSHUM(:) 
       REAL*8,  ALLOCATABLE, PUBLIC :: AIRDENS(:) 
-      REAL*8,  ALLOCATABLE, PUBLIC :: CSPEC(:,:)
+      REAL*8,  ALLOCATABLE, PUBLIC :: CSPEC(:,:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: CSPEC_FULL(:,:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: CSUMA(:) 
       REAL*8,  ALLOCATABLE, PUBLIC :: CSUMC(:) 
@@ -156,13 +156,13 @@
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'AIRDENS' )
          AIRDENS = 0d0      
 
-         ALLOCATE( CSPEC( ITLOOP, IGAS ), STAT=AS )
+         ALLOCATE( CSPEC( ILONG, ILAT, IPVERT, IGAS ), STAT=AS )
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSPEC' )
          CSPEC = 0d0
 
-         ALLOCATE( CSPEC_FULL( ILONG, ILAT, IPVERT, IGAS ), STAT=AS )
-         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSPEC_FULL' )
-         CSPEC_FULL = 0d0
+!        ALLOCATE( CSPEC_FULL( ILONG, ILAT, IPVERT, IGAS ), STAT=AS )
+!        IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSPEC_FULL' )
+!        CSPEC_FULL = 0d0
 
 !        ALLOCATE( CSUMA( ITLOOP ), STAT=AS )
 !        IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSUMA' )

@@ -11,7 +11,7 @@
 
       MODULE RESTART_MOD
 
-      USE COMODE_MOD,   ONLY : CSPEC_FULL
+      USE COMODE_MOD,   ONLY : CSPEC
       USE DAO_MOD,      ONLY : AIRDEN, BXHEIGHT, RH
       USE LOGICAL_MOD,  ONLY : LCHEM, LEMIS, LMEGAN, LSVCSPEC
       USE MEGAN_MOD,    ONLY : DAY_DIM, NUM_DAYS
@@ -322,7 +322,7 @@
       ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLTROP ) )
       ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLTROP ) )
 
-      ! Read CSPEC_FULL
+      ! Read CSPEC
       DO N = 1, NT
 
          IF (LMASTER) THEN
@@ -332,7 +332,7 @@
          CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
      &                      IGLOB*2, JGLOB/2, LLTROP, LLTROP, 0, 0, 0 )
 
-         CSPEC_FULL(:,:,:,N) = P_ARRAY
+         CSPEC(:,:,:,N) = P_ARRAY
 
       ENDDO
 
@@ -576,10 +576,10 @@
       ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLTROP ) )
       ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLTROP ) )
 
-      ! Write CSPEC_FULL
+      ! Write CSPEC
       DO N = 1, NTSPECGAS
 
-         P_ARRAY = CSPEC_FULL(:,:,:,N)
+         P_ARRAY = CSPEC(:,:,:,N)
 
          CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLTROP )
 

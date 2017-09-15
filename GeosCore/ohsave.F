@@ -140,28 +140,28 @@
          TEMPNOX        = TEMPNOX * XNUMOL(IDTNOX)/VOLUME(JLOOP)
 
          ! Ox/O3 fraction [unitless]
-         FRACO3(I,J,L)  = CSPEC(JLOOP,IDO3)  / TEMPOX
+         FRACO3(I,J,L)  = CSPEC(I,J,L,IDO3)  / TEMPOX
 
          ! NO/NOx fraction [unitless]
-         FRACNO(I,J,L)  = CSPEC(JLOOP,IDNO)  / TEMPNOX
+         FRACNO(I,J,L)  = CSPEC(I,J,L,IDNO)  / TEMPNOX
 
          ! NO2/NOx fraction [unitless]
-         FRACNO2(I,J,L) = CSPEC(JLOOP,IDNO2) / TEMPNOX    
+         FRACNO2(I,J,L) = CSPEC(I,J,L,IDNO2) / TEMPNOX    
 
          ! OH concentration [molec/cm3]
-         SAVEOH(I,J,L)  = CSPEC(JLOOP,IDOH)
+         SAVEOH(I,J,L)  = CSPEC(I,J,L,IDOH)
 
          ! HO2 concentration [v/v] 
-         SAVEHO2(I,J,L) = CSPEC(JLOOP,IDHO2) / AIRDENS(JLOOP)  
+         SAVEHO2(I,J,L) = CSPEC(I,J,L,IDHO2) / AIRDENS(JLOOP)  
 
          ! NO concentration [v/v]
-         SAVENO(I,J,L)  = CSPEC(JLOOP,IDNO)  / AIRDENS(JLOOP)
+         SAVENO(I,J,L)  = CSPEC(I,J,L,IDNO)  / AIRDENS(JLOOP)
 
          ! NO2 concentration [v/v]
-         SAVENO2(I,J,L) = CSPEC(JLOOP,IDNO2) / AIRDENS(JLOOP)  
+         SAVENO2(I,J,L) = CSPEC(I,J,L,IDNO2) / AIRDENS(JLOOP)  
 
          ! NO3 concentration [v/v]
-         SAVENO3(I,J,L) = CSPEC(JLOOP,IDNO3) / AIRDENS(JLOOP)
+         SAVENO3(I,J,L) = CSPEC(I,J,L,IDNO3) / AIRDENS(JLOOP)
 
  350  CONTINUE
  360  CONTINUE

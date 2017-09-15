@@ -5498,7 +5498,7 @@
          ! Take OH from the SMVGEAR array CSPEC
          ! OH is defined only in the troposphere
          IF ( JLOOP > 0 ) THEN
-            OH_MOLEC_CM3 = CSPEC(JLOOP,IDOH)
+            OH_MOLEC_CM3 = CSPEC(I,J,L,IDOH)
          ELSE
             OH_MOLEC_CM3 = 0d0
          ENDIF
@@ -5581,7 +5581,7 @@
 
       ! Replace OH into CSPEC(troposphere only)
       IF ( JLOOP > 0 ) THEN
-         CSPEC(JLOOP,IDOH) = OH
+         CSPEC(I,J,L,IDOH) = OH
       ENDIF
 
       ! Return to calling program
@@ -5644,7 +5644,7 @@
          ! Take NO3 from the SMVGEAR array CSPEC
          ! NO3 is defined only in the troposphere
          IF ( JLOOP > 0 ) THEN
-            NO3_MOLEC_CM3 = CSPEC(JLOOP,IDNO3)
+            NO3_MOLEC_CM3 = CSPEC(I,J,L,IDNO3)
          ELSE
             NO3_MOLEC_CM3 = 0d0
          ENDIF
@@ -5749,7 +5749,7 @@
 
       ! Replace OH into CSPEC (troposphere only)
       IF ( JLOOP > 0 ) THEN
-         CSPEC(JLOOP,IDNO3) = NO3
+         CSPEC(I,J,L,IDNO3) = NO3
       ENDIF
 
       ! Return to calling program
@@ -5806,7 +5806,7 @@
          ! Get O3 from CSPEC [molec/cm3] and convert it to [v/v]
          ! O3 data will only be defined below the tropopause
          IF ( JLOOP  > 0 ) THEN
-            O3_VV = ( CSPEC(JLOOP,IDO3) * 1d6       ) / 
+            O3_VV = ( CSPEC(I,J,L,IDO3) * 1d6       ) / 
      &              ( AIRDEN(L,I,J)     * XNUMOLAIR )
          ELSE
             O3_VV = 0d0

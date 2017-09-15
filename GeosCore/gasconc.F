@@ -40,8 +40,8 @@
       USE COMODE_MOD,     ONLY : IYSAVE, IZSAVE,  PRESS3, T3
       USE COMODE_MOD,     ONLY : CSPEC_FULL, JLOP
       USE DRYDEP_MOD,     ONLY : NUMDEP
-      USE TROPOPAUSE_MOD, ONLY : ITS_IN_THE_TROP, COPY_FULL_TROP
-      USE TROPOPAUSE_MOD, ONLY : SAVE_FULL_TROP
+      USE TROPOPAUSE_MOD, ONLY : ITS_IN_THE_TROP!, COPY_FULL_TROP
+!     USE TROPOPAUSE_MOD, ONLY : SAVE_FULL_TROP
       USE LOGICAL_MOD,    ONLY : LVARTROP
       USE DAO_MOD,        ONLY : T
       USE PRESSURE_MOD,   ONLY : GET_PCENTER
@@ -164,20 +164,20 @@
                      IF ( FRCLND(IX,IY) >= 0.5 ) THEN
 
                          ! Continental boundary layer: 2 ppbv MOH
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 2.000d-9 * CONST
+                        CSPEC(IX,IY,IZ,JGAS) = 2.000d-9 * CONST
 
                         ! Make sure MOH conc. is not negative (SMAL2 = 1d-99)
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 
-     &                       MAX(CSPEC_FULL(IX,IY,IZ,JGAS),SMAL2)
+                        CSPEC(IX,IY,IZ,JGAS) = 
+     &                       MAX(CSPEC(IX,IY,IZ,JGAS),SMAL2)
 
                      ELSE
 
                         ! Marine boundary layer: 0.9 ppbv MOH
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 0.900d-9 * CONST
+                        CSPEC(IX,IY,IZ,JGAS) = 0.900d-9 * CONST
 
                         ! Make sure MOH conc. is not negative (SMAL2 = 1d-99)
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 
-     &                       MAX(CSPEC_FULL(IX,IY,IZ,JGAS),SMAL2)
+                        CSPEC(IX,IY,IZ,JGAS) = 
+     &                       MAX(CSPEC(IX,IY,IZ,JGAS),SMAL2)
                      ENDIF
 
                   ELSE
@@ -188,16 +188,16 @@
                      IF ( ITS_IN_THE_TROP( IX, IY, IZ ) ) THEN
                       
                         ! Free troposphere: 0.6 ppbv MOH
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 0.600d-9 * CONST
+                        CSPEC(IX,IY,IZ,JGAS) = 0.600d-9 * CONST
 
                         ! Make sure MOH conc. is not negative (SMAL2 = 1d-99)
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = 
-     &                       MAX(CSPEC_FULL(IX,IY,IZ,JGAS),SMAL2)
+                        CSPEC(IX,IY,IZ,JGAS) = 
+     &                       MAX(CSPEC(IX,IY,IZ,JGAS),SMAL2)
 
                      ELSE
 
                         ! Stratosphere: set MOH conc. to SMAL2 = 1d-99
-                        CSPEC_FULL(IX,IY,IZ,JGAS) = SMAL2
+                        CSPEC(IX,IY,IZ,JGAS) = SMAL2
                      ENDIF
                   ENDIF
                ENDDO
@@ -219,15 +219,15 @@
                   CONST = GET_PCENTER(IX,IY,IZ)*1000D0/(T(IX,IY,IZ)*BK)
                 
                   ! Copy default background conc. from "globchem.dat" to CSPEC
-                  CSPEC_FULL(IX,IY,IZ,JGAS) = QBKCHEM(JGAS,NCS)* CONST
+                  CSPEC(IX,IY,IZ,JGAS) = QBKCHEM(JGAS,NCS)* CONST
 
                   ! Make sure concentration is not negative (SMAL2 = 1d-99)
-                  CSPEC_FULL(IX,IY,IZ,JGAS) = 
-     &                 MAX(CSPEC_FULL(IX,IY,IZ,JGAS),SMAL2)
+                  CSPEC(IX,IY,IZ,JGAS) = 
+     &                 MAX(CSPEC(IX,IY,IZ,JGAS),SMAL2)
 
                   ! For emission species, don't do unit conversion
                   IF (NAMEGAS(JGAS).EQ.'EMISSION') THEN
-                     CSPEC_FULL(IX,IY,IZ,JGAS) = QBKCHEM(JGAS,NCS)
+                     CSPEC(IX,IY,IZ,JGAS) = QBKCHEM(JGAS,NCS)
                   ENDIF
                ENDDO
                ENDDO
@@ -251,7 +251,7 @@
 !
 !      IF ( LVARTROP .or. FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
 !-----------------------------------------------------------------------
-      IF ( FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
+!     IF ( FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
 
 !  ********************************************************************
 !  *            Update starting concentrations for plumes             *
@@ -281,7 +281,10 @@
          !write(6,*) 'value of drydep reactions in cspec= ',jj
          IF (JJ.LE.0) GOTO 130
          DO 135 JLOOP = 1,NTTLOOP
-            CSPEC(JLOOP,JJ) = 0.0D0
+            IX = IXSAVE(JLOOP)
+            IY = IYSAVE(JLOOP)
+            IZ = IZSAVE(JLOOP)
+            CSPEC(IX,IY,IZ,JJ) = 0.0D0
  135     CONTINUE
  130  CONTINUE
 
@@ -300,9 +303,12 @@
             CONSEXP       = 17.2693882D0 * (TK - 273.16D0) /
      1           (TK - 35.86D0)
             VPRESH2O      = CONSVAP * EXP(CONSEXP) / TK 
-            CSPEC(JLOOP,IH2O) = ABSHUM(JLOOP)
+            IX = IXSAVE(JLOOP)
+            IY = IYSAVE(JLOOP)
+            IZ = IZSAVE(JLOOP)
+            CSPEC(IX,IY,IZ,IH2O) = ABSHUM(JLOOP)
 !     then calculate R.H.
-            ABSHUM(JLOOP) = CSPEC(JLOOP,IH2O) / VPRESH2O 
+            ABSHUM(JLOOP) = CSPEC(IX,IY,IZ,IH2O) / VPRESH2O 
 !            write(297,*) 'in initgas',jloop,abshum(jloop)
  33      CONTINUE
       ENDIF
@@ -316,7 +322,10 @@
       IF (IOXYGEN.GT.NGAS) THEN
          OXYCONS           = 0.2095d0
          DO 260 JLOOP      = 1, NTLOOP
- 260        CSPEC(JLOOP,IOXYGEN) = AIRDENS(JLOOP) * OXYCONS
+            IX = IXSAVE(JLOOP)
+            IY = IYSAVE(JLOOP)
+            IZ = IZSAVE(JLOOP)
+ 260        CSPEC(IX,IY,IZ,IOXYGEN) = AIRDENS(JLOOP) * OXYCONS
       ENDIF
  999  format(E10.3)
 
@@ -330,7 +339,10 @@
 !
       IF ( ILISOPOH > 0 ) THEN
          DO JLOOP = 1, NTLOOP
-            CSPEC(JLOOP,ILISOPOH) = 0d0
+            IX = IXSAVE(JLOOP)
+            IY = IYSAVE(JLOOP)
+            IZ = IZSAVE(JLOOP)
+            CSPEC(IX,IY,IZ,ILISOPOH) = 0d0
          ENDDO
       ENDIF 
 !
@@ -365,12 +377,15 @@
 
             ! Reset value of LISOPOH to zero 
             DO JLOOP      = 1, NTLOOP
-               CSPEC(JLOOP,ILBRO2H) = 0d0
-               CSPEC(JLOOP,ILBRO2N) = 0d0
-               CSPEC(JLOOP,ILTRO2H) = 0d0
-               CSPEC(JLOOP,ILTRO2N) = 0d0
-               CSPEC(JLOOP,ILXRO2H) = 0d0
-               CSPEC(JLOOP,ILXRO2N) = 0d0
+               IX = IXSAVE(JLOOP)
+               IY = IYSAVE(JLOOP)
+               IZ = IZSAVE(JLOOP)
+               CSPEC(IX,IY,IZ,ILBRO2H) = 0d0
+               CSPEC(IX,IY,IZ,ILBRO2N) = 0d0
+               CSPEC(IX,IY,IZ,ILTRO2H) = 0d0
+               CSPEC(IX,IY,IZ,ILTRO2N) = 0d0
+               CSPEC(IX,IY,IZ,ILXRO2H) = 0d0
+               CSPEC(IX,IY,IZ,ILXRO2N) = 0d0
             ENDDO
 
          ! Exit with an error message if it is not. 
@@ -429,8 +444,11 @@
       NCS         =  1
 !
       IF (ITESTGEAR.EQ.2) THEN
+       IX = IXSAVE(LLOOP)
+       IY = IYSAVE(LLOOP)
+       IZ = IZSAVE(LLOOP)
        WRITE(KCPD,810) 0.,0.,(NAMENCS(INEWOLD(I,NCS),NCS),
-     1        CSPEC(LLOOP,INEWOLD(I,NCS)), I = 1, ISCHANG(NCS))
+     1        CSPEC(IX,IY,IZ,INEWOLD(I,NCS)), I = 1, ISCHANG(NCS))
        WRITE(KCPD,820)
       ENDIF
 !

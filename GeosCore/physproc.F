@@ -32,7 +32,7 @@
       ! References to F90 modules (bmy, 10/19/00)
       USE COMODE_MOD,      ONLY : ABSHUM, AIRDENS,  CSPEC,   CSUMA,  
      &                            CSUMC,  ERRMX2,  IXSAVE, 
-     &                            IYSAVE, T3
+     &                            IYSAVE, T3,      IZSAVE
       USE LOGICAL_MOD,     ONLY : LKPP
       USE TIME_MOD,        ONLY : TIMESTAMP_STRING
 !     USE CHEMISTRY_MOD,   ONLY : GCKPP_DRIVER
@@ -82,7 +82,7 @@
       INTEGER JLLAST,IT,IRADD,LVAL,IRVAL,IRADD1,JREORD,IPAR,JPAR,JPAR1
       INTEGER NSUMBLOCK,NCELLROW,NBLOCKROW,ICG,I,NGCOUNT,NGHI,IAVG
       INTEGER IREMAIN,IUSESIZE,NREBLOCK,L
-      INTEGER IX,IY,IJWINDOW,KBLK2,NK
+      INTEGER IX,IY,IZ,IJWINDOW,KBLK2,NK
 
       INTEGER COUNTER,JGAS
       REAL*8 S1CON,S2CON,ARGS,CONSTQ,SNOON,CONTEMP,DIFCONC,PLODYN
@@ -291,8 +291,11 @@
                 JNEW               = MAPPL(JOLD,NCS)
                 DO 570 KLOOP       = 1, KTLOOP
                    JLOOP             = JREORDER(JLOOPLO+KLOOP)
-                   CBLK( KLOOP,JOLD) = CSPEC(JLOOP,JOLD)
-                   CORIG(KLOOP,JNEW) = CSPEC(JLOOP,JOLD)
+                   IX                = IXSAVE(JLOOP)
+                   IY                = IYSAVE(JLOOP)
+                   IZ                = IZSAVE(JLOOP)
+                   CBLK( KLOOP,JOLD) = CSPEC(IX,IY,IZ,JOLD)
+                   CORIG(KLOOP,JNEW) = CSPEC(IX,IY,IZ,JOLD)
  570            CONTINUE
  572         CONTINUE
 !
@@ -332,8 +335,11 @@
                 DO 620 JNEW         = 1, ISCHANG(NCS)
                    JOLD               = INEWOLD(JNEW,NCS)
                    DO 620 KLOOP       = 1, KTLOOP
-                      JLOOP             = JREORDER(JLOOPLO+KLOOP)
-                      CSPEC(JLOOP,JOLD) = MAX(CNEW(KLOOP,JNEW),SMAL2)
+                      JLOOP                = JREORDER(JLOOPLO+KLOOP)
+                      IX                   = IXSAVE(JLOOP)
+                      IY                   = IYSAVE(JLOOP)
+                      IZ                   = IZSAVE(JLOOP)
+                      CSPEC(IX,IY,IZ,JOLD) = MAX(CNEW(KLOOP,JNEW),SMAL2)
  620            CONTINUE
              ENDIF
           ENDIF

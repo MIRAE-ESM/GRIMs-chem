@@ -873,7 +873,7 @@ c new OH+CO rate from JPL2006.
                      ! temperature, air density, and HO2 concentration 
                      ! (jaegle - 02/26/09)
 
-                     HO2_MOLEC_CM3 = CSPEC(JLOOP,IDHO2)
+                     HO2_MOLEC_CM3 = CSPEC(IX,IY,IZ,IDHO2)
 
                      ! Find out whether we are in the continental
                      ! boundary layer and set the CONTINENTAL_PBL

@@ -112,7 +112,7 @@
             AIR_MASS(I,J,L) = AIR_MASS(I,J,L)   + XAIRMASS
 
             ! Sum OH mass term into OH_MASS array
-            XOHMASS         = CSPEC(JLOOP,IDOH) * XAIRMASS
+            XOHMASS         = CSPEC(I,J,L,IDOH) * XAIRMASS
             OH_MASS(I,J,L)  = OH_MASS(I,J,L)    + XOHMASS
 
          ENDIF

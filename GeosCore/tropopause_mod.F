@@ -23,7 +23,7 @@
 !
       PUBLIC  :: CLEANUP_TROPOPAUSE
       PUBLIC  :: CHECK_VAR_TROP
-      PUBLIC  :: COPY_FULL_TROP
+!     PUBLIC  :: COPY_FULL_TROP
       PUBLIC  :: DIAG_TROPOPAUSE
       PUBLIC  :: GET_MIN_TPAUSE_LEVEL
       PUBLIC  :: GET_MAX_TPAUSE_LEVEL
@@ -31,7 +31,7 @@
       PUBLIC  :: ITS_IN_THE_TROP
       PUBLIC  :: ITS_IN_THE_STRAT
 !     PUBLIC  :: READ_TROPOPAUSE
-      PUBLIC  :: SAVE_FULL_TROP
+!     PUBLIC  :: SAVE_FULL_TROP
 !
 ! !PRIVATE MEMBER FUNCTIONS:
 !
@@ -65,6 +65,7 @@
 
       CONTAINS
 !EOC
+#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -212,6 +213,7 @@
 
       END SUBROUTINE SAVE_FULL_TROP
 !EOC
+#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
