@@ -573,6 +573,7 @@
       USE JULDAY_MOD,    ONLY : CALDATE
       USE LOGICAL_MOD,   ONLY : LSVGLB,      LUNZIP,       LWAIT
       USE LOGICAL_MOD,   ONLY : LVARTROP,    LLINOZ
+      USE LOGICAL_MOD,   ONLY : LO3RAD
       USE LOGICAL_MOD,   ONLY : LAERODIR,    LAEROIND
       USE LOGICAL_MOD,   ONLY : LSVMET,      LSVMETNEST
 !     USE RESTART_MOD,   ONLY : SET_RESTART
@@ -708,24 +709,28 @@
       I0 = 0
       J0 = 0
 
-      ! Aerosol direct effect
+      ! Use O3 for radiation?
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:20' )
+      READ( SUBSTRS(1:N), *     ) LO3RAD
+
+      ! Aerosol direct effect
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:21' )
       READ( SUBSTRS(1:N), *     ) LAERODIR
 
       ! Aerosol indirect effect
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:21' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:22' )
       READ( SUBSTRS(1:N), *     ) LAEROIND
 
       ! Save met-fields for offline GRIMs/GEOS-Chem?
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:22' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:23' )
       READ( SUBSTRS(1:N), *     ) LSVMET
 
       ! Save nested met-fields for offline GRIMs/GEOS-Chem?
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:23' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:24' )
       READ( SUBSTRS(1:N), *     ) LSVMETNEST
 
       ! Separator line
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:24' )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_simulation_menu:25' )
 
       !=================================================================
       ! Add safety checks for logical switches
@@ -776,6 +781,7 @@
 !     WRITE( 6, 120     ) 'Use variable tropopause?    : ', LVARTROP
       WRITE( 6, 120     ) 'Use LINOZ strat chemistry?  : ', LLINOZ
 !     WRITE( 6, 130     ) 'Global offsets I0, J0       : ', I0, J0
+      WRITE( 6, 120     ) 'Use O3 for radiation?       : ', LO3RAD
       WRITE( 6, 120     ) 'Aerosol direct effect       : ', LAERODIR
       WRITE( 6, 120     ) 'Aerosol indirect effect     : ', LAEROIND
       WRITE( 6, 120     ) 'Save met-fields?            : ', LSVMET
@@ -6138,6 +6144,7 @@
       USE LOGICAL_MOD,   ONLY : LSHIPTAG,    LPLANETAG
       USE LOGICAL_MOD,   ONLY : LCHEMCO2
       USE LOGICAL_MOD,   ONLY : LRETRO   !(wfr, 3/8/11)
+      USE LOGICAL_MOD,   ONLY : LO3RAD
       USE LOGICAL_MOD,   ONLY : LAERODIR,    LAEROIND
       USE LOGICAL_MOD,   ONLY : LSVMET,      LSVMETNEST
 ! 
@@ -6274,6 +6281,8 @@
 
       LRETRO       = .FALSE.  !(wfr, 3/8/11)
       
+      LO3RAD       = .FALSE.
+
       LAERODIR     = .FALSE.
       LAEROIND     = .FALSE.
 

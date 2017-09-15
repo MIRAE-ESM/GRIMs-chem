@@ -235,6 +235,9 @@
       LOGICAL :: LND51_HDF       ! Save ND51  diagnostic in HDF5?
       LOGICAL :: LND51b_HDF      ! Save ND51b diagnostic in HDF5?
 
+      !%%%% Ozone Feedback %%%%
+      LOGICAL :: LO3RAD          ! Use O3 for radiation?
+
       !%%%% Aerosol Feedback %%%%
       LOGICAL :: LAERODIR        ! Aerosol direct effect
       LOGICAL :: LAEROIND        ! Aerosol indirect effect
