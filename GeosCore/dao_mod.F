@@ -2171,9 +2171,9 @@
       PBL = 0d0
 
       ! Surface geopotential height
-      ALLOCATE( PHIS( IIPAR, JJPAR ), STAT=AS )  
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'PHIS' )
-      PHIS = 0d0
+!     ALLOCATE( PHIS( IIPAR, JJPAR ), STAT=AS )  
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'PHIS' )
+!     PHIS = 0d0
 
       ! Total precip at ground
       ALLOCATE( PREACC( IIPAR, JJPAR ), STAT=AS )
@@ -2186,14 +2186,14 @@
       PRECON = 0d0
    
       ! Pressure at beginning of 6hr timestep
-      ALLOCATE( PS1( IIPAR, JJPAR ), STAT=AS )  
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS1' )
-      PS1 = 0d0
+!     ALLOCATE( PS1( IIPAR, JJPAR ), STAT=AS )  
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS1' )
+!     PS1 = 0d0
 
       ! Pressure at end of 6hr timestep
-      ALLOCATE( PS2( IIPAR, JJPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS2' )
-      PS2 = 0d0
+!     ALLOCATE( PS2( IIPAR, JJPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS2' )
+!     PS2 = 0d0
 
       ! Pressure at end of dynamic timestep
       ALLOCATE( PSC2( IIPAR, JJPAR ), STAT=AS ) 
@@ -2243,14 +2243,14 @@
       T = 0d0
 
       ! Temperature on full vertical grid 
-      ALLOCATE( T_FULLGRID( IIPAR, JJPAR, LGLOB ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'T_FULLGRID' )
-      T_FULLGRID = 0d0
+!     ALLOCATE( T_FULLGRID( IIPAR, JJPAR, LGLOB ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'T_FULLGRID' )
+!     T_FULLGRID = 0d0
 
       ! Number density of air on full vertical grid
-      ALLOCATE( AIRDEN_FULLGRID( LGLOB, IIPAR, JJPAR ), STAT=AS ) 
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'AIRDEN_FULLGRID' )
-      AIRDEN_FULLGRID = 0d0
+!     ALLOCATE( AIRDEN_FULLGRID( LGLOB, IIPAR, JJPAR ), STAT=AS ) 
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'AIRDEN_FULLGRID' )
+!     AIRDEN_FULLGRID = 0d0
 
       ! Tropopause pressure
       ALLOCATE( TROPP( IIPAR, JJPAR ), STAT=AS ) 
@@ -2329,14 +2329,14 @@
       SNOW = 0d0
 
       ! TROPP1 is only defined for GEOS-3, GEOS-4, or GCAP
-      ALLOCATE( TROPP1( IIPAR, JJPAR ), STAT=AS ) 
-      IF ( AS /= 0 ) C ALL ALLOC_ERR( 'TROPP1' )
-      TROPP1 = 0d0
+!     ALLOCATE( TROPP1( IIPAR, JJPAR ), STAT=AS ) 
+!     IF ( AS /= 0 ) C ALL ALLOC_ERR( 'TROPP1' )
+!     TROPP1 = 0d0
 
       ! TROPP2 is only defined for GEOS-3, GEOS-4, or GCAP
-      ALLOCATE( TROPP2( IIPAR, JJPAR ), STAT=AS ) 
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'TROPP2' )
-      TROPP2 = 0d0
+!     ALLOCATE( TROPP2( IIPAR, JJPAR ), STAT=AS ) 
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'TROPP2' )
+!     TROPP2 = 0d0
 
 #endif
 
@@ -2347,14 +2347,14 @@
       !-----------------------------------------------------------------
 
       ! Albedo at start of 6-hr interval
-      ALLOCATE( ALBD1( IIPAR, JJPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'ALBD1' )
-      ALBD1 = 0d0
+!     ALLOCATE( ALBD1( IIPAR, JJPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'ALBD1' )
+!     ALBD1 = 0d0
 
       ! Albedo at end of 6-hr interval
-      ALLOCATE( ALBD2( IIPAR, JJPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'ALBD2' )
-      ALBD2 = 0d0
+!     ALLOCATE( ALBD2( IIPAR, JJPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'ALBD2' )
+!     ALBD2 = 0d0
 
       ! GEOS-3 cloud mass flux
       ALLOCATE( CLDMAS( IIPAR, JJPAR, LLPAR ), STAT=AS )
@@ -2367,44 +2367,44 @@
       DTRAIN = 0d0
 
       ! Specific humidity at start of 6-hr interval
-      ALLOCATE( SPHU1( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'SPHU1' )
-      SPHU1 = 0d0
+!     ALLOCATE( SPHU1( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'SPHU1' )
+!     SPHU1 = 0d0
 
       ! Specific humidity at end of 6-hr interval
-      ALLOCATE( SPHU2( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'SPHU2' )
-      SPHU2 = 0d0
+!     ALLOCATE( SPHU2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'SPHU2' )
+!     SPHU2 = 0d0
 
       ! Temperature at start of 6-hr interval
-      ALLOCATE( TMPU1( IIPAR, JJPAR, LLPAR ), STAT=AS ) 
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'TMPU1' )
-      TMPU1 = 0d0
+!     ALLOCATE( TMPU1( IIPAR, JJPAR, LLPAR ), STAT=AS ) 
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'TMPU1' )
+!     TMPU1 = 0d0
 
       ! Temperature at end of 6-hr interval
-      ALLOCATE( TMPU2( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'TMPU2' )
-      TMPU2 = 0d0
+!     ALLOCATE( TMPU2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'TMPU2' )
+!     TMPU2 = 0d0
 
       ! U-wind at start of 6-hr interval
-      ALLOCATE( UWND1( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'UWND1' )
-      UWND1 = 0d0
+!     ALLOCATE( UWND1( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'UWND1' )
+!     UWND1 = 0d0
 
       ! U-wind at end of 6-hr interval
-      ALLOCATE( UWND2( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'UWND2' )
-      UWND2 = 0d0
+!     ALLOCATE( UWND2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'UWND2' )
+!     UWND2 = 0d0
 
       ! V-wind at start of 6-hr interval
-      ALLOCATE( VWND1( IIPAR, JJPAR, LLPAR ), STAT=AS ) 
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'VWND1' )
-      VWND1 = 0d0
+!     ALLOCATE( VWND1( IIPAR, JJPAR, LLPAR ), STAT=AS ) 
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'VWND1' )
+!     VWND1 = 0d0
 
       ! V-wind at end of 6-hr interval
-      ALLOCATE( VWND2( IIPAR, JJPAR, LLPAR ), STAT=AS )
-      IF ( AS /= 0 ) CALL ALLOC_ERR( 'VWND2' )
-      VWND2 = 0d0
+!     ALLOCATE( VWND2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'VWND2' )
+!     VWND2 = 0d0
 
 #elif defined( GEOS_4 )
 

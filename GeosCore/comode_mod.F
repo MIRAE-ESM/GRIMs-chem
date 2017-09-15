@@ -164,21 +164,21 @@
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSPEC_FULL' )
          CSPEC_FULL = 0d0
 
-         ALLOCATE( CSUMA( ITLOOP ), STAT=AS )
-         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSUMA' )
-         CSUMA = 0d0
+!        ALLOCATE( CSUMA( ITLOOP ), STAT=AS )
+!        IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSUMA' )
+!        CSUMA = 0d0
       
-         ALLOCATE( CSUMC( ITLOOP ), STAT=AS )
-         IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSUMC' )
-         CSUMC = 0d0
+!        ALLOCATE( CSUMC( ITLOOP ), STAT=AS )
+!        IF ( AS /= 0 ) CALL ALLOC_ERR( 'CSUMC' )
+!        CSUMC = 0d0
 
          ALLOCATE( ERADIUS( ITLOOP, NDUST+NAER ), STAT=AS )
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'ERADIUS' )
          ERADIUS = 0d0      
 
-         ALLOCATE( ERRMX2( ITLOOP ), STAT=AS )
-         IF ( AS /= 0 ) CALL ALLOC_ERR( 'ERRMX2' )
-         ERRMX2 = 0d0
+!        ALLOCATE( ERRMX2( ITLOOP ), STAT=AS )
+!        IF ( AS /= 0 ) CALL ALLOC_ERR( 'ERRMX2' )
+!        ERRMX2 = 0d0
            
          ALLOCATE( IXSAVE( ITLOOP ), STAT=AS )
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'IXSAVE' )
