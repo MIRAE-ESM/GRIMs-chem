@@ -262,8 +262,6 @@
       REAL*8  :: ut(LONF2S,LLPAR,LATG2S)
       REAL*8  :: vt(LONF2S,LLPAR,LATG2S)
       REAL*8  :: pdot(LONF2S,LLPAR+1,LATG2S)
-      REAL*8  :: q1(LONF2S,LLPAR*N_TRACERS,LATG2S)
-      REAL*8  :: q3(LONF2S,LLPAR*N_TRACERS,LATG2S)
 
 #ifdef MP
       ! For MPI
@@ -357,8 +355,6 @@
       ut = 0d0
       vt = 0d0
       pdot = 0d0
-      q1 = 0d0
-      q3 = 0d0
 
       ! Prepare met-fields for NISLQ
       deltim = D_DYN / 2d0
@@ -380,34 +376,11 @@
       ENDDO
       ENDDO
 
-      DO J = 1, JJPAR
-      DO N = 1, N_TRACERS
-      DO L = 1, LLPAR
-      DO I = 1, IIPAR
-         q1(I,LLPAR*(N-1)+L,J) = STT(I,J,L,N)
-      ENDDO
-      ENDDO
-      ENDDO
-      ENDDO
-
       ! Do the advection
       ! We use NISLQ advection scheme with GRIMS met-fields.
 #ifndef RMP
-      CALL nislq_chem_advect( deltim, pt, ut, vt, pdot, q1, q3 )
-#else
-      q3 = q1
+      CALL nislq_chem_advect( deltim, pt, ut, vt, pdot )
 #endif
-
-      DO N = 1, N_TRACERS
-      DO L = 1, LLPAR
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
-         STT(I,J,L,N) = q3(I,LLPAR*(N-1)+L,J)
-      ENDDO
-      ENDDO
-      ENDDO
-      ENDDO
-
 #else
       !=================================================================
       ! Call the PJC/LLNL pressure fixer to get the adjusted air 
@@ -507,12 +480,10 @@
 
 #ifdef MP
       ! Gather values from all PE
-      CALL MPI_GATHER( SUMALL, N_TOT_TRC*3, MPI_REAL16,
-     &                 BUFFER, N_TOT_TRC*3, MPI_REAL16,
-     &                 0, MPI_COMM_WORLD, IERR )
+      CALL MPI_ALLGATHER( SUMALL, N_TOT_TRC*3, MPI_REAL16,
+     &                    BUFFER, N_TOT_TRC*3, MPI_REAL16,
+     &                    MPI_COMM_WORLD, IERR )
       SUMALL = SUM( BUFFER, DIM=3 )
-      CALL MPI_BCAST( SUMALL, N_TOT_TRC*3, MPI_REAL16,
-     &                0, MPI_COMM_WORLD, IERR )
 #endif
 
 !$OMP PARALLEL DO
