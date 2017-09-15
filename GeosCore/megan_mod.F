@@ -50,10 +50,8 @@
 ! !DEFINED PARAMETERS:
 ! 
       ! Scalars
-#if   defined( MERRA ) 
+#if   defined( MERRA ) || defined( GRIMS )
       INTEGER, PARAMETER  :: DAY_DIM        = 24       ! # of 1-hr periods/day
-#elif defined( GRIMS )
-      INTEGER             :: DAY_DIM
 #else
       INTEGER, PARAMETER  :: DAY_DIM        = 8        ! # of 3-hr periods/day
 #endif
@@ -2589,7 +2587,6 @@
       USE LOGICAL_MOD, ONLY : LUNZIP
       USE TIME_MOD,    ONLY : GET_FIRST_A3_TIME, GET_JD
       USE TIME_MOD,    ONLY : ITS_A_LEAPYEAR,    YMD_EXTRACT
-      USE TIME_MOD,    ONLY : GET_TS_EMIS
 ! 
 ! !REVISION HISTORY: 
 !  (1 ) Change the logic in the #if block for G4AHEAD. (bmy, 12/6/05)
@@ -2619,9 +2616,6 @@
       !=================================================================
       ! INIT_MEGAN begins here!
       !=================================================================
-
-      ! Set DAY_DIM
-      DAY_DIM = 1440 / NINT( GET_TS_EMIS() )
 
       ! Allocate arrays
       ALLOCATE( T_DAY( IIPAR, JJPAR, DAY_DIM ), STAT=AS )

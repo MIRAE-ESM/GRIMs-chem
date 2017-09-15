@@ -203,7 +203,9 @@
       ENDIF
 
       ! Update daily mean temperature archive for MEGAN biogenics
-      IF ( LMEGAN ) CALL UPDATE_T_DAY
+      IF ( MOD(NHMS,010000) .EQ. 0 ) THEN
+         IF ( LMEGAN ) CALL UPDATE_T_DAY
+      ENDIF
 
       ! Cloud top level
       CALL MAKE_CLDTOPS
