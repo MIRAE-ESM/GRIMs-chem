@@ -31,7 +31,7 @@
       ! max # of photolysis rxns = 4 + IPHOT (see comode.h)
       ! FP increased JPMAX since IPHOT was increased (hotp 7/31/09)
       !INTEGER, PARAMETER :: JPMAX = 79
-      INTEGER, PARAMETER :: JPMAX = 89
+      INTEGER, PARAMETER :: JPMAX = 55
 !
 ! !PUBLIC DATA MEMBERS:
 !

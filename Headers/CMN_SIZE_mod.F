@@ -371,7 +371,7 @@
       INTEGER, PARAMETER :: NNPAR   = 154   ! For APM (G. Luo, 3/8/11)
 #else
       ! increase NNPAR to 100 (FP 8/2009)
-      INTEGER, PARAMETER :: NNPAR   = 75    ! For non-TOMAS simulations
+      INTEGER, PARAMETER :: NNPAR   = 43    ! For non-TOMAS simulations
       !INTEGER, PARAMETER :: NNPAR   = 100
 #endif
 
@@ -382,11 +382,11 @@
       !INTEGER, PARAMETER :: NEMPARA = 21 
       !  Add RCHO, HCOOH, ACTA
       !INTEGER, PARAMETER :: NEMPARA = 26 
-      INTEGER, PARAMETER :: NEMPARA = 29
+      INTEGER, PARAMETER :: NEMPARA = 12
 
       ! Add biogenic emissions: MBO, MONX. (tmf, 1/7/09) 
 !      INTEGER, PARAMETER :: NEMPARB = 3
-      INTEGER, PARAMETER :: NEMPARB = 17
+      INTEGER, PARAMETER :: NEMPARB = 1
 
       !=================================================================
       ! OTHER PARAMETERS 
@@ -439,7 +439,7 @@
       !NBIOMAX -- biomass burning
       ! increase NBIOMAX to 20 (hotp 7/31/09)
       ! increase NBIOMAX to 24 for dicarbonyls (ccc, 2/02/10)
-      INTEGER, PARAMETER :: NBIOMAX = 24
+      INTEGER, PARAMETER :: NBIOMAX = 15
 
 #if   defined( TOMAS )
 
