@@ -21,7 +21,7 @@ module flexaod
   use tracerid_mod,  only : idtsala, idtsalc
   use tracerid_mod,  only : idtdst1, idtdst2, idtdst3, idtdst4
   use cmn_size_mod,  only : ni => iipar, nj => jjpar, nl => llpar
-  use cmn_size_mod,  only : lmaster, iipar, jjpar
+  use cmn_size_mod,  only : lmaster
 
   implicit none
 
@@ -57,14 +57,10 @@ module flexaod
   real,dimension(:,:,:),allocatable   :: c_ext, c_sca
   real,dimension(:,:,:),allocatable   :: ssalb, asym
   real,dimension(:,:,:),allocatable   :: specmr, specmi
-  real,dimension(:,:,:),allocatable   :: relh, boxh, aird
   real,dimension(:,:,:,:),allocatable :: outod
   real,dimension(:,:,:,:),allocatable :: outssa, outg
-  real,dimension(:,:,:,:),allocatable :: k_ext, k_sca
-  real,dimension(:,:,:,:),allocatable :: ssa, numconc, ga
   real,dimension(nsizspc)             :: rho, sigma, gam_a, gam_b
   real,dimension(:,:),allocatable     :: radius, rmin, rmax
-  real,dimension(:,:,:,:),allocatable :: conc
 
   ! Water refractive index
   real :: mwatr, mwati
@@ -487,72 +483,6 @@ module flexaod
   end subroutine read_mie
 
 !======================================================================
-
-  subroutine calc_aod
-
-  ! Initialize
-  conc = 0d0
-
-  ! Tracer concentrations (kg/kg)
-  if (idtso4 .ne. 0) then
-    if (idtnh4 .eq. 0) then
-      conc(:,:,:,1) = stt(:,:,:,idtso4) * ( 96.0 + 36.0 ) / 28.97
-    else
-      conc(:,:,:,1) = stt(:,:,:,idtso4) * 96.0 / 28.97
-    endif
-  endif
-  if (idtnh4 .ne. 0) then
-    conc(:,:,:,1) = conc(:,:,:,1) + stt(:,:,:,idtnh4) * 18.0 / 28.97
-  endif
-  if (idtnit .ne. 0) then
-    conc(:,:,:,1) = conc(:,:,:,1) + stt(:,:,:,idtnit) * 62.0 / 28.97
-  endif
-  if (idtocpi .ne. 0) then
-    conc(:,:,:,2) = stt(:,:,:,idtocpi) * 12.0 * 2.1 / 28.97
-  endif
-  if (idtbcpi .ne. 0) then
-    conc(:,:,:,3) = stt(:,:,:,idtbcpi) * 12.0 / 28.97
-  endif
-  if (idtsala .ne. 0) then
-    conc(:,:,:,4) = stt(:,:,:,idtsala) * 36.0 / 28.97
-  endif
-  if (idtsalc .ne. 0) then
-    conc(:,:,:,5) = stt(:,:,:,idtsalc) * 36.0 / 28.97
-  endif
-  if (idtocpo .ne. 0) then
-    conc(:,:,:,6) = stt(:,:,:,idtocpo) * 12.0 * 2.1 / 28.97
-  endif
-  if (idtbcpo .ne. 0) then
-    conc(:,:,:,7) = stt(:,:,:,idtbcpo) * 12.0 / 28.97
-  endif
-  if (idtdst1 .ne. 0) then
-    conc(:,:,:,8) = stt(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
-    conc(:,:,:,9) = stt(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
-    conc(:,:,:,10) = stt(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
-    conc(:,:,:,11) = stt(:,:,:,idtdst1)*0.25 * 29.0 / 28.97
-  endif
-  if (idtdst2 .ne. 0) then
-    conc(:,:,:,12) = stt(:,:,:,idtdst2) * 29.0 / 28.97
-  endif
-  if (idtdst3 .ne. 0) then
-    conc(:,:,:,13) = stt(:,:,:,idtdst3) * 29.0 / 28.97
-  endif
-  if (idtdst4 .ne. 0) then
-    conc(:,:,:,14) = stt(:,:,:,idtdst4) * 29.0 / 28.97
-  endif
-
-  ! RH (%)
-  relh = rh
-  ! Air density (kg/m3)
-  aird = airden
-  ! Box height (m)
-  boxh = bxheight
-
-  call interp_aod
-
-  end subroutine calc_aod
-
-!======================================================================
 ! LINTERP: linear interpolation
 !======================================================================
 real function linterp( bins, values, outpoint )
@@ -681,9 +611,6 @@ subroutine mie_tab
       ssalb(irh,ispec,ibnd) = real(alb)
       asym(irh,ispec,ibnd) = real(al1(2))/3.
       r_eff(irh,ispec,ibnd) = real(reff)
-      do ip = 1, npcoef
-!        pcoef(ip,irh,ispec,ibnd) = real(al1(ip)) / (2.*(real(ip)-1.)+1.)
-      enddo
 
       ! debug
       !write(*,'(I1,2X,F6.4,2X,F5.3,2x,F6.4,1X,F5.3)')irh,q_ext(irh,ispec),r_eff(irh,ispec),ssalb(irh,ispec),al1(2)
@@ -745,9 +672,6 @@ subroutine mie_tab
     dssalb(ispec,ibnd) = real(alb)
     dasym(ispec,ibnd) = real(al1(2))/3.
     r_dust(ispec,ibnd) = real(reff)
-    do ip = 1, npcoef
-!      dpcoef(ip,ispec,ibnd) = real(al1(ip)) / (2.*(real(ip)-1.)+1.)
-    enddo
 
     ! debug
     !write(*,'(I1,2X,F6.4,2X,F5.3,2x,F5.3,8(1X,F5.3))')irh,q_dext(ispec),r_dust(ispec),dssalb(ispec),al1(1:8)
@@ -760,41 +684,86 @@ end subroutine mie_tab
 !======================================================================
 ! INTERP_AOD: Calculate RH-dependent AOD from Mie table
 !======================================================================
-subroutine interp_aod
+subroutine calc_aod
 
   integer :: i, j, l, ispec, irh, iphob, idst, r, ip
   integer :: n, icount
-  real :: rh, dz, fwet, weight
+  real :: dz, fwet, weight
   real :: reff, qext, optdep, g, ss
   real :: scaleq, scaler, scaleod
   real :: x, y
   real :: kappa_ext, kappa_sca, totssa, totg
-  real,dimension(npcoef) :: pci
+  real :: k_ext, k_sca, numconc
   real,dimension(nsizspc+2) :: conc_gcm3
   real,dimension(nrh) :: rw, qw, gw, ssw
-  real,dimension(npcoef,nrh) :: pcw
 
   ! Loop over horizontal grid
   outod = 0.0
   outssa = 0.0
   outg = 0.0
   do ibnd = 1,nbnd
-  do j = 1,jjpar
-  do i = 1,iipar
+  do j = 1,nj
+  do i = 1,ni
 
     ! Loop over levels
     do l = 1,nl
 
-      if (aird(l,i,j) .eq. 0) return
+      if (airden(l,i,j) .eq. 0) cycle
+
+      conc_gcm3 = 0d0
+      ! Tracer concentrations (kg/kg)
+      if (idtso4 .ne. 0) then
+        if (idtnh4 .eq. 0) then
+          conc_gcm3(1) = stt(i,j,l,idtso4) * ( 96.0 + 36.0 ) / 28.97
+        else
+          conc_gcm3(1) = stt(i,j,l,idtso4) * 96.0 / 28.97
+        endif
+      endif
+      if (idtnh4 .ne. 0) then
+        conc_gcm3(1) = conc_gcm3(1) + stt(i,j,l,idtnh4) * 18.0 / 28.97
+      endif
+      if (idtnit .ne. 0) then
+        conc_gcm3(1) = conc_gcm3(1) + stt(i,j,l,idtnit) * 62.0 / 28.97
+      endif
+      if (idtocpi .ne. 0) then
+        conc_gcm3(2) = stt(i,j,l,idtocpi) * 12.0 * 2.1 / 28.97
+      endif
+      if (idtbcpi .ne. 0) then
+        conc_gcm3(3) = stt(i,j,l,idtbcpi) * 12.0 / 28.97
+      endif
+      if (idtsala .ne. 0) then
+        conc_gcm3(4) = stt(i,j,l,idtsala) * 36.0 / 28.97
+      endif
+      if (idtsalc .ne. 0) then
+        conc_gcm3(5) = stt(i,j,l,idtsalc) * 36.0 / 28.97
+      endif
+      if (idtocpo .ne. 0) then
+        conc_gcm3(6) = stt(i,j,l,idtocpo) * 12.0 * 2.1 / 28.97
+      endif
+      if (idtbcpo .ne. 0) then
+        conc_gcm3(7) = stt(i,j,l,idtbcpo) * 12.0 / 28.97
+      endif
+      if (idtdst1 .ne. 0) then
+        conc_gcm3(8) = stt(i,j,l,idtdst1)*0.25 * 29.0 / 28.97
+        conc_gcm3(9) = stt(i,j,l,idtdst1)*0.25 * 29.0 / 28.97
+        conc_gcm3(10) = stt(i,j,l,idtdst1)*0.25 * 29.0 / 28.97
+        conc_gcm3(11) = stt(i,j,l,idtdst1)*0.25 * 29.0 / 28.97
+      endif
+      if (idtdst2 .ne. 0) then
+        conc_gcm3(12) = stt(i,j,l,idtdst2) * 29.0 / 28.97
+      endif
+      if (idtdst3 .ne. 0) then
+        conc_gcm3(13) = stt(i,j,l,idtdst3) * 29.0 / 28.97
+      endif
+      if (idtdst4 .ne. 0) then
+        conc_gcm3(14) = stt(i,j,l,idtdst4) * 29.0 / 28.97
+      endif
 
       ! Aerosol concentration (g/cm3)
-      conc_gcm3 = conc(i,j,l,:) * aird(l,i,j) * 1e-3
-
-      ! Relative Humidity (%)
-      rh = relh(i,j,l)
+      conc_gcm3 = conc_gcm3 * airden(l,i,j) * 1e-3
 
       ! Box Height (m --> cm)
-      dz = boxh(i,j,l) * 1e2
+      dz = bxheight(i,j,l) * 1e2
 
 
       ! Reset total variables
@@ -806,7 +775,7 @@ subroutine interp_aod
 
         ! Select RH bin
         do irh = 2,nrh
-          if (rh<rhbins(irh)) exit
+          if (rh(i,j,l)<rhbins(irh)) exit
         enddo
         irh = irh - 1
 
@@ -838,20 +807,13 @@ subroutine interp_aod
               !gw(r) = asym(r,ispec)*fwet + asym(1,ispec)*(1.d0-fwet)
               gw(r) = asym(r,ispec,ibnd)
 
-              ! Wet phase function coeffs
-              do ip = 1, npcoef
-                !pcw(ip,r) = pcoef(ip,r,ispec)*fwet + &
-                !            pcoef(ip,1,ispec)*(1.d0-fwet)
-!                pcw(ip,r) = pcoef(ip,r,ispec,ibnd)
-              enddo
-
             enddo  ! RH bins
 
             ! Interpolate optical parameters
             if (irh<nrh) then
 
               ! Interpolation weight
-              weight = (rh-rhbins(irh)) / (rhbins(irh+1)-rhbins(irh))
+              weight = (rh(i,j,l)-rhbins(irh)) / (rhbins(irh+1)-rhbins(irh))
               if ( weight > 1.0d0 ) weight = 1.0d0
 
               ! Interpolate radius and Q scaling factor
@@ -863,11 +825,6 @@ subroutine interp_aod
 
               ! Interpolate asymmetry parameter
               g =  weight*gw(irh+1) + (1.d0-weight)*gw(irh)
-
-              ! Interpolate phase function coeffs
-              do ip = 1, npcoef
-!                pci(ip) = weight*pcw(ip,irh+1) + (1.d0-weight)*pcw(ip,irh)
-              enddo
 
             ! Last RH bin: do not interpolate
             else
@@ -881,11 +838,6 @@ subroutine interp_aod
 
               ! Asymmetry parameter
               g =  gw(irh)
-
-              ! Phase function coeffs
-              do ip = 1, npcoef
-!                pci(ip) = pcw(ip,irh)
-              enddo
 
             endif   ! RH bins
 
@@ -917,59 +869,41 @@ subroutine interp_aod
             endif
 
             ! Number concentration [#/cm3]
-            numconc(ispec,i,j,l) = conc_gcm3(ispec) / &
+            numconc = conc_gcm3(ispec) / &
               (rho(ispec) * v_ave(1,ispec,ibnd)*1e-12)
             ! Extinction coefficient [km-1]
             !  Cext = extinction cross-section (um^2)
             !  Ncon = number concentration (cm^-3)
             !  Kext = extinction coefficient (km^-1)
-            k_ext(ispec,i,j,l) = c_ext(1,ispec,ibnd) * &
-              numconc(ispec,i,j,l) * scaleod*1e-3
-            kappa_ext = kappa_ext + k_ext(ispec,i,j,l)
+            k_ext = c_ext(1,ispec,ibnd) * &
+              numconc * scaleod*1e-3
+            kappa_ext = kappa_ext + k_ext
             ! Scattering coefficient [km-1]
-            k_sca(ispec,i,j,l) = c_sca(1,ispec,ibnd) * &
-              numconc(ispec,i,j,l) * scaleod*1e-3
-            kappa_sca = kappa_sca + k_sca(ispec,i,j,l)
-            ! Back-Scattering coefficient [km-1 srad-1]
-!            k_bac(ispec,i,j,l) = c_bac(1,ispec,ibnd) * &
-!              numconc(ispec,i,j,l) * scaleod*1e-3
+            k_sca = c_sca(1,ispec,ibnd) * &
+              numconc * scaleod*1e-3
+            kappa_sca = kappa_sca + k_sca
             ! Single Scattering Albedo
-            ssa(ispec,i,j,l) = ss
-            totssa = totssa + k_ext(ispec,i,j,l) * ss
+            totssa = totssa + k_ext * ss
             ! Asymmetry factor
-            ga(ispec,i,j,l) = g
-            totg = totg + k_sca(ispec,i,j,l) * g
-            ! Phase function coefficients
-            do ip = 1, npcoef
-!              pc(ip,ispec,i,j,l) = pci(ip)
-            enddo
+            totg = totg + k_sca * g
 
             ! Hydrophobic species
             if (iphob>0) then
               ! Number concentration [#/cm3]
-              numconc(iphob,i,j,l) = conc_gcm3(iphob) / &
+              numconc = conc_gcm3(iphob) / &
                 (rho(ispec) * v_ave(1,ispec,ibnd)*1e-12)
               ! Extinction [km-1]
-              k_ext(iphob,i,j,l) = c_ext(1,ispec,ibnd) * &
-                numconc(iphob,i,j,l) * 1e-3
-              kappa_ext = kappa_ext + k_ext(iphob,i,j,l)
+              k_ext = c_ext(1,ispec,ibnd) * &
+                numconc * 1e-3
+              kappa_ext = kappa_ext + k_ext
               ! Scattering [km-1]
-              k_sca(iphob,i,j,l) = c_sca(1,ispec,ibnd) * &
-                numconc(iphob,i,j,l) * 1e-3
-              kappa_sca = kappa_sca + k_sca(iphob,i,j,l)
-              ! Back-Scattering [km-1 srad-1]
-!              k_bac(iphob,i,j,l) = c_bac(1,ispec,ibnd) * &
-!                numconc(iphob,i,j,l) * 1e-3
+              k_sca = c_sca(1,ispec,ibnd) * &
+                numconc * 1e-3
+              kappa_sca = kappa_sca + k_sca
               ! Single Scattering Albedo
-              ssa(iphob,i,j,l) = ssalb(1,ispec,ibnd)
-              totssa = totssa + k_ext(iphob,i,j,l) * ssalb(1,ispec,ibnd)
+              totssa = totssa + k_ext * ssalb(1,ispec,ibnd)
               ! Asymmetry factor
-              ga(iphob,i,j,l) = asym(1,ispec,ibnd)
-              totg = totg + k_sca(iphob,i,j,l) * asym(1,ispec,ibnd)
-              ! Phase function coefficients
-              do ip = 1, npcoef
-!                pc(ip,iphob,i,j,l) = pcoef(ip,1,ispec,ibnd)
-              enddo
+              totg = totg + k_sca * asym(1,ispec,ibnd)
             endif
 
         ! Store optical depth
@@ -999,26 +933,18 @@ subroutine interp_aod
 !        if (ispec<=4) outod(i,j,l,nspecs+1) = outod(i,j,l,nspecs+1) + optdep
 
         ! Number concentration [#/cm3]
-        numconc(idst+2,i,j,l) = conc_gcm3(idst+2) / &
+        numconc = conc_gcm3(idst+2) / &
           (rho(idst) * v_dave(ispec,ibnd)*1e-12)
         ! Extinction [km-1]
-        k_ext(idst+2,i,j,l) = c_dext(ispec,ibnd) * numconc(idst+2,i,j,l) * 1e-3
-        kappa_ext = kappa_ext + k_ext(idst+2,i,j,l)
+        k_ext = c_dext(ispec,ibnd) * numconc * 1e-3
+        kappa_ext = kappa_ext + k_ext
         ! Scattering [km-1]
-        k_sca(idst+2,i,j,l) = c_dsca(ispec,ibnd) * numconc(idst+2,i,j,l) * 1e-3
-        kappa_sca = kappa_sca + k_sca(idst+2,i,j,l)
-        ! Back-Scattering [km-1 srad-1]
-!        k_bac(idst+2,i,j,l) = c_dbac(ispec,ibnd) * numconc(idst+2,i,j,l) * 1e-3
+        k_sca = c_dsca(ispec,ibnd) * numconc * 1e-3
+        kappa_sca = kappa_sca + k_sca
         ! Single Scattering Albedo
-        ssa(idst+2,i,j,l) = dssalb(ispec,ibnd)
-        totssa = totssa + k_ext(idst+2,i,j,l) * dssalb(ispec,ibnd)
+        totssa = totssa + k_ext * dssalb(ispec,ibnd)
         ! Asymmetry parameter
-        ga(idst+2,i,j,l) = dasym(ispec,ibnd)
-        totg = totg + k_sca(idst+2,i,j,l) * dasym(ispec,ibnd)
-        ! Phase function coefficients
-        do ip = 1, npcoef
-!          pc(ip,idst+2,i,j,l) = dpcoef(ip,ispec,ibnd)
-        enddo
+        totg = totg + k_sca * dasym(ispec,ibnd)
 
       enddo  ! dust species
 
@@ -1034,7 +960,7 @@ subroutine interp_aod
   enddo
   enddo
 
-end subroutine interp_aod
+end subroutine calc_aod
 
 !======================================================================
 ! ALLOC_OPTICS: Allocate OPTICS arrays
@@ -1080,18 +1006,9 @@ end subroutine alloc_dist
 !======================================================================
 subroutine alloc_other
 
-  allocate(conc(ni,nj,nl,nsizspc+2))
-  allocate(relh(ni,nj,nl))
-  allocate(aird(nl,ni,nj))
-  allocate(boxh(ni,nj,nl))
   allocate(outod(ni,nj,nl,nbnd))
   allocate(outssa(ni,nj,nl,nbnd))
   allocate(outg(ni,nj,nl,nbnd))
-  allocate(k_ext(nsizspc+2,ni,nj,nl))
-  allocate(k_sca(nsizspc+2,ni,nj,nl))
-  allocate(ssa(nsizspc+2,ni,nj,nl))
-  allocate(ga(nsizspc+2,ni,nj,nl))
-  allocate(numconc(nsizspc+2,ni,nj,nl))
 
 end subroutine alloc_other
 
