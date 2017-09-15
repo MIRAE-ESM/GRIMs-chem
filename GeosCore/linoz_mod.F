@@ -212,22 +212,26 @@
       ! whether this is a full chemistry run or a tagged Ox run.
       ! If tagged Ox, tracer 2 should be the stratospheric tracer.  (dbj)
       !=================================================================
-!     IF ( ITS_A_FULLCHEM_SIM() ) THEN
+      IF ( ITS_A_FULLCHEM_SIM() ) THEN
           NUM_TRACER = 1
-!     ELSE
-!        IF ( ITS_A_TAGOX_SIM() ) THEN
-!          IF (N_TRACERS > 1) THEN
-!            NUM_TRACER = 2
-!          ELSE
-!            NUM_TRACER = 1
-!          ENDIF
-!        ELSE
+      ELSE IF ( ITS_AN_AEROSOL_SIM() .AND. IDTOX /= 0 ) THEN
+          NUM_TRACER = 1
+      ELSE
+         IF ( ITS_A_TAGOX_SIM() ) THEN
+           IF (N_TRACERS > 1) THEN
+             NUM_TRACER = 2
+           ELSE
+             NUM_TRACER = 1
+           ENDIF
+         ELSE
            ! All other simulations don't use O3...print error message
-!           WRITE( 6, '(a)' ) 'This simulation does not use O3!!'
-!           WRITE( 6, '(a)' ) 'STOP in linoz_chem3.f!'
-!           STOP
-!        ENDIF
-!     ENDIF
+            IF (LMASTER) THEN
+            WRITE( 6, '(a)' ) 'This simulation does not use O3!!'
+            WRITE( 6, '(a)' ) 'STOP in linoz_chem3.f!'
+            ENDIF
+            STOP
+         ENDIF
+      ENDIF
 
       ! Echo info
       IF (LMASTER) THEN
@@ -240,11 +244,13 @@
 
       DO ITRC=1,NUM_TRACER     ! dbj loop for tagged
 
-!        IF ( ITS_A_FULLCHEM_SIM() ) THEN
+         IF ( ITS_A_FULLCHEM_SIM() ) THEN
             NTRACER = IDTOX
-!        ELSE
-!           NTRACER = ITRC
-!        ENDIF
+         ELSE IF ( ITS_AN_AEROSOL_SIM() ) THEN
+            NTRACER = IDTOX
+         ELSE
+            NTRACER = ITRC
+         ENDIF
 
          ! Start at top layer and continue to lowest layer for strat. chem
          OUT_DATA = 0d0
@@ -340,14 +346,18 @@
 
             ENDDO       ! loop over L
 
-            ! Remove Tropospheric Ozone
-            DO L = LBOT-1,1,-1
+            IF ( ITS_AN_AEROSOL_SIM() ) THEN
 
-               ! Lifetime = 22.3day
-               STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER)
-     &                            * EXP( - DTCHEM / 22.3d0 / 86400d0 )
+               ! Remove Tropospheric Ozone
+               DO L = LBOT-1,1,-1
 
-            ENDDO       ! loop over L
+                  ! Lifetime = 22.3day
+                  STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER)
+     &                              * EXP( - DTCHEM / 22.3d0 / 86400d0 )
+
+               ENDDO       ! loop over L
+
+            ENDIF
 
          ENDDO          ! loop over I
 

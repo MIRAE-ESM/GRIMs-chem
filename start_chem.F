@@ -17,8 +17,9 @@
       USE FLEXAOD,        ONLY : READ_MIE
       USE INPUT_MOD,      ONLY : READ_INPUT_FILE
       USE LINOZ_MOD,      ONLY : LINOZ_READ
-      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LPRT
+      USE LOGICAL_MOD,    ONLY : LCHEM, LEMIS, LLINOZ, LMEGAN, LPRT
       USE LOGICAL_MOD,    ONLY : LSVMET, LSVMETNEST
+      USE MEGAN_MOD,      ONLY : INIT_MEGAN
       USE METEO_MOD,      ONLY : INIT_METEO
       USE PRESSURE_MOD,   ONLY : INIT_PRESSURE
       USE RESTART_MOD,    ONLY : READ_RESTART
@@ -54,6 +55,14 @@
 
       ! Added to read input file for linoz strat (dbj, jliu, bmy, 10/16/09)
       IF ( LLINOZ ) CALL LINOZ_READ
+
+      ! Initialize MEGAN arrays, get 15-day avg temperatures
+      IF ( LMEGAN ) THEN
+         CALL INIT_MEGAN
+         CALL INITIALIZE( 2 )
+         CALL INITIALIZE( 3 )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a INIT_MEGAN' )
+      ENDIF
 
       ! Read restart file from the disk
       CALL READ_RESTART

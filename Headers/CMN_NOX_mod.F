@@ -31,6 +31,8 @@
 
       ALLOCATE ( GEMISNOX2(IIPAR,JJPAR) )
 
+      GEMISNOX2 = 0d0
+
       END SUBROUTINE INIT_CMN_NOX
 ! !REMARKS:
 !  !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

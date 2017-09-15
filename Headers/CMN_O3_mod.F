@@ -159,6 +159,39 @@
       ALLOCATE ( FRACNO2(IIPAR,JJPAR,LLPAR) )
       ALLOCATE ( SAVEHO2(IIPAR,JJPAR,LLPAR) )
 
+      EMISR      = 0d0
+      EMISRN     = 0d0
+      EMIST      = 0d0
+      EMISTN     = 0d0
+      EMISRR     = 0d0
+      EMISRRN    = 0d0
+      EMISS_BVOC = 0d0
+      EMISTNOX   = 0e0
+      EMISTETHE  = 0e0
+      EMISTCO    = 0e0
+      EMISTPRPE  = 0e0
+      EMISTC3H8  = 0e0
+      EMISTALK4  = 0e0
+      EMISTC2H6  = 0e0
+      EMISTSOX   = 0e0
+      EMISTACET  = 0e0
+      EMISTMEK   = 0e0
+      EMISTBENZ  = 0e0
+      EMISTTOLU  = 0e0
+      EMISTXYLE  = 0e0
+      EMISTC2H4  = 0e0
+      EMISTC2H2  = 0e0
+      FTOTCO2    = 0e0
+      FLIQCO2    = 0e0
+      FRACO3     = 0d0
+      SAVEOH     = 0d0
+      FRACNO     = 0d0
+      SAVENO     = 0d0
+      SAVENO2    = 0d0
+      SAVENO3    = 0d0
+      FRACNO2    = 0d0
+      SAVEHO2    = 0d0
+
       END SUBROUTINE INIT_CMN_O3
 !
 ! !REMARKS:

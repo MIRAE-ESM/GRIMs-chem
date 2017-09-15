@@ -137,7 +137,7 @@
 !     PARAMETER (ITLOOP  = ILAT * ILONG * IPVERT   )
 
       ! Regular
-      PARAMETER (KBLOOP  = 24                       )
+      PARAMETER (KBLOOP  = 1                       )
 !     PARAMETER (IMLOOP  = ILAT * ILONG            )
 !     PARAMETER (ILAYER  = IVERT + 1               )
 !     PARAMETER (ILTLOOP = IMLOOP * ILAYER         )
@@ -645,6 +645,19 @@
       ALLOCATE ( JLOP_SMV(ILAT,ILONG,ILAYER) )
       ALLOCATE ( JLLOW(MXBLOCK) )
       ALLOCATE ( KLHI(MXBLOCK) )
+
+      JLOWVAR  = 0
+      KTLPVAR  = 0
+      JLOFIXED = 0
+      JHIFIXED = 0
+      JREORDER = 0
+      LREORDER = 0
+      ITWO     = 0
+      NCSLOOP  = 0
+      MLOP     = 0
+      JLOP_SMV = 0
+      JLLOW    = 0
+      KLHI     = 0
 
       END SUBROUTINE INIT_COMODE_LOOP
 

@@ -11,55 +11,64 @@
 
       SUBROUTINE INTEGRATE_CHEM
 
-      USE BPCH2_MOD,      ONLY : OPEN_BPCH2_FOR_WRITE
-      USE CHEMISTRY_MOD,  ONLY : DO_CHEMISTRY
-      USE CONVECTION_MOD, ONLY : DO_CONVECTION
-      USE DAO_MOD,        ONLY : AD, AIRQNT, CONVERT_UNITS, COSSZA
-      USE DAO_MOD,        ONLY : MAKE_RH, PSC2, SUNCOS, SUNCOS_MID
-      USE DAO_MOD,        ONLY : T, TROPP
-      USE DIAG41_MOD,     ONLY : DIAG41, ND41
-      USE DIAG49_MOD,     ONLY : DIAG49, ITS_TIME_FOR_DIAG49
-      USE DIAG_AOD_MOD,   ONLY : WRITE_DIAG_AOD
-      USE DRYDEP_MOD,     ONLY : DO_DRYDEP
-      USE EMISSIONS_MOD,  ONLY : DO_EMISSIONS
-      USE ERROR_MOD,      ONLY : DEBUG_MSG
-      USE FILE_MOD,       ONLY : IU_BPCH, IU_DEBUG, IU_ND48, IU_SMV2LOG
-      USE LINOZ_MOD,      ONLY : DO_LINOZ
-      USE LOGICAL_MOD,    ONLY : LCHEM, LCONV, LDRYD, LEMIS, LLINOZ
-      USE LOGICAL_MOD,    ONLY : LPRT, LTRAN, LTURB, LVARTROP, LWETD
-      USE LOGICAL_MOD,    ONLY : LSVMET, LSVMETNEST
-      USE METEO_MOD,      ONLY : DO_METEO, INIT_A3, INIT_A6
-      USE METEO_MOD,      ONLY : SAVE_A3, SAVE_A6, SAVE_I6
-      USE METEO_MOD,      ONLY : SAVE_A3_NESTED, SAVE_A6_NESTED
-      USE METEO_MOD,      ONLY : SAVE_I6_NESTED
-      USE PBL_MIX_MOD,    ONLY : DO_PBL_MIX
-      USE PRESSURE_MOD,   ONLY : SET_FLOATING_PRESSURE
-      USE TIME_MOD,       ONLY : GET_NYMD, GET_NHMS, GET_TAU
-      USE TIME_MOD,       ONLY : GET_YEAR, GET_SEASON, GET_MONTH
-      USE TIME_MOD,       ONLY : GET_HOUR, GET_MINUTE
-      USE TIME_MOD,       ONLY : GET_ELAPSED_SEC, GET_DAY_OF_YEAR
-      USE TIME_MOD,       ONLY : ITS_A_NEW_DAY
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_BPCH
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_CHEM
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_CONV
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_DIAG
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_DYN
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_EMIS
-      USE TIME_MOD,       ONLY : ITS_TIME_FOR_UNIT
-      USE TIME_MOD,       ONLY : SET_CT_CHEM, SET_CT_CONV, SET_CT_DIAG
-      USE TIME_MOD,       ONLY : SET_CT_DYN, SET_CT_EMIS
-      USE TIME_MOD,       ONLY : SET_DIAGb, SET_DIAGe, TIMESTAMP_DIAG
-      USE TIME_MOD,       ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
-      USE TIME_MOD,       ONLY : SET_ELAPSED_MIN
-      USE TIME_MOD,       ONLY : EXPAND_DATE
-      USE TRACER_MOD,     ONLY : CHECK_STT, N_TRACERS
-      USE TRACER_MOD,     ONLY : STT, TCVV
-      USE TRACER_MOD,     ONLY : ITS_A_H2HD_SIM
-      USE TRANSPORT_MOD,  ONLY : DO_TRANSPORT
-      USE TROPOPAUSE_MOD, ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
-      USE WETSCAV_MOD,    ONLY : DO_WETDEP, INIT_WETSCAV
+      USE BPCH2_MOD,         ONLY : OPEN_BPCH2_FOR_WRITE
+      USE CHEMISTRY_MOD,     ONLY : DO_CHEMISTRY, RECOMPUTE_OD
+      USE CONVECTION_MOD,    ONLY : DO_CONVECTION
+      USE DAO_MOD,           ONLY : AD, AIRQNT, CONVERT_UNITS, COSSZA
+      USE DAO_MOD,           ONLY : MAKE_RH, PSC2, SUNCOS, SUNCOS_MID
+      USE DAO_MOD,           ONLY : T, TROPP
+      USE DIAG41_MOD,        ONLY : DIAG41, ND41
+      USE DIAG49_MOD,        ONLY : DIAG49, ITS_TIME_FOR_DIAG49
+      USE DIAG_AOD_MOD,      ONLY : WRITE_DIAG_AOD
+      USE DRYDEP_MOD,        ONLY : DO_DRYDEP
+      USE EMISSIONS_MOD,     ONLY : DO_EMISSIONS
+      USE ERROR_MOD,         ONLY : DEBUG_MSG
+      USE FILE_MOD,          ONLY : IU_BPCH, IU_DEBUG
+      USE FILE_MOD,          ONLY : IU_ND48, IU_SMV2LOG
+      USE LAI_MOD,           ONLY : RDISOLAI
+      USE LIGHTNING_NOX_MOD, ONLY : LIGHTNING
+      USE LOGICAL_MOD,       ONLY : LCHEM, LCONV, LDRYD, LEMIS
+      USE LOGICAL_MOD,       ONLY : LPRT, LTRAN, LTURB, LVARTROP, LWETD
+      USE LOGICAL_MOD,       ONLY : LSVMET, LSVMETNEST
+      USE LOGICAL_MOD,       ONLY : LLIGHTNOX, LMEGAN, LUPBD
+      USE MEGAN_MOD,         ONLY : UPDATE_T_15_AVG
+      USE MEGAN_MOD,         ONLY : UPDATE_T_DAY
+      USE METEO_MOD,         ONLY : DO_METEO, INIT_A3, INIT_A6
+      USE METEO_MOD,         ONLY : SAVE_A3, SAVE_A6, SAVE_I6
+      USE METEO_MOD,         ONLY : SAVE_A3_NESTED, SAVE_A6_NESTED
+      USE METEO_MOD,         ONLY : SAVE_I6_NESTED
+      USE PBL_MIX_MOD,       ONLY : DO_PBL_MIX
+      USE PRESSURE_MOD,      ONLY : SET_FLOATING_PRESSURE
+      USE TIME_MOD,          ONLY : GET_NYMD, GET_NHMS, GET_TAU
+      USE TIME_MOD,          ONLY : GET_YEAR, GET_SEASON, GET_MONTH
+      USE TIME_MOD,          ONLY : GET_HOUR, GET_MINUTE
+      USE TIME_MOD,          ONLY : GET_ELAPSED_SEC, GET_DAY_OF_YEAR
+      USE TIME_MOD,          ONLY : ITS_A_NEW_DAY
+      USE TIME_MOD,          ONLY : ITS_A_NEW_MONTH
+      USE TIME_MOD,          ONLY : ITS_A_NEW_SEASON
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_BPCH
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_CHEM
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_CONV
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_DIAG
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_DYN
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_EMIS
+      USE TIME_MOD,          ONLY : ITS_TIME_FOR_UNIT
+      USE TIME_MOD,          ONLY : SET_CT_CHEM, SET_CT_CONV
+      USE TIME_MOD,          ONLY : SET_CT_DIAG, SET_CT_DYN, SET_CT_EMIS
+      USE TIME_MOD,          ONLY : SET_DIAGb, SET_DIAGe, TIMESTAMP_DIAG
+      USE TIME_MOD,          ONLY : SET_CURRENT_TIME, PRINT_CURRENT_TIME
+      USE TIME_MOD,          ONLY : SET_ELAPSED_MIN
+      USE TIME_MOD,          ONLY : EXPAND_DATE
+      USE TRACER_MOD,        ONLY : CHECK_STT, N_TRACERS
+      USE TRACER_MOD,        ONLY : STT, TCVV
+      USE TRACER_MOD,        ONLY : ITS_A_FULLCHEM_SIM
+      USE TRANSPORT_MOD,     ONLY : DO_TRANSPORT
+      USE TROPOPAUSE_MOD,    ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
+      USE UPBDFLX_MOD,       ONLY : DO_UPBDFLX, UPBDFLX_NOY
+      USE UVALBEDO_MOD,      ONLY : READ_UVALBEDO
+      USE WETSCAV_MOD,       ONLY : DO_WETDEP, INIT_WETSCAV
 #ifndef RMP
-      USE comfver,        ONLY : stepone
+      USE comfver,           ONLY : stepone
 #endif
 
       USE CMN_SIZE_MOD    ! Size parameters   
@@ -87,10 +96,6 @@
 
          CALL AIRQNT
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a AIRQNT' )
-
-         ! Tropopause [hPa]
-         CALL TPP_REICHLER( T, TROPP )
-         TROPP = TROPP * 1d-2
 
          ! Read land types and fractions from "vegtype.global"
          CALL RDLAND
@@ -123,6 +128,16 @@
 
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_CURRENT_TIME' )
+
+      !==============================================================
+      !   ***** U N I T   C O N V E R S I O N  ( v/v -> kg ) *****
+      !==============================================================
+      IF ( ITS_TIME_FOR_UNIT() ) THEN
+         CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT )
+
+         !### Debug
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:0' )
+      ENDIF
 
       !==============================================================
       !   ***** W R I T E   D I A G N O S T I C   F I L E S *****
@@ -187,6 +202,38 @@
 
       ENDIF
 
+      ! Update daily mean temperature archive for MEGAN biogenics
+      IF ( LMEGAN ) CALL UPDATE_T_DAY
+
+      ! Cloud top level
+      CALL MAKE_CLDTOPS
+
+      ! Since CLDTOPS is an A-6 field, update the
+      ! lightning NOx emissions [molec/box/6h]
+      IF ( LLIGHTNOX ) CALL LIGHTNING
+
+      !==============================================================
+      ! ***** M O N T H L Y   O R   S E A S O N A L   D A T A *****
+      !==============================================================
+
+      ! UV albedoes
+      IF ( LCHEM .and. ITS_A_NEW_MONTH() ) THEN
+         CALL READ_UVALBEDO( MONTH )
+      ENDIF
+
+      ! Fossil fuel emissions (SMVGEAR)
+      ! NOTE: Only call ANTHROEMS if it's time to do emissions;
+      ! this will function properly for the central chemistry time
+      ! step
+      ! (bmy, 10/14/11)
+      IF ( ITS_A_FULLCHEM_SIM() ) THEN
+         IF ( ITS_TIME_FOR_EMIS() ) THEN
+            IF ( LEMIS .and. ITS_A_NEW_SEASON() ) THEN
+               CALL ANTHROEMS( SEASON )
+            ENDIF
+         ENDIF
+      ENDIF
+
       !==============================================================
       !              ***** D A I L Y   D A T A *****
       !==============================================================
@@ -196,9 +243,28 @@
          ! Now include the year (mpb,11/19/09)
          CALL RDLAI( DAY_OF_YEAR, MONTH, YEAR )
 
+         ! For MEGAN biogenics ...
+         IF ( LMEGAN ) THEN
+
+            ! Read daily leaf-area-index
+            ! Now include the year (mpb,11/19/09)
+            CALL RDISOLAI( DAY_OF_YEAR, MONTH, YEAR )
+
+            ! Compute 15-day average temperature for MEGAN
+            IF ( NHMS == 000000 ) CALL UPDATE_T_15_AVG
+         ENDIF
+
+         ! Also read soil-type info for fullchem simulation
+         IF ( ITS_A_FULLCHEM_SIM() ) THEN
+            CALL RDSOIL
+         ENDIF
+
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG ( '### MAIN: a DAILY DATA' )
       ENDIF
+
+      ! Tropopause [hPa]
+      CALL TPP_REICHLER( T, TROPP )
 
       ! Case of variable tropopause:
       ! Check LLTROP and set LMIN, LMAX, and LPAUSE
@@ -212,10 +278,6 @@
 
       ! Compute airmass quantities at each grid box 
       CALL AIRQNT
-
-      ! Tropopause [hPa]
-      CALL TPP_REICHLER( T, TROPP )
-      TROPP = TROPP * 1d-2
 
       ! Compute the cosine of the solar zenith angle array
       ! SUNCOS     = cos(SZA) at the current time
@@ -242,9 +304,19 @@
       CALL DIAG_2PM
 
       !==============================================================
-      !     ***** S T R A T O S P H E R I C   O Z O N E   *****
+      !   ***** U N I T   C O N V E R S I O N  ( kg -> v/v ) *****
       !==============================================================
-      IF ( LLINOZ ) CALL DO_LINOZ
+      IF ( ITS_TIME_FOR_UNIT() ) THEN
+         CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
+
+         !### Debug
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:1' )
+      ENDIF
+
+      !==============================================================
+      !     ***** S T R A T O S P H E R I C   F L U X E S *****
+      !==============================================================
+      IF ( LUPBD ) CALL DO_UPBDFLX
 
       !==============================================================
       !              ***** T R A N S P O R T *****
@@ -257,9 +329,10 @@
          ! Reset air mass quantities
          CALL AIRQNT
 
-         ! Tropopause [hPa]
-         CALL TPP_REICHLER( T, TROPP )
-         TROPP = TROPP * 1d-2
+         ! Repartition [NOy] species after transport
+         IF ( LUPBD .and. ITS_A_FULLCHEM_SIM() ) THEN
+            CALL UPBDFLX_NOY( 2 )
+         ENDIF
 
          ! Get relative humidity (after recomputing pressures)
          ! NOTE: for GEOS-5 we'll read this from disk instead
@@ -307,7 +380,7 @@
          CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT )
 
          !### Debug
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:1' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:2' )
       ENDIF
 
       !-------------------------------
@@ -321,7 +394,7 @@
          !========================================================
          !         ***** D R Y   D E P O S I T I O N *****
          !========================================================
-         IF ( LDRYD .and. ( .not. ITS_A_H2HD_SIM() ) ) CALL DO_DRYDEP
+         IF ( LDRYD ) CALL DO_DRYDEP
             
          !========================================================
          !             ***** E M I S S I O N S *****
@@ -352,6 +425,17 @@
             
          CALL DO_WETDEP
             
+      ENDIF
+
+      !==============================================================
+      !      ***** U P D A T E  O P T I C A L  D E P T H *****          
+      !==============================================================
+      ! Recalculate the optical depth at the wavelength specified by
+      ! jv_spec_aod.dat This must be done before the call to any
+      ! diagnostic and only on a chemistry timestep.
+      ! (skim, 02/05/11)
+      IF ( ITS_TIME_FOR_CHEM() ) THEN
+         CALL RECOMPUTE_OD
       ENDIF
 
       !==============================================================
@@ -414,10 +498,10 @@
       !   ***** U N I T   C O N V E R S I O N  ( kg -> v/v ) *****
       !==============================================================
       IF ( ITS_TIME_FOR_UNIT() ) THEN
-         CALL CONVERT_UNITS( 1,  N_TRACERS, TCVV, AD, STT )
+         CALL CONVERT_UNITS( 1, N_TRACERS, TCVV, AD, STT )
 
          !### Debug
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:2' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:3' )
       ENDIF
 
       !==============================================================

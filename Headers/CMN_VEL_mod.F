@@ -36,6 +36,11 @@
       ALLOCATE ( IJUSE(MAXIJ,NTYPE) )
       ALLOCATE ( XYLAI(MAXIJ,NTYPE) )
 
+      IJREG  = 0
+      IJLAND = 0
+      IJUSE  = 0
+      XYLAI  = 0d0
+
       END SUBROUTINE INIT_CMN_VEL
 !
 ! !REMARKS:

@@ -22,7 +22,7 @@
 !
       !NBIOMAX moved to F77_CMN_SIZE (fp, 6/2009)
       !USE BIOMASS_MOD,     ONLY : NBIOMAX
-!     USE BIOFUEL_MOD,     ONLY : NBFTRACE
+      USE BIOFUEL_MOD,     ONLY : NBFTRACE
       USE DIAG_MOD,        ONLY : AD01,        AD02,        AD05    
       USE DIAG_MOD,        ONLY : AD06,        AD07,        AD07_BC
       USE DIAG_MOD,        ONLY : AD07_OC,     AD07_HC,     AD08
@@ -68,7 +68,7 @@
       USE DIAG_MOD,        ONLY : AD10,        AD10em,      CTO3_24h
       ! Add O3 for ND45 diag. (ccc, 8/12/09)
       USE DIAG_MOD,        ONLY : LTO3
-!     USE DIAG_OH_MOD,     ONLY : INIT_DIAG_OH
+      USE DIAG_OH_MOD,     ONLY : INIT_DIAG_OH
       USE DRYDEP_MOD,      ONLY : NUMDEP
       USE ERROR_MOD,       ONLY : ALLOC_ERR,   ERROR_STOP
       USE LOGICAL_MOD,     ONLY : LDUST, LCARB, LSSALT, LCRYST, LDRYD
@@ -747,7 +747,6 @@
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD33' )
       ENDIF
 
-#ifdef NOUSE
       !=================================================================
       ! ND34: Biofuel burning emissions [molec/cm2/s]
       !       (NO, CO, ALK4, ACET, MEK, ALD2, PRPE, C3H8, CH2O, C2H6)  
@@ -757,7 +756,6 @@
          ALLOCATE( AD34( IIPAR, JJPAR, NBFTRACE ), STAT=AS )
          IF ( AS /= 0 ) CALL ALLOC_ERR( 'AD34' )
       ENDIF         
-#endif
 
       !=================================================================
       ! ND35: Tracer at 500 mb [v/v] (this is ~ level 9 for GEOS-CHEM)

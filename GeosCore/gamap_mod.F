@@ -1381,7 +1381,7 @@
 !     USE DIAG50_MOD,   ONLY : DO_SAVE_DIAG50
 !     USE DIAG51_MOD,   ONLY : DO_SAVE_DIAG51
 !     USE DIAG51b_MOD,  ONLY : DO_SAVE_DIAG51b
-!     USE DIAG56_MOD,   ONLY : ND56
+      USE DIAG56_MOD,   ONLY : ND56
 !     USE DIAG_PL_MOD,  ONLY : DO_SAVE_PL,  GET_NFAM
 !     USE DIAG_PL_MOD,  ONLY : GET_FAM_MWT, GET_FAM_NAME
       USE DRYDEP_MOD,   ONLY : DEPNAME,     NUMDEP,    NTRAIND
@@ -3490,7 +3490,6 @@
          ENDDO
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! Lightning flash rates (ND56)
       !-------------------------------------      
@@ -3525,7 +3524,6 @@
             SCALE(T,56) = 1e0
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! THETA (ND57) (FP 6/2009)

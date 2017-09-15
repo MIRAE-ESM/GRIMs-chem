@@ -36,6 +36,9 @@
       ALLOCATE ( LPAUSE(IIPAR,JJPAR) )
       ALLOCATE ( IFLX(IIPAR,JJPAR) )
 
+      LPAUSE = 0
+      IFLX   = 0
+
       END SUBROUTINE INIT_CMN
 !
 ! !REMARKS:

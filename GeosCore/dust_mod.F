@@ -15,6 +15,8 @@
 !
 ! !USES:
 !
+      USE CMN_SIZE_MOD
+
       IMPLICIT NONE
 #     include "define.h"
       PRIVATE
@@ -23,8 +25,8 @@
 !
       PUBLIC  :: CHEMDUST      
       PUBLIC  :: EMISSDUST
-!     PUBLIC  :: RDUST_ONLINE
-!     PUBLIC  :: RDUST_OFFLINE
+      PUBLIC  :: RDUST_ONLINE
+      PUBLIC  :: RDUST_OFFLINE
       PUBLIC  :: INIT_DUST
       PUBLIC  :: CLEANUP_DUST
 !     
@@ -1388,7 +1390,6 @@
 
       END SUBROUTINE SRC_DUST_GINOUX
 !EOC
-#ifdef NOUSE
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -1413,7 +1414,7 @@
       USE DIAG_MOD,      ONLY : AD21
       USE DIRECTORY_MOD, ONLY : DATA_DIR
       USE ERROR_MOD,     ONLY : ERROR_STOP
-      USE TRANSFER_MOD,  ONLY : TRANSFER_3D
+!     USE TRANSFER_MOD,  ONLY : TRANSFER_3D
       USE COMODE_MOD,    ONLY : WTAREA, WERADIUS
       USE DAO_MOD,       ONLY : RH
 
@@ -1653,7 +1654,7 @@
       USE DIAG_MOD,      ONLY : AD21
       USE DIRECTORY_MOD, ONLY : DATA_DIR
       USE ERROR_MOD,     ONLY : ERROR_STOP
-      USE TRANSFER_MOD,  ONLY : TRANSFER_3D
+!     USE TRANSFER_MOD,  ONLY : TRANSFER_3D
       USE COMODE_MOD,    ONLY : WTAREA, WERADIUS
       USE DAO_MOD,       ONLY : RH
 
@@ -1737,7 +1738,7 @@
 !
       INTEGER             :: I, J, JLOOP, L, N
       INTEGER, SAVE       :: MONTH_LAST = -999
-      REAL*4              :: TEMP(IIPAR,JJPAR,LGLOB)
+      REAL*4              :: TEMP(I2x25,J2x25,LG5FUL)
       REAL*8              :: DUST(IIPAR,JJPAR,LLPAR,NDUST)
       REAL*8              :: MSDENS(NDUST), XTAU
       CHARACTER (LEN=255) :: FILENAME
@@ -1769,17 +1770,20 @@
      &              GET_RES_EXT()
 
          ! Echo filename
+         IF (LMASTER) THEN
          WRITE( 6, 100 ) TRIM( FILENAME )
+         ENDIF
  100     FORMAT( '     - RDUST: Reading ', a )
 
          ! Read aerosol concentrations [kg/m3] for each 
          ! dust type from the binary punch file
          DO N = 1, NDUST 
             CALL READ_BPCH2( FILENAME, 'MDUST-$', N,     XTAU,
-     &                       IIPAR,     JJPAR,    LGLOB, TEMP, 
+     &                       I2x25,     J2x25,    LG5FUL,TEMP, 
      &                       QUIET=.TRUE. )
 
-            CALL TRANSFER_3D( TEMP, DUST(:,:,:,N) )
+            CALL TRANS_REGRID( DBLE(TEMP), DUST(:,:,:,N),
+     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
          ENDDO
 
          !==============================================================
@@ -1839,7 +1843,9 @@
 !$OMP END PARALLEL DO
 
          ! Echo information
+         IF (LMASTER) THEN
          WRITE( 6, 110 ) 
+         ENDIF
  110     FORMAT( '     - RDUST: Finished computing optical depths' )
 
          !==============================================================
@@ -1955,7 +1961,6 @@
 
       END SUBROUTINE RDUST_OFFLINE
 !EOC
-#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------

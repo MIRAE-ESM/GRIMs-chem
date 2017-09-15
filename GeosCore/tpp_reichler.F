@@ -11,8 +11,9 @@
 
       SUBROUTINE TPP_REICHLER( TEMP, TPP_PRESS )
 
+      USE DAO_MOD,      ONLY : PSC2
       USE GRID_MOD,     ONLY : GET_XMID, GET_YMID
-      USE PRESSURE_MOD, ONLY : GET_PCENTER
+      USE PRESSURE_MOD, ONLY : GET_AP, GET_BP
 
       USE CMN_SIZE_MOD
 
@@ -28,6 +29,8 @@
       REAL*8, PARAMETER :: PLIML=7500d0
       REAL*8 :: TEMP(IIPAR,JJPAR,LLPAR)
       REAL*8 :: TPP_PRESS(IIPAR,JJPAR)
+      REAL*8 :: PCENTER(LLPAR)
+      REAL*8 :: PEDGE1, PEDGE2
       REAL*8 :: P, PD, PU, PK
       REAL*8 :: P2, PD2, PU2, PK2
       REAL*8 :: DT, DPK, DTDPK, DTDP, DTDZ
@@ -42,12 +45,27 @@
       DO J = 1, JJPAR
       DO I = 1, IIPAR
 
+         DO L = 1, LLPAR
+
+            ! Get pressure of lower edge
+            PEDGE1 = GET_AP(L) + ( GET_BP(L) * PSC2(I,J) )
+            IF (PEDGE1 .LE. 0d0) PEDGE1 = PTOP
+
+            ! Get pressure of upper edge
+            PEDGE2 = GET_AP(L+1) + ( GET_BP(L+1) * PSC2(I,J) )
+            IF (PEDGE2 .LE. 0d0) PEDGE2 = PTOP
+
+            ! Get pressure of layer center
+            PCENTER(L) = 0.5d0 * ( PEDGE1 + PEDGE2 )
+
+         ENDDO
+
          DO L = 2, LLPAR-1
 
             ! Get pressure profile
-            P  = GET_PCENTER(I,J,L) * 1d2
-            PD = GET_PCENTER(I,J,L-1) * 1d2
-            PU = GET_PCENTER(I,J,L+1) * 1d2
+            P  = PCENTER(L) * 1d2
+            PD = PCENTER(L-1) * 1d2
+            PU = PCENTER(L+1) * 1d2
             PK = P ** KAP
 
             ! Calculate lapse rate
@@ -79,9 +97,9 @@
             DO L2 = L, LLPAR-1
 
                ! Get pressure profile
-               P2  = GET_PCENTER(I,J,L2) * 1d2
-               PD2 = GET_PCENTER(I,J,L2-1) * 1d2
-               PU2 = GET_PCENTER(I,J,L2+1) * 1d2
+               P2  = PCENTER(L2) * 1d2
+               PD2 = PCENTER(L2-1) * 1d2
+               PU2 = PCENTER(L2+1) * 1d2
                PK2 = P2 ** KAP
                IF ( P2 .GT. PTPH ) GOTO 200
                IF ( P2 .LT. P2KM ) GOTO 300
@@ -110,10 +128,10 @@
          ENDDO
 
          ! Couldn't find tropopause
-         TPP_PRESS(I,J) = PLIML
+         TPP_PRESS(I,J) = PLIML * 1d-2
          CYCLE
 
- 300     TPP_PRESS(I,J) = MAX( PTPH, PLIML )
+ 300     TPP_PRESS(I,J) = MAX( PTPH, PLIML ) * 1d-2
 
       ENDDO
       ENDDO

@@ -224,6 +224,9 @@
       ! Astronomical Julian Date at 0 GMT, 1 Jan 1985
       REAL*8, PARAMETER :: JD85 = 2446066.5d0
 
+      ! Are we in the first time step?
+      LOGICAL           :: FIRSTTIME = .TRUE.
+
       CONTAINS
 !EOC
 !------------------------------------------------------------------------------
@@ -1053,6 +1056,7 @@
 !------------------------------------------------------------------------------
 !BOC
       ELAPSED_MIN = ELAPSED_MIN + TS_DYN
+      FIRSTTIME = .FALSE.
 
       END SUBROUTINE SET_ELAPSED_MIN
 !EOC
@@ -3852,6 +3856,8 @@
          
       ENDIF
 
+      IF ( FIRSTTIME ) IS_NEW_YEAR = .TRUE.
+
       END FUNCTION ITS_A_NEW_YEAR
 !EOC
 !------------------------------------------------------------------------------
@@ -3990,6 +3996,8 @@
          IS_NEW_MONTH = .FALSE.
 
       ENDIF
+
+      IF ( FIRSTTIME ) IS_NEW_MONTH = .TRUE.
 
       END FUNCTION ITS_A_NEW_MONTH
 !EOC
@@ -4158,6 +4166,8 @@
          ENDIF
 
       ENDIF
+
+      IF ( FIRSTTIME ) IS_NEW_DAY = .TRUE.
 
       END FUNCTION ITS_A_NEW_DAY
 

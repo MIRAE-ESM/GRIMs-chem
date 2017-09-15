@@ -117,6 +117,20 @@
       ALLOCATE ( FFF(NW,LPAR) )
       ALLOCATE ( JADSUB(NC) )
 
+      ODMDUST = 0d0
+      ODAER   = 0d0
+      TJ      = 0d0
+      PJ      = 0d0
+      DM      = 0d0
+      DO3     = 0d0
+      DBC     = 0d0
+      Z       = 0d0
+      AER     = 0d0
+      AMF     = 0d0
+      ZJ      = 0d0
+      FFF     = 0d0
+      JADSUB  = 0
+
       END SUBROUTINE INIT_JV_CMN
 
 ! !REMARKS:

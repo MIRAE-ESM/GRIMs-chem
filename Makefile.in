@@ -64,6 +64,8 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/drydep_mod.o \
         ${COREDIR}/global_oh_mod.o \
         ${COREDIR}/global_no3_mod.o \
+        ${COREDIR}/lai_mod.o \
+        ${COREDIR}/megan_mod.o \
         ${COREDIR}/carbon_mod.o \
         ${COREDIR}/dust_dead_mod.o \
         ${COREDIR}/dust_shao_mod.o \
@@ -80,41 +82,135 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/emep_mod.o \
         ${COREDIR}/streets_anthro_mod.o \
         ${COREDIR}/icoads_ship_mod.o \
+        ${COREDIR}/uvalbedo_mod.o \
         ${COREDIR}/sulfate_mod.o \
+        ${COREDIR}/acetone_mod.o \
+        ${COREDIR}/aerosol_mod.o \
+        ${COREDIR}/optdepth_mod.o \
         ${COREDIR}/chemistry_mod.o \
+        ${COREDIR}/gc_type_mod.o \
         ${COREDIR}/convection_mod.o \
         ${COREDIR}/diag41_mod.o \
         ${COREDIR}/flexaod.o \
         ${COREDIR}/diag49_mod.o \
         ${COREDIR}/diag_aod_mod.o \
+        ${COREDIR}/retro_mod.o \
+        ${COREDIR}/vistas_anthro_mod.o \
         ${COREDIR}/emissions_mod.o \
+        ${COREDIR}/diag56_mod.o \
         ${COREDIR}/gamap_mod.o \
-        ${COREDIR}/input_mod.o \
+        ${COREDIR}/biofuel_mod.o \
+        ${COREDIR}/transport_mod.o \
         ${COREDIR}/linoz_mod.o \
+        ${COREDIR}/upbdflx_mod.o \
+        ${COREDIR}/diag_oh_mod.o \
+        ${COREDIR}/input_mod.o \
         ${COREDIR}/meteo_mod.o \
         ${COREDIR}/restart_mod.o \
-        ${COREDIR}/transport_mod.o \
+        ${COREDIR}/aircraft_nox_mod.o \
+        ${COREDIR}/lightning_nox_mod.o \
+        ${COREDIR}/toms_mod.o \
+        ${COREDIR}/geia_mod.o \
+        ${COREDIR}/fjx_acet_mod.o \
+        ${COREDIR}/airmas.o \
+        ${COREDIR}/anthroems.o \
+        ${COREDIR}/arsl1k.o \
+        ${COREDIR}/backsub.o \
         ${COREDIR}/biofit.o \
+        ${COREDIR}/BLKSLV.o \
         ${COREDIR}/boxvl.o \
+        ${COREDIR}/calcrate.o \
+        ${COREDIR}/chemdr.o \
+        ${COREDIR}/CLDSRF.o \
         ${COREDIR}/cleanup.o \
+        ${COREDIR}/CO_strat_pl.o \
+        ${COREDIR}/decomp.o \
         ${COREDIR}/diag1.o \
         ${COREDIR}/diag3.o \
+        ${COREDIR}/diagoh.o \
         ${COREDIR}/diag_2pm.o \
+        ${COREDIR}/EFOLD.o \
+        ${COREDIR}/emfossil.o \
+        ${COREDIR}/emf_scale.o \
+        ${COREDIR}/emisop.o \
+        ${COREDIR}/emisop_grass.o \
+        ${COREDIR}/emisop_mb.o \
+        ${COREDIR}/emissdr.o \
         ${COREDIR}/emmonot.o \
+        ${COREDIR}/fast_j.o \
+        ${COREDIR}/fertadd.o \
         ${COREDIR}/findmon.o \
+        ${COREDIR}/fjfunc.o \
+        ${COREDIR}/FLINT.o \
+        ${COREDIR}/fyhoro.o \
+        ${COREDIR}/fyrno3.o \
+        ${COREDIR}/gasconc.o \
+        ${COREDIR}/GAUSSP.o \
+        ${COREDIR}/GEN.o \
+        ${COREDIR}/getifsun.o \
+        ${COREDIR}/get_global_ch4.o \
         ${COREDIR}/initialize.o \
+        ${COREDIR}/inphot.o \
+        ${COREDIR}/JRATET.o \
+        ${COREDIR}/jsparse.o \
+        ${COREDIR}/JVALUE.o \
+        ${COREDIR}/jv_index.o \
+        ${COREDIR}/ksparse.o \
+        ${COREDIR}/LEGND0.o \
+        ${COREDIR}/lump.o \
+        ${COREDIR}/make_cldtops.o \
+        ${COREDIR}/MATIN4.o \
+        ${COREDIR}/MIESCT.o \
         ${COREDIR}/mie_spher.o \
+        ${COREDIR}/mmran_16.o \
         ${COREDIR}/ndxx_setup.o \
         ${COREDIR}/nislq_chem_advect.o \
+        ${COREDIR}/NOABS.o \
+        ${COREDIR}/ohsave.o \
+        ${COREDIR}/OPMIE.o \
+        ${COREDIR}/partition.o \
+        ${COREDIR}/pderiv.o \
+        ${COREDIR}/photoj.o \
+        ${COREDIR}/physproc.o \
+        ${COREDIR}/precipfrac.o \
+        ${COREDIR}/pulsing.o \
         ${COREDIR}/rdisopt.o \
         ${COREDIR}/rdlai.o \
         ${COREDIR}/rdland.o \
+        ${COREDIR}/rdlight.o \
         ${COREDIR}/rdmonot.o \
+        ${COREDIR}/rdsoil.o \
+        ${COREDIR}/RD_AOD.o \
+        ${COREDIR}/rd_js.o \
+        ${COREDIR}/rd_prof.o \
+        ${COREDIR}/RD_TJPL.o \
+        ${COREDIR}/readchem.o \
+        ${COREDIR}/reader.o \
         ${COREDIR}/readlai.o \
+        ${COREDIR}/ruralbox.o \
+        ${COREDIR}/schem.o \
         ${COREDIR}/setbase.o \
+        ${COREDIR}/setemdep.o \
+        ${COREDIR}/setemis.o \
+        ${COREDIR}/setmodel.o \
+        ${COREDIR}/set_aer.o \
+        ${COREDIR}/set_prof.o \
         ${COREDIR}/sfcwindsqr.o \
+        ${COREDIR}/smvgear.o \
+        ${COREDIR}/soilbase.o \
+        ${COREDIR}/soilcrf.o \
+        ${COREDIR}/soilnoxems.o \
+        ${COREDIR}/soiltemp.o \
+        ${COREDIR}/soiltype.o \
+        ${COREDIR}/SPHERE.o \
+        ${COREDIR}/subfun.o \
         ${COREDIR}/sunparam.o \
-        ${COREDIR}/tpp_reichler.o
+        ${COREDIR}/tcorr.o \
+        ${COREDIR}/tpp_reichler.o \
+        ${COREDIR}/update.o \
+        ${COREDIR}/XSEC1D.o \
+        ${COREDIR}/XSECO2.o \
+        ${COREDIR}/XSECO3.o
 
 ISOROPIA = ISOROPIA/isoropiaIIcode.o
 

@@ -64,6 +64,8 @@
 
       ALLOCATE ( ZPJ(LPAR,JPMAX,IPAR,JPAR) )
 
+      ZPJ = 0d0
+
       END SUBROUTINE INIT_CMN_FJ
 ! 
 ! !REMARKS:

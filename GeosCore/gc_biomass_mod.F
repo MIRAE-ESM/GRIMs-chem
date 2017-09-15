@@ -747,7 +747,7 @@
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
             ! ACET -- Convert from [molec/cm2/month] to [molec C/cm2/month] 
-            BIOMASS(:,:,N) = BIOMASS(:,:,IDBACET) * 3d0  
+            BIOMASS(:,:,IDBACET) = BIOMASS(:,:,IDBACET) * 3d0  
 
             ! Scale to yearly value for biogenic acetone (bdf, bmy, 7/23/01)
             CALL SCALE_BIOMASS_ACET( BIOMASS(:,:,IDBACET) )
@@ -858,7 +858,7 @@
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
             ! C3H8 -- convert from [molec/cm2/month] to [molec C/cm2/month] 
-            BIOMASS(:,:,N) = BIOMASS(:,:,IDBC3H8) * 3d0 
+            BIOMASS(:,:,IDBC3H8) = BIOMASS(:,:,IDBC3H8) * 3d0 
 
             ! Compute future C3H8 emissions (if necessary)
             IF ( LFUTURE ) THEN
@@ -913,7 +913,7 @@
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
             ! C2H6 --convert from [molec/cm2/month] to [molec C/cm2/month]
-            BIOMASS(:,:,N) = BIOMASS(:,:,IDBC2H6) * 2d0 
+            BIOMASS(:,:,IDBC2H6) = BIOMASS(:,:,IDBC2H6) * 2d0 
 
             ! Compute future C2H6 emissions (if necessary)
             IF ( LFUTURE ) THEN
@@ -2309,12 +2309,14 @@
          THEYEAR = JYEAR - 1978
      
          IF ( THEYEAR > NAIYEARS .OR. THEYEAR < 0 ) THEN
+            IF (LMASTER) THEN
             PRINT*,'Error in SR TOMSAI:  You have picked a year less'
             PRINT*,'than 1979 or greater than 1999.  The data in this'
             PRINT*,'SR used to scale biomass burning emissions is only'
             PRINT*,'good for 1979-1999. You may need to comment out'
             PRINT*,'the call to this SR in SR bioburn.'
             PRINT*,'Your year is ',JYEAR,'.'
+            ENDIF
             STOP
          ENDIF
 

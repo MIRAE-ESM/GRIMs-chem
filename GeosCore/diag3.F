@@ -22,7 +22,7 @@
       ! set of tracers
       ! NBIOMAX in F77_CMN_SIZE (FP)
       USE BIOMASS_MOD,  ONLY : BIOTRCE !     NBIOMAX
-!     USE BIOFUEL_MOD,  ONLY : NBFTRACE,    BFTRACE
+      USE BIOFUEL_MOD,  ONLY : NBFTRACE,    BFTRACE
       USE DIAG_MOD,     ONLY : AD01,        AD02,        AD05    
       USE DIAG_MOD,     ONLY : AD06,        AD07,        AD07_BC
       USE DIAG_MOD,     ONLY : AD07_SOAGM
@@ -70,7 +70,7 @@
 !     USE DIAG04_MOD,   ONLY : ND04,        WRITE_DIAG04
       USE DIAG41_MOD,   ONLY : ND41,        WRITE_DIAG41
 !     USE DIAG42_MOD,   ONLY : ND42,        WRITE_DIAG42
-!     USE DIAG56_MOD,   ONLY : ND56,        WRITE_DIAG56
+      USE DIAG56_MOD,   ONLY : ND56,        WRITE_DIAG56
 !     USE DIAG_PL_MOD,  ONLY : AD65
       ! For mercury simulation. (ccc, 6/4/10)
 !     USE DEPO_MERCURY_MOD, ONLY : UPDATE_DEP
@@ -2251,7 +2251,6 @@
          ENDDO
       ENDIF  
 !
-#ifdef NOUSE
 !******************************************************************************
 !  ND34: Biofuel burning diagnostic 
 !
@@ -2303,7 +2302,6 @@
          ENDDO
       ENDIF
 !
-#endif
 !******************************************************************************
 !  ND35: Tracer concentration at 500 mb 
 !
@@ -3249,7 +3247,7 @@
 !  ND56: Lightning flash rate diagnostics (ltm, bmy, 5/5/06))
 !******************************************************************************
 !
-!     IF ( ND56 > 0 ) CALL WRITE_DIAG56
+      IF ( ND56 > 0 ) CALL WRITE_DIAG56
 
 !
 !******************************************************************************
@@ -3622,7 +3620,7 @@
                   UNIT   = 'm'
                CASE ( 9 )
                   SCALEX = SCALE_ND67
-                  UNIT   = 'hPa'
+                  UNIT   = 'm'
                CASE ( 10 )
                   SCALEX = SCALE_ND67
                   UNIT   = 'unitless'
@@ -3652,6 +3650,8 @@
                CASE ( 16 )
 #if   defined( MERRA )
                   SCALEX = SCALE_A3     ! MERRA CLDTOPS is a 3-hr time avg'd
+#elif defined( GRIMS )
+                  SCALEX = SCALE_ND67
 #else 
                   SCALEX = SCALE_A6     ! Otherwise CLDTOPS is 6-hr time avg'd
 #endif

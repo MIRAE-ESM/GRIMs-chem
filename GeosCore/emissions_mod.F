@@ -106,7 +106,7 @@
 !     USE MERCURY_MOD,            ONLY : EMISSMERCURY
       USE NEI2005_ANTHRO_MOD,     ONLY : EMISS_NEI2005_ANTHRO
 !     USE NEI2005_ANTHRO_MOD,     ONLY : EMISS_NEI2005_ANTHRO_05x0666
-!     USE RETRO_MOD,              ONLY : EMISS_RETRO
+      USE RETRO_MOD,              ONLY : EMISS_RETRO
 !     USE RnPbBe_MOD,             ONLY : EMISSRnPbBe
       USE SEASALT_MOD,            ONLY : EMISSSEASALT
       USE STREETS_ANTHRO_MOD,     ONLY : EMISS_STREETS_ANTHRO
@@ -116,7 +116,7 @@
       USE TIME_MOD,               ONLY : ITS_A_NEW_MONTH, ITS_A_NEW_YEAR
       USE TRACER_MOD                 
 !     USE TAGGED_CO_MOD,          ONLY : EMISS_TAGGED_CO
-!     USE VISTAS_ANTHRO_MOD,      ONLY : EMISS_VISTAS_ANTHRO
+      USE VISTAS_ANTHRO_MOD,      ONLY : EMISS_VISTAS_ANTHRO
       USE ICOADS_SHIP_MOD,        ONLY : EMISS_ICOADS_SHIP !(cklee,7/09/09)
 
       USE CMN_SIZE_MOD                 ! Size parameters
@@ -194,7 +194,6 @@
          CALL COMPUTE_BIOMASS_EMISSIONS( GET_YEAR(), MONTH )
       ENDIF
          
-#ifdef NOUSE
       ! Test by simulation type
       IF ( ITS_A_FULLCHEM_SIM() ) THEN
 
@@ -283,7 +282,6 @@
          IF ( LDUST             ) CALL EMISSDUST
 
       ELSE IF ( ITS_AN_AEROSOL_SIM() ) THEN
-#endif
          
          !--------------------
          ! Offline aerosol
@@ -567,9 +565,9 @@
 
          ! Emit H2/HD
          CALL EMISS_H2_HD
+#endif
 
       ENDIF
-#endif
 
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG ( '### DO_EMISSIONS: a EMISSIONS' )

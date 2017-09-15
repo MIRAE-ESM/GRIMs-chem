@@ -23,7 +23,7 @@
 !
       PUBLIC :: DO_CHEMISTRY
 !     PUBLIC :: GCKPP_DRIVER
-!     PUBLIC :: RECOMPUTE_OD
+      PUBLIC :: RECOMPUTE_OD
 !
 ! !REVISION HISTORY: 
 !  (1 ) Bug fix in DO_CHEMISTRY (bnd, bmy, 4/14/03)
@@ -70,16 +70,16 @@
 !
 ! !USES:
 !
-!     USE ACETONE_MOD,     ONLY : OCEAN_SINK_ACET
-!     USE AEROSOL_MOD,     ONLY : AEROSOL_CONC, AEROSOL_RURALBOX
-!     USE AEROSOL_MOD,     ONLY : RDAER,        SOILDUST
+      USE ACETONE_MOD,     ONLY : OCEAN_SINK_ACET
+      USE AEROSOL_MOD,     ONLY : AEROSOL_CONC, AEROSOL_RURALBOX
+      USE AEROSOL_MOD,     ONLY : RDAER,        SOILDUST
 !     USE C2H6_MOD,        ONLY : CHEMC2H6
       USE CARBON_MOD,      ONLY : CHEMCARBON
 !     USE CH3I_MOD,        ONLY : CHEMCH3I
       USE DAO_MOD,         ONLY : CLDF,    DELP
       USE DAO_MOD,         ONLY : OPTDEP,  OPTD,   T
       USE DRYDEP_MOD,      ONLY : DRYFLX, DRYFLXRnPbBe, DRYFLXH2HD
-      USE DUST_MOD,        ONLY : CHEMDUST
+      USE DUST_MOD,        ONLY : CHEMDUST, RDUST_ONLINE
       USE ERROR_MOD,       ONLY : DEBUG_MSG
 !     USE GLOBAL_CH4_MOD,  ONLY : CHEMCH4
 !     USE H2_HD_MOD,       ONLY : CHEM_H2_HD
@@ -88,7 +88,7 @@
       USE LOGICAL_MOD,     ONLY : LCARB, LCHEM,  LCRYST, LDUST
       USE LOGICAL_MOD,     ONLY : LPRT,  LSSALT, LSULF,  LSOA
 !     USE MERCURY_MOD,     ONLY : CHEMMERCURY
-!     USE OPTDEPTH_MOD,    ONLY : OPTDEPTH
+      USE OPTDEPTH_MOD,    ONLY : OPTDEPTH
 !     USE RnPbBe_MOD,      ONLY : CHEMRnPbBe
       USE RPMARES_MOD,     ONLY : DO_RPMARES
       USE SEASALT_MOD,     ONLY : CHEMSEASALT
@@ -170,19 +170,16 @@
       ! DO_CHEMISTRY begins here!
       !=================================================================
 
-#ifdef NOUSE
       ! Compute optical depths (except for CH4 simulation)
       IF ( .not. ITS_A_CH4_SIM() ) THEN
          CALL OPTDEPTH( LLPAR, CLDF, OPTDEP, OPTD )
       ENDIF
-#endif
 
       !=================================================================
       ! If LCHEM=T then call the chemistry subroutines
       !=================================================================
       IF ( LCHEM ) THEN 
 
-#ifdef NOUSE
          !---------------------------------
          ! NOx-Ox-HC (w/ or w/o aerosols) 
          !---------------------------------
@@ -238,25 +235,24 @@
           ! Offline aerosol simulation
           !---------------------------------
           ELSE IF ( ITS_AN_AEROSOL_SIM() ) THEN
-#endif
  
              ! Define loop index and other SMVGEAR arrays
              ! N_TROP, the # of trop boxes, is returned
-!            CALL AEROSOL_RURALBOX( N_TROP )
+             CALL AEROSOL_RURALBOX( N_TROP )
  
              ! Initialize FAST-J quantities for computing AOD's
              IF ( FIRST ) THEN
-!               CALL READER( FIRST )
-!               CALL READCHEM
-!               CALL INPHOT( LLTROP, NPHOT )
+                CALL READER( FIRST )
+                CALL READCHEM
+                CALL INPHOT( LLTROP, NPHOT )
  
                 ! Reset NCS with NCSURBAN
                 NCS     = NCSURBAN
  
                 ! Reset NTLOOP and NTTLOOP after call to READER
                 ! with the actual # of boxes w/in the ann mean trop
-!               NTLOOP  = N_TROP
-!               NTTLOOP = N_TROP
+                NTLOOP  = N_TROP
+                NTTLOOP = N_TROP
  
                 ! Reset first-time flag
                 FIRST = .FALSE.
@@ -264,14 +260,14 @@
  
              ! Compute aerosol & dust concentrations [kg/m3]
              ! (NOTE: SOILDUST in "aerosol_mod.f" is computed here)
-!            CALL AEROSOL_CONC
+             CALL AEROSOL_CONC
  
              ! Compute AOD's and surface areas at 999 nm
              MONTH = 0
              YEAR  = 0
              WAVELENGTH = 0
 
-!            CALL RDAER( MONTH, YEAR, WAVELENGTH )
+             CALL RDAER( MONTH, YEAR, WAVELENGTH )
  
              !*** AEROSOL THERMODYNAMIC EQUILIBRIUM ***
              IF ( LSSALT ) THEN
@@ -310,7 +306,7 @@
                 WAVELENGTH = 0
 
                 ! Compute dust OD's & surface areas
-!               CALL RDUST_ONLINE( SOILDUST, WAVELENGTH )
+                CALL RDUST_ONLINE( SOILDUST, WAVELENGTH )
              ENDIF
  
 #ifdef NOUSE
@@ -376,8 +372,8 @@
              CALL CHEM_H2_HD
              CALL DRYFLXH2HD
   
-          ENDIF
 #endif
+          ENDIF
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CHEMISTRY' )
@@ -679,6 +675,7 @@
       ! Return to calling program
       END SUBROUTINE GCKPP_DRIVER
 !EOC
+#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -776,5 +773,4 @@
       ! Return to calling program
       END SUBROUTINE RECOMPUTE_OD
 !EOC
-#endif
       END MODULE CHEMISTRY_MOD

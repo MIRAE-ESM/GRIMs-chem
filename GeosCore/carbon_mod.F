@@ -4280,9 +4280,9 @@ c
       USE DAO_MOD,       ONLY : SUNCOS_MID
       USE DIRECTORY_MOD, ONLY : DATA_DIR
       USE LOGICAL_MOD,   ONLY : LMEGANMONO,       LSOA
-!     USE MEGAN_MOD,     ONLY : GET_EMMONOT_MEGAN
+      USE MEGAN_MOD,     ONLY : GET_EMMONOT_MEGAN
       ! Speciated MEGAN monoterpenes (hotp 3/10/10)
-!     USE MEGAN_MOD,     ONLY : GET_EMMONOG_MEGAN
+      USE MEGAN_MOD,     ONLY : GET_EMMONOG_MEGAN
       ! ----
       USE TIME_MOD,      ONLY : GET_MONTH,        GET_TS_CHEM
       USE TIME_MOD,      ONLY : GET_TS_EMIS,      ITS_A_NEW_MONTH
@@ -4369,8 +4369,8 @@ c
             IF ( LMEGANMONO ) THEN
                ! +++++++++++++++++++++++++++++++++++++++++
                ! New formulation for MEGAN (mpb,2009)
-!              EMMO = GET_EMMONOT_MEGAN( I, J, SC, TMMP,
-!    &                                   PDR, PDF, 1d0 )
+               EMMO = GET_EMMONOT_MEGAN( I, J, SC, TMMP,
+     &                                   PDR, PDF, 1d0 )
                ! +++++++++++++++++++++++++++++++++++++++++
                ! EMMO = GET_EMMONOT_MEGAN( I, J, TMMP, 1d0 )
             ELSE

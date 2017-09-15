@@ -182,7 +182,7 @@
       USE DAO_MOD,      ONLY : T,       UWND,   VWND
       USE DAO_MOD,      ONLY : TS
       USE DAO_MOD,      ONLY : PARDF, PARDR
-!     USE LAI_MOD,      ONLY : ISOLAI
+      USE LAI_MOD,      ONLY : ISOLAI
       USE FILE_MOD,     ONLY : IU_ND49
       USE GRID_MOD,     ONLY : GET_XOFFSET,        GET_YOFFSET
       USE TIME_MOD,     ONLY : EXPAND_DATE
@@ -329,6 +329,7 @@
 
          ! Zero summing array
          Q = 0d0
+         P_ARRAY = 0d0
 
          ! Test by tracer number
          IF ( N <= N_TRACERS ) THEN
@@ -366,113 +367,24 @@
             ENDDO
 !$OMP END PARALLEL DO
 
-         ELSE IF ( N == 31 ) THEN
+         ELSE IF ( N == 71 ) THEN
 
             !-------------------------------------
             ! Aerosol Optical Depth [unitless]
             !-------------------------------------
             CATEGORY = 'DIAGAOD'
-            UNIT     = ''           ! Let GAMAP pick the unit
+            UNIT     = 'unitless'
             GMNL     = ND49_NL
             GMTRC    = 1
-
-#if defined (RRTMGSW) && defined (RRTMGLW)
-            CALL TRANS_OUTPUT( OUTOD(:,:,:,10), F_ARRAY, ND49_NL )
-#else
-            CALL TRANS_OUTPUT( OUTOD(:,:,:,4), F_ARRAY, ND49_NL )
-#endif
-
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, X, Y, K )
-            DO K = 1, ND49_NL
-               L = LOFF + K
-            DO Y = 1, ND49_NJ
-               J = JOFF + Y
-            DO X = 1, ND49_NI
-               I = GET_I( X )
-               Q(X,Y,K) = F_ARRAY(I,J,L)
-            ENDDO
-            ENDDO
-            ENDDO
-!$OMP END PARALLEL DO
-
-         ELSE IF ( N == 32 ) THEN
-
-            !-------------------------------------
-            ! Single Scattering Albedo [unitless]
-            !-------------------------------------
-            CATEGORY = 'DIAGSSA'
-            UNIT     = ''           ! Let GAMAP pick the unit
-            GMNL     = ND49_NL
-            GMTRC    = 1
-
-#if defined (RRTMGSW) && defined (RRTMGLW)
-            CALL TRANS_OUTPUT( OUTSSA(:,:,:,10), F_ARRAY, ND49_NL )
-#else
-            CALL TRANS_OUTPUT( OUTSSA(:,:,:,4), F_ARRAY, ND49_NL )
-#endif
-
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, X, Y, K )
-            DO K = 1, ND49_NL
-               L = LOFF + K
-            DO Y = 1, ND49_NJ
-               J = JOFF + Y
-            DO X = 1, ND49_NI
-               I = GET_I( X )
-               Q(X,Y,K) = F_ARRAY(I,J,L)
-            ENDDO
-            ENDDO
-            ENDDO
-!$OMP END PARALLEL DO
-
-         ELSE IF ( N == 33 ) THEN
-
-            !-------------------------------------
-            ! Asymmerty Parameter [unitless]
-            !-------------------------------------
-            CATEGORY = 'DIAGASM'
-            UNIT     = ''           ! Let GAMAP pick the unit
-            GMNL     = ND49_NL
-            GMTRC    = 1
-
-#if defined (RRTMGSW) && defined (RRTMGLW)
-            CALL TRANS_OUTPUT( OUTG(:,:,:,10), F_ARRAY, ND49_NL )
-#else
-            CALL TRANS_OUTPUT( OUTG(:,:,:,4), F_ARRAY, ND49_NL )
-#endif
-
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, X, Y, K )
-            DO K = 1, ND49_NL
-               L = LOFF + K
-            DO Y = 1, ND49_NJ
-               J = JOFF + Y
-            DO X = 1, ND49_NI
-               I = GET_I( X )
-               Q(X,Y,K) = F_ARRAY(I,J,L)
-            ENDDO
-            ENDDO
-            ENDDO
-!$OMP END PARALLEL DO
-
-         ELSE IF ( N == 34 ) THEN
-
-            !-------------------------------------
-            ! AIR DENSITY [molec/cm3]
-            !-------------------------------------
-            CATEGORY = 'TIME-SER'
-            UNIT     = 'molec/cm3'
-            GMNL     = ND49_NL
-            GMTRC    = 22
 
             DO L = 1, ND49_NL
             DO J = 1, JJPAR
             DO I = 1, IIPAR
-               P_ARRAY(I,J,L) = AIRDEN(L,I,J) * XNUMOLAIR * 1d-6
+#if defined (RRTMGSW) && defined (RRTMGLW)
+               P_ARRAY(I,J,L) = OUTOD(I,J,L,10)
+#else
+               P_ARRAY(I,J,L) = OUTOD(I,J,L,4)
+#endif
             ENDDO
             ENDDO
             ENDDO
@@ -494,16 +406,29 @@
             ENDDO
 !$OMP END PARALLEL DO
 
-#ifdef NOUSE
-         ELSE IF ( N == 91 .and. IS_Ox ) THEN
+         ELSE IF ( N == 72 ) THEN
 
             !-------------------------------------
-            ! PURE O3 CONCENTRATION [v/v]
+            ! Single Scattering Albedo [unitless]
             !-------------------------------------
-            CATEGORY = 'IJ-AVG-$'
-            UNIT     = ''           ! Let GAMAP pick the unit
+            CATEGORY = 'DIAGSSA'
+            UNIT     = 'unitless'
             GMNL     = ND49_NL
-            GMTRC    = N_TRACERS + 1
+            GMTRC    = 1
+
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+#if defined (RRTMGSW) && defined (RRTMGLW)
+               P_ARRAY(I,J,L) = OUTSSA(I,J,L,10)
+#else
+               P_ARRAY(I,J,L) = OUTSSA(I,J,L,4)
+#endif
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -514,8 +439,82 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = STT(I,J,L,IDTOX) * TCVV(IDTOX)  / 
-     &                    AD(I,J,L)        * FRACO3(I,J,L) 
+               Q(X,Y,K) = F_ARRAY(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
+
+         ELSE IF ( N == 73 ) THEN
+
+            !-------------------------------------
+            ! Asymmerty Parameter [unitless]
+            !-------------------------------------
+            CATEGORY = 'DIAGASM'
+            UNIT     = ''           ! Let GAMAP pick the unit
+            GMNL     = ND49_NL
+            GMTRC    = 1
+
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+#if defined (RRTMGSW) && defined (RRTMGLW)
+               P_ARRAY(I,J,L) = OUTG(I,J,L,10)
+#else
+               P_ARRAY(I,J,L) = OUTG(I,J,L,4)
+#endif
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I, J, L, X, Y, K )
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
+
+         ELSE IF ( N == 91 .and. IS_Ox ) THEN
+
+            !-------------------------------------
+            ! PURE O3 CONCENTRATION [v/v]
+            !-------------------------------------
+            CATEGORY = 'IJ-AVG-$'
+            UNIT     = ''           ! Let GAMAP pick the unit
+            GMNL     = ND49_NL
+            GMTRC    = N_TRACERS + 1
+
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = STT(I,J,L,IDTOX) * TCVV(IDTOX)  / 
+     &                          AD(I,J,L)        * FRACO3(I,J,L) 
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I, J, L, X, Y, K )
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -531,6 +530,17 @@
             GMNL     = ND49_NL
             GMTRC    = 9
                
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = STT(I,J,L,IDTNOX) * TCVV(IDTNOX) * 
+     &                          FRACNO(I,J,L)     / AD(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -540,8 +550,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )   
-               Q(X,Y,K) = STT(I,J,L,IDTNOX) * TCVV(IDTNOX) * 
-     &                    FRACNO(I,J,L)     / AD(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -557,15 +566,9 @@
             GMNL     = ND49_NL
             GMTRC    = 3
 
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, X, Y, K, TMP )
-            DO K = 1, ND49_NL
-               L = LOFF + K
-            DO Y = 1, ND49_NJ
-               J = JOFF + Y
-            DO X = 1, ND49_NI
-               I = GET_I( X )  
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
 
                ! Temp variable for accumulation
                TMP = 0d0
@@ -602,7 +605,23 @@
      &                       STT(I,J,L,IDTHNO4)  / AD(I,J,L) )
 
                ! Save afternoon points
-               Q(X,Y,K) = Q(X,Y,K) + TMP
+               P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + TMP
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I, J, L, X, Y, K, TMP )
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )  
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -618,6 +637,16 @@
             GMNL     = ND49_NL
             GMTRC    = 2
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = SAVEOH(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -627,7 +656,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = SAVEOH(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -643,6 +672,16 @@
             GMNL     = ND49_NL
             GMTRC    = 25
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = SAVENO2(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -652,7 +691,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = SAVENO2(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -668,6 +707,14 @@
             GMNL     = 1
             GMTRC    = 1
 
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = GET_PBL_TOP_m( I, J )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, X, Y, TMP )
@@ -675,7 +722,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = GET_PBL_TOP_m( I, J )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -690,6 +737,14 @@
             GMNL     = 1
             GMTRC    = 2
 
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = GET_PBL_TOP_L( I, J )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, X, Y )
@@ -697,7 +752,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = GET_PBL_TOP_L( I, J )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -712,6 +767,16 @@
             GMNL     = ND49_NL
             GMTRC    = 22
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = AIRDEN(L,I,J) * XNUMOLAIR * 1d-6
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -721,7 +786,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = AIRDEN(L,I,J) * XNUMOLAIR * 1d-6
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -737,6 +802,16 @@
             GMNL     = ND49_NL
             GMTRC    = 19
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = CLDF(L,I,J)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -746,7 +821,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = CLDF(K,I,J)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -762,6 +837,14 @@
             GMNL     = 1
             GMTRC    = 20
 
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = SUM( OPTD(:,I,J) )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, X, Y )
@@ -769,7 +852,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = SUM( OPTD(:,I,J) )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -779,22 +862,27 @@
             !--------------------------------------
             ! CLOUD TOP HEIGHTS [hPa]
             !--------------------------------------
-            CATEGORY = 'TIME_SER'
+            CATEGORY = 'TIME-SER'
             UNIT     = 'hPa'
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 21
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = GET_PEDGE( I, J, CLDTOPS(I,J) )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, X, Y, K )
-            DO K = 1, ND49_NL
-               L = LOFF + K
+!$OMP+PRIVATE( I, J, X, Y )
             DO Y = 1, ND49_NJ
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = GET_PEDGE( I, J, CLDTOPS(I,J) )
-            ENDDO
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -816,22 +904,33 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0
                
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ( ODAER(I,J,L,R) * SCALEAODnm )
+               ENDDO
+               ENDDO
+               ENDDO
+
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ( ODAER(I,J,L,R) * SCALEAODnm )
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
-
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF ( N == 85 ) THEN
 
@@ -853,21 +952,32 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0 
 
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ( ODAER(I,J,L,H) * SCALEAODnm )
+               ENDDO
+               ENDDO
+               ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ( ODAER(I,J,L,H) * SCALEAODnm )
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF ( N == 86 ) THEN
 
@@ -889,21 +999,32 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0
 
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ( ODAER(I,J,L,H) * SCALEAODnm )
+               ENDDO
+               ENDDO
+               ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ( ODAER(I,J,L,H) * SCALEAODnm )
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF ( N == 87 ) THEN
             
@@ -925,21 +1046,32 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0
     
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ( ODAER(I,J,L,H) * SCALEAODnm )
+               ENDDO
+               ENDDO
+               ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ( ODAER(I,J,L,H) * SCALEAODnm )
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF ( N == 88 ) THEN
 
@@ -961,21 +1093,32 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0
 
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ( ODAER(I,J,L,H) * SCALEAODnm )
+               ENDDO
+               ENDDO
+               ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, R, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ( ODAER(I,J,L,H) * SCALEAODnm )
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF ( N == 89 ) THEN
 
@@ -994,21 +1137,32 @@
                ! We no longer need to scale by wavelength (skim, 02/03/11)
                SCALEAODnm = 1.0  
 
+               DO L = 1, ND49_NL
+               DO J = 1, JJPAR
+               DO I = 1, IIPAR
+                  P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                             ODMDUST(I,J,L,R) * SCALEAODnm
+               ENDDO
+               ENDDO
+               ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
-               DO K = 1, ND49_NL
-                  L = LOFF + K
-               DO Y = 1, ND49_NJ
-                  J = JOFF + Y
-               DO X = 1, ND49_NI
-                  I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ODMDUST(I,J,L,R) * SCALEAODnm
-               ENDDO
-               ENDDO
-               ENDDO
-!$OMP END PARALLEL DO
+            DO K = 1, ND49_NL
+               L = LOFF + K
+            DO Y = 1, ND49_NJ
+               J = JOFF + Y
+            DO X = 1, ND49_NI
+               I = GET_I( X )
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
+            ENDDO
+            ENDDO
+!$OMP END PARALLEL DO
 
          ELSE IF (N > 114) THEN
 
@@ -1028,6 +1182,17 @@
             ! We no longer need to scale by wavelength (skim, 02/03/11)
             SCALEAODnm = 1.0
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = P_ARRAY(I,J,L) + 
+     &                          ODMDUST(I,J,L,R) * SCALEAODnm
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1037,7 +1202,7 @@
                   J = JOFF + Y
                DO X = 1, ND49_NI
                   I = GET_I( X )
-                  Q(X,Y,K) = Q(X,Y,K) + ODMDUST(I,J,L,R) * SCALEAODnm
+                  Q(X,Y,K) = F_ARRAY(I,J,L)
                ENDDO
                ENDDO
                ENDDO
@@ -1053,6 +1218,18 @@
             GMNL     = ND49_NL
             GMTRC    = 24
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = ( STT(I,J,L,IDTSALA) + 
+     &                            STT(I,J,L,IDTSALC) ) *
+     &                            TCVV(IDTSALA)      / AD(I,J,L) 
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1062,8 +1239,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = ( STT(I,J,L,IDTSALA) + STT(I,J,L,IDTSALC) ) *
-     &                      TCVV(IDTSALA)      / AD(I,J,L) 
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1079,6 +1255,16 @@
             GMNL     = ND49_NL
             GMTRC    = 1
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = BXHEIGHT(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1088,7 +1274,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = BXHEIGHT(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1104,6 +1290,16 @@
             GMNL     = ND49_NL
             GMTRC    = 17
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = RH(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1113,7 +1309,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = RH(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1129,6 +1325,14 @@
             GMNL     = 1
             GMTRC    = 18
 
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = SLP(I,J)
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, X, Y )
@@ -1136,7 +1340,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = SLP(I,J)
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1151,6 +1355,16 @@
             GMNL     = ND49_NL
             GMTRC    = 1
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = UWND(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1160,7 +1374,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = UWND(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1176,6 +1390,16 @@
             GMNL     = ND49_NL
             GMTRC    = 2
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = VWND(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1185,7 +1409,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = VWND(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1201,6 +1425,16 @@
             GMNL     = ND49_NL
             GMTRC    = 1
                   
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = GET_PEDGE(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1210,7 +1444,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = GET_PEDGE(I,J,K)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1226,6 +1460,16 @@
             GMNL     = ND49_NL
             GMTRC    = 3
 
+            DO L = 1, ND49_NL
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,L) = T(I,J,L)
+            ENDDO
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, L, X, Y, K )
@@ -1235,7 +1479,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,K) = T(I,J,L)
+               Q(X,Y,K) = F_ARRAY(I,J,L)
             ENDDO
             ENDDO
             ENDDO
@@ -1248,8 +1492,16 @@
             !----------------------------------- 
             CATEGORY = 'DAO-FLDS'
             UNIT     = 'W/m2'
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 20
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = PARDF(I,J)
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1258,7 +1510,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = PARDF(I,J)
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1270,8 +1522,16 @@
             !----------------------------------- 
             CATEGORY = 'DAO-FLDS'
             UNIT     = 'W/m2'
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 21
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = PARDR(I,J)
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1280,7 +1540,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = PARDR(I,J)
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1292,9 +1552,17 @@
             !----------------------------------- 
             CATEGORY = 'TIME-SER'
             UNIT     = 'm2/m2'
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 32
            
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = ISOLAI(I,J) 
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
+
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I, J, X, Y )
@@ -1302,7 +1570,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = ISOLAI(I,J) 
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1315,8 +1583,16 @@
             !-----------------------------------
             CATEGORY = 'DAO-FLDS'
             UNIT     = 'K'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 5
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = TS( I , J )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1325,7 +1601,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = TS( I , J )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1338,8 +1614,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'    
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 1
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 1 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1348,7 +1632,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 1 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1361,8 +1645,16 @@
             !--------------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'       
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 4
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 2 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1371,7 +1663,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 2 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1384,8 +1676,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 5
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 3 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1394,7 +1694,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 3 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1407,8 +1707,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 7
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 4 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1417,7 +1725,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 4 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1430,8 +1738,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 8
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 5 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1440,7 +1756,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 5 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1454,8 +1770,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 9
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 6 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1464,7 +1788,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 6 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1478,8 +1802,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 10
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 7 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1488,7 +1820,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 7 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1502,8 +1834,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 11
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 8 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1512,7 +1852,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 8 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1526,8 +1866,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 12
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 9 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1536,7 +1884,7 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 9 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
@@ -1549,8 +1897,16 @@
             !-----------------------------------
             CATEGORY = 'BIOGSRCE'
             UNIT     = 'atomC/cm2/s'     
-            GMNL     = ND49_NL
+            GMNL     = 1
             GMTRC    = 13
+
+            DO J = 1, JJPAR
+            DO I = 1, IIPAR
+               P_ARRAY(I,J,1) = EMISS_BVOC( I , J , 10 )
+            ENDDO
+            ENDDO
+
+            CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, ND49_NL )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -1559,11 +1915,10 @@
                J = JOFF + Y
             DO X = 1, ND49_NI
                I = GET_I( X )
-               Q(X,Y,1) = EMISS_BVOC( I , J , 10 )
+               Q(X,Y,1) = F_ARRAY(I,J,1)
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
-#endif
 
          ELSE
 

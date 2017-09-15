@@ -1487,6 +1487,7 @@
 
             ! Print when Debug output selected (hotp 8/5/09)
             IF ( LPRT ) THEN
+               IF (LMASTER) THEN
                PRINT*, '###--------------------'
                PRINT*, '### T, C       : ', T, C
                PRINT*, '### NAME       : ', TRACER_NAME(T)
@@ -1495,6 +1496,7 @@
                PRINT*, '### CTRMB(T,C) : ', CTRMB(T,C)
                PRINT*, '### IDEMIS(T)  : ', IDEMIS(T)
                PRINT*, '### IDTRMB(T,C): ', IDTRMB(T,C)
+               ENDIF
             ENDIF
 
          ENDDO

@@ -62,7 +62,7 @@
 !     USE DIAG04_MOD,  ONLY : ND04,        ZERO_DIAG04
       USE DIAG41_MOD,  ONLY : ND41,        ZERO_DIAG41
 !     USE DIAG42_MOD,  ONLY : ND42,        ZERO_DIAG42
-!     USE DIAG56_MOD,  ONLY : ND56,        ZERO_DIAG56
+      USE DIAG56_MOD,  ONLY : ND56,        ZERO_DIAG56
 !     USE DIAG_PL_MOD, ONLY : AD65,        FAM_PL
       USE ERROR_MOD,   ONLY : ERROR_STOP
       USE LOGICAL_MOD, ONLY : LCRYST
@@ -304,9 +304,9 @@
 !        ENDIF
 
          ! For ND56 - lightning flash rates (bmy, 5/5/06)
-!        IF ( ND56 > 0 ) THEN
-!           CALL ZERO_DIAG56
-!        ENDIF
+         IF ( ND56 > 0 ) THEN
+            CALL ZERO_DIAG56
+         ENDIF
 
          ! For ND65 -- Chemical production & loss (bmy, 12/5/00)
 !        IF ( ND65 > 0 ) THEN

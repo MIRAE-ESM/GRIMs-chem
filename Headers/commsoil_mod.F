@@ -77,7 +77,7 @@
 
 #elif defined( GRIMS )
 
-      ! NLAND = MAXIJ
+      ! NLAND will be determined by RDSOIL
       INTEGER            :: NLAND
 
 #endif
@@ -160,14 +160,19 @@
 
       SUBROUTINE INIT_COMMSOIL
 
-      NLAND = MAXIJ
-
       ALLOCATE ( INDEXSOIL(2,NLAND) )
       ALLOCATE ( SOILPULS(NPULSE+1,NLAND) )
       ALLOCATE ( SOILPREP(2,NLAND) )
       ALLOCATE ( SOILFERT(NLAND) )
       ALLOCATE ( SOILNOX(IIPAR,JJPAR) )
       ALLOCATE ( CANOPYNOX(MAXIJ,NTYPE) )
+
+      INDEXSOIL = 0
+      SOILPULS  = 0d0
+      SOILPREP  = 0d0
+      SOILFERT  = 0d0
+      SOILNOX   = 0d0
+      CANOPYNOX = 0d0
 
       END SUBROUTINE INIT_COMMSOIL
 !

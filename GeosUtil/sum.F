@@ -43,7 +43,7 @@
 
       IMPLICIT NONE
 
-      REAL*8  :: VALUE, TOTAL
+      REAL*8  :: VALUE, TOTAL, L_TOT
 #ifdef MP
       INTEGER :: IERR
       REAL*8  :: BUFFER(npes)
@@ -62,6 +62,8 @@
 #endif
 
       ! Remove floating-point error
-      TOTAL = DBLE( REAL( TOTAL, 4 ) )
+      L_TOT = LOG(TOTAL)
+      L_TOT = REAL(L_TOT-INT(L_TOT),4) + INT(L_TOT)
+      TOTAL = EXP(L_TOT)
 
       END FUNCTION SUM_VALUE

@@ -87,9 +87,9 @@
       PUBLIC :: GET_EDGAR_ANTH_SO2
       PUBLIC :: GET_EDGAR_SHIP_SO2
       PUBLIC :: GET_EDGAR_TODN
-!     PUBLIC :: READ_AROMATICS
-!     PUBLIC :: READ_C2H4
-!     PUBLIC :: READ_C2H2
+      PUBLIC :: READ_AROMATICS
+      PUBLIC :: READ_C2H4
+      PUBLIC :: READ_C2H2
 !     PUBLIC :: READ_AROMATICS_05x0666
 !     PUBLIC :: READ_C2H4_05x0666
 !     PUBLIC :: READ_C2H2_05x0666
@@ -1996,7 +1996,6 @@
       ! Return to calling program
       END SUBROUTINE EDGAR_TOTAL_Tg
 
-#ifdef NOUSE
 !------------------------------------------------------------------------------
       SUBROUTINE READ_AROMATICS( E_BENZ, E_TOLU, E_XYLE )
 !
@@ -2022,7 +2021,7 @@
       ! References to F90 modules
       USE BPCH2_MOD
       USE DIRECTORY_MOD, ONLY : DATA_DIR_1x1
-      USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
+!     USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
 
 !      IMPLICIT NONE
 #     include "define.h"
@@ -2057,7 +2056,9 @@
       FILENAME = TRIM( DATA_DIR_1x1 )//
      &         'EDGAR_200607/BENZ/BENZ_1985_FF_IND_EDGAR2.1x1geos.bpch'
       ! Write file name to stdout
+      IF (LMASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
+      ENDIF
 
       CALL READ_BPCH2( FILENAME, 'ANTHSRCE',    57, 
      &                 0.d0,       I1x1,        J1x1,     
@@ -2066,7 +2067,8 @@
       ! Regrid BENZ from GEOS 1x1 to current model resolution
       ! [atoms C/cm2/s] (ccc, 3/9/09)
       GEOS1x1(:,:,1) = ARRAY(:,:)
-      CALL DO_REGRID_1x1('atoms C/cm2/s', GEOS1x1, TEMP)
+      CALL TRANS_REGRID( GEOS1x1, TEMP,
+     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
       E_BENZ = TEMP
 
@@ -2076,7 +2078,9 @@
       FILENAME = TRIM( DATA_DIR_1x1 )//
      &         'EDGAR_200607/TOLU/TOLU_1985_FF_IND_EDGAR2.1x1geos.bpch'
       ! Write file name to stdout
+      IF (LMASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
+      ENDIF
 
       CALL READ_BPCH2( FILENAME, 'ANTHSRCE',    58, 
      &                 0.d0,       I1x1,        J1x1,     
@@ -2085,7 +2089,8 @@
       ! Regrid TOLU from GEOS 1x1 to current model resolution
       ! [atoms C/cm2/s] (ccc, 3/9/09)
       GEOS1x1(:,:,1) = ARRAY(:,:)
-      CALL DO_REGRID_1x1('atoms C/cm2/s', GEOS1x1, TEMP)
+      CALL TRANS_REGRID( GEOS1x1, TEMP,
+     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
       E_TOLU = TEMP
 
@@ -2095,7 +2100,9 @@
       FILENAME = TRIM( DATA_DIR_1x1 )//
      &         'EDGAR_200607/XYLE/XYLE_1985_FF_IND_EDGAR2.1x1geos.bpch'
       ! Write file name to stdout
+      IF (LMASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
+      ENDIF
 
 
       CALL READ_BPCH2( FILENAME, 'ANTHSRCE',    59, 
@@ -2105,7 +2112,8 @@
       ! Regrid XYLE from GEOS 1x1 to current model resolution
       ! [atoms C/cm2/s] (ccc, 3/9/09)
       GEOS1x1(:,:,1) = ARRAY(:,:)
-      CALL DO_REGRID_1x1('atoms C/cm2/s', GEOS1x1, TEMP)
+      CALL TRANS_REGRID( GEOS1x1, TEMP,
+     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
       E_XYLE = TEMP
 
@@ -2137,7 +2145,7 @@
       ! References to F90 modules
       USE BPCH2_MOD
       USE DIRECTORY_MOD, ONLY : DATA_DIR_1x1
-      USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
+!     USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
 
 !      IMPLICIT NONE
 #     include "define.h"
@@ -2165,7 +2173,9 @@
      &        'EDGAR_200607/C2H4/C2H4_1985_FF_IND_EDGAR2.1x1geos.bpch'
 
       ! Write file name to stdout
+      IF (LMASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
+      ENDIF
  100  FORMAT( 'READ_C2H4: Reading ', a )
 
       !=================================================================
@@ -2179,7 +2189,8 @@
       ! Regrid C2H4 from GEOS 1x1 to current model resolution
       ! [atoms C/cm2/s] (ccc, 3/9/09)
       GEOS1x1(:,:,1) = ARRAY(:,:)
-      CALL DO_REGRID_1x1('atoms C/cm2/s', GEOS1x1, TEMP)
+      CALL TRANS_REGRID( GEOS1x1, TEMP,
+     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
       E_C2H4 = TEMP
 
@@ -2208,7 +2219,7 @@
       ! References to F90 modules
       USE BPCH2_MOD  
       USE DIRECTORY_MOD, ONLY : DATA_DIR_1x1
-      USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
+!     USE REGRID_1x1_MOD,       ONLY : DO_REGRID_1x1
 
 !      IMPLICIT NONE
 #     include "define.h"
@@ -2236,7 +2247,9 @@
      &        'EDGAR_200607/C2H2/C2H2_1985_FF_IND_EDGAR2.1x1geos.bpch'
 
       ! Write file name to stdout
+      IF (LMASTER) THEN
       WRITE( 6, 100 ) TRIM( FILENAME )
+      ENDIF
  100  FORMAT( 'READ_C2H2: Reading ', a )
 
       !=================================================================
@@ -2249,13 +2262,15 @@
       ! Regrid C2H2 from GEOS 1x1 to current model resolution
       ! [atoms C/cm2/s] (ccc, 3/9/09)
       GEOS1x1(:,:,1) = ARRAY(:,:)
-      CALL DO_REGRID_1x1('atoms C/cm2/s', GEOS1x1, TEMP)
+      CALL TRANS_REGRID( GEOS1x1, TEMP,
+     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
       E_C2H2 = TEMP
 
       ! Return to calling program
       END SUBROUTINE READ_C2H2
 
+#ifdef NOUSE
 !------------------------------------------------------------------------------
       SUBROUTINE READ_AROMATICS_05x0666( E_BENZ, E_TOLU, E_XYLE )
 !

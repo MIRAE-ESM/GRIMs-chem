@@ -21,7 +21,7 @@
       USE DAO_MOD,        ONLY : UWND, VWND, T, SPHU, CLDMAS, DTRAIN
       USE DAO_MOD,        ONLY : HFLUX, RADSWG, PREACC, PRECON, TS
       USE DAO_MOD,        ONLY : USTAR, Z0, CLDFRC, U10M, V10M
-      USE DAO_MOD,        ONLY : ALBD, TROPP, TSKIN
+      USE DAO_MOD,        ONLY : ALBD, CLDTOPS, TROPP, TSKIN
       USE DAO_MOD,        ONLY : PARDF, PARDR, GWETTOP
       USE DIAG_MOD,       ONLY : AD30, AD31, AD33, AD35, AD45, AD54 
       USE DIAG_MOD,       ONLY : AD47, AD67, AD68, AD69, LTOTH, LTO3
@@ -414,6 +414,7 @@
          AD67(:,:,11) = AD67(:,:,11) + U10M
          AD67(:,:,12) = AD67(:,:,12) + V10M
          AD67(:,:,14) = AD67(:,:,14) + ALBD
+         AD67(:,:,16) = AD67(:,:,16) + CLDTOPS
          AD67(:,:,17) = AD67(:,:,17) + TROPP
          AD67(:,:,19) = AD67(:,:,19) + TSKIN
          AD67(:,:,20) = AD67(:,:,20) + PARDF

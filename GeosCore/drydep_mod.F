@@ -1015,7 +1015,7 @@
 
       ! Call soiltype to determine whether soil is dry or
       ! wet for all land grid-boxes
-!     CALL SOILTYPE
+      CALL SOILTYPE
 
       ! Only do the following if DRYDEP is turned on
       IF ( .not. LDRYD ) RETURN

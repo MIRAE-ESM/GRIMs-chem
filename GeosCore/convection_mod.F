@@ -16,7 +16,7 @@
 ! 
 ! !USES:
 !
-!     USE GC_TYPE_MOD
+      USE GC_TYPE_MOD
       USE SMV_ERRCODE_MOD
       USE SMV_PHYSCONST_MOD
 

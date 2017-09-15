@@ -50,6 +50,13 @@
       ALLOCATE ( XLAI(IIPAR,JJPAR,NTYPE) )
       ALLOCATE ( XLAI2(IIPAR,JJPAR,NTYPE) )
 
+      IREG   = 0
+      ILAND  = 0
+      IUSE   = 0
+      FRCLND = 0d0
+      XLAI   = 0d0
+      XLAI2  = 0d0
+
       END SUBROUTINE INIT_CMN_DEP
 !
 ! !REMARKS:

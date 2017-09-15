@@ -773,9 +773,9 @@
 !    &                     TRIM( OUT_RST_FILE )
 !     WRITE( 6, 120     ) 'Unzip met fields?           : ', LUNZIP
 !     WRITE( 6, 120     ) 'Wait for met fields?        : ', LWAIT
-      WRITE( 6, 120     ) 'Use variable tropopause?    : ', LVARTROP
+!     WRITE( 6, 120     ) 'Use variable tropopause?    : ', LVARTROP
       WRITE( 6, 120     ) 'Use LINOZ strat chemistry?  : ', LLINOZ
-      WRITE( 6, 130     ) 'Global offsets I0, J0       : ', I0, J0
+!     WRITE( 6, 130     ) 'Global offsets I0, J0       : ', I0, J0
       WRITE( 6, 120     ) 'Aerosol direct effect       : ', LAERODIR
       WRITE( 6, 120     ) 'Aerosol indirect effect     : ', LAEROIND
       WRITE( 6, 120     ) 'Save met-fields?            : ', LSVMET
@@ -843,7 +843,7 @@
 ! !USES:
 !
       USE CHARPAK_MOD,  ONLY : ISDIGIT
-!     USE BIOFUEL_MOD,  ONLY : SET_BFTRACE
+      USE BIOFUEL_MOD,  ONLY : SET_BFTRACE
       USE BIOMASS_MOD,  ONLY : SET_BIOTRCE
       USE ERROR_MOD,    ONLY : ALLOC_ERR, ERROR_STOP
       USE LOGICAL_MOD,  ONLY : LSPLIT
@@ -1124,7 +1124,7 @@
       CALL TRACERID
 
       ! Set NBFTRACE in "biofuel_mod.f"
-!     CALL SET_BFTRACE
+      CALL SET_BFTRACE
 
       ! Set NBIOTRACE in "biomass_mod.f"
       !FP_ISOP (6/2009)
@@ -2586,8 +2586,8 @@
 !     READ( SUBSTRS(1:N), * ) LSVCSPEC
 
       ! Use KPP solver ?
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:4' )
-      READ( SUBSTRS(1:N), * ) LKPP
+!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:4' )
+!     READ( SUBSTRS(1:N), * ) LKPP
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:5' )
@@ -2601,7 +2601,7 @@
       WRITE( 6, 100     ) 'Turn on chemistry?          : ', LCHEM
 !     WRITE( 6, 110     ) 'Chemistry timestep [min]    : ', TS_CHEM
 !     WRITE( 6, 100     ) 'Use CSPEC restart?          : ', LSVCSPEC
-      WRITE( 6, 100     ) 'Use solver coded by KPP?    : ', LKPP
+!     WRITE( 6, 100     ) 'Use solver coded by KPP?    : ', LKPP
       ENDIF
 
          
@@ -2634,8 +2634,8 @@
       USE LOGICAL_MOD,   ONLY : LTRAN,              LUPBD
       USE LOGICAL_MOD,   ONLY : LMFCT,              LFILL
       USE TRACER_MOD,    ONLY : ITS_A_FULLCHEM_SIM, ITS_A_TAGOX_SIM
-!     USE TRANSPORT_MOD, ONLY : SET_TRANSPORT
-!     USE UPBDFLX_MOD,   ONLY : INIT_UPBDFLX
+      USE TRANSPORT_MOD, ONLY : SET_TRANSPORT
+      USE UPBDFLX_MOD,   ONLY : INIT_UPBDFLX
       USE comcon,        ONLY : con
 ! 
 ! !REVISION HISTORY: 
@@ -2695,8 +2695,8 @@
 #endif
 
       ! Include strat O3/NOy
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:6' )
-!     READ( SUBSTRS(1:N), * ) LUPBD
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:6' )
+      READ( SUBSTRS(1:N), * ) LUPBD
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:7' )
@@ -2706,8 +2706,8 @@
       !=================================================================      
 
       ! Turn off LUPBD if for simulations other than fullchem & tagox
-      IF ( .not. ITS_A_FULLCHEM_SIM()  .and. 
-     &     .not. ITS_A_TAGOX_SIM()    ) LUPBD = .FALSE.
+!     IF ( .not. ITS_A_FULLCHEM_SIM()  .and. 
+!    &     .not. ITS_A_TAGOX_SIM()    ) LUPBD = .FALSE.
       
       ! Define maximum timestep for transport
 #if   defined( GRID4x5   ) 
@@ -2740,7 +2740,7 @@
 !     WRITE( 6, 110     ) 'IORD, JORD, KORD for TPCORE?: ', IORD, 
 !    &                                                      JORD, KORD
 !     WRITE( 6, 120     ) 'Transport timestep [min]    : ', TS_DYN
-!     WRITE( 6, 100     ) 'Use strat BC for O3 & NOy?  : ', LUPBD
+      WRITE( 6, 100     ) 'Use strat BC for O3 & NOy?  : ', LUPBD
       ENDIF
 
       ! FORMAT statements
@@ -2753,10 +2753,10 @@
       !=================================================================
 
       ! Pass parameters to "transport_mod.f"
-!     CALL SET_TRANSPORT( IORD, JORD, KORD )
+      CALL SET_TRANSPORT( IORD, JORD, KORD )
 
       ! Pass parameters to "upbdflx_mod.f"
-!     CALL INIT_UPBDFLX( IORD, JORD, KORD )
+      CALL INIT_UPBDFLX( IORD, JORD, KORD )
 
       END SUBROUTINE READ_TRANSPORT_MENU
 !EOC
@@ -2816,8 +2816,8 @@
       READ( SUBSTRS(1:N), * ) LTURB
 
       ! Turn on non-local PBL scheme (Lin, 03/31/09)
-      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:3' )
-      READ( SUBSTRS(1:N), * ) LNLPBL
+!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:3' )
+!     READ( SUBSTRS(1:N), * ) LNLPBL
 
       ! Convection timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:4' )
@@ -2852,7 +2852,7 @@
       WRITE( 6, '(  a)' ) '----------------'
       WRITE( 6, 100     ) 'Turn on cloud convection?   : ', LCONV
       WRITE( 6, 100     ) 'Turn on PBL mixing?         : ', LTURB
-      WRITE( 6, 100     ) 'Turn on non-local PBL?      : ', LNLPBL
+!     WRITE( 6, 100     ) 'Turn on non-local PBL?      : ', LNLPBL
 !     WRITE( 6, 110     ) 'Convection timestep [min]   : ', TS_CONV
       ENDIF
 
@@ -3149,14 +3149,14 @@
 !
 ! !USES:
 !
-!     USE BIOFUEL_MOD,  ONLY : NBFTRACE
+      USE BIOFUEL_MOD,  ONLY : NBFTRACE
       USE BPCH2_MOD,    ONLY : OPEN_BPCH2_FOR_WRITE
 !     USE DIAG03_MOD,   ONLY : ND03,      PD03,      INIT_DIAG03
 !     USE DIAG04_MOD,   ONLY : ND04,      PD04,      INIT_DIAG04
       USE DIAG41_MOD,   ONLY : ND41,      PD41,      INIT_DIAG41
 !     USE DIAG42_MOD,   ONLY : ND42,      PD42,      INIT_DIAG42
-!     USE DIAG56_MOD,   ONLY : ND56,      PD56,      INIT_DIAG56
-!     USE DIAG_OH_MOD,  ONLY : INIT_DIAG_OH
+      USE DIAG56_MOD,   ONLY : ND56,      PD56,      INIT_DIAG56
+      USE DIAG_OH_MOD,  ONLY : INIT_DIAG_OH
       USE DRYDEP_MOD,   ONLY : NUMDEP
       USE ERROR_MOD,    ONLY : ERROR_STOP
       USE FILE_MOD,     ONLY : IU_BPCH
@@ -3319,16 +3319,16 @@
       !--------------------------
       ! ND11: Acetone source
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:13' )
-!     READ( SUBSTRS(1), * ) ND11
-!     CALL SET_TINDEX( 11, ND11, SUBSTRS(2:N), N-1, PD11 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:13' )
+      READ( SUBSTRS(1), * ) ND11
+      CALL SET_TINDEX( 11, ND11, SUBSTRS(2:N), N-1, PD11 )
 
       !--------------------------
       ! ND12: PBL distribution
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:14' )
-!     READ( SUBSTRS(1), * ) ND12
-!     CALL SET_TINDEX( 12, ND12, SUBSTRS(2:N), N-1, PD12 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:14' )
+      READ( SUBSTRS(1), * ) ND12
+      CALL SET_TINDEX( 12, ND12, SUBSTRS(2:N), N-1, PD12 )
 
       !--------------------------
       ! ND13: Sulfur sources
@@ -3389,26 +3389,26 @@
       !--------------------------
       ! ND21: Opt depths etc.
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:22' )
-!     READ( SUBSTRS(1), * ) ND21
-!     CALL SET_TINDEX( 21, ND21, SUBSTRS(2:N), N-1, PD21 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:22' )
+      READ( SUBSTRS(1), * ) ND21
+      CALL SET_TINDEX( 21, ND21, SUBSTRS(2:N), N-1, PD21 )
 
       ! Error check 
-!     IF ( ND21 > 0 .and. SALA_REDGE_um(2) /= 0.5 ) THEN
-!        MSG = 'Cannot output seasalt AOD''s when radius bin' //
-!    &         ' is not split at 0.5 um!!'
-!        CALL ERROR_STOP( MSG, LOCATION )
-!     ENDIF
+      IF ( ND21 > 0 .and. SALA_REDGE_um(2) /= 0.5 ) THEN
+         MSG = 'Cannot output seasalt AOD''s when radius bin' //
+     &         ' is not split at 0.5 um!!'
+         CALL ERROR_STOP( MSG, LOCATION )
+      ENDIF
 
       !--------------------------
       ! ND22: J-values
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:23' )
-!     READ( SUBSTRS(1), * ) ND22
-!     CALL SET_TINDEX( 22, ND22, SUBSTRS(2:N), N-1, PD22 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:23' )
+      READ( SUBSTRS(1), * ) ND22
+      CALL SET_TINDEX( 22, ND22, SUBSTRS(2:N), N-1, PD22 )
 
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:24' ) 
-!     READ( SUBSTRS(1:N), * ) HR1_JV, HR2_JV
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:24' ) 
+      READ( SUBSTRS(1:N), * ) HR1_JV, HR2_JV
 
       !--------------------------
       ! ND24: E/W transport flux
@@ -3449,9 +3449,9 @@
       !--------------------------
       ! ND29: CO sources
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:30' )
-!     READ( SUBSTRS(1), * ) ND29
-!     CALL SET_TINDEX( 29, ND29, SUBSTRS(2:N), N-1, PD29 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:30' )
+      READ( SUBSTRS(1), * ) ND29
+      CALL SET_TINDEX( 29, ND29, SUBSTRS(2:N), N-1, PD29 )
 
       !--------------------------
       ! ND30: Land map
@@ -3470,38 +3470,38 @@
       !--------------------------
       ! ND32: NOx sources
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:33' )
-!     READ( SUBSTRS(1), * ) ND32
-!     CALL SET_TINDEX( 32, ND32, SUBSTRS(2:N), N-1, PD32 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:33' )
+      READ( SUBSTRS(1), * ) ND32
+      CALL SET_TINDEX( 32, ND32, SUBSTRS(2:N), N-1, PD32 )
 
       !--------------------------
       ! ND33: Column tracer
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:34' )
-!     READ( SUBSTRS(1), * ) ND33
-!     CALL SET_TINDEX( 33, ND33, SUBSTRS(2:N), N-1, N_MAX )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:34' )
+      READ( SUBSTRS(1), * ) ND33
+      CALL SET_TINDEX( 33, ND33, SUBSTRS(2:N), N-1, N_MAX )
 
       !--------------------------
       ! ND34: Biofuel sources
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:35' )
-!     READ( SUBSTRS(1), * ) ND34
-!     IF ( .not. LBIOFUEL ) ND34 = 0
-!     CALL SET_TINDEX( 34, ND34, SUBSTRS(2:N), N-1, NBFTRACE )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:35' )
+      READ( SUBSTRS(1), * ) ND34
+      IF ( .not. LBIOFUEL ) ND34 = 0
+      CALL SET_TINDEX( 34, ND34, SUBSTRS(2:N), N-1, NBFTRACE )
 
       !--------------------------
       ! ND35: 500 hPa tracer
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:36' )
-!     READ( SUBSTRS(1), * ) ND35
-!     CALL SET_TINDEX( 35, ND35, SUBSTRS(2:N), N-1, N_MAX )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:36' )
+      READ( SUBSTRS(1), * ) ND35
+      CALL SET_TINDEX( 35, ND35, SUBSTRS(2:N), N-1, N_MAX )
 
       !--------------------------
       ! ND36: Anthro emissions
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:37' )
-!     READ( SUBSTRS(1), * ) ND36
-!     CALL SET_TINDEX( 36, ND36, SUBSTRS(2:N), N-1, NEMANTHRO )      
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:37' )
+      READ( SUBSTRS(1), * ) ND36
+      CALL SET_TINDEX( 36, ND36, SUBSTRS(2:N), N-1, NEMANTHRO )      
 
       !--------------------------
       ! ND37: Updraft scav frac
@@ -3546,16 +3546,16 @@
       !--------------------------
       ! ND43: OH, NO, etc.
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:43' )
-!     READ( SUBSTRS(1), * ) ND43
-!     IF ( .not. ( ITS_A_FULLCHEM_SIM().or.ITS_A_CH4_SIM() )) ND43 = 0
-!     CALL SET_TINDEX( 43, ND43, SUBSTRS(2:N), N-1, PD43 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:43' )
+      READ( SUBSTRS(1), * ) ND43
+      IF ( .not. ( ITS_A_FULLCHEM_SIM().or.ITS_A_CH4_SIM() )) ND43 = 0
+      CALL SET_TINDEX( 43, ND43, SUBSTRS(2:N), N-1, PD43 )
 
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:44' )
-!     READ( SUBSTRS(1:N), * ) HR1_OH, HR2_OH
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:44' )
+      READ( SUBSTRS(1:N), * ) HR1_OH, HR2_OH
 
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:45' )
-!     READ( SUBSTRS(1:N), * ) HR1_NO, HR2_NO
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 2,  'read_diagnostic_menu:45' )
+      READ( SUBSTRS(1:N), * ) HR1_NO, HR2_NO
 
       !--------------------------
       ! ND44 drydep vel & flux
@@ -3586,9 +3586,9 @@
       !--------------------------
       ! ND46: Biogenic sources
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:49' )
-!     READ( SUBSTRS(1), * ) ND46
-!     CALL SET_TINDEX( 46, ND46, SUBSTRS(2:N), N-1, PD46 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:49' )
+      READ( SUBSTRS(1), * ) ND46
+      CALL SET_TINDEX( 46, ND46, SUBSTRS(2:N), N-1, PD46 )
 
       !--------------------------
       ! ND47: 24h avg tracer
@@ -3600,9 +3600,9 @@
       !--------------------------
       ! ND52: GAMMA HO2
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:51' )
-!     READ( SUBSTRS(1), * ) ND52
-!     CALL SET_TINDEX( 52, ND52, SUBSTRS(2:N), N-1, PD52 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:51' )
+      READ( SUBSTRS(1), * ) ND52
+      CALL SET_TINDEX( 52, ND52, SUBSTRS(2:N), N-1, PD52 )
 
       !--------------------------
       ! ND53: Free
@@ -3628,9 +3628,9 @@
       !--------------------------
       ! ND56: Lightning flashes
       !--------------------------
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:55' )
-!     READ( SUBSTRS(1), * ) ND56
-!     CALL SET_TINDEX( 56, ND56, SUBSTRS(2:N), N-1, PD56 )
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, -1, 'read_diagnostic_menu:55' )
+      READ( SUBSTRS(1), * ) ND56
+      CALL SET_TINDEX( 56, ND56, SUBSTRS(2:N), N-1, PD56 )
 
       !--------------------------
       ! ND57: Potential temperature
@@ -3736,10 +3736,10 @@
 !     CALL INIT_DIAG04
       CALL INIT_DIAG41
 !     CALL INIT_DIAG42
-!     CALL INIT_DIAG56
+      CALL INIT_DIAG56
 
       ! Enable Mean OH (or CH3CCl3) diag for runs which need it
-!     CALL INIT_DIAG_OH 
+      CALL INIT_DIAG_OH 
 
       ! Expand YYYYMMDD tokens in the bpch file name
       CALL EXPAND_DATE( BPCH_FILE, GET_NYMDb(), GET_NHMSb() )
