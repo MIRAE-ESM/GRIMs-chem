@@ -33,7 +33,6 @@ c
         read(NJ2,'(3X,11F7.4)') (OREF(I,L,M), I=1,31)
       enddo
       close(NJ2)
-      endif
 c
 c  Extend climatology to 100 km
       ofac=exp(-2.d5/ZZHT)
@@ -52,6 +51,7 @@ c  Extend climatology to 100 km
           enddo
         enddo
       enddo
+      endif
 c
 #ifdef MP
 #ifndef RMP
