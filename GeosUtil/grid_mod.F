@@ -968,14 +968,44 @@
       DO I = 1, IIIPAR
 
          ! Locate index corresponding to the lower-left longitude
-         IF ( COORDS(1) >  XEDGE(I  )   .and. 
-     &        COORDS(1) <= XEDGE(I+1) ) INDICES(1) = I
+         IF ( COORDS(1) >= XEDGE(I  )   .and. 
+     &        COORDS(1) <  XEDGE(I+1) ) INDICES(1) = I
 
          ! Locate index corresponding to upper-right longitude
          IF ( COORDS(3) >  XEDGE(I  )   .and. 
      &        COORDS(3) <= XEDGE(I+1) ) INDICES(3) = I
 
       ENDDO
+
+      ! Date line check lower-left longitude
+      IF ( INDICES(1) == 0 ) THEN
+
+         I = IIIPAR / 2 + 1
+
+         ! Locate index corresponding to the lower-left longitude
+         IF ( COORDS(1) >= XEDGE(I  ) - 360d0  .and. 
+     &        COORDS(1) <  XEDGE(I+1) ) INDICES(1) = I
+
+         ! Locate index corresponding to the lower-left longitude
+         IF ( COORDS(1) >= XEDGE(I  )   .and. 
+     &        COORDS(1) <  XEDGE(I+1) + 360d0 ) INDICES(1) = I
+
+      ENDIF
+
+      ! Date line check upper-right longitude
+      IF ( INDICES(3) == 0 ) THEN
+
+         I = IIIPAR / 2 + 1
+
+         ! Locate index corresponding to upper-right longitude
+         IF ( COORDS(3) >  XEDGE(I  ) - 360d0  .and. 
+     &        COORDS(3) <= XEDGE(I+1) ) INDICES(3) = I
+
+         ! Locate index corresponding to upper-right longitude
+         IF ( COORDS(3) >  XEDGE(I  )   .and. 
+     &        COORDS(3) <= XEDGE(I+1) + 360d0 ) INDICES(3) = I
+
+      ENDIF
 
       ! Error check lower-left longitude
       IF ( INDICES(1) == 0 ) THEN
@@ -993,8 +1023,8 @@
       DO J = 1, JJJPAR
 
          ! Locate index corresponding to the lower-left latitude
-         IF ( COORDS(2) >  YEDGE(J+1)   .and. 
-     &        COORDS(2) <= YEDGE(J  ) ) INDICES(2) = J
+         IF ( COORDS(2) >= YEDGE(J+1)   .and. 
+     &        COORDS(2) <  YEDGE(J  ) ) INDICES(2) = J
 
          ! Locate index corresponding to the upper-right latitude
          IF ( COORDS(4) >  YEDGE(J+1)   .and. 

@@ -4194,9 +4194,9 @@
       WRITE( 6, 120     ) 'ND49 timeseries tracers     : ', 
      &                     ( TRACERS(N), N=1, N_ND49 )
       WRITE( 6, 130     ) 'ND49 save frequency [min]   : ', FREQ
-      WRITE( 6, 130     ) 'ND49 longitude limits       : ', IMIN, IMAX
-      WRITE( 6, 130     ) 'ND49 latitude  limits       : ', JMIN, JMAX
-      WRITE( 6, 130     ) 'ND49 level     limits       : ', LMIN, LMAX
+      WRITE( 6, 130     ) 'ND49 longitude limits [deg] : ', IMIN, IMAX
+      WRITE( 6, 130     ) 'ND49 latitude  limits [deg] : ', JMIN, JMAX
+      WRITE( 6, 130     ) 'ND49 level     limits [lev] : ', LMIN, LMAX
       ENDIF
 
       ! FORMAT statements

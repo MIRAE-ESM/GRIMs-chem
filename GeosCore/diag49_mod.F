@@ -2156,6 +2156,7 @@
 !
       USE BPCH2_MOD, ONLY : GET_MODELNAME
       USE BPCH2_MOD, ONLY : GET_HALFPOLAR
+      USE GRID_MOD,  ONLY : GET_BOUNDING_BOX
       USE GRID_MOD,  ONLY : GET_XOFFSET
       USE GRID_MOD,  ONLY : GET_YOFFSET
       USE GRID_MOD,  ONLY : ITS_A_NESTED_GRID
@@ -2199,6 +2200,8 @@
 !
 ! !LOCAL VARIABLES:
 !
+      INTEGER            :: INDICES(4)
+      REAL*8             :: COORDS(4)
       CHARACTER(LEN=255) :: LOCATION
       
       !=================================================================
@@ -2224,6 +2227,37 @@
      
       ! Return if we are not saving ND49 diagnostics
       IF ( .not. DO_SAVE_DIAG49 ) RETURN
+
+      ! IMIN and IMAX should be in the range of -180 to 180
+      DO WHILE( ND49_IMIN < -180 )
+         ND49_IMIN = ND49_IMIN + 360
+      ENDDO
+      DO WHILE( ND49_IMIN > 180 )
+         ND49_IMIN = ND49_IMIN - 360
+      ENDDO
+      DO WHILE( ND49_IMAX < -180 )
+         ND49_IMAX = ND49_IMAX + 360
+      ENDDO
+      DO WHILE( ND49_IMAX > 180 )
+         ND49_IMAX = ND49_IMAX - 360
+      ENDDO
+
+      ! Definition of ND49 save area
+      COORDS = (/ DBLE(ND49_IMIN), DBLE(ND49_JMIN),
+     &            DBLE(ND49_IMAX), DBLE(ND49_JMAX) /)
+
+      ! Get the indices corresponding to the lon/lat values in COORDS
+      CALL GET_BOUNDING_BOX( COORDS, INDICES )
+
+      IF ( IMAX - IMIN == 360 ) INDICES(3) = INDICES(1) - 1
+
+      ! Do xshift and yrev
+      ND49_IMIN = INDICES(1) + IGLOB/2
+      ND49_IMAX = INDICES(3) + IGLOB/2
+      ND49_JMIN = JGLOB + 1 - INDICES(2)
+      ND49_JMAX = JGLOB + 1 - INDICES(4)
+      IF ( ND49_IMIN > IGLOB ) ND49_IMIN = ND49_IMIN - IGLOB
+      IF ( ND49_IMAX > IGLOB ) ND49_IMAX = ND49_IMAX - IGLOB
 
       !=================================================================
       ! Compute lon, lat, alt extents and check for errors
