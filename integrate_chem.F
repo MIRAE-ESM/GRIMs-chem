@@ -15,8 +15,8 @@
       USE CHEMISTRY_MOD,     ONLY : DO_CHEMISTRY, RECOMPUTE_OD
       USE CONVECTION_MOD,    ONLY : DO_CONVECTION
       USE DAO_MOD,           ONLY : AD, AIRQNT, CONVERT_UNITS, COSSZA
-      USE DAO_MOD,           ONLY : MAKE_RH, PSC2, SUNCOS, SUNCOS_MID
-      USE DAO_MOD,           ONLY : T, TROPP
+      USE DAO_MOD,           ONLY : MAKE_RH, PS1, PSC2, SUNCOS
+      USE DAO_MOD,           ONLY : SUNCOS_MID, T, TROPP
       USE DIAG41_MOD,        ONLY : DIAG41, ND41
       USE DIAG49_MOD,        ONLY : DIAG49, ITS_TIME_FOR_DIAG49
       USE DIAG_AOD_MOD,      ONLY : WRITE_DIAG_AOD
@@ -68,6 +68,7 @@
       USE UVALBEDO_MOD,      ONLY : READ_UVALBEDO
       USE WETSCAV_MOD,       ONLY : DO_WETDEP, INIT_WETSCAV
 #ifndef RMP
+      USE comfphys,          ONLY : lastep
       USE comfver,           ONLY : stepone
 #endif
 
@@ -83,13 +84,13 @@
       LOGICAL, SAVE :: FIRST = .TRUE.
 
 #ifndef RMP
-      IF ( stepone .AND. .NOT. FIRST ) RETURN
+      IF ( stepone .AND. .NOT. lastep ) RETURN
 #endif
 
       IF (FIRST) THEN
 
          ! Call AIRQNT to compute air mass quantities from PSC2
-         CALL SET_FLOATING_PRESSURE( PSC2 )
+         CALL SET_FLOATING_PRESSURE( PS1 )
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_FLT_PRS' )
 
          CALL AIRQNT

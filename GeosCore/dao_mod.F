@@ -2186,9 +2186,9 @@
       PRECON = 0d0
    
       ! Pressure at beginning of 6hr timestep
-!     ALLOCATE( PS1( IIPAR, JJPAR ), STAT=AS )  
-!     IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS1' )
-!     PS1 = 0d0
+      ALLOCATE( PS1( IIPAR, JJPAR ), STAT=AS )  
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'PS1' )
+      PS1 = 0d0
 
       ! Pressure at end of 6hr timestep
 !     ALLOCATE( PS2( IIPAR, JJPAR ), STAT=AS )
