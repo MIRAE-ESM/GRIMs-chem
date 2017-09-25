@@ -2521,6 +2521,11 @@
       DO J = 1, JJPAR
       DO I = 1, IIPAR
 
+         D_DIM = 0d0
+         DO D = 1, DAY_DIM
+            IF ( T_DAY(I,J,D) > 0d0 ) D_DIM = D_DIM + 1d0
+         ENDDO
+
          ! Average T_DAY over the 8 TS values during the day.
          TMP_T = SUM( T_DAY(I,J,:) ) / D_DIM
          
@@ -2538,6 +2543,11 @@
 
          ! Put the newest daily average TS value in the first spot
          T_15(I,J,1) = TMP_T
+
+         D_DAYS = 0d0
+         DO D = 1, NUM_DAYS
+            IF ( T_15(I,J,D) > 0d0 ) D_DAYS = D_DAYS + 1d0
+         ENDDO
 
          ! Get T_15_AVG by averaging T_15 over the 15 day period.
          T_15_AVG(I,J) = SUM( T_15(I,J,:) ) / D_DAYS 
