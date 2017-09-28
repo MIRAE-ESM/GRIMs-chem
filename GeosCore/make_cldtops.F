@@ -24,6 +24,7 @@
          DO L = LLPAR, 1, -1
             IF ( CLDMAS(I,J,L) > 0d0 ) THEN
                CLDTOPS(I,J) = L + 1
+               EXIT
             ENDIF
          ENDDO
       ENDDO

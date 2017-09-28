@@ -525,8 +525,8 @@
          PEDGE = 1013.25 * si(L)
 #endif
          IF ( PEDGE < 50d0 ) THEN
-            LLTROP     = L
-            LLTROP_FIX = L
+            LLTROP     = L - 1
+            LLTROP_FIX = L - 1
             EXIT
          ENDIF
       ENDDO

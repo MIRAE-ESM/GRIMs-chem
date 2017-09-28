@@ -42,26 +42,33 @@
 
       IF (LMASTER) THEN
       ! No horizontal regridding
-      IF ( RES .EQ. 0 ) THEN
+      IF ( IN_NI .EQ. LONF2F .AND. IN_NJ .EQ. LATG2F ) THEN
 
          F_ARRAY = INDATA
 
       ! Perform horizontal regridding
-      ELSE
+      ELSE IF ( IN_NI .EQ. I1x1 .AND. IN_NJ .EQ. J1x1 ) THEN
 
          DO L = 1, IN_NL
 
             ! 1x1 -> model grid
-            IF ( RES .EQ. 1 ) THEN
-               CALL REGRID_1x1( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
-            ENDIF
-
-            ! 2x25 -> model grid
-            IF ( RES .EQ. 2 ) THEN
-               CALL REGRID_2x25( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
-            ENDIF
+            CALL REGRID_1x1( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
 
          ENDDO
+
+      ELSE IF ( IN_NI .EQ. I2x25 .AND. IN_NJ .EQ. J2x25 ) THEN
+
+         DO L = 1, IN_NL
+
+            ! 2x25 -> model grid
+            CALL REGRID_2x25( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
+
+         ENDDO
+
+      ELSE
+
+         WRITE(6,*) 'Error: Unknown NI_NI, NI_NJ in trans_regrid'
+         STOP
 
       ENDIF
 
@@ -79,7 +86,7 @@
 #endif
 
       ! No vertical regridding
-      IF ( VERT .EQ. 0 ) THEN
+      IF ( IN_NL .EQ. OUT_NL ) THEN
 
          DO L = 1, IN_NL
          DO J = 1, JJPAR
@@ -104,19 +111,23 @@
          ENDDO
          ENDDO
 
+         IF ( MASS == 1 ) THEN
+            WRITE(6,*) 'Error: VERT /= 0 and MASS == 1 in trans_regrid'
+            STOP
+         ENDIF
+
          ! 38 layers -> model grid
          IF ( IN_NL .EQ. 38 ) THEN
             CALL INTERP_VER_T( TMP, OUTDATA, VERT, MASS )
-         ENDIF
-
          ! 47 layers -> model grid
-         IF ( IN_NL .EQ. 47 ) THEN
+         ELSE IF ( IN_NL .EQ. 47 ) THEN
             CALL INTERP_VER_R( TMP, OUTDATA, VERT, MASS )
-         ENDIF
-
          ! 72 layers -> model grid
-         IF ( IN_NL .EQ. 72 ) THEN
+         ELSE IF ( IN_NL .EQ. 72 ) THEN
             CALL INTERP_VER_F( TMP, OUTDATA, VERT, MASS )
+         ELSE
+            WRITE(6,*) 'Error: Unknown IN_NL in trans_regrid'
+            STOP
          ENDIF
 
       ENDIF
@@ -773,7 +784,7 @@
       REAL*8  :: AP(39), BP(39)
       REAL*8  :: PEDGE1(39), PEDGE2(LLTROP+1)
       REAL*8  :: FSUM(LLTROP)
-      REAL*8  :: FR1, FR2
+      REAL*8  :: FR, FR1, FR2
 
       AP = (/ 0.000000d+00, 4.804826d-02, 6.593752d+00, 1.313480d+01,
      &        1.961311d+01, 2.609201d+01, 3.257081d+01, 3.898201d+01,
@@ -829,10 +840,10 @@
          !=====================================================
          DO ID=1, 47
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
-     &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
+     &       PEDGE2(L) .GT. PEDGE1(ID+1)) THEN
             ID1=ID
          ENDIF
-         IF (PEDGE2(L+1) .LE. PEDGE1(ID) .AND.
+         IF (PEDGE2(L+1) .LT. PEDGE1(ID) .AND.
      &       PEDGE2(L+1) .GE. PEDGE1(ID+1)) THEN
             ID2=ID
          ENDIF
@@ -845,28 +856,22 @@
 
             ! z weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE2(L+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE2(L+1))
                FR2 = 0d0
             ELSE
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE1(ID1+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
-               FR2 = (LOG(PEDGE2(L+1))-LOG(PEDGE1(ID2)))
-     &             / (LOG(PEDGE1(ID2+1))-LOG(PEDGE1(ID2)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE1(ID1+1))
+               FR2 = LOG(PEDGE1(ID2)) - LOG(PEDGE2(L+1))
             ENDIF
 
          ELSEIF (VERT .EQ. 2) THEN
 
             ! p weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (PEDGE2(L)-PEDGE2(L+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
+               FR1 = PEDGE2(L) - PEDGE2(L+1)
                FR2 = 0d0
             ELSE
-               FR1 = (PEDGE2(L)-PEDGE1(ID1+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
-               FR2 = (PEDGE2(L+1)-PEDGE1(ID2))
-     &             / (PEDGE1(ID2+1)-PEDGE1(ID2))
+               FR1 = PEDGE2(L) - PEDGE1(ID1+1)
+               FR2 = PEDGE1(ID2) - PEDGE2(L+1)
             ENDIF
 
          ENDIF
@@ -878,8 +883,9 @@
          FSUM(L) = FSUM(L) + FR1
 
          DO ID=ID1+1, ID2-1
-            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID)
-            FSUM(L) = FSUM(L) + 1d0
+            FR = PEDGE1(ID) - PEDGE1(ID+1)
+            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID) * FR
+            FSUM(L) = FSUM(L) + FR
          ENDDO
 
          OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID2) * FR2
@@ -927,7 +933,7 @@
       REAL*8  :: AP(48), BP(48)
       REAL*8  :: PEDGE1(48), PEDGE2(LLPAR+1)
       REAL*8  :: FSUM(LLPAR)
-      REAL*8  :: FR1, FR2
+      REAL*8  :: FR, FR1, FR2
 
       AP = (/ 0.000000d+00, 4.804826d-02, 6.593752d+00, 1.313480d+01,
      &        1.961311d+01, 2.609201d+01, 3.257081d+01, 3.898201d+01,
@@ -987,10 +993,10 @@
          !=====================================================
          DO ID=1, 47
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
-     &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
+     &       PEDGE2(L) .GT. PEDGE1(ID+1)) THEN
             ID1=ID
          ENDIF
-         IF (PEDGE2(L+1) .LE. PEDGE1(ID) .AND.
+         IF (PEDGE2(L+1) .LT. PEDGE1(ID) .AND.
      &       PEDGE2(L+1) .GE. PEDGE1(ID+1)) THEN
             ID2=ID
          ENDIF
@@ -1003,28 +1009,22 @@
 
             ! z weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE2(L+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE2(L+1))
                FR2 = 0d0
             ELSE
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE1(ID1+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
-               FR2 = (LOG(PEDGE2(L+1))-LOG(PEDGE1(ID2)))
-     &             / (LOG(PEDGE1(ID2+1))-LOG(PEDGE1(ID2)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE1(ID1+1))
+               FR2 = LOG(PEDGE1(ID2)) - LOG(PEDGE2(L+1))
             ENDIF
 
          ELSEIF (VERT .EQ. 2) THEN
 
             ! p weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (PEDGE2(L)-PEDGE2(L+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
+               FR1 = PEDGE2(L) - PEDGE2(L+1)
                FR2 = 0d0
             ELSE
-               FR1 = (PEDGE2(L)-PEDGE1(ID1+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
-               FR2 = (PEDGE2(L+1)-PEDGE1(ID2))
-     &             / (PEDGE1(ID2+1)-PEDGE1(ID2))
+               FR1 = PEDGE2(L) - PEDGE1(ID1+1)
+               FR2 = PEDGE1(ID2) - PEDGE2(L+1)
             ENDIF
 
          ENDIF
@@ -1036,8 +1036,9 @@
          FSUM(L) = FSUM(L) + FR1
 
          DO ID=ID1+1, ID2-1
-            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID)
-            FSUM(L) = FSUM(L) + 1d0
+            FR = PEDGE1(ID) - PEDGE1(ID+1)
+            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID) * FR
+            FSUM(L) = FSUM(L) + FR
          ENDDO
 
          OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID2) * FR2
@@ -1085,7 +1086,7 @@
       REAL*8  :: AP(73), BP(73)
       REAL*8  :: PEDGE1(73), PEDGE2(LLPAR+1)
       REAL*8  :: FSUM(LLPAR)
-      REAL*8  :: FR1, FR2
+      REAL*8  :: FR, FR1, FR2
 
       AP = (/ 0.000000d+00, 4.804826d-02, 6.593752d+00, 1.313480d+01,
      &        1.961311d+01, 2.609201d+01, 3.257081d+01, 3.898201d+01,
@@ -1159,10 +1160,10 @@
          !=====================================================
          DO ID=1, 72
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
-     &       PEDGE2(L) .GE. PEDGE1(ID+1)) THEN
+     &       PEDGE2(L) .GT. PEDGE1(ID+1)) THEN
             ID1=ID
          ENDIF
-         IF (PEDGE2(L+1) .LE. PEDGE1(ID) .AND.
+         IF (PEDGE2(L+1) .LT. PEDGE1(ID) .AND.
      &       PEDGE2(L+1) .GE. PEDGE1(ID+1)) THEN
             ID2=ID
          ENDIF
@@ -1175,28 +1176,22 @@
 
             ! z weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE2(L+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE2(L+1))
                FR2 = 0d0
             ELSE
-               FR1 = (LOG(PEDGE2(L))-LOG(PEDGE1(ID1+1)))
-     &             / (LOG(PEDGE1(ID1))-LOG(PEDGE1(ID1+1)))
-               FR2 = (LOG(PEDGE2(L+1))-LOG(PEDGE1(ID2)))
-     &             / (LOG(PEDGE1(ID2+1))-LOG(PEDGE1(ID2)))
+               FR1 = LOG(PEDGE2(L)) - LOG(PEDGE1(ID1+1))
+               FR2 = LOG(PEDGE1(ID2)) - LOG(PEDGE2(L+1))
             ENDIF
 
          ELSEIF (VERT .EQ. 2) THEN
 
             ! p weighted
             IF (ID1 .EQ. ID2) THEN
-               FR1 = (PEDGE2(L)-PEDGE2(L+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
+               FR1 = PEDGE2(L) - PEDGE2(L+1)
                FR2 = 0d0
             ELSE
-               FR1 = (PEDGE2(L)-PEDGE1(ID1+1))
-     &             / (PEDGE1(ID1)-PEDGE1(ID1+1))
-               FR2 = (PEDGE2(L+1)-PEDGE1(ID2))
-     &             / (PEDGE1(ID2+1)-PEDGE1(ID2))
+               FR1 = PEDGE2(L) - PEDGE1(ID1+1)
+               FR2 = PEDGE1(ID2) - PEDGE2(L+1)
             ENDIF
 
          ENDIF
@@ -1208,8 +1203,9 @@
          FSUM(L) = FSUM(L) + FR1
 
          DO ID=ID1+1, ID2-1
-            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID)
-            FSUM(L) = FSUM(L) + 1d0
+            FR = PEDGE1(ID) - PEDGE1(ID+1)
+            OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID) * FR
+            FSUM(L) = FSUM(L) + FR
          ENDDO
 
          OUTDATA(:,:,L) = OUTDATA(:,:,L) + INDATA(:,:,ID2) * FR2
