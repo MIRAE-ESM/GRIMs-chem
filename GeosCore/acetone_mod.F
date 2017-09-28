@@ -552,6 +552,11 @@
       !-----------------------------------------------------------------
       REAL*8, PARAMETER :: SCALE_FACTOR = 0.05d0
  
+#elif defined( GRIMS )
+
+      ! Based on 1-yr benchmark simulation
+      REAL*8, PARAMETER :: SCALE_FACTOR = 0.05d0
+
 #else
       
       ! Otherwise set to 1
@@ -643,6 +648,13 @@
          ! temperature wind speed between GEOS met fields -- and also 
          ! surface area between 1x1, 2x2.5, and 4x5 grids. (bmy, 3/15/04)
          OCEAN_ACET = OCEAN_ACET * SCALE_FACTOR
+
+#if   defined( GRIMS )
+         ! Scale factor for the GRIMs model is based on T62(192,94)
+         ! horizontal resolution. Apply further scale factor to account
+         ! for horizontal resolution change.
+         OCEAN_ACET = OCEAN_ACET * ( 192. * 94. ) / ( IGLOB * JGLOB )
+#endif
 
       ELSE
 
@@ -791,6 +803,12 @@
                ! square of the surface wind correctly for all GEOS models 
                U     = SQRT( SFCWINDSQR( I, J ) )
             
+#if   defined( GRIMS )
+               ! 10m wind in the GRIMs model is stronger than GEOS-5.
+               ! We apply a scale factor to reduce acetone loss.
+               U     = U * 0.88
+#endif
+
                ! TC is temperature in Celsius
                ! Bug fix: make sure -5 <= TC <= 30 (mje, rvm, bmy, 11/26/01) 
                TC    = TS(I,J) - 273.15d0  

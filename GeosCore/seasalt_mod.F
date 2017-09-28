@@ -823,6 +823,12 @@
                ! Wind speed at 10 m altitude [m/s]
                W10M = SQRT( SFCWINDSQR(I,J) )
 
+#if   defined( GRIMS )
+               ! 10m wind in the GRIMs model is stronger than GEOS-5.
+               ! We apply a scale factor to reduce sea salt emission.
+               W10M = W10M * 0.88
+#endif
+
                ! Loop over size bins
                DO R = 1, NR
 

@@ -4203,6 +4203,12 @@
             CONC = DMSo(I,J)            
             W10  = SQRT( SFCWINDSQR(I,J) )
 
+#if   defined( GRIMS )
+            ! 10m wind in the GRIMs model is stronger than GEOS-5.
+            ! We apply a scale factor to reduce DMS emission.
+            W10  = W10 * 0.88
+#endif
+
             !-----------------------------------------------------------
             ! Tans et al. (1990) 
             !ScCO2 = 428.d0
