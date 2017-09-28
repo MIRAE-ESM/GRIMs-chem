@@ -68,16 +68,12 @@
       INTEGER             :: IYYYY, NYYYY 
 
       ! Arrays for transform
-      REAL*8              :: F_XLAI(I2x25,J2x25,NTYPE)
-      REAL*8              :: F_XLAI2(I2x25,J2x25,NTYPE)
+      REAL*8              :: F_ARRAY(I2x25,J2x25,NVEGTYPE)
+      REAL*8              :: P_ARRAY(IIPAR,JJPAR,NVEGTYPE)
 
       !=================================================================
       ! READLAI begins here!
       !=================================================================
-
-      ! Initialize
-      F_XLAI = 0d0
-      F_XLAI2 = 0d0
 
       ! Zero XLAI, XLAI2
       DO J = 1, JJPAR
@@ -135,12 +131,36 @@
 
       ! Read until EOF
  10   READ( IU_FILE, '(3i3,20f5.1)', END=20 ) 
-     &     I, J, INDEX, ( F_XLAI(I,J,K), K=1,INDEX )
+     &     I, J, INDEX, ( XLAI_2x25(I,J,K), K=1,INDEX )
       GOTO 10
 
       ! Close file
  20   CLOSE( IU_FILE )
       ENDIF
+
+      ! Regrid
+      IF (LMASTER) THEN
+      F_ARRAY = 0d0
+      DO J = 1, J2x25
+      DO I = 1, I2x25
+      DO K = 1, IREG_2x25(I,J)
+         F_ARRAY(I,J,ILAND_2x25(I,J,K)+1) = XLAI_2x25(I,J,K)
+      ENDDO
+      ENDDO
+      ENDDO
+      ENDIF
+
+      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
+     &                   I2x25, J2x25, NVEGTYPE, NVEGTYPE, 2, 0, 0 )
+
+      ! Retrieve XLAI
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+      DO K = 1, IREG(I,J)
+         XLAI(I,J,K) = P_ARRAY(I,J,ILAND(I,J,K)+1)
+      ENDDO
+      ENDDO
+      ENDDO
       
       ! Save for next month
       MMM = MM
@@ -190,17 +210,36 @@
 
       ! Read until EOF
  30   READ( IU_FILE, '(3i3,20f5.1)', END=40 )
-     &     I, J, INDEX, ( F_XLAI2(I,J,K), K=1,INDEX )
+     &     I, J, INDEX, ( XLAI2_2x25(I,J,K), K=1,INDEX )
       GOTO 30
 
       ! Close file
  40   CLOSE( IU_FILE )
       ENDIF
 
-      CALL TRANS_REGRID( F_XLAI, XLAI,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
-      CALL TRANS_REGRID( F_XLAI2, XLAI2,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ! Regrid
+      IF (LMASTER) THEN
+      F_ARRAY = 0d0
+      DO J = 1, J2x25
+      DO I = 1, I2x25
+      DO K = 1, IREG_2x25(I,J)
+         F_ARRAY(I,J,ILAND_2x25(I,J,K)+1) = XLAI2_2x25(I,J,K)
+      ENDDO
+      ENDDO
+      ENDDO
+      ENDIF
+
+      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
+     &                   I2x25, J2x25, NVEGTYPE, NVEGTYPE, 2, 0, 0 )
+
+      ! Retrieve XLAI2
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+      DO K = 1, IREG(I,J)
+         XLAI2(I,J,K) = P_ARRAY(I,J,ILAND(I,J,K)+1)
+      ENDDO
+      ENDDO
+      ENDDO
       
       END SUBROUTINE READLAI
 !EOC

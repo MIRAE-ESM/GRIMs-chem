@@ -83,14 +83,19 @@
 
       ! Arrays for transform
       INTEGER, PARAMETER :: NLAND2 = 3920
-      INTEGER            :: F_INDEX(I2x25,J2x25)
-      INTEGER            :: P_INDEX(IIPAR,JJPAR)
-      REAL*8             :: SOILPREP2(2,NLAND2)
-      REAL*8             :: SOILFERT2(NLAND2)
+      REAL*8             :: SOILPREP2(2,I2x25,J2x25)
+      REAL*8             :: SOILFERT2(I2x25,J2x25)
+      REAL*8             :: F_ARRAY(I2x25,J2x25)
+      REAL*8             :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
       ! RDSOIL begins here!
       !=================================================================
+
+      ! Initialize
+      SOILPREP2 = 0d0
+      SOILFERT2 = 0d0
+      F_ARRAY = 0d0
 
       ! Define the file unit
       IUNIT = IU_FILE
@@ -163,50 +168,54 @@
          IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'rdsoil:4' )
 
          ! Read data -- save (I,J) pairs into INDEXSOIL array
-         F_INDEX = 0
          DO M = 1, NLAND2
-	    READ( IUNIT,*, IOSTAT=IOS ) I, J, SOILFERT2(M)
+	    READ( IUNIT,*, IOSTAT=IOS ) I, J, SOILFERT2(I,J)
             IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'rdsoil:5' )
-            F_INDEX(I,J) = M
+            F_ARRAY(I,J) = 1d0
          ENDDO
 
          ! Close file
          CLOSE( IUNIT )
          ENDIF
 
-         CALL TRANS_INDEX( F_INDEX, P_INDEX, I2x25, J2x25 )
+         ! Regrid
+         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
+     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
 
-#ifdef MP
-#ifndef RMP
-         CALL mpbcastr(SOILFERT2,NLAND2)
-#else
-         CALL rmpbcastr(SOILFERT2,NLAND2)
-#endif
-#endif
-
+         ! Get the number of land grid box
          NLAND = 0
          DO J = 1, JJPAR
          DO I = 1, IIPAR
-            M = P_INDEX(I,J)
-            IF (M .GT. 0) THEN
+            IF ( P_ARRAY(I,J) > 0d0 ) THEN
                NLAND = NLAND + 1
             ENDIF
          ENDDO
          ENDDO
 
+         ! Initialize header module
          CALL INIT_COMMSOIL
 
+         ! INDEXSOIL
          K = 0
          DO J = 1, JJPAR
          DO I = 1, IIPAR
-            M = P_INDEX(I,J)
-            IF (M .GT. 0) THEN
+            IF ( P_ARRAY(I,J) > 0d0 ) THEN
                K = K + 1
                INDEXSOIL(1,K) = I
                INDEXSOIL(2,K) = J
-               SOILFERT(K) = SOILFERT2(M)
             ENDIF
          ENDDO
+         ENDDO
+
+         ! Regrid
+         CALL TRANS_REGRID( SOILFERT2, P_ARRAY,
+     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+
+         ! SOILFERT
+         DO M = 1, NLAND
+            I = INDEXSOIL(1,M)
+            J = INDEXSOIL(2,M)
+            SOILFERT(M) = P_ARRAY(I,J)
          ENDDO
 
       ENDIF
@@ -242,51 +251,40 @@
          OPEN( IUNIT, FILE=TRIM( FILENAME ), STATUS='OLD', IOSTAT=IOS )
          IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'rdsoil:6' )
 
-         F_INDEX = 0
          ! Loop over Olson land types
          DO M = 1, NLAND2
 
             ! Read monthly soil precip data for each (I,J) box
             READ( IUNIT, *, IOSTAT=IOS ) I, J, ( TMP(K), K=1,12 )
             IF ( IOS /= 0 ) CALL IOERROR( IOS, IUNIT, 'rdsoil:7' )
-            F_INDEX(I,J) = M
-            SOILPREP2(1,M) = TMP(M1)
-            SOILPREP2(2,M) = TMP(MONTH)
-
+            SOILPREP2(1,I,J) = TMP(M1)
+            SOILPREP2(2,I,J) = TMP(MONTH)
          ENDDO
 
          ! Close file
          CLOSE( IUNIT )
          ENDIF
 
-         CALL TRANS_INDEX( F_INDEX, P_INDEX, I2x25, J2x25 )
+         ! Regrid
+         CALL TRANS_REGRID( SOILPREP2(1,:,:), P_ARRAY,
+     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
 
-#ifdef MP
-#ifndef RMP
-         CALL mpbcastr(SOILPREP2,2*NLAND2)
-#else
-         CALL rmpbcastr(SOILPREP2,2*NLAND2)
-#endif
-#endif
-
-         K = 0
-         DO J = 1, JJPAR
-         DO I = 1, IIPAR
-            M = P_INDEX(I,J)
-            IF (M .GT. 0) THEN
-               K = K + 1
-               ! Error check -- make sure that each (I,J) pair has both
-               ! soil precip data and fertilizer data defined
-               IF ( INDEXSOIL(1,K) /= I .OR. INDEXSOIL(2,K) /= J ) THEN
-                  WRITE(6,*) 'CORRUPTED TEMPCORR OR CLMATPRECIP DATA'
-                  WRITE(6,*) 'CHECK (I,J)',I,J
-                  CALL GEOS_CHEM_STOP
-               ELSE
-                  SOILPREP(1,K) = SOILPREP2(1,M)
-                  SOILPREP(2,K) = SOILPREP2(2,M)
-               ENDIF
-            ENDIF
+         ! SOILPREP
+         DO M = 1, NLAND
+            I = INDEXSOIL(1,M)
+            J = INDEXSOIL(2,M)
+            SOILPREP(1,M) = P_ARRAY(I,J)
          ENDDO
+
+         ! Regrid
+         CALL TRANS_REGRID( SOILPREP2(2,:,:), P_ARRAY,
+     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+
+         ! SOILPREP
+         DO M = 1, NLAND
+            I = INDEXSOIL(1,M)
+            J = INDEXSOIL(2,M)
+            SOILPREP(2,M) = P_ARRAY(I,J)
          ENDDO
 
       ENDIF

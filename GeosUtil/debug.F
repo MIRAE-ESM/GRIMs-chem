@@ -15,7 +15,7 @@
       INTEGER :: NL
       REAL*8  :: ARRAY(IIPAR,JJPAR,NL)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,NL)
-      CHARACTER(LEN=255) :: FNAME
+      CHARACTER(LEN=*) :: FNAME
 
       ! Transform
       CALL TRANS_OUTPUT( ARRAY, F_ARRAY, NL )

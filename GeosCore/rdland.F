@@ -66,18 +66,15 @@
       CHARACTER(LEN=255) :: FILENAME
  
       ! Arrays for transform
-      INTEGER :: F_IREG(I2x25,J2x25)
-      INTEGER :: F_ILAND(I2x25,J2x25,NTYPE)
-      INTEGER :: F_IUSE(I2x25,J2x25,NTYPE)
+      REAL*8  :: F_ARRAY(I2x25,J2x25,NVEGTYPE)
+      REAL*8  :: P_ARRAY(IIPAR,JJPAR,NVEGTYPE)
 
       !=================================================================
       ! RDLAND begins here!
       !=================================================================
 
       ! Initialize
-      F_IREG = 0
-      F_ILAND = 0
-      F_IUSE = 0
+      F_ARRAY = 0d0
 
       ! Get nested-grid offsets (bmy, 2/11/03)
       I0 = GET_XOFFSET()
@@ -106,15 +103,15 @@
 
       ! Read data
       IF ( LAVHRRLAI ) THEN
- 100  READ(65,101,end=110,ERR=800) I,J,F_IREG(I,J),
-     &     (F_ILAND(I,J,K),K=1,F_IREG(I,J)),
-     &     (F_IUSE(I,J,K),K=1,F_IREG(I,J))
+ 100  READ(65,101,end=110,ERR=800) I,J,IREG_2x25(I,J),
+     &     (ILAND_2x25(I,J,K),K=1,IREG_2x25(I,J)),
+     &     (IUSE_2x25(I,J,K),K=1,IREG_2x25(I,J))
  101  FORMAT(20I4)
       GO TO 100
       ELSE
- 200  READ(65,201,end=210,ERR=800) I,J,F_IREG(I,J),
-     &     (F_ILAND(I,J,K),K=1,F_IREG(I,J)),
-     &     (F_IUSE(I,J,K),K=1,F_IREG(I,J))
+ 200  READ(65,201,end=210,ERR=800) I,J,IREG_2x25(I,J),
+     &     (ILAND_2x25(I,J,K),K=1,IREG_2x25(I,J)),
+     &     (IUSE_2x25(I,J,K),K=1,IREG_2x25(I,J))
  201  FORMAT(25I4)
       GO TO 200
       ENDIF
@@ -125,10 +122,31 @@
       CLOSE (65)
       ENDIF
 
-      CALL TRANS_INDEX( F_IREG, IREG, I2x25, J2x25 )
-      DO K = 1, NTYPE
-         CALL TRANS_INDEX( F_ILAND(:,:,K), ILAND(:,:,K), I2x25, J2x25 )
-         CALL TRANS_INDEX( F_IUSE(:,:,K), IUSE(:,:,K), I2x25, J2x25 )
+      ! Regrid
+      IF (LMASTER) THEN
+      DO J = 1, J2x25
+      DO I = 1, I2x25
+      DO K = 1, IREG_2x25(I,J)
+         F_ARRAY(I,J,ILAND_2x25(I,J,K)+1) = DBLE(IUSE_2x25(I,J,K))
+      ENDDO
+      ENDDO
+      ENDDO
+      ENDIF
+
+      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
+     &                   I2x25, J2x25, NVEGTYPE, NVEGTYPE, 2, 0, 0 )
+
+      ! Retrieve IREG, ILAND, IUSE
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+      DO K = 1, NVEGTYPE
+         IF( P_ARRAY(I,J,K) > 0d0 ) THEN
+            IREG(I,J) = IREG(I,J) + 1
+            ILAND(I,J,IREG(I,J)) = K - 1
+            IUSE(I,J,IREG(I,J)) = NINT(P_ARRAY(I,J,K))
+         ENDIF
+      ENDDO
+      ENDDO
       ENDDO
 
       IJLOOP = 0

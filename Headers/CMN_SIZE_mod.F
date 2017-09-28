@@ -396,7 +396,7 @@
       ! NTYPE    - Maximum number of veg types in a CTM grid box
       ! NPOLY    - Number of coefficients for polynomial fits
       INTEGER, PARAMETER :: NVEGTYPE = 74
-      INTEGER, PARAMETER :: NTYPE    = 15
+      INTEGER, PARAMETER :: NTYPE    = 20
       INTEGER, PARAMETER :: NPOLY    = 20
 
       ! NNSTA = max number of time series stations (in inptr.ctm)

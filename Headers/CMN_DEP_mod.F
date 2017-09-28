@@ -14,13 +14,28 @@
 !
 ! !USES:
 !
-      USE CMN_SIZE_MOD, ONLY : IIPAR, JJPAR, NTYPE
+      USE CMN_SIZE_MOD, ONLY : I2x25, J2x25, IIPAR, JJPAR, NTYPE
 
       IMPLICIT NONE
       PUBLIC
 !
 ! !PUBLIC DATA MEMBERS:
 !
+      ! IREG   - Number of landtypes in grid square (I,J)
+      INTEGER, ALLOCATABLE :: IREG_2x25(:,:)                                
+
+      ! ILAND  - Land type ID in grid square (I,J) for IREG landtypes
+      INTEGER, ALLOCATABLE :: ILAND_2x25(:,:,:)
+
+      ! IUSE   - Fraction ((per mil) of gridbox area occupied by land type
+      INTEGER, ALLOCATABLE :: IUSE_2x25(:,:,:)                          
+
+      ! XLAI    - Leaf Area Index of land type for current MONTH
+      REAL*8,  ALLOCATABLE :: XLAI_2x25(:,:,:)
+
+      ! XLAI2   - Leaf Area Index of land type for following MONTH
+      REAL*8,  ALLOCATABLE :: XLAI2_2x25(:,:,:)
+
       ! IREG   - Number of landtypes in grid square (I,J)
       INTEGER, ALLOCATABLE :: IREG(:,:)                                
 
@@ -43,6 +58,11 @@
 
       SUBROUTINE INIT_CMN_DEP
 
+      ALLOCATE ( IREG_2x25(I2x25,J2x25) )
+      ALLOCATE ( ILAND_2x25(I2x25,J2x25,NTYPE) )
+      ALLOCATE ( IUSE_2x25(I2x25,J2x25,NTYPE) )
+      ALLOCATE ( XLAI_2x25(I2x25,J2x25,NTYPE) )
+      ALLOCATE ( XLAI2_2x25(I2x25,J2x25,NTYPE) )
       ALLOCATE ( IREG(IIPAR,JJPAR) )
       ALLOCATE ( ILAND(IIPAR,JJPAR,NTYPE) )
       ALLOCATE ( IUSE(IIPAR,JJPAR,NTYPE) )
@@ -50,6 +70,11 @@
       ALLOCATE ( XLAI(IIPAR,JJPAR,NTYPE) )
       ALLOCATE ( XLAI2(IIPAR,JJPAR,NTYPE) )
 
+      IREG_2x25  = 0
+      ILAND_2x25 = 0
+      IUSE_2x25  = 0
+      XLAI_2x25  = 0d0
+      XLAI2_2x25 = 0d0
       IREG   = 0
       ILAND  = 0
       IUSE   = 0
