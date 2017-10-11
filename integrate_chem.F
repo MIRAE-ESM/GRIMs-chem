@@ -104,6 +104,15 @@
          CALL DO_PBL_MIX( .FALSE. )
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
 
+         ! Tropopause [hPa]
+         CALL TPP_REICHLER( T, PS1, TROPP )
+
+         ! Save I6 fields
+         IF ( MOD(GET_NHMS(),010000) .EQ. 0 ) THEN
+            IF ( LSVMET     ) CALL SAVE_I6( FIRST )
+            IF ( LSVMETNEST ) CALL SAVE_I6_NESTED( FIRST )
+         ENDIF
+
          FIRST = .FALSE.
 
       ENDIF
@@ -190,12 +199,10 @@
             CALL INIT_A3
          ENDIF
 
-         ! Save A6, I6 fields
+         ! Save A6 fields
          IF ( MOD(NHMS,010000) .EQ. 0 ) THEN
             IF ( LSVMET     ) CALL SAVE_A6
-            IF ( LSVMET     ) CALL SAVE_I6
             IF ( LSVMETNEST ) CALL SAVE_A6_NESTED
-            IF ( LSVMETNEST ) CALL SAVE_I6_NESTED
             CALL INIT_A6
          ENDIF
 
@@ -265,7 +272,7 @@
       ENDIF
 
       ! Tropopause [hPa]
-      CALL TPP_REICHLER( T, TROPP )
+      CALL TPP_REICHLER( T, PSC2, TROPP )
 
       ! Case of variable tropopause:
       ! Check LLTROP and set LMIN, LMAX, and LPAUSE
@@ -476,6 +483,12 @@
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a DIAGNOSTICS' )
+      ENDIF
+
+      ! Save I6 fields
+      IF ( MOD(GET_NHMS(),010000) .EQ. 0 ) THEN
+         IF ( LSVMET     ) CALL SAVE_I6( FIRST )
+         IF ( LSVMETNEST ) CALL SAVE_I6_NESTED( FIRST )
       ENDIF
 
       !==============================================================

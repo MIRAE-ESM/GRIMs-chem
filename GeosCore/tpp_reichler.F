@@ -9,9 +9,8 @@
 !
 !=====================================================================
 
-      SUBROUTINE TPP_REICHLER( TEMP, TPP_PRESS )
+      SUBROUTINE TPP_REICHLER( TEMP, PSFC, TPP_PRESS )
 
-      USE DAO_MOD,      ONLY : PSC2
       USE GRID_MOD,     ONLY : GET_XMID, GET_YMID
       USE PRESSURE_MOD, ONLY : GET_AP, GET_BP
 
@@ -28,6 +27,7 @@
       REAL*8, PARAMETER :: PLIMU=45000d0
       REAL*8, PARAMETER :: PLIML=7500d0
       REAL*8 :: TEMP(IIPAR,JJPAR,LLPAR)
+      REAL*8 :: PSFC(IIPAR,JJPAR)
       REAL*8 :: TPP_PRESS(IIPAR,JJPAR)
       REAL*8 :: PCENTER(LLPAR)
       REAL*8 :: PEDGE1, PEDGE2
@@ -48,11 +48,11 @@
          DO L = 1, LLPAR
 
             ! Get pressure of lower edge
-            PEDGE1 = GET_AP(L) + ( GET_BP(L) * PSC2(I,J) )
+            PEDGE1 = GET_AP(L) + ( GET_BP(L) * PSFC(I,J) )
             IF (PEDGE1 .LE. 0d0) PEDGE1 = PTOP
 
             ! Get pressure of upper edge
-            PEDGE2 = GET_AP(L+1) + ( GET_BP(L+1) * PSC2(I,J) )
+            PEDGE2 = GET_AP(L+1) + ( GET_BP(L+1) * PSFC(I,J) )
             IF (PEDGE2 .LE. 0d0) PEDGE2 = PTOP
 
             ! Get pressure of layer center
@@ -133,6 +133,15 @@
 
  300     TPP_PRESS(I,J) = MAX( PTPH, PLIML ) * 1d-2
 
+      ENDDO
+      ENDDO
+
+      ! Cap TROPP in the polar regions
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         IF ( GET_YMID(I,J) >= 60d0 .or. GET_YMID(I,J) <= -60d0 ) THEN
+            TPP_PRESS(I,J) = MAX( TPP_PRESS(I,J), 200d0 )
+         ENDIF
       ENDDO
       ENDDO
 

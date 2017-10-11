@@ -211,12 +211,13 @@
 
 !=====================================================================
 
-      SUBROUTINE SAVE_I6
+      SUBROUTINE SAVE_I6( FIRST )
 
       INTEGER :: DATE(2), N
       REAL*8  :: P_ARRAY(IIPAR,JJPAR,N_I6_FIELDS)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,N_I6_FIELDS)
       REAL*8  :: ARRAY(I2x25,J2x25,N_I6_FIELDS)
+      LOGICAL :: FIRST
       CHARACTER(LEN=8) :: IDENT, NAME(N_I6_FIELDS)
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
@@ -246,7 +247,11 @@
 
       ! Get meteorology
       P_ARRAY(:,:,1) = LWI
-      P_ARRAY(:,:,2) = PSC2
+      IF (FIRST) THEN
+         P_ARRAY(:,:,2) = PS1
+      ELSE
+         P_ARRAY(:,:,2) = PSC2
+      ENDIF
       P_ARRAY(:,:,3) = TROPP
 
       ! Transform
@@ -393,12 +398,13 @@
 
 !=====================================================================
 
-      SUBROUTINE SAVE_I6_NESTED
+      SUBROUTINE SAVE_I6_NESTED( FIRST )
 
       INTEGER :: DATE(2), N
       REAL*8  :: P_ARRAY(IIPAR,JJPAR,N_I6_FIELDS)
       REAL*8  :: F_ARRAY(IGLOB,JGLOB,N_I6_FIELDS)
       REAL*8  :: ARRAY(NI_NEST,NJ_NEST,N_I6_FIELDS)
+      LOGICAL :: FIRST
       CHARACTER(LEN=8) :: IDENT, NAME(N_I6_FIELDS)
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=255), SAVE :: FILENAME_SAVE=''
@@ -428,7 +434,11 @@
 
       ! Get meteorology
       P_ARRAY(:,:,1) = LWI
-      P_ARRAY(:,:,2) = PSC2
+      IF (FIRST) THEN
+         P_ARRAY(:,:,2) = PS1
+      ELSE
+         P_ARRAY(:,:,2) = PSC2
+      ENDIF
       P_ARRAY(:,:,3) = TROPP
 
       ! Transform

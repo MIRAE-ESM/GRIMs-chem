@@ -119,12 +119,10 @@
             CALL INIT_A3
          ENDIF
 
-         ! Save A6, I6 fields
+         ! Save A6 fields
          IF ( MOD(NHMS,010000) .EQ. 0 ) THEN
             IF ( LSVMET     ) CALL SAVE_A6
-            IF ( LSVMET     ) CALL SAVE_I6
             IF ( LSVMETNEST ) CALL SAVE_A6_NESTED
-            IF ( LSVMETNEST ) CALL SAVE_I6_NESTED
             CALL INIT_A6
          ENDIF
 
