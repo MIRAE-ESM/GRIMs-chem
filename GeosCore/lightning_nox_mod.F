@@ -1409,7 +1409,7 @@
       ! from May 1995 through Dec 2005.  Slight difference when
       ! averaging over different resolutions. (ltm, 09/24/07, 11/14/08)
       !=================================================================
-#if   defined( GRID2x25 ) 
+#if   defined( GRID2x25 ) || defined( GRIMS )
       REAL*8, PARAMETER     :: ANN_AVG_FLASHRATE = 45.8650d0
 #elif defined( GRID4x5  )
       REAL*8, PARAMETER     :: ANN_AVG_FLASHRATE = 45.8658d0
@@ -1536,6 +1536,11 @@
       ! GCAP: 4 x 5 global simulation
       !---------------------------------------
       BETA = ANN_AVG_FLASHRATE / 48.681763d0
+
+#elif defined( GRIMS )
+
+      ! Based on 1-yr benchmark simulation
+      BETA = ANN_AVG_FLASHRATE / 25.918649d0
 
 #endif
 
