@@ -100,7 +100,7 @@
       USE GRID_MOD,     ONLY : GET_XOFFSET, GET_YOFFSET
       USE TIME_MOD,     ONLY : GET_CT_A6,   GET_CT_A3
       USE TIME_MOD,     ONLY : GET_DIAGb,  GET_DIAGe
-      USE TIME_MOD,     ONLY : GET_TS_EMIS
+      USE TIME_MOD,     ONLY : GET_CT_EMIS
 
       USE CMN_SIZE_MOD     ! Size parameters
       USE CMN_DIAG_MOD     ! TINDEX
@@ -154,7 +154,7 @@
 #if defined( MERRA ) 
       SCALE     = DBLE( GET_CT_A3() ) + 1d-32
 #elif defined( GRIMS )
-      SCALE     = DBLE( GET_TS_EMIS() ) + 1d-32
+      SCALE     = DBLE( GET_CT_EMIS() ) + 1d-32
 #else
       SCALE     = DBLE( GET_CT_A6() ) + 1d-32
 #endif     
