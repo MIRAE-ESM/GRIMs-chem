@@ -949,10 +949,14 @@ subroutine calc_aod
       enddo  ! dust species
 
       ! Store total single scattering albedo
-      outssa(i,j,l,ibnd) = totssa / kappa_ext
+      if (kappa_ext .ne. 0) then
+         outssa(i,j,l,ibnd) = totssa / kappa_ext
+      endif
 
       ! Store total asymmetry parameter
-      outg(i,j,l,ibnd) = totg / kappa_sca
+      if (kappa_sca .ne. 0) then
+         outg(i,j,l,ibnd) = totg / kappa_sca
+      endif
 
     enddo  ! levels
 

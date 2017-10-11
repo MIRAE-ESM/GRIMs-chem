@@ -362,7 +362,7 @@
                CONCNOX = STT(I,J,L,IDTNOX)
 
                ! Error test
-               IF ( CONCNOX - SUM1 < 0.d0 ) THEN
+               IF ( CONCNOX - SUM1 < 0.d0 .and. CONCNOX /= 0.d0 ) THEN
 !$OMP CRITICAL 
                   PRINT*, '### In partition.f: CONCNOX - SUM1 < 0'
                   PRINT*, '### If CONCNOX = 0 and SUM1 ~ 1e-99 it is OK'
