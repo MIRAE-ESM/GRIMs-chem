@@ -69,7 +69,7 @@
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
      &     NL .NE. LLPAR .OR. NT .NE. N_TRACERS ) THEN
          WRITE(6,*) '    - RESTART_MOD: Dimension of chemi is bad!'
-         STOP
+         STOP 9999
       ENDIF
       ENDIF
 
@@ -121,7 +121,7 @@
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
      &     NL .NE. LLPAR ) THEN
          WRITE(6,*) '    - RESTART_MOD: Dimension of bxhghti is bad!'
-         STOP
+         STOP 9999
       ENDIF
       ENDIF
 
@@ -197,7 +197,7 @@
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
      &     NL .NE. DAY_DIM .OR. NT .NE. NUM_DAYS ) THEN
          WRITE(6,*) '    - RESTART_MOD: Dimension of megani is bad!'
-         STOP
+         STOP 9999
       ENDIF
       ENDIF
 
@@ -306,7 +306,7 @@
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
      &     NL .NE. LLTROP ) THEN
          WRITE(6,*) '    - RESTART_MOD: Dimension of cspeci is bad!'
-         STOP
+         STOP 9999
       ENDIF
       ENDIF
 

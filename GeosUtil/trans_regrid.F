@@ -68,7 +68,7 @@
       ELSE
 
          WRITE(6,*) 'Error: Unknown NI_NI, NI_NJ in trans_regrid'
-         STOP
+         STOP 9999
 
       ENDIF
 
@@ -113,7 +113,7 @@
 
          IF ( MASS == 1 ) THEN
             WRITE(6,*) 'Error: VERT /= 0 and MASS == 1 in trans_regrid'
-            STOP
+            STOP 9999
          ENDIF
 
          ! 38 layers -> model grid
@@ -127,7 +127,7 @@
             CALL INTERP_VER_F( TMP, OUTDATA, VERT, MASS )
          ELSE
             WRITE(6,*) 'Error: Unknown IN_NL in trans_regrid'
-            STOP
+            STOP 9999
          ENDIF
 
       ENDIF
