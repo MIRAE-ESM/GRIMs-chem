@@ -18,6 +18,8 @@
       REAL*8,  ALLOCATABLE :: DIAGAOD(:,:,:)
       REAL*8,  ALLOCATABLE :: DIAGSSA(:,:,:)
       REAL*8,  ALLOCATABLE :: DIAGASM(:,:,:)
+      REAL*8,  ALLOCATABLE :: AERSWHR(:,:,:,:)
+      REAL*8,  ALLOCATABLE :: AERRADF(:,:,:)
 
       CONTAINS
 
@@ -128,6 +130,76 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
+      ! AERSWHR
+      CATEGORY  = 'AERSWHR'
+      UNIT      = 'K/s'
+
+      ! Divide by SCALEAOD
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         IF (SCALEAOD(I,J) .EQ. 0) THEN
+            ARRAY(I,J,L) = 0e0
+         ELSE
+            ARRAY(I,J,L) = AERSWHR(I,J,L,1) / DBLE(SCALEAOD(I,J))
+         ENDIF
+      ENDDO
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Divide by SCALEAOD
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         IF (SCALEAOD(I,J) .EQ. 0) THEN
+            ARRAY(I,J,L) = 0e0
+         ELSE
+            ARRAY(I,J,L) = AERSWHR(I,J,L,2) / DBLE(SCALEAOD(I,J))
+         ENDIF
+      ENDDO
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 2,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! AERRADF
+      CATEGORY  = 'AERRADF'
+      UNIT      = 'W/m2'
+
+      ! Divide by SCALEAOD
+      DO L = 1, 4
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         IF (SCALEAOD(I,J) .EQ. 0) THEN
+            ARRAY(I,J,L) = 0e0
+         ELSE
+            ARRAY(I,J,L) = AERRADF(I,J,L) / DBLE(SCALEAOD(I,J))
+         ENDIF
+      ENDDO
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      DO L = 1, 4
+         CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &               HALFPOLAR, CENTER180, CATEGORY, L,
+     &               UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &               IIPAR,     JJPAR,     1,        1,
+     &               1,         1,         ARRAY(:,:,L) )
+      ENDDO
+
       IF (LMASTER) THEN
       WRITE( 6, '(a)' ) '     - DIAG_AOD: Diagnostics written to bpch!'
       ENDIF
@@ -137,6 +209,8 @@
       DIAGAOD  = 0d0
       DIAGSSA  = 0d0
       DIAGASM  = 0d0
+      AERSWHR  = 0d0
+      AERRADF  = 0d0
 
       END SUBROUTINE WRITE_DIAG_AOD
 
@@ -149,12 +223,16 @@
       ALLOCATE( DIAGAOD(IIPAR,JJPAR,LLPAR) )
       ALLOCATE( DIAGSSA(IIPAR,JJPAR,LLPAR) )
       ALLOCATE( DIAGASM(IIPAR,JJPAR,LLPAR) )
+      ALLOCATE( AERSWHR(IIPAR,JJPAR,LLPAR,2) )
+      ALLOCATE( AERRADF(IIPAR,JJPAR,4) )
 
       ! Initialize module variables
       SCALEAOD = 0
       DIAGAOD  = 0d0
       DIAGSSA  = 0d0
       DIAGASM  = 0d0
+      AERSWHR  = 0d0
+      AERRADF  = 0d0
 
       END SUBROUTINE INIT_DIAG_AOD
 

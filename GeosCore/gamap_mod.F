@@ -560,6 +560,34 @@
       CALL WRITE_TINFO( NAME_NEW, FNAME(3,70), 1e0,
      &                  1,        1e0,         'unitless', N )
 
+      CALL WRITE_SEPARATOR( 800 )
+
+      N = ( SPACING * 55 ) + 1
+
+      NAME_NEW = 'AERSWHR'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(4,70), 1e0,
+     &                  1,        1e0,         'K/s', N )
+      NAME_NEW = 'AERSWHRC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(5,70), 1e0,
+     &                  1,        1e0,         'K/s', N+1 )
+
+      CALL WRITE_SEPARATOR( 900 )
+
+      N = ( SPACING * 56 ) + 1
+
+      NAME_NEW = 'ARFTOA'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(6,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+      NAME_NEW = 'ARFSFC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(7,70), 1e0,
+     &                  1,        1e0,         'W/m2', N+1 )
+      NAME_NEW = 'ARFTOAC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(8,70), 1e0,
+     &                  1,        1e0,         'W/m2', N+2 )
+      NAME_NEW = 'ARFSFCC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(9,70), 1e0,
+     &                  1,        1e0,         'W/m2', N+3 )
+
       !------------------------------
       ! All other diagnostics 
       !------------------------------
@@ -707,9 +735,13 @@
          CASE( 600 ) 
             WRITE( IU_FILE, 160, IOSTAT=IOS )
          CASE( 700 )
+            WRITE( IU_FILE, 170, IOSTAT=IOS )
+         CASE( 800 )
             WRITE( IU_FILE, 180, IOSTAT=IOS )
+         CASE( 900 )
+            WRITE( IU_FILE, 190, IOSTAT=IOS )
          CASE DEFAULT
-            WRITE( IU_FILE, 170, IOSTAT=IOS ) DIAG
+            WRITE( IU_FILE, 200, IOSTAT=IOS ) DIAG
       END SELECT
 
       ! Error check
@@ -727,8 +759,10 @@
  140  FORMAT( '# GEOS-CHEM tracers [kg]'             )
  150  FORMAT( '# GEOS-CHEM tracers [ug/m3]'          )
  160  FORMAT( '# SOA GPROD & APROD [kg/kg]'          )
- 170  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
- 180  FORMAT( '# AOD, SSA, ASM [unitless]'           )
+ 170  FORMAT( '# AOD, SSA, ASM [unitless]'           )
+ 180  FORMAT( '# Aerosol Heat Rate [K/s]'            )
+ 190  FORMAT( '# Aerosol Radiative Forcing [W/m2]'   )
+ 200  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
       
       END SUBROUTINE WRITE_SEPARATOR
 !EOC
@@ -1341,6 +1375,16 @@
       CATEGORY(N) = 'DIAGASM'
       DESCRIPT(N) = 'Diagnostic Asymmetry Parameter'
       OFFSET(N)   = SPACING * 54
+
+      N           = N + 1
+      CATEGORY(N) = 'AERSWHR'
+      DESCRIPT(N) = 'Aerosol Heat Rate'
+      OFFSET(N)   = SPACING * 55
+
+      N           = N + 1
+      CATEGORY(N) = 'AERRADF'
+      DESCRIPT(N) = 'Aerosol Radiative Forcing'
+      OFFSET(N)   = SPACING * 56
 
 ! NEED TO DO THAT AT ONE POINT      
 !      ! New for CSPEC
@@ -3865,13 +3909,19 @@
       ! DIAGAOD, DIAGSSA, DIAGASM
       !-------------------------------------
 #if defined( RRTMGSW ) && defined( RRTMGLW )
-      FNAME(1,70) = 'Aerosol Optical Depth at 533nm'
-      FNAME(2,70) = 'Single Scattering Albedo at 533nm'
-      FNAME(3,70) = 'Asymmetry Parameter at 533nm'
+      FNAME(1,70) = 'AOD at 533nm'
+      FNAME(2,70) = 'SSA at 533nm'
+      FNAME(3,70) = 'ASM at 533nm'
+      FNAME(4,70) = 'Aerosol Heat Rate (all-sky)'
+      FNAME(5,70) = 'Aerosol Heat Rate (clear-sky)'
+      FNAME(6,70) = 'Aerosol RF at TOA (all-sky)'
+      FNAME(7,70) = 'Aerosol RF at SFC (all-sky)'
+      FNAME(8,70) = 'Aerosol RF at TOA (clear-sky)'
+      FNAME(9,70) = 'Aerosol RF at SFC (clear-sky)'
 #else
-      FNAME(1,70) = 'Aerosol Optical Depth at 508nm'
-      FNAME(2,70) = 'Single Scattering Albedo at 508nm'
-      FNAME(3,70) = 'Asymmetry Parameter at 508nm'
+      FNAME(1,70) = 'AOD at 508nm'
+      FNAME(2,70) = 'SSA at 508nm'
+      FNAME(3,70) = 'ASM at 508nm'
 #endif
 
       END SUBROUTINE INIT_TRACERINFO

@@ -2297,6 +2297,15 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'Z0' )
       Z0 = 0d0
 
+#if   defined( GRIMS )
+
+      ! Latent heat flux
+      ALLOCATE( EFLUX( IIPAR, JJPAR ), STAT=AS )
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'EFLUX' )
+      EFLUX = 0d0
+
+#endif
+
       !-----------------------------------------------------------------
       ! Allocate proper array for land/water/ice flags 
       !-----------------------------------------------------------------
