@@ -626,10 +626,12 @@
       CALL TRANS_REGRID( BIOM_GEOS_1x1, GFED2_BIOMASS,
      &                   I1x1, J1x1, N_SPEC, N_SPEC, 1, 0, 0 )
 
+#ifdef NOUSE
       ! Compute future biomass emissions (if necessary)
       IF ( LFUTURE ) THEN
-!        CALL GFED2_SCALE_FUTURE( GFED2_BIOMASS )
+         CALL GFED2_SCALE_FUTURE( GFED2_BIOMASS )
       ENDIF
+#endif
 
       ! Print totals in Tg/month
       CALL GFED2_TOTAL_Tg( THIS_YYYY, THIS_MM )

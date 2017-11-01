@@ -663,10 +663,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBNOX),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future NOx emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'NOxbb', BIOMASS(:,:,IDBNOX) )
+               CALL SCALE_FUTURE( 'NOxbb', BIOMASS(:,:,IDBNOX) )
             ENDIF
+#endif
 
             ! NOX -- print totals in [Tg/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBNOX), 14d-3, 'NOx' )
@@ -694,10 +696,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), COEMIS,
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future NOx emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'CObb', BIOMASS(:,:,IDBCO) )
+               CALL SCALE_FUTURE( 'CObb', BIOMASS(:,:,IDBCO) )
             ENDIF
+#endif
 
             ! Print totals in [Tg/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBCO), 28d-3, 'CO' )
@@ -720,10 +724,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBALK4),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future ALK4 emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBALK4) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBALK4) )
             ENDIF
+#endif
 
             ! ALK4 -- print totals in [Tg C/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBALK4), 12d-3, 'ALK4' )
@@ -752,10 +758,12 @@
             ! Scale to yearly value for biogenic acetone (bdf, bmy, 7/23/01)
             CALL SCALE_BIOMASS_ACET( BIOMASS(:,:,IDBACET) )
 
+#ifdef NOUSE
             ! Compute future ACET emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBACET) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBACET) )
             ENDIF
+#endif
 
             ! Print totals in [Tg C/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBACET), 12d-3, 'ACET' )
@@ -778,10 +786,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBMEK),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future MEK emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBMEK) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBMEK) )
             ENDIF
+#endif
 
             ! MEK -- print totals in [Tg C/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBMEK), 12d-3, 'MEK' )
@@ -804,10 +814,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBALD2),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future ALD2 emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBALD2) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBALD2) )
             ENDIF
+#endif
 
             ! ALD2 -- print totals in [Tg C/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBALD2), 12d-3, 'ALD2' )
@@ -830,10 +842,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBPRPE),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future PRPE emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBPRPE) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBPRPE) )
             ENDIF
+#endif
 
             ! PRPE -- convert from [molec/cm2/month] to [molec C/cm2/month]
             ! Print totals in [Tg C/month]
@@ -860,10 +874,12 @@
             ! C3H8 -- convert from [molec/cm2/month] to [molec C/cm2/month] 
             BIOMASS(:,:,IDBC3H8) = BIOMASS(:,:,IDBC3H8) * 3d0 
 
+#ifdef NOUSE
             ! Compute future C3H8 emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBC3H8) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBC3H8) )
             ENDIF
+#endif
 
             ! Print totals in [Tg C]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBC3H8), 12d-3, 'C3H8' )
@@ -886,10 +902,12 @@
             CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBCH2O),
      &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
 
+#ifdef NOUSE
             ! Compute future CH2O emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBCH2O) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBCH2O) )
             ENDIF
+#endif
 
             ! CH2O -- print totals in [Tg C/month]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBCH2O), 30d-3, 'CH2O' )
@@ -915,10 +933,12 @@
             ! C2H6 --convert from [molec/cm2/month] to [molec C/cm2/month]
             BIOMASS(:,:,IDBC2H6) = BIOMASS(:,:,IDBC2H6) * 2d0 
 
+#ifdef NOUSE
             ! Compute future C2H6 emissions (if necessary)
             IF ( LFUTURE ) THEN
-!              CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBC2H6) )
+               CALL SCALE_FUTURE( 'VOCbb', BIOMASS(:,:,IDBC2H6) )
             ENDIF
+#endif
 
             ! Print totals in [Tg C]
             CALL TOTAL_BIOMASS_TG( BIOMASS(:,:,IDBC2H6), 12d-3, 'C2H6' )
@@ -1489,17 +1509,19 @@
             BIOMASS_BC(I,J) = BIOMASS_BC(I,J) * XNUMOL(IDTBCPO) * CONV
             BIOMASS_OC(I,J) = BIOMASS_OC(I,J) * XNUMOL(IDTOCPO) * CONV
 
+#ifdef NOUSE
             ! Scale to IPCC future scenario (if necessary)
             IF ( LFUTURE ) THEN
 
                ! Future scale BC biomass
-!              BIOMASS_BC(I,J) = BIOMASS_BC(I,J) * 
-!    &                           GET_FUTURE_SCALE_BCbb( I, J )
+               BIOMASS_BC(I,J) = BIOMASS_BC(I,J) * 
+     &                           GET_FUTURE_SCALE_BCbb( I, J )
 
                ! Future scale OC biomass
-!              BIOMASS_OC(I,J) = BIOMASS_OC(I,J) * 
-!    &                           GET_FUTURE_SCALE_OCbb( I, J )
+               BIOMASS_OC(I,J) = BIOMASS_OC(I,J) * 
+     &                           GET_FUTURE_SCALE_OCbb( I, J )
             ENDIF
+#endif
 
          ENDDO
       ENDDO
@@ -1661,11 +1683,13 @@
             ! Convert [kg SO2/month] -> [molec SO2/cm2/s]
             BIOMASS_SO2(I,J) = BIOMASS_SO2(I,J) * CONV
 
+#ifdef NOUSE
             ! Scale to IPCC future scenario (if necessary)
             IF ( LFUTURE ) THEN
-!              BIOMASS_SO2(I,J) = BIOMASS_SO2(I,J) * 
-!    &                            GET_FUTURE_SCALE_SO2bb( I, J )
+               BIOMASS_SO2(I,J) = BIOMASS_SO2(I,J) * 
+     &                            GET_FUTURE_SCALE_SO2bb( I, J )
             ENDIF
+#endif
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -1827,11 +1851,13 @@
             ! Convert [kg NH3/month] -> [molec NH3/cm2/s]
             BIOMASS_NH3(I,J) = BIOMASS_NH3(I,J) * CONV
 
+#ifdef NOUSE
             ! Scale to IPCC future scenario (if necessary)
             IF ( LFUTURE ) THEN
-!              BIOMASS_NH3(I,J) = BIOMASS_NH3(I,J) * 
-!    &                            GET_FUTURE_SCALE_NH3bb( I, J )
+               BIOMASS_NH3(I,J) = BIOMASS_NH3(I,J) * 
+     &                            GET_FUTURE_SCALE_NH3bb( I, J )
             ENDIF
+#endif
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO

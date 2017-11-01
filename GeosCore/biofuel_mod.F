@@ -329,10 +329,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
                
+#ifdef NOUSE
                ! Compute future NOx emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'NOxbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'NOxbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total of biofuel NOx
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -365,10 +367,12 @@
                ! Scale CO to account for oxidation of extra VOC's
                CALL SCALE_BIOFUEL_CO( BIOFUEL_KG(N,:,:) )
                
+#ifdef NOUSE
                ! Compute future CO emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'CObf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'CObf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Print total CO
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -394,10 +398,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future ALK4 emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total ALK4
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -426,10 +432,12 @@
                ! Scale to match a posteriori source (bdf, bmy, 9/10/01)
                CALL SCALE_BIOFUEL_ACET( BIOFUEL_KG(N,:,:) )
 
+#ifdef NOUSE
                ! Compute future ACET emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total ACET
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -455,10 +463,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future MEK emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total MEK
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -484,10 +494,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future ALD2 emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total ALD2
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -513,10 +525,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future PRPE emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total PRPE
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -542,10 +556,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future C3H8 emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total C3H8
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -571,10 +587,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future CH2O emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF
+#endif
 
                ! Compute total CH2O
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
@@ -600,10 +618,12 @@
                CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
      &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
 
+#ifdef NOUSE
                ! Compute future C2H6 emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
+                  CALL SCALE_FUTURE( 'VOCbf', BIOFUEL_KG(N,:,:) )
                ENDIF 
+#endif
 
                ! Compute total C2H6
                TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9

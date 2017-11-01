@@ -1651,10 +1651,12 @@
 !%%%%%%%%%%%%% END KLUDGE %%%%%%%%%%%%%%
       
       
+#ifdef NOUSE
       ! Apply scale factor for future emissions (if necessary)
       IF ( LFUTURE ) THEN
-!        NOx = NOx * GET_FUTURE_SCALE_NOxff( I, J )
+         NOx = NOx * GET_FUTURE_SCALE_NOxff( I, J )
       ENDIF
+#endif
 
       ! Convert units (if necessary)
       IF ( DO_KGS ) THEN
@@ -1727,10 +1729,12 @@
          CO = EDGAR_CO(I,J)
       ENDIF
 
+#ifdef NOUSE
       ! Apply scale factor for future emissions (if necessary)
       IF ( LFUTURE ) THEN
-!        CO = CO * GET_FUTURE_SCALE_COff( I, J )
+         CO = CO * GET_FUTURE_SCALE_COff( I, J )
       ENDIF
+#endif
 
       ! Convert units (if necessary)
       IF ( DO_KGS ) THEN
@@ -1793,10 +1797,12 @@
       ! Get anthropogenic SO2 [kg SO2/season]
       SO2 = EDGAR_SO2(I,J)
 
+#ifdef NOUSE
       ! Apply scale factor for future emissions (if necessary)
       IF ( LFUTURE ) THEN
-!        SO2 = SO2 * GET_FUTURE_SCALE_SO2ff( I, J )
+         SO2 = SO2 * GET_FUTURE_SCALE_SO2ff( I, J )
       ENDIF
+#endif
 
       ! Convert units
       IF ( DO_KGS ) THEN
@@ -1860,10 +1866,12 @@
       ! Get ship SO2 [kg SO2/month]
       SO2 = EDGAR_SO2_SHIP(I,J)
 
+#ifdef NOUSE
       ! Apply scale factor for future emissions (if necessary)
       IF ( LFUTURE ) THEN
-!        SO2 = SO2 * GET_FUTURE_SCALE_SO2ff( I, J )
+         SO2 = SO2 * GET_FUTURE_SCALE_SO2ff( I, J )
       ENDIF
+#endif
 
       ! Convert units (if necessary)
       IF ( DO_KGS ) THEN

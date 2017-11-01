@@ -326,12 +326,14 @@
       CALL TRANS_REGRID( GEOS_1x1, BRAVO_SO2,
      &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
+#ifdef NOUSE
       !=================================================================
       ! Compute IPCC future emissions (if necessary)
       !=================================================================
       IF ( LFUTURE ) THEN 
-!        CALL BRAVO_SCALE_FUTURE
+         CALL BRAVO_SCALE_FUTURE
       ENDIF
+#endif
 
       !=================================================================
       ! Print emission totals

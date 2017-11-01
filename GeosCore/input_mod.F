@@ -250,8 +250,10 @@
          ELSE IF ( INDEX( LINE, 'EMISSIONS MENU'   ) > 0 ) THEN
             CALL READ_EMISSIONS_MENU              
 
-!        ELSE IF ( INDEX( LINE, 'FUTURE MENU'      ) > 0 ) THEN
-!           CALL READ_FUTURE_MENU 
+#ifdef NOUSE
+         ELSE IF ( INDEX( LINE, 'FUTURE MENU'      ) > 0 ) THEN
+            CALL READ_FUTURE_MENU 
+#endif
                                                         
          ELSE IF ( INDEX( LINE, 'CHEMISTRY MENU'   ) > 0 ) THEN
             CALL READ_CHEMISTRY_MENU              
@@ -265,8 +267,10 @@
          ELSE IF ( INDEX( LINE, 'DEPOSITION MENU'  ) > 0 ) THEN
             CALL READ_DEPOSITION_MENU             
 
-!        ELSE IF ( INDEX( LINE, 'CO2 SIM MENU'     ) > 0 ) THEN !Ray Nassar
-!           CALL READ_CO2_SIM_MENU
+#ifdef NOUSE
+         ELSE IF ( INDEX( LINE, 'CO2 SIM MENU'     ) > 0 ) THEN !Ray Nassar
+            CALL READ_CO2_SIM_MENU
+#endif
                                     
          ELSE IF ( INDEX( LINE, 'GAMAP MENU'       ) > 0 ) THEN
             CALL READ_GAMAP_MENU                 
@@ -277,47 +281,53 @@
          ELSE IF ( INDEX( LINE, 'DIAGNOSTIC MENU'  ) > 0 ) THEN
             CALL READ_DIAGNOSTIC_MENU             
 
-!        ELSE IF ( INDEX( LINE, 'PLANEFLIGHT MENU' ) > 0 ) THEN
-!           CALL READ_PLANEFLIGHT_MENU             
+#ifdef NOUSE
+         ELSE IF ( INDEX( LINE, 'PLANEFLIGHT MENU' ) > 0 ) THEN
+            CALL READ_PLANEFLIGHT_MENU             
                                                   
-!        ELSE IF ( INDEX( LINE, 'ND48 MENU'        ) > 0 ) THEN
-!           CALL READ_ND48_MENU                  
+         ELSE IF ( INDEX( LINE, 'ND48 MENU'        ) > 0 ) THEN
+            CALL READ_ND48_MENU                  
+#endif
 
          ELSE IF ( INDEX( LINE, 'ND49 MENU'        ) > 0 ) THEN
             CALL READ_ND49_MENU                   
                                                   
-!        ELSE IF ( INDEX( LINE, 'ND50 MENU'        ) > 0 ) THEN
-!           CALL READ_ND50_MENU                   
+#ifdef NOUSE
+         ELSE IF ( INDEX( LINE, 'ND50 MENU'        ) > 0 ) THEN
+            CALL READ_ND50_MENU                   
                                                   
-!        ELSE IF ( INDEX( LINE, 'ND51 MENU'        ) > 0 ) THEN
-!           CALL READ_ND51_MENU                   
+         ELSE IF ( INDEX( LINE, 'ND51 MENU'        ) > 0 ) THEN
+            CALL READ_ND51_MENU                   
                                                   
-!        ELSE IF ( INDEX( LINE, 'ND51b MENU'       ) > 0 ) THEN
-!           CALL READ_ND51b_MENU  
+         ELSE IF ( INDEX( LINE, 'ND51b MENU'       ) > 0 ) THEN
+            CALL READ_ND51b_MENU  
 
-!        ELSE IF ( INDEX( LINE, 'PROD & LOSS MENU' ) > 0 ) THEN
-!           CALL READ_PROD_LOSS_MENU               
+         ELSE IF ( INDEX( LINE, 'PROD & LOSS MENU' ) > 0 ) THEN
+            CALL READ_PROD_LOSS_MENU               
+#endif
                                                   
          ELSE IF ( INDEX( LINE, 'UNIX CMDS MENU'   ) > 0 ) THEN 
             CALL READ_UNIX_CMDS_MENU              
 
-!        ELSE IF ( INDEX( LINE, 'NESTED GRID MENU' ) > 0 ) THEN 
-!           CALL READ_NESTED_GRID_MENU
+#ifdef NOUSE
+         ELSE IF ( INDEX( LINE, 'NESTED GRID MENU' ) > 0 ) THEN 
+            CALL READ_NESTED_GRID_MENU
 
-!        ELSE IF ( INDEX( LINE, 'ARCHIVED OH MENU' ) > 0 ) THEN 
-!           CALL READ_ARCHIVED_OH_MENU
+         ELSE IF ( INDEX( LINE, 'ARCHIVED OH MENU' ) > 0 ) THEN 
+            CALL READ_ARCHIVED_OH_MENU
 
-!        ELSE IF ( INDEX( LINE, 'O3 P/L MENU'      ) > 0 ) THEN 
-!           CALL READ_O3PL_MENU
+         ELSE IF ( INDEX( LINE, 'O3 P/L MENU'      ) > 0 ) THEN 
+            CALL READ_O3PL_MENU
 
-!        ELSE IF ( INDEX( LINE, 'BENCHMARK MENU'   ) > 0 ) THEN 
-!           CALL READ_BENCHMARK_MENU
+         ELSE IF ( INDEX( LINE, 'BENCHMARK MENU'   ) > 0 ) THEN 
+            CALL READ_BENCHMARK_MENU
               
-!        ELSE IF ( INDEX( LINE, 'MERCURY MENU'     ) > 0 ) THEN 
-!           CALL READ_MERCURY_MENU
+         ELSE IF ( INDEX( LINE, 'MERCURY MENU'     ) > 0 ) THEN 
+            CALL READ_MERCURY_MENU
                                     
-!        ELSE IF ( INDEX( LINE, 'CH4 MENU'         ) > 0 ) THEN 
-!           CALL READ_CH4_MENU
+         ELSE IF ( INDEX( LINE, 'CH4 MENU'         ) > 0 ) THEN 
+            CALL READ_CH4_MENU
+#endif
                                     
          ELSE IF ( INDEX( LINE, 'END OF FILE'      ) > 0 ) THEN 
             EXIT
@@ -1576,9 +1586,9 @@
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_emissions_menu:2' )
 !     READ( SUBSTRS(1:N), * ) TS_EMIS
 #ifndef RMP
-      TS_EMIS = con(1) / 60
+      TS_EMIS = con(1) / 60d0
 #else
-      TS_EMIS = con(11) / 60
+      TS_EMIS = con(11) / 60d0
 #endif
 
       ! Include anthropogenic emissions?
@@ -2582,9 +2592,9 @@
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_chemistry_menu:2' )
 !     READ( SUBSTRS(1:N), * ) TS_CHEM
 #ifndef RMP
-      TS_CHEM = con(1) / 60
+      TS_CHEM = con(1) / 60d0
 #else
-      TS_CHEM = con(11) / 60
+      TS_CHEM = con(11) / 60d0
 #endif
 
       ! Read and save CSPEC ?
@@ -2695,9 +2705,9 @@
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_transport_menu:5' )
 !     READ( SUBSTRS(1:N), * ) TS_DYN
 #ifndef RMP
-      TS_DYN  = con(1) / 60
+      TS_DYN  = con(1) / 60d0
 #else
-      TS_DYN  = con(11) / 60
+      TS_DYN  = con(11) / 60d0
 #endif
 
       ! Include strat O3/NOy
@@ -2822,23 +2832,23 @@
       READ( SUBSTRS(1:N), * ) LTURB
 
       ! Turn on non-local PBL scheme (Lin, 03/31/09)
-!     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:3' )
-!     READ( SUBSTRS(1:N), * ) LNLPBL
+      CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:3' )
+      READ( SUBSTRS(1:N), * ) LNLPBL
 
       ! Convection timestep
 !     CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:4' )
 !     READ( SUBSTRS(1:N), * ) TS_CONV
 #ifndef RMP
-      TS_CONV = con(1) / 60
+      TS_CONV = con(1) / 60d0
 #else
-      TS_CONV = con(11) / 60
+      TS_CONV = con(11) / 60d0
 #endif
 
       ! Separator line
       CALL SPLIT_ONE_LINE( SUBSTRS, N, 1, 'read_convection_menu:5' )
 
       ! The non-local PBL scheme is valid only with GEOS-5 or MERRA!
-#if   !defined( GEOS_5 ) && !defined( MERRA )
+#if   !defined( GEOS_5 ) && !defined( MERRA ) && !defined( GRIMS )
       IF ( LNLPBL ) THEN
          IF (LMASTER) THEN
          WRITE(*,*) '================================================='
@@ -2858,7 +2868,7 @@
       WRITE( 6, '(  a)' ) '----------------'
       WRITE( 6, 100     ) 'Turn on cloud convection?   : ', LCONV
       WRITE( 6, 100     ) 'Turn on PBL mixing?         : ', LTURB
-!     WRITE( 6, 100     ) 'Turn on non-local PBL?      : ', LNLPBL
+      WRITE( 6, 100     ) 'Turn on non-local PBL?      : ', LNLPBL
 !     WRITE( 6, 110     ) 'Convection timestep [min]   : ', TS_CONV
       ENDIF
 

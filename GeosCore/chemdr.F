@@ -30,7 +30,7 @@
       USE DUST_MOD,             ONLY : RDUST_ONLINE, RDUST_OFFLINE
       USE ERROR_MOD,            ONLY : DEBUG_MSG,    ERROR_STOP
 !     USE FUTURE_EMISSIONS_MOD, ONLY : GET_FUTURE_YEAR
-      USE LOGICAL_MOD,          ONLY : LCARB,        LDUST
+      USE LOGICAL_MOD,          ONLY : LCARB,        LDUST,     LNLPBL
       USE LOGICAL_MOD,          ONLY : LPRT,         LSSALT,    LSULF  
       USE LOGICAL_MOD,          ONLY : LSOA,         LVARTROP,  LFUTURE
 !     USE PLANEFLIGHT_MOD,      ONLY : SETUP_PLANEFLIGHT
@@ -238,7 +238,7 @@
       !=================================================================
       ! Compute AVGW, the mixing ratio of water vapor
       !=================================================================
-      CALL MAKE_AVGW
+      IF ( .not. LNLPBL ) CALL MAKE_AVGW
 
       !=================================================================
       ! Open "smv2.log" output file and read chem mechanism switches
@@ -246,7 +246,7 @@
       IF ( FIRSTCHEM ) THEN
          
          ! Read from data file mglob.dat
-         CALL READER( FIRSTCHEM )
+         IF ( .not. LNLPBL ) CALL READER( FIRSTCHEM )
          IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after READER' )
 
          ! Set NCS for urban chemistry only (since that is where we
@@ -266,14 +266,14 @@
       !vartrop fix (dkh, 05/08/11)
       !Save a copy of JLOP from the previous time step before re-ordering
       !the grid mappings.
-      JLOP_PREVIOUS(:,:,:) = JLOP(:,:,:)
+      IF ( .not. LNLPBL ) JLOP_PREVIOUS(:,:,:) = JLOP(:,:,:)
 
 !-----------------------------------------------------------------------------
 ! Prior to 10/5/11:
 ! SUNCOS is no longer used in RURALBOX, we can remove it (bmy, 10/5/11)
 !     CALL RURALBOX( AD, T, AVGW, ALBD, SUNCOS )
 !-----------------------------------------------------------------------------
-      CALL RURALBOX( AD, T, AVGW, ALBD )
+      IF ( .not. LNLPBL ) CALL RURALBOX( AD, T, AVGW, ALBD )
 
       !vartrop fix (dkh, 05/08/11)
       !Use JLOP from this timestep the first time through
@@ -306,7 +306,7 @@
          !---------------------------------
 
          ! Read "globchem.dat" chemistry mechanism
-         CALL READCHEM
+         IF ( .not. LNLPBL ) CALL READCHEM
 
          ! Set NCS=NCSURBAN here since we have defined our tropospheric
          ! chemistry mechanism in the urban slot of SMVGEAR II (bmy, 4/21/03)
@@ -337,11 +337,15 @@
             ! concentrations for FUTURE_YEAR.  Otherwise get the CH4
             ! concentrations for the current met field year. 
             ! (swu, havala, bmy, 1/24/08)
+#ifdef NOUSE
             IF ( LFUTURE ) THEN
-!              CH4_YEAR = GET_FUTURE_YEAR()
+               CH4_YEAR = GET_FUTURE_YEAR()
             ELSE
+#endif
                CH4_YEAR = GET_YEAR()
+#ifdef NOUSE
             ENDIF
+#endif
 
             ! Get CH4 [ppbv] in 4 latitude bins for each year
             CALL GET_GLOBAL_CH4( CH4_YEAR, .TRUE., C3090S,
@@ -359,7 +363,7 @@
          !-------------------------------
          ! Flag certain chemical species
          !-------------------------------
-         CALL SETTRACE
+         IF ( .not. LNLPBL ) CALL SETTRACE
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after SETTRACE' )
@@ -367,7 +371,7 @@
          !-------------------------------
          ! Flag emission & drydep rxns
          !-------------------------------
-         CALL SETEMDEP( N_TRACERS )
+         IF ( .not. LNLPBL ) CALL SETEMDEP( N_TRACERS )
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after SETEMDEP' )
@@ -389,15 +393,17 @@
       ! Get todays' date
       DATE = GET_NYMD()
     
+#ifdef NOUSE
       ! If this is the first chem timestep of a new day, then we need to 
       ! call SETUP_PLANEFLIGHT.  If chemistry is turned on, then we need
       ! to place this call here, so as to make sure that the chemical
       ! mechanism files (read by READER and READCHEM) have been loaded.
       IF ( ND40 .and. DATE /= DATE_PREV ) THEN
-!        print*, '### Called SETUP_PLANEFLIGHT'
-!        CALL SETUP_PLANEFLIGHT
-!        DATE_PREV = DATE
+         print*, '### Called SETUP_PLANEFLIGHT'
+         CALL SETUP_PLANEFLIGHT
+         DATE_PREV = DATE
       ENDIF
+#endif
 
       !================================================================
       ! Get concentrations of aerosols in [kg/m3] 
@@ -422,7 +428,9 @@
       IT_EXISTS = .FALSE.
       IF ( FIRSTCHEM .AND. LSVCSPEC ) THEN 
 
-!        CALL READ_CSPEC_FILE( GET_NYMD(), GET_NHMS(), IT_EXISTS ) 
+#ifdef NOUSE
+         CALL READ_CSPEC_FILE( GET_NYMD(), GET_NHMS(), IT_EXISTS ) 
+#endif
          IT_EXISTS = .TRUE.
    
          IF ( .not. IT_EXISTS ) THEN 
@@ -466,7 +474,7 @@
       !=================================================================  
       ! Call SETEMIS which sets emission rates REMIS 
       !=================================================================
-      CALL SETEMIS( EMISRR, EMISRRN )
+      IF ( .not. LNLPBL ) CALL SETEMIS( EMISRR, EMISRRN )
       
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after SETEMIS' )
@@ -578,15 +586,16 @@
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after DO_DIAG_OH' )
 
+#ifdef NOUSE
       !=================================================================
       ! Save production and loss for chemical families.  Also save
       ! P(Ox) and L(Ox) for a future tagged Ox run (if necessary).
       !=================================================================
       IF ( LFAMILY ) THEN
-!        CALL DO_DIAG_PL
+         CALL DO_DIAG_PL
 
          !### Debug
-!        IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after DO_DIAG_PL' )
+         IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after DO_DIAG_PL' )
       ENDIF
       
       !=================================================================
@@ -602,11 +611,12 @@
       !     CSPEC_FULL restart file. (ccc, 2/26/09) 
       !=================================================================
       IF ( LVARTROP .or. LSVCSPEC ) THEN
-         !CALL SAVE_FULL_TROP
+         CALL SAVE_FULL_TROP
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after SAVE_FULL_TROP')
       ENDIF
+#endif
 
       !=================================================================
       ! Set FIRSTCHEM = .FALSE. -- we have gone thru one chem step

@@ -534,59 +534,67 @@
       ENDIF
 
       !-----------------------------------
-      ! SPACING*52,53,54: AOD [unitless]
+      ! SPACING*52: AOD, SSA, ASM
       !-----------------------------------
 
       CALL WRITE_SEPARATOR( 700 )
 
       N = ( SPACING * 52 ) + 1
-
-      NAME_NEW = 'DIAGAOD'
-
+      NAME_NEW = 'AOD'
       CALL WRITE_TINFO( NAME_NEW, FNAME(1,70), 1e0,
      &                  1,        1e0,         'unitless', N )
 
-      N = ( SPACING * 53 ) + 1
-
-      NAME_NEW = 'DIAGSSA'
-
+      N = ( SPACING * 52 ) + 2
+      NAME_NEW = 'SSA'
       CALL WRITE_TINFO( NAME_NEW, FNAME(2,70), 1e0,
      &                  1,        1e0,         'unitless', N )
 
-      N = ( SPACING * 54 ) + 1
-
-      NAME_NEW = 'DIAGASM'
-
+      N = ( SPACING * 52 ) + 3
+      NAME_NEW = 'ASM'
       CALL WRITE_TINFO( NAME_NEW, FNAME(3,70), 1e0,
      &                  1,        1e0,         'unitless', N )
 
+      !-----------------------------------
+      ! SPACING*53: Aerosol SWHR
+      !-----------------------------------
+
       CALL WRITE_SEPARATOR( 800 )
 
-      N = ( SPACING * 55 ) + 1
-
+      N = ( SPACING * 53 ) + 1
       NAME_NEW = 'AERSWHR'
       CALL WRITE_TINFO( NAME_NEW, FNAME(4,70), 1e0,
      &                  1,        1e0,         'K/s', N )
+
+      N = ( SPACING * 53 ) + 2
       NAME_NEW = 'AERSWHRC'
       CALL WRITE_TINFO( NAME_NEW, FNAME(5,70), 1e0,
-     &                  1,        1e0,         'K/s', N+1 )
+     &                  1,        1e0,         'K/s', N )
+
+      !-----------------------------------
+      ! SPACING*54: Aerosol RADF
+      !-----------------------------------
 
       CALL WRITE_SEPARATOR( 900 )
 
-      N = ( SPACING * 56 ) + 1
-
+      N = ( SPACING * 54 ) + 1
       NAME_NEW = 'ARFTOA'
       CALL WRITE_TINFO( NAME_NEW, FNAME(6,70), 1e0,
      &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 54 ) + 2
       NAME_NEW = 'ARFSFC'
       CALL WRITE_TINFO( NAME_NEW, FNAME(7,70), 1e0,
-     &                  1,        1e0,         'W/m2', N+1 )
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 54 ) + 3
       NAME_NEW = 'ARFTOAC'
       CALL WRITE_TINFO( NAME_NEW, FNAME(8,70), 1e0,
-     &                  1,        1e0,         'W/m2', N+2 )
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 54 ) + 4
       NAME_NEW = 'ARFSFCC'
       CALL WRITE_TINFO( NAME_NEW, FNAME(9,70), 1e0,
-     &                  1,        1e0,         'W/m2', N+3 )
+     &                  1,        1e0,         'W/m2', N )
 
       !------------------------------
       ! All other diagnostics 
@@ -1362,29 +1370,19 @@
       OFFSET(N)   = SPACING * 51
 
       N           = N + 1
-      CATEGORY(N) = 'DIAGAOD'
-      DESCRIPT(N) = 'Diagnostic Aerosol Optical Depth'
+      CATEGORY(N) = 'AERPROP'
+      DESCRIPT(N) = 'Aerosol Optical Properties'
       OFFSET(N)   = SPACING * 52
-
-      N           = N + 1
-      CATEGORY(N) = 'DIAGSSA'
-      DESCRIPT(N) = 'Diagnostic Single Scattering Albedo'
-      OFFSET(N)   = SPACING * 53
-
-      N           = N + 1
-      CATEGORY(N) = 'DIAGASM'
-      DESCRIPT(N) = 'Diagnostic Asymmetry Parameter'
-      OFFSET(N)   = SPACING * 54
 
       N           = N + 1
       CATEGORY(N) = 'AERSWHR'
       DESCRIPT(N) = 'Aerosol Heat Rate'
-      OFFSET(N)   = SPACING * 55
+      OFFSET(N)   = SPACING * 53
 
       N           = N + 1
       CATEGORY(N) = 'AERRADF'
       DESCRIPT(N) = 'Aerosol Radiative Forcing'
-      OFFSET(N)   = SPACING * 56
+      OFFSET(N)   = SPACING * 54
 
 ! NEED TO DO THAT AT ONE POINT      
 !      ! New for CSPEC
@@ -3906,7 +3904,7 @@
       ENDIF
 
       !-------------------------------------
-      ! DIAGAOD, DIAGSSA, DIAGASM
+      ! AERPROP, AERSWHR, AERRADF
       !-------------------------------------
 #if defined( RRTMGSW ) && defined( RRTMGLW )
       FNAME(1,70) = 'AOD at 533nm'

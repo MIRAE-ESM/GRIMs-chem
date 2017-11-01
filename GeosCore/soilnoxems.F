@@ -149,12 +149,16 @@
             DO K = 1, IREG(IREF,JREF)
                NN = NCONSOIL(ILAND(IREF,JREF,K)+1)
 
+#ifdef NOUSE
                ! IPCC future emission scenario for NOx from fertilizers
                IF ( LFUTURE ) THEN
-!                 FUT_SCL = GET_FUTURE_SCALE_NOXft( I, J )
+                  FUT_SCL = GET_FUTURE_SCALE_NOXft( I, J )
                ELSE
+#endif
                   FUT_SCL = 1d0
+#ifdef NOUSE
                ENDIF
+#endif
 
                IF (LSOILNOX) THEN
                ! SOILNOX contains soil NOx emissions in [molec NOx/cm2/s]

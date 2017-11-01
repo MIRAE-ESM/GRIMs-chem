@@ -224,7 +224,7 @@
              NUM_TRACER = 1
            ENDIF
          ELSE
-           ! All other simulations don't use O3...print error message
+            ! All other simulations don't use O3...print error message
             IF (LMASTER) THEN
             WRITE( 6, '(a)' ) 'This simulation does not use O3!!'
             WRITE( 6, '(a)' ) 'STOP in linoz_chem3.f!'

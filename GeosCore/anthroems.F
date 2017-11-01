@@ -289,6 +289,7 @@
 
             EMISTC2H2 = E_C2H2
          ENDIF
+#ifdef NOUSE
          !============================================================== 
          ! Apply IPCC future scale factors to emissions (if necessary)
          !==============================================================
@@ -302,40 +303,41 @@
             DO I = 1, IIPAR
 
                ! Future CO [molec/cm2/s]
-!              EMISTCO(I,J)      = EMISTCO(I,J)                    *
-!    &                             GET_FUTURE_SCALE_COff( I, J )
+               EMISTCO(I,J)      = EMISTCO(I,J)                    *
+     &                             GET_FUTURE_SCALE_COff( I, J )
 
                ! Future C2H6 [atoms C/cm2/s]
-!              EMISTC2H6(I,J)    = EMISTC2H6(I,J)                  *
-!    &                             GET_FUTURE_SCALE_C2H6ff( I, J )
+               EMISTC2H6(I,J)    = EMISTC2H6(I,J)                  *
+     &                             GET_FUTURE_SCALE_C2H6ff( I, J )
 
                ! Future C3H8 emissions [atoms C/cm2/s]
-!              EMISTC3H8(I,J)    = EMISTC3H8(I,J)                  * 
-!    &                             GET_FUTURE_SCALE_C3H8ff( I, J )
+               EMISTC3H8(I,J)    = EMISTC3H8(I,J)                  * 
+     &                             GET_FUTURE_SCALE_C3H8ff( I, J )
 
                ! Future ALK4 [atoms C/cm2/s]
-!              EMISTALK4(I,J)    = EMISTALK4(I,J)                  * 
-!    &                             GET_FUTURE_SCALE_ALK4ff( I, J )
+               EMISTALK4(I,J)    = EMISTALK4(I,J)                  * 
+     &                             GET_FUTURE_SCALE_ALK4ff( I, J )
 
                ! Future PRPE [atoms C/cm2/s]
-!              EMISTPRPE(I,J)    = EMISTPRPE(I,J)                  *
-!    &                             GET_FUTURE_SCALE_PRPEff( I, J )
+               EMISTPRPE(I,J)    = EMISTPRPE(I,J)                  *
+     &                             GET_FUTURE_SCALE_PRPEff( I, J )
 
                ! Future ACET [atoms C/cm2/s]
-!              EMISTACET(I,J)    = EMISTACET(I,J)                  * 
-!    &                             GET_FUTURE_SCALE_TONEff( I, J )
+               EMISTACET(I,J)    = EMISTACET(I,J)                  * 
+     &                             GET_FUTURE_SCALE_TONEff( I, J )
 
                ! Future MEK [atoms C/cm2/s]
-!              EMISTMEK(I,J)     = EMISTMEK(I,J)                   * 
-!    &                             GET_FUTURE_SCALE_TONEff( I, J )
+               EMISTMEK(I,J)     = EMISTMEK(I,J)                   * 
+     &                             GET_FUTURE_SCALE_TONEff( I, J )
 
                ! Future NOx [molec/cm2/s]
-!              EMISTNOX(I,J,:,:) = EMISTNOX(I,J,:,:)               *
-!    &                             GET_FUTURE_SCALE_NOxff( I, J )
+               EMISTNOX(I,J,:,:) = EMISTNOX(I,J,:,:)               *
+     &                             GET_FUTURE_SCALE_NOxff( I, J )
             ENDDO
             ENDDO
 !$OMP END PARALLEL DO
          ENDIF
+#endif
       ENDIF
 
       !================================================================= 

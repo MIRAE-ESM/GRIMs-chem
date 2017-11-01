@@ -4065,12 +4065,14 @@ c
          FIRST = .FALSE.
       ENDIF
 
+#ifdef NOUSE
       ! Compute time scaling arrays which are used both for
       ! biogenic emission and offline OH (rjp, bmy, 7/15/04)
       IF ( LSOA ) THEN
-!        CALL OHNO3TIME
-!        IF ( LPRT ) CALL DEBUG_MSG( '### EMISSCARB: after OHNO3TIME' )
+         CALL OHNO3TIME
+         IF ( LPRT ) CALL DEBUG_MSG( '### EMISSCARB: after OHNO3TIME' )
       ENDIF
+#endif
       
       !------------------------------
       ! Read monthly-mean ANTHRO data
@@ -4727,12 +4729,14 @@ c
          ! Hydrophobic BLACK CARBON from anthropogenics [kg C/timestep]
          ANTH_BLKC(I,J,2) = ( 1.d0 - FHB ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_BCff( I, J )
-!           ANTH_BLKC(I,J,1) = ANTH_BLKC(I,J,1) * FUT_SCL
-!           ANTH_BLKC(I,J,2) = ANTH_BLKC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_BCff( I, J )
+            ANTH_BLKC(I,J,1) = ANTH_BLKC(I,J,1) * FUT_SCL
+            ANTH_BLKC(I,J,2) = ANTH_BLKC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -4762,12 +4766,14 @@ c
          ! Hydrophobic ORGANIC CARBON from anthropogenics [kgC/timestep]
          ANTH_ORGC(I,J,2) = ( 1.d0 - FHO ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of ORGANIC CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_OCff( I, J )
-!           ANTH_ORGC(I,J,1) = ANTH_ORGC(I,J,1) * FUT_SCL
-!           ANTH_ORGC(I,J,2) = ANTH_ORGC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_OCff( I, J )
+            ANTH_ORGC(I,J,1) = ANTH_ORGC(I,J,1) * FUT_SCL
+            ANTH_ORGC(I,J,2) = ANTH_ORGC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -4810,12 +4816,14 @@ c
          BIOF_BLKC(I,J,2) = ( 1.d0 - FHB ) * FD2D(I,J) / STEPS_PER_MON
 
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_BCbf( I, J )
-!           BIOF_BLKC(I,J,1) = BIOF_BLKC(I,J,1) * FUT_SCL
-!           BIOF_BLKC(I,J,2) = BIOF_BLKC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_BCbf( I, J )
+            BIOF_BLKC(I,J,1) = BIOF_BLKC(I,J,1) * FUT_SCL
+            BIOF_BLKC(I,J,2) = BIOF_BLKC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -4845,12 +4853,14 @@ c
          ! Hydrophobic ORGANIC CARBON from biofuels [kg C/timestep]
          BIOF_ORGC(I,J,2) = ( 1.d0 - FHO ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_OCbf( I, J )
-!           BIOF_ORGC(I,J,1) = BIOF_ORGC(I,J,1) * FUT_SCL
-!           BIOF_ORGC(I,J,2) = BIOF_ORGC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_OCbf( I, J )
+            BIOF_ORGC(I,J,1) = BIOF_ORGC(I,J,1) * FUT_SCL
+            BIOF_ORGC(I,J,2) = BIOF_ORGC(I,J,2) * FUT_SCL
          ENDIF          
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -4970,12 +4980,14 @@ c
          ! Hydrophobic BLACK CARBON from anthropogenics [kg C/timestep]
          ANTH_BLKC(I,J,2) = ( 1.d0 - FHB ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_BCff( I, J )
-!           ANTH_BLKC(I,J,1) = ANTH_BLKC(I,J,1) * FUT_SCL
-!           ANTH_BLKC(I,J,2) = ANTH_BLKC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_BCff( I, J )
+            ANTH_BLKC(I,J,1) = ANTH_BLKC(I,J,1) * FUT_SCL
+            ANTH_BLKC(I,J,2) = ANTH_BLKC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 
@@ -5008,12 +5020,14 @@ c
          ! Hydrophobic ORGANIC CARBON from anthropogenics [kg C/timestep]
          ANTH_ORGC(I,J,2) = ( 1.d0 - FHO ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of ORGANIC CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_OCff( I, J )
-!           ANTH_ORGC(I,J,1) = ANTH_ORGC(I,J,1) * FUT_SCL
-!           ANTH_ORGC(I,J,2) = ANTH_ORGC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_OCff( I, J )
+            ANTH_ORGC(I,J,1) = ANTH_ORGC(I,J,1) * FUT_SCL
+            ANTH_ORGC(I,J,2) = ANTH_ORGC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 
@@ -5061,12 +5075,14 @@ c
          ! Hydrophobic BLACK CARBON from biofuels [kg C/timestep]
          BIOF_BLKC(I,J,2) = ( 1.d0 - FHB ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_BCbf( I, J )
-!           BIOF_BLKC(I,J,1) = BIOF_BLKC(I,J,1) * FUT_SCL
-!           BIOF_BLKC(I,J,2) = BIOF_BLKC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_BCbf( I, J )
+            BIOF_BLKC(I,J,1) = BIOF_BLKC(I,J,1) * FUT_SCL
+            BIOF_BLKC(I,J,2) = BIOF_BLKC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 
@@ -5102,12 +5118,14 @@ c
          ! Hydrophobic ORGANIC CARBON from biofuels [kg C/timestep]
          BIOF_ORGC(I,J,2) = ( 1.d0 - FHO ) * FD2D(I,J) / STEPS_PER_MON
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_OCbf( I, J )
-!           BIOF_ORGC(I,J,1) = BIOF_ORGC(I,J,1) * FUT_SCL
-!           BIOF_ORGC(I,J,2) = BIOF_ORGC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_OCbf( I, J )
+            BIOF_ORGC(I,J,1) = BIOF_ORGC(I,J,1) * FUT_SCL
+            BIOF_ORGC(I,J,2) = BIOF_ORGC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 
@@ -5207,12 +5225,14 @@ c
          ! Hydrophobic BLACK CARBON from biomass [kg C/timestep]
          BIOB_BLKC(I,J,2) = ( 1.d0 - FHB ) * FD2D(I,J) / STEPS_PER_YR
 
+#ifdef NOUSE
          ! Compute future emissions of BLACK CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_BCbb( I, J )
-!           BIOB_BLKC(I,J,1) = BIOB_BLKC(I,J,1) * FUT_SCL
-!           BIOB_BLKC(I,J,2) = BIOB_BLKC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_BCbb( I, J )
+            BIOB_BLKC(I,J,1) = BIOB_BLKC(I,J,1) * FUT_SCL
+            BIOB_BLKC(I,J,2) = BIOB_BLKC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -5242,12 +5262,14 @@ c
          ! Hydrophobic ORGANIC CARBON from biomass [kg C/timestep]
          BIOB_ORGC(I,J,2) = ( 1.d0 - FHO ) * FD2D(I,J) / STEPS_PER_YR
 
+#ifdef NOUSE
          ! Compute future emissions of ORGANIC CARBON (if necessary)
          IF ( LFUTURE ) THEN
-!           FUT_SCL          = GET_FUTURE_SCALE_OCbb( I, J )
-!           BIOB_ORGC(I,J,1) = BIOB_ORGC(I,J,1) * FUT_SCL
-!           BIOB_ORGC(I,J,2) = BIOB_ORGC(I,J,2) * FUT_SCL
+            FUT_SCL          = GET_FUTURE_SCALE_OCbb( I, J )
+            BIOB_ORGC(I,J,1) = BIOB_ORGC(I,J,1) * FUT_SCL
+            BIOB_ORGC(I,J,2) = BIOB_ORGC(I,J,2) * FUT_SCL
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -5364,19 +5386,21 @@ c
             ! Hydrophobic ORGANIC CARBON from biomass [kg C/timestep]
             BIOB_ORGC(I,J,2) = ( 1.D0 - FHO ) * BIOOC
 
+#ifdef NOUSE
             ! Apply future emissions for GCAP (if necessary)
             IF ( LFUTURE ) THEN
 
                ! Compute future emissions of ORGANIC CARBON
-!              FUT_SCL          = GET_FUTURE_SCALE_OCbb( I, J )
-!              BIOB_ORGC(I,J,1) = BIOB_ORGC(I,J,1) * FUT_SCL
-!              BIOB_ORGC(I,J,2) = BIOB_ORGC(I,J,2) * FUT_SCL
+               FUT_SCL          = GET_FUTURE_SCALE_OCbb( I, J )
+               BIOB_ORGC(I,J,1) = BIOB_ORGC(I,J,1) * FUT_SCL
+               BIOB_ORGC(I,J,2) = BIOB_ORGC(I,J,2) * FUT_SCL
 
                ! Compute future emissions of BLACK CARBON
-!              FUT_SCL          = GET_FUTURE_SCALE_BCbb( I, J )
-!              BIOB_BLKC(I,J,1) = BIOB_BLKC(I,J,1) * FUT_SCL
-!              BIOB_BLKC(I,J,2) = BIOB_BLKC(I,J,2) * FUT_SCL
+               FUT_SCL          = GET_FUTURE_SCALE_BCbb( I, J )
+               BIOB_BLKC(I,J,1) = BIOB_BLKC(I,J,1) * FUT_SCL
+               BIOB_BLKC(I,J,2) = BIOB_BLKC(I,J,2) * FUT_SCL
             ENDIF 
+#endif
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO  
@@ -5414,7 +5438,7 @@ c
       USE TRACER_MOD,   ONLY  : STT
       USE TRACERID_MOD, ONLY  : IDTBCPI, IDTBCPO, IDTOCPI, IDTOCPO
       USE TRACERID_MOD, ONLY  : IDTALPH, IDTLIMO, IDTALCO
-!     USE VDIFF_PRE_MOD, ONLY : EMIS_SAVE ! (Lin, 03/31/09)
+      USE VDIFF_PRE_MOD, ONLY : EMIS_SAVE ! (Lin, 03/31/09)
 
       USE CMN_SIZE_MOD  ! Size parameters
 
@@ -5444,7 +5468,6 @@ c
       ! Save surface emis for non-local PBL mixing (vdiff_mod.f) 
       ! (units: kg) (Lin, 06/09/08) 
 
-#ifdef NOUSE
       IF (LNLPBL) THEN
 
 !$OMP PARALLEL DO DEFAULT( SHARED ) PRIVATE( I, J )
@@ -5476,7 +5499,6 @@ c
          RETURN ! we don't need to use below
 
       ENDIF
-#endif
 
       ! Maximum extent of PBL [model levels]
       PBL_MAX = GET_PBL_MAX_L()

@@ -397,20 +397,22 @@
       NGAS         = NACTIVE
       NTSPECGAS    = NGAS + NINAC
 
+#ifdef NOUSE
       !=================================================================
       ! Chemical prod-loss diagnostic (bdf, bmy, 4/18/03)
       !=================================================================
       IF ( LFAMILY ) THEN
 
          ! Find species and rxns for ND65 diagnostic families
-!        CALL SETJFAM( NACTIVE, NINAC )
+         CALL SETJFAM( NACTIVE, NINAC )
 
          ! Reset quantities after SETJFAM 
-!        NSPEC(NCS)  = NACTIVE - 1
-!        NGAS        = NSPEC(NCS)
-!        NTSPECGAS   = NGAS + NINAC
-!        NTSPEC(NCS) = NGAS + NINAC
+         NSPEC(NCS)  = NACTIVE - 1
+         NGAS        = NSPEC(NCS)
+         NTSPECGAS   = NGAS + NINAC
+         NTSPEC(NCS) = NGAS + NINAC
       ENDIF
+#endif
 !
       IF (NTSPECGAS.GT.IGAS   .OR.  NSDEAD.GT. NMDEAD) THEN
         IF (LMASTER) THEN
@@ -1309,9 +1311,11 @@
 ! ***** CALL JSPARSE TO SET ARRAYS FOR SOLVING CHEMICAL EQUATIONS ***** 
 ! *********************************************************************
 !
+#ifdef NOUSE
       ! Call SETPL to setup ND65 prod/loss diagnostic
       ! SETPL must be called before JSPARSE (ljm, bmy, 5/9/03)
-!     IF ( LFAMILY ) CALL SETPL
+      IF ( LFAMILY ) CALL SETPL
+#endif
 
       ! IFSOLVE = 1 means we are calling the chemistry solver
       IF ( IFSOLVE .EQ. 1 ) THEN

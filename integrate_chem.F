@@ -27,7 +27,7 @@
       USE FILE_MOD,          ONLY : IU_ND48, IU_SMV2LOG
       USE LAI_MOD,           ONLY : RDISOLAI
       USE LIGHTNING_NOX_MOD, ONLY : LIGHTNING
-      USE LOGICAL_MOD,       ONLY : LCHEM, LCONV, LDRYD, LEMIS
+      USE LOGICAL_MOD,       ONLY : LCHEM, LCONV, LDRYD, LEMIS, LNLPBL
       USE LOGICAL_MOD,       ONLY : LPRT, LTRAN, LTURB, LVARTROP, LWETD
       USE LOGICAL_MOD,       ONLY : LSVMET, LSVMETNEST
       USE LOGICAL_MOD,       ONLY : LLIGHTNOX, LMEGAN, LUPBD
@@ -66,6 +66,7 @@
       USE TROPOPAUSE_MOD,    ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
       USE UPBDFLX_MOD,       ONLY : DO_UPBDFLX, UPBDFLX_NOY
       USE UVALBEDO_MOD,      ONLY : READ_UVALBEDO
+      USE VDIFF_MOD,         ONLY : DO_PBL_MIX_2
       USE WETSCAV_MOD,       ONLY : DO_WETDEP, INIT_WETSCAV
 #ifndef RMP
       USE comfphys,          ONLY : lastep
@@ -101,8 +102,14 @@
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a RDLAND' )
 
          ! Initialize PBL quantities but do not do mixing
-         CALL DO_PBL_MIX( .FALSE. )
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
+         ! Add option for non-local PBL (Lin, 03/31/09) 
+         IF ( .NOT. LNLPBL ) THEN
+           CALL DO_PBL_MIX( .FALSE. )
+           IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
+         ELSE
+           CALL DO_PBL_MIX_2( .FALSE. )
+           IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 1' )
+         ENDIF
 
          ! Tropopause [hPa]
          CALL TPP_REICHLER( T, PS1, TROPP )
@@ -351,6 +358,33 @@
          IF ( LCONV .or. LWETD ) CALL INIT_WETSCAV
       ENDIF
 
+
+      !-------------------------------
+      ! Test for emission timestep
+      !-------------------------------
+      IF ( LNLPBL .AND. ITS_TIME_FOR_EMIS() ) THEN
+
+         IF ( ITS_TIME_FOR_UNIT() )
+     &      CALL CONVERT_UNITS( 2, N_TRACERS, TCVV, AD, STT ) ! v/v -> kg
+
+         ! Increment emission counter
+         CALL SET_CT_EMIS( INCREMENT=.TRUE. )
+
+         !========================================================
+         !         ***** D R Y   D E P O S I T I O N *****
+         !========================================================
+         IF ( LDRYD ) CALL DO_DRYDEP
+
+         !========================================================
+         !             ***** E M I S S I O N S *****
+         !========================================================
+         IF ( LEMIS ) CALL DO_EMISSIONS
+
+         IF ( ITS_TIME_FOR_UNIT() )
+     &      CALL CONVERT_UNITS( 1, N_TRACERS, TCVV, AD, STT ) ! kg -> v/v
+
+      ENDIF
+
       !-------------------------------
       ! Test for convection timestep
       !-------------------------------
@@ -362,8 +396,14 @@
          !===========================================================
          !      ***** M I X E D   L A Y E R   M I X I N G *****
          !===========================================================
-         CALL DO_PBL_MIX( LTURB )
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
+         ! Add option for non-local PBL. (Lin, 03/31/09)
+         IF ( .NOT. LNLPBL ) THEN
+            CALL DO_PBL_MIX( LTURB )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
+         ELSE
+            CALL DO_PBL_MIX_2( LTURB )
+            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 2' )
+         ENDIF
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:2' )
@@ -394,7 +434,7 @@
       !-------------------------------
       ! Test for emission timestep
       !-------------------------------
-      IF ( ITS_TIME_FOR_EMIS() ) THEN
+      IF ( ( .NOT. LNLPBL ) .AND. ITS_TIME_FOR_EMIS() ) THEN
             
          ! Increment emission counter
          CALL SET_CT_EMIS( INCREMENT=.TRUE. )

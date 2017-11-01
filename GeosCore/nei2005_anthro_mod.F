@@ -695,12 +695,14 @@
 
       ENDDO
 
+#ifdef NOUSE
       !--------------------------
       ! Compute future emissions
       !--------------------------
       IF ( LFUTURE ) THEN 
-!        CALL NEI2005_SCALE_FUTURE
+         CALL NEI2005_SCALE_FUTURE
       ENDIF
+#endif
 
       !--------------------------
       ! Print emission totals

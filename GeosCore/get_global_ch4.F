@@ -80,10 +80,12 @@
       !=================================================================
       IF ( VARIABLE_CH4 ) THEN
 
+#ifdef NOUSE
          ! Get IPCC future scenario (e.g. A1, A2, B1, B2)
          IF ( LFUTURE ) THEN
-!           FUTURE_SCENARIO = GET_FUTURE_SCENARIO()
+            FUTURE_SCENARIO = GET_FUTURE_SCENARIO()
          ENDIF
+#endif
 
          ! Select latitudinal CH4 gradient by year...
          SELECT CASE ( THISYEAR )

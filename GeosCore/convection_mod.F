@@ -1439,6 +1439,7 @@
      &                       ( T0 * AREA_M2 / ( TCVV(IC) * DNS ) )
                      ENDIF
   
+#ifdef NOUSE
                      !=================================================
                      ! Pass the amount of Hg2 and HgP lost in wet 
                      ! scavenging [kg] to "ocean_mercury_mod.f" via 
@@ -1455,8 +1456,8 @@
                         WET_Hg2 = WET_Hg2 * NDT 
 
                         ! Pass to "ocean_mercury_mod.f"
-!                       CALL ADD_Hg2_WD( I, J, IC, WET_Hg2 )
-!                       CALL ADD_Hg2_SNOWPACK( I, J, IC, WET_Hg2 )
+                        CALL ADD_Hg2_WD( I, J, IC, WET_Hg2 )
+                        CALL ADD_Hg2_SNOWPACK( I, J, IC, WET_Hg2 )
                      ENDIF
 
                      IF ( IS_Hg .and. IS_HgP( IC ) ) THEN
@@ -1468,9 +1469,10 @@
                         WET_HgP = WET_HgP * NDT 
 
                         ! Pass to "ocean_mercury_mod.f"
-!                       CALL ADD_HgP_WD( I, J, IC, WET_HgP )
-!                       CALL ADD_Hg2_SNOWPACK( I, J, IC, WET_HgP )
+                        CALL ADD_HgP_WD( I, J, IC, WET_HgP )
+                        CALL ADD_Hg2_SNOWPACK( I, J, IC, WET_HgP )
                      ENDIF
+#endif
 
                   !=====================================================
                   ! No cloud transport if cloud mass flux < TINY; 

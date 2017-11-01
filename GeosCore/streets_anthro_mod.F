@@ -967,12 +967,14 @@
       ENDIF    ! end other simulations
 
 
+#ifdef NOUSE
       !--------------------------
       ! Compute future emissions
       !--------------------------
       IF ( LFUTURE ) THEN 
-!        CALL STREETS_SCALE_FUTURE
+         CALL STREETS_SCALE_FUTURE
       ENDIF
+#endif
 
       !--------------------------
       ! Print emission totals

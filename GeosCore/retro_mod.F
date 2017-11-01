@@ -150,33 +150,35 @@
       DO I = 1, IIPAR
 
 
+#ifdef NOUSE
          !-----------------------------------
          !  Calculate IPCC future emissions
          !-----------------------------------
          IF ( LFUTURE ) THEN
 
             ! Future anthro scale factors
-!           ALK4ff  = GET_FUTURE_SCALE_ALK4ff( I, J )
-!           VOCff   = GET_FUTURE_SCALE_VOCff(  I, J )
-!           PRPEff  = GET_FUTURE_SCALE_PRPEff( I, J )
-!           C3H8ff  = GET_FUTURE_SCALE_C3H8ff( I, J )
-!           C2H6ff  = GET_FUTURE_SCALE_C2H6ff( I, J )
+            ALK4ff  = GET_FUTURE_SCALE_ALK4ff( I, J )
+            VOCff   = GET_FUTURE_SCALE_VOCff(  I, J )
+            PRPEff  = GET_FUTURE_SCALE_PRPEff( I, J )
+            C3H8ff  = GET_FUTURE_SCALE_C3H8ff( I, J )
+            C2H6ff  = GET_FUTURE_SCALE_C2H6ff( I, J )
 
             ! Apply scale factors
-!           RETRO_ALK4 (I,J) = RETRO_ALK4 (I,J) * ALK4ff
-!           RETRO_ACET (I,J) = RETRO_ACET (I,J) * VOCff
-!           RETRO_MEK  (I,J) = RETRO_MEK  (I,J) * VOCff
-!           RETRO_ALD2 (I,J) = RETRO_ALD2 (I,J) * VOCff
-!           RETRO_PRPE (I,J) = RETRO_PRPE (I,J) * PRPEff
-!           RETRO_C3H8 (I,J) = RETRO_C3H8 (I,J) * C3H8ff
-!           RETRO_C2H6 (I,J) = RETRO_C2H6 (I,J) * C2H6ff
-!           RETRO_CH2O (I,J) = RETRO_CH2O (I,J) * VOCff
-!           RETRO_BENZ (I,J) = RETRO_BENZ (I,J) * VOCff
-!           RETRO_TOLU (I,J) = RETRO_TOLU (I,J) * VOCff
-!           RETRO_XYLE (I,J) = RETRO_XYLE (I,J) * VOCff
-!           RETRO_C2H4 (I,J) = RETRO_C2H4 (I,J) * VOCff
-!           RETRO_C2H2 (I,J) = RETRO_C2H2 (I,J) * VOCff
+            RETRO_ALK4 (I,J) = RETRO_ALK4 (I,J) * ALK4ff
+            RETRO_ACET (I,J) = RETRO_ACET (I,J) * VOCff
+            RETRO_MEK  (I,J) = RETRO_MEK  (I,J) * VOCff
+            RETRO_ALD2 (I,J) = RETRO_ALD2 (I,J) * VOCff
+            RETRO_PRPE (I,J) = RETRO_PRPE (I,J) * PRPEff
+            RETRO_C3H8 (I,J) = RETRO_C3H8 (I,J) * C3H8ff
+            RETRO_C2H6 (I,J) = RETRO_C2H6 (I,J) * C2H6ff
+            RETRO_CH2O (I,J) = RETRO_CH2O (I,J) * VOCff
+            RETRO_BENZ (I,J) = RETRO_BENZ (I,J) * VOCff
+            RETRO_TOLU (I,J) = RETRO_TOLU (I,J) * VOCff
+            RETRO_XYLE (I,J) = RETRO_XYLE (I,J) * VOCff
+            RETRO_C2H4 (I,J) = RETRO_C2H4 (I,J) * VOCff
+            RETRO_C2H2 (I,J) = RETRO_C2H2 (I,J) * VOCff
          ENDIF
+#endif
       ENDDO
       ENDDO
 

@@ -226,7 +226,7 @@
 !******************************************************************************
 !
       USE LOGICAL_MOD,   ONLY : LNLPBL ! (Lin, 03/31/09)
-!     USE VDIFF_PRE_MOD, ONLY : emis_save ! (Lin, 03/31/09)
+      USE VDIFF_PRE_MOD, ONLY : emis_save ! (Lin, 03/31/09)
 
       IMPLICIT NONE
 #     include "define.h"
@@ -4302,7 +4302,7 @@
  
          ! Save surface emis for non-local PBL mixing (vdiff_mod.f) (units: kg)
          ! (Lin, 06/09/08)
-!        if (LNLPBL) emis_save(I,J,IDTDMS) = DMSSRC
+         if (LNLPBL) emis_save(I,J,IDTDMS) = DMSSRC
 
          !==============================================================
          ! ND13 diagnostic:  DMS emissions [kg S/box/timestep]
@@ -4862,7 +4862,7 @@
                ELSE
                   ! Save surface emis for non-local PBL mixing (vdiff_mod.f) 
                   ! (units: kg) (Lin, 06/09/08)
-!                 EMIS_SAVE(I,J,IDTSO2) = SO2SRC * DTSRCE
+                  EMIS_SAVE(I,J,IDTSO2) = SO2SRC * DTSRCE
                ENDIF
             ENDIF
          ENDDO
@@ -5163,7 +5163,7 @@
                TC(I,J,:)  = TC(I,J,:)  + SO4(:)  * DTSRCE
             ELSE
                TC(I,J,2:) = TC(I,J,2:) + SO4(2:) * DTSRCE
-!              EMIS_SAVE(I,J,IDTSO4) = SO4(1) * DTSRCE
+               EMIS_SAVE(I,J,IDTSO4) = SO4(1) * DTSRCE
             ENDIF
                
 
@@ -5414,7 +5414,7 @@
                TC(I,J,:)  = TC(I,J,:)  + NH3(:)  * DTSRCE
             ELSE
                TC(I,J,2:) = TC(I,J,2:) + NH3(2:) * DTSRCE
-!              EMIS_SAVE(I,J,IDTNH3) = NH3(1) * DTSRCE
+               EMIS_SAVE(I,J,IDTNH3) = NH3(1) * DTSRCE
             ENDIF
             
             !============================================================
@@ -6362,11 +6362,13 @@
                ! First scale SOx to the given fossil fuel year
                E_SOx(I,J,L) = E_SOx(I,J,L) * SOx_SCALE(I,J)
             
+#ifdef NOUSE
                ! Compute future SOx emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                 E_SOx(I,J,L) = E_SOx(I,J,L)                  * 
-!    &                           GET_FUTURE_SCALE_SO2ff( I, J )
+                  E_SOx(I,J,L) = E_SOx(I,J,L)                  * 
+     &                           GET_FUTURE_SCALE_SO2ff( I, J )
                ENDIF
+#endif
 
                ! Compute SO4/SOx fraction for EUROPE
                IF ( ( X >= -12.5 .and. X <= 60.0 )  .and. 
@@ -6739,11 +6741,13 @@
             ESO2_bf(I,J) = ( BIOCO(I,J) * 64d-3 * 0.0015d0 /
      &                     ( 28d-3 * 86400.d0 * 365.25d0 ) )
 
+#ifdef NOUSE
             ! Apply future emissions to biofuel SO2, if necessary
             IF ( LFUTURE ) THEN
-!              ESO2_bf(I,J) = ESO2_bf(I,J) * 
-!    &                        GET_FUTURE_SCALE_SO2bf( I, J )
+               ESO2_bf(I,J) = ESO2_bf(I,J) * 
+     &                        GET_FUTURE_SCALE_SO2bf( I, J )
             ENDIF
+#endif
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -7101,11 +7105,13 @@
                ! Convert [molec SO2/cm2/s] to [kg SO2/box/s]
                ESO2_sh(I,J) = SHIPSO2(I,J) * AREA_CM2 / XNUMOL(IDTSO2)
 
+#ifdef NOUSE
                ! Apply future emissions (if necessary)
                IF ( LFUTURE ) THEN
-!                  ESO2_sh(I,J) = ESO2_sh(I,J) *
-!    &                            GET_FUTURE_SCALE_SO2ff( I, J ) 
+                   ESO2_sh(I,J) = ESO2_sh(I,J) *
+     &                            GET_FUTURE_SCALE_SO2ff( I, J ) 
                ENDIF
+#endif
 
                IF ( LEMEPSHIP ) THEN
                   IF ( GET_EUROPE_MASK(I,J) > 0d0 )
@@ -7278,12 +7284,14 @@
          ENH3_an(I,J) = ENH3_an(I,J) * ( 17.d0 / 14.d0 ) 
      &                / ( NMDAY(THISMONTH) * 86400.d0 )
 
+#ifdef NOUSE
          ! Compute future NH3an emissions, if necessary
          ! Moved here since Streets and EMEP should have already
          ! applied FUTURE scale factors if needed 
          IF ( LFUTURE ) THEN
-!           ENH3_an(I,J) = ENH3_an(I,J) * GET_FUTURE_SCALE_NH3an( I, J )
+            ENH3_an(I,J) = ENH3_an(I,J) * GET_FUTURE_SCALE_NH3an( I, J )
          ENDIF
+#endif
 
          ! If we are using David Streets' emissions ...
          IF ( LSTREETS ) THEN
@@ -7498,6 +7506,7 @@
       ! Store NH3 in ENH3_bf array [kg NH3/box/s]
       ENH3_bf = ENH3_bf / ( NMDAY(THISMONTH) * 86400.d0 )
 
+#ifdef NOUSE
       !=================================================================
       ! Convert units and apply IPCC future emissions (if necessary)
       !=================================================================
@@ -7514,12 +7523,13 @@
 
             ! Scale biofuel NH3 to IPCC future scenario (if necessary)
             IF ( LFUTURE ) THEN
-!              ENH3_bf(I,J) = ENH3_bf(I,J) * 
-!    &                        GET_FUTURE_SCALE_NH3bf( I, J )
+               ENH3_bf(I,J) = ENH3_bf(I,J) * 
+     &                        GET_FUTURE_SCALE_NH3bf( I, J )
             ENDIF
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO
+#endif
       
       ! Return to calling program
       END SUBROUTINE READ_BIOFUEL_NH3

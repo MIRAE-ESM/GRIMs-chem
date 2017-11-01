@@ -532,12 +532,14 @@
       ENDIF
 
       
+#ifdef NOUSE
       !=================================================================
       ! Compute IPCC future emissions (if necessary)
       !=================================================================
       IF ( LFUTURE ) THEN 
-!        CALL EMEP_SCALE_FUTURE
+         CALL EMEP_SCALE_FUTURE
       ENDIF
+#endif
 
       !=================================================================
       ! Print emission totals

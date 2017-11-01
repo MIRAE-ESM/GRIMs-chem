@@ -86,6 +86,7 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/global_no3_mod.o \
         ${COREDIR}/lai_mod.o \
         ${COREDIR}/megan_mod.o \
+        ${COREDIR}/vdiff_pre_mod.o \
         ${COREDIR}/carbon_mod.o \
         ${COREDIR}/dust_dead_mod.o \
         ${COREDIR}/dust_shao_mod.o \
@@ -132,6 +133,7 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/toms_mod.o \
         ${COREDIR}/geia_mod.o \
         ${COREDIR}/fjx_acet_mod.o \
+        ${COREDIR}/vdiff_mod.o \
         ${COREDIR}/airmas.o \
         ${COREDIR}/anthroems.o \
         ${COREDIR}/arsl1k.o \

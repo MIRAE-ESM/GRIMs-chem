@@ -223,15 +223,17 @@
          IF ( ND68 > 0 ) AD68     = 0e0
          IF ( ND69 > 0 ) AD69     = 0e0
 
+#ifdef NOUSE
          ! For ND03 - mercury simulations (eck, sas, bmy, 1/20/05)
-!        IF ( ND03 > 0 ) THEN
-!           CALL ZERO_DIAG03
-!        ENDIF
+         IF ( ND03 > 0 ) THEN
+            CALL ZERO_DIAG03
+         ENDIF
 
          ! For ND04 - CO2 simulation (pns, bmy, 7/26/05)
-!        IF ( ND04 > 0 ) THEN
-!           CALL ZERO_DIAG04
-!        ENDIF
+         IF ( ND04 > 0 ) THEN
+            CALL ZERO_DIAG04
+         ENDIF
+#endif
 
          ! ND07 -- carbon aerosol emissions (rjp, tdf, bmy, 4/5/04)
          IF ( ND07 > 0 ) THEN
@@ -298,21 +300,25 @@
             CALL ZERO_DIAG41
          ENDIF
 
+#ifdef NOUSE
          ! For ND42 - SOA concentrations (dkh, bmy, 5/22/06)
-!        IF ( ND42 > 0 ) THEN
-!           CALL ZERO_DIAG42
-!        ENDIF
+         IF ( ND42 > 0 ) THEN
+            CALL ZERO_DIAG42
+         ENDIF
+#endif
 
          ! For ND56 - lightning flash rates (bmy, 5/5/06)
          IF ( ND56 > 0 ) THEN
             CALL ZERO_DIAG56
          ENDIF
 
+#ifdef NOUSE
          ! For ND65 -- Chemical production & loss (bmy, 12/5/00)
-!        IF ( ND65 > 0 ) THEN
-!           AD65  = 0d0
-!           IF ( ALLOCATED( FAM_PL ) ) FAM_PL = 0d0      
-!       ENDIF
+         IF ( ND65 > 0 ) THEN
+            AD65  = 0d0
+            IF ( ALLOCATED( FAM_PL ) ) FAM_PL = 0d0      
+        ENDIF
+#endif
 
          ! Echo output
          IF (LMASTER) THEN

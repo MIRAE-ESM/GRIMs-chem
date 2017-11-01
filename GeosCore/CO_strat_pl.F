@@ -103,7 +103,7 @@
          ! Compute production of CH2O (qli, 12/9/99)
          STT(I,J,L,IDTCH2O) = STT(I,J,L,IDTCH2O) + 
      &                        XNUMOL(IDTCO) / XNUMOL(IDTCH2O) * 
-     &                        COPROD(I,J,L)   * BAIRDENS      / 
+     &                        COPROD(I,J,L) * BAIRDENS        / 
      &                        STTTOGCO
 
          ! Convert STT from [molec/cm3] to [kg/box]

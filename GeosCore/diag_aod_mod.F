@@ -58,11 +58,11 @@
       ! Write data to the bpch file
       !=================================================================
 
+      ! AERPROP
+      CATEGORY  = 'AERPROP'
+
       ! Select proper unit string
       UNIT = 'unitless'
-
-      ! AOD
-      CATEGORY  = 'DIAGAOD'
 
       ! Divide by SCALEAOD
       DO L = 1, LLPAR
@@ -84,9 +84,6 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! SSA
-      CATEGORY  = 'DIAGSSA'
-
       ! Divide by SCALEAOD
       DO L = 1, LLPAR
       DO J = 1, JJPAR
@@ -102,13 +99,10 @@
 
       ! Write to bpch file
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            HALFPOLAR, CENTER180, CATEGORY, 2,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
-
-      ! ASM
-      CATEGORY  = 'DIAGASM'
 
       ! Divide by SCALEAOD
       DO L = 1, LLPAR
@@ -125,14 +119,16 @@
 
       ! Write to bpch file
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            HALFPOLAR, CENTER180, CATEGORY, 3,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
       ! AERSWHR
       CATEGORY  = 'AERSWHR'
-      UNIT      = 'K/s'
+
+      ! Select proper unit string
+      UNIT = 'K/s'
 
       ! Divide by SCALEAOD
       DO L = 1, LLPAR
@@ -176,7 +172,9 @@
 
       ! AERRADF
       CATEGORY  = 'AERRADF'
-      UNIT      = 'W/m2'
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
 
       ! Divide by SCALEAOD
       DO L = 1, 4

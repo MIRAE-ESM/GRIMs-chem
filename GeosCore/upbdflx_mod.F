@@ -162,6 +162,7 @@
             CALL UPBDFLX_O3
          ENDIF
 
+#ifdef NOUSE
       ELSE IF ( ITS_A_H2HD_SIM() ) THEN
 
          !---------------
@@ -169,7 +170,8 @@
          !---------------
 
          ! HD form strat
-!        CALL UPBDFLX_HD
+         CALL UPBDFLX_HD
+#endif
 
       ELSE IF ( ITS_AN_AEROSOL_SIM() ) THEN
 

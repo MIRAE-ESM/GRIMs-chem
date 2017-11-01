@@ -407,18 +407,20 @@
          ENDDO
       ENDIF
 !
+#ifdef NOUSE
 !******************************************************************************
 !  ND03: Diagnostics from Hg0/Hg2/HgP offline simulation (eck, bmy, 1/20/05)
 !******************************************************************************
 !
-!     IF ( ND03 > 0 ) CALL WRITE_DIAG03
+      IF ( ND03 > 0 ) CALL WRITE_DIAG03
 !
 !******************************************************************************
 !  ND04: Diagnostics from CO2 simulation (pns, bmy, 7/26/05)
 !******************************************************************************
 !
-!     IF ( ND04 > 0 ) CALL WRITE_DIAG04
+      IF ( ND04 > 0 ) CALL WRITE_DIAG04
 !
+#endif
 !******************************************************************************
 !  ND05: Production/Loss for coupled fullchem/aerosol runs (NSRCX==3) or
 !        offline sulfate chemistry runs (NSRCX==10).      
@@ -2580,12 +2582,14 @@
 !
       IF ( ND41 > 0 ) CALL WRITE_DIAG41
 !
+#ifdef NOUSE
 !******************************************************************************
 !  ND42: SOA concentrations [ug/m3]
 !******************************************************************************
 !
-!     IF ( ND42 > 0 ) CALL WRITE_DIAG42
+      IF ( ND42 > 0 ) CALL WRITE_DIAG42
 !
+#endif
 !******************************************************************************
 !  ND42: Free diagnostic as of 11/24/99
 !
@@ -3756,6 +3760,7 @@
 !        ND69 = 0
       ENDIF
 
+#ifdef NOUSE
       !==================================================================
       ! Special case for mercury simulation. We need to store AD38, AD39,
       ! AD44 to ensure that we have monthly average in GTMM restart file
@@ -3771,8 +3776,9 @@
             
          ENDDO
 
-!        CALL UPDATE_DEP( N )
+         CALL UPDATE_DEP( N )
       ENDIF
+#endif
             
       ! Echo output
       IF (LMASTER) THEN

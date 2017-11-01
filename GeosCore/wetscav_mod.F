@@ -1584,6 +1584,7 @@
          ! ND38 index
          ISOL = GET_ISOL( N )
 
+#ifdef NOUSE
       !-------------------------------
       ! Hg2 (liquid phase only)
       !-------------------------------
@@ -1592,14 +1593,14 @@
 
          ! Begin CDH Changes (5/20/2009)
          ! Allow user to choose how precip occurs
-!        IF (LHg_WETDasHNO3) THEN
+         IF (LHg_WETDasHNO3) THEN
 
             ! Assume that all Hg2 is in cloud water (liquid or frozen), 
             ! in analogy to aerosols and HNO3
-!           CALL F_AEROSOL( KC, F )
-!           ISOL = GET_ISOL( N ) 
+            CALL F_AEROSOL( KC, F )
+            ISOL = GET_ISOL( N ) 
 
-!        ELSE
+         ELSE
 
             ! Calculate gas-liquid partitioning from Henry's law
             ! then assume Hg2 is scavenged only by liquid precip
@@ -1651,8 +1652,9 @@
             ! ND38 index
             ISOL = GET_ISOL( N )
 
-!        ENDIF
+         ENDIF
          ! END CDH Changes
+#endif
 
       !-------------------------------
       ! HgP (treat like aerosol)
@@ -3073,6 +3075,7 @@
          RAINFRAC = GET_RAINFRAC( K_RAIN, F, DT )
          RAINFRAC = RAINFRAC * 0.8d0
 
+#ifdef NOUSE
       !------------------------------
       ! Hg2 (liquid phase only)
       !------------------------------
@@ -3080,13 +3083,13 @@
 
          ! Begin CDH Changes (5/20/2009)
          ! Allow user to choose how precip occurs
-!        IF (LHg_WETDasHNO3) THEN
+         IF (LHg_WETDasHNO3) THEN
             
             ! Assume that all Hg2 is in cloud water (liquid or frozen), 
             ! in analogy to aerosols and HNO3
-!           RAINFRAC = GET_RAINFRAC( K_RAIN, F, DT )
+            RAINFRAC = GET_RAINFRAC( K_RAIN, F, DT )
 
-!        ELSE
+         ELSE
 
             ! Compute liquid to gas ratio for HgCl2, using
             ! the appropriate parameters for Henry's law
@@ -3115,8 +3118,9 @@
             ! (Eq. 10, Jacob et al, 2000)
             RAINFRAC = GET_RAINFRAC( K, F, DT ) 
 
-!        ENDIF
+         ENDIF
          ! END CDH Changes
+#endif
 
       !------------------------------
       ! HgP (treat like aerosol)
@@ -3601,6 +3605,7 @@
          AER      = .TRUE.
          WASHFRAC = WASHFRAC_AEROSOL( DT, F, K_WASH, PP, TK )
 
+#ifdef NOUSE
       !------------------------------
       ! Hg2 (liquid & gas phases)
       !------------------------------
@@ -3608,13 +3613,13 @@
 
          ! Begin CDH Changes (5/20/2009)
          ! Allow user to choose how precip occurs
-!        IF ( LHg_WETDasHNO3 ) THEN
+         IF ( LHg_WETDasHNO3 ) THEN
 
             ! Assume that Hg2 behaves like HNO3 and aerosols 
-!           AER      = .TRUE.
-!           WASHFRAC = WASHFRAC_AEROSOL( DT, F, K_WASH, PP, TK )
+            AER      = .TRUE.
+            WASHFRAC = WASHFRAC_AEROSOL( DT, F, K_WASH, PP, TK )
             
-!        ELSE
+         ELSE
 
             ! Assume Hg2 is in gas phase and equilibrates with precip
             ! according to Henry's law
@@ -3626,7 +3631,8 @@
      &                             F,        DZ,    TK, K_WASH, 
      &                             WASHFRAC, AER )
 
-!        ENDIF
+         ENDIF
+#endif
       
       !------------------------------
       ! HgP (treat like aerosol) 
@@ -4342,6 +4348,7 @@
             ENDIF    
          ENDIF
 
+#ifdef NOUSE
          !==============================================================
          ! (8)  M e r c u r y   S i m u l a t i o n   O n l y 
          !
@@ -4365,20 +4372,21 @@
                ! Check if it is a gaseous Hg2 tag
                IF ( IS_Hg2( N ) ) THEN
 
-!                 CALL ADD_Hg2_WD      ( I, J, N, DSTT(NN,1,I,J) )
-!                 CALL ADD_Hg2_SNOWPACK( I, J, N, DSTT(NN,1,I,J) )
+                  CALL ADD_Hg2_WD      ( I, J, N, DSTT(NN,1,I,J) )
+                  CALL ADD_Hg2_SNOWPACK( I, J, N, DSTT(NN,1,I,J) )
 
                ! Check if it is a HgP tag
                ELSE IF ( IS_HgP( N ) ) THEN
                   
-!                 CALL ADD_HgP_WD      ( I, J, N, DSTT(NN,1,I,J) )
-!                 CALL ADD_Hg2_SNOWPACK( I, J, N, DSTT(NN,1,I,J) )
+                  CALL ADD_HgP_WD      ( I, J, N, DSTT(NN,1,I,J) )
+                  CALL ADD_Hg2_SNOWPACK( I, J, N, DSTT(NN,1,I,J) )
                   
                ENDIF
 
             ENDDO
             
          ENDIF
+#endif
 
       ENDDO	
       ENDDO	

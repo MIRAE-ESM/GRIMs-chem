@@ -792,52 +792,54 @@
          EPA_WE_AN_SO4 (I,J) = EPA_WE_AN_SO4 (I,J) * USA_MASK(I,J)
          EPA_WE_AN_NH3 (I,J) = EPA_WE_AN_NH3 (I,J) * USA_MASK(I,J)
                               
+#ifdef NOUSE
          !----------------------------------------------
          ! Compute IPCC future emissions (if necessary)
          !----------------------------------------------
          IF ( LFUTURE .and. USA_MASK(I,J) > 0d0 ) THEN
 
             ! Future anthro scale factors
-!           ALK4ff = GET_FUTURE_SCALE_ALK4ff( I, J )
-!           C2H6ff = GET_FUTURE_SCALE_C2H6ff( I, J )
-!           C3H8ff = GET_FUTURE_SCALE_C3H8ff( I, J )
-!           COff   = GET_FUTURE_SCALE_COff(   I, J )
-!           NH3an  = GET_FUTURE_SCALE_NH3an(  I, J )
-!           NOxff  = GET_FUTURE_SCALE_NOxff(  I, J )
-!           PRPEff = GET_FUTURE_SCALE_PRPEff( I, J )
-!           TONEff = GET_FUTURE_SCALE_TONEff( I, J )
-!           SO2ff  = GET_FUTURE_SCALE_SO2ff(  I, J )
-!           VOCff  = GET_FUTURE_SCALE_VOCff(  I, J )
+            ALK4ff = GET_FUTURE_SCALE_ALK4ff( I, J )
+            C2H6ff = GET_FUTURE_SCALE_C2H6ff( I, J )
+            C3H8ff = GET_FUTURE_SCALE_C3H8ff( I, J )
+            COff   = GET_FUTURE_SCALE_COff(   I, J )
+            NH3an  = GET_FUTURE_SCALE_NH3an(  I, J )
+            NOxff  = GET_FUTURE_SCALE_NOxff(  I, J )
+            PRPEff = GET_FUTURE_SCALE_PRPEff( I, J )
+            TONEff = GET_FUTURE_SCALE_TONEff( I, J )
+            SO2ff  = GET_FUTURE_SCALE_SO2ff(  I, J )
+            VOCff  = GET_FUTURE_SCALE_VOCff(  I, J )
 
             ! Future weekday avg anthro
-!           EPA_WD_AN_NOX (I,J) = EPA_WD_AN_NOX (I,J) * NOxff
-!           EPA_WD_AN_CO  (I,J) = EPA_WD_AN_CO  (I,J) * COff
-!           EPA_WD_AN_ALK4(I,J) = EPA_WD_AN_ALK4(I,J) * ALK4ff
-!           EPA_WD_AN_ACET(I,J) = EPA_WD_AN_ACET(I,J) * TONEff
-!           EPA_WD_AN_MEK (I,J) = EPA_WD_AN_MEK (I,J) * TONEff
-!           EPA_WD_AN_PRPE(I,J) = EPA_WD_AN_PRPE(I,J) * PRPEff
-!           EPA_WD_AN_C3H8(I,J) = EPA_WD_AN_C3H8(I,J) * C3H8ff 
-!           EPA_WD_AN_CH2O(I,J) = EPA_WD_AN_CH2O(I,J) * VOCff
-!           EPA_WD_AN_C2H6(I,J) = EPA_WD_AN_C2H6(I,J) * C2H6ff
-!           EPA_WD_AN_SO2 (I,J) = EPA_WD_AN_SO2 (I,J) * SO2ff
-!           EPA_WD_AN_SO4 (I,J) = EPA_WD_AN_SO4 (I,J) * SO2ff
-!           EPA_WD_AN_NH3 (I,J) = EPA_WD_AN_NH3 (I,J) * NH3an 
+            EPA_WD_AN_NOX (I,J) = EPA_WD_AN_NOX (I,J) * NOxff
+            EPA_WD_AN_CO  (I,J) = EPA_WD_AN_CO  (I,J) * COff
+            EPA_WD_AN_ALK4(I,J) = EPA_WD_AN_ALK4(I,J) * ALK4ff
+            EPA_WD_AN_ACET(I,J) = EPA_WD_AN_ACET(I,J) * TONEff
+            EPA_WD_AN_MEK (I,J) = EPA_WD_AN_MEK (I,J) * TONEff
+            EPA_WD_AN_PRPE(I,J) = EPA_WD_AN_PRPE(I,J) * PRPEff
+            EPA_WD_AN_C3H8(I,J) = EPA_WD_AN_C3H8(I,J) * C3H8ff 
+            EPA_WD_AN_CH2O(I,J) = EPA_WD_AN_CH2O(I,J) * VOCff
+            EPA_WD_AN_C2H6(I,J) = EPA_WD_AN_C2H6(I,J) * C2H6ff
+            EPA_WD_AN_SO2 (I,J) = EPA_WD_AN_SO2 (I,J) * SO2ff
+            EPA_WD_AN_SO4 (I,J) = EPA_WD_AN_SO4 (I,J) * SO2ff
+            EPA_WD_AN_NH3 (I,J) = EPA_WD_AN_NH3 (I,J) * NH3an 
                              
             ! Weekend avg anthro     
-!           EPA_WE_AN_NOX (I,J) = EPA_WE_AN_NOX (I,J) * NOxff
-!           EPA_WE_AN_CO  (I,J) = EPA_WE_AN_CO  (I,J) * COff
-!           EPA_WE_AN_ALK4(I,J) = EPA_WE_AN_ALK4(I,J) * ALK4ff
-!           EPA_WE_AN_ACET(I,J) = EPA_WE_AN_ACET(I,J) * TONEff
-!           EPA_WE_AN_MEK (I,J) = EPA_WE_AN_MEK (I,J) * TONEff
-!           EPA_WE_AN_PRPE(I,J) = EPA_WE_AN_PRPE(I,J) * PRPEff
-!           EPA_WE_AN_C3H8(I,J) = EPA_WE_AN_C3H8(I,J) * C3H8ff
-!           EPA_WE_AN_CH2O(I,J) = EPA_WE_AN_CH2O(I,J) * VOCff
-!           EPA_WE_AN_C2H6(I,J) = EPA_WE_AN_C2H6(I,J) * C2H6ff 
-!           EPA_WE_AN_SO2 (I,J) = EPA_WE_AN_SO2 (I,J) * SO2ff
-!           EPA_WE_AN_SO4 (I,J) = EPA_WE_AN_SO4 (I,J) * SO2ff
-!           EPA_WE_AN_NH3 (I,J) = EPA_WE_AN_NH3 (I,J) * NH3an 
+            EPA_WE_AN_NOX (I,J) = EPA_WE_AN_NOX (I,J) * NOxff
+            EPA_WE_AN_CO  (I,J) = EPA_WE_AN_CO  (I,J) * COff
+            EPA_WE_AN_ALK4(I,J) = EPA_WE_AN_ALK4(I,J) * ALK4ff
+            EPA_WE_AN_ACET(I,J) = EPA_WE_AN_ACET(I,J) * TONEff
+            EPA_WE_AN_MEK (I,J) = EPA_WE_AN_MEK (I,J) * TONEff
+            EPA_WE_AN_PRPE(I,J) = EPA_WE_AN_PRPE(I,J) * PRPEff
+            EPA_WE_AN_C3H8(I,J) = EPA_WE_AN_C3H8(I,J) * C3H8ff
+            EPA_WE_AN_CH2O(I,J) = EPA_WE_AN_CH2O(I,J) * VOCff
+            EPA_WE_AN_C2H6(I,J) = EPA_WE_AN_C2H6(I,J) * C2H6ff 
+            EPA_WE_AN_SO2 (I,J) = EPA_WE_AN_SO2 (I,J) * SO2ff
+            EPA_WE_AN_SO4 (I,J) = EPA_WE_AN_SO4 (I,J) * SO2ff
+            EPA_WE_AN_NH3 (I,J) = EPA_WE_AN_NH3 (I,J) * NH3an 
                               
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
@@ -1012,46 +1014,48 @@
          EPA_WE_BF_SO4 (I,J) = EPA_WE_BF_SO4 (I,J) * USA_MASK(I,J)
          EPA_WE_BF_NH3 (I,J) = EPA_WE_BF_NH3 (I,J) * USA_MASK(I,J)
 
+#ifdef NOUSE
          !----------------------------------------------
          ! Compute IPCC future emissions (if necessary)
          !----------------------------------------------
          IF ( LFUTURE .and. USA_MASK(I,J) > 0d0 ) THEN
 
             ! Future biofuel scale factors            
-!           CObf   = GET_FUTURE_SCALE_CObf(   I, J )
-!           NH3bf  = GET_FUTURE_SCALE_NH3bf(  I, J )
-!           NOxbf  = GET_FUTURE_SCALE_NOXbf(  I, J )
-!           SO2bf  = GET_FUTURE_SCALE_SO2bf(  I, J )
-!           VOCbf  = GET_FUTURE_SCALE_VOCbf(  I, J )
+            CObf   = GET_FUTURE_SCALE_CObf(   I, J )
+            NH3bf  = GET_FUTURE_SCALE_NH3bf(  I, J )
+            NOxbf  = GET_FUTURE_SCALE_NOXbf(  I, J )
+            SO2bf  = GET_FUTURE_SCALE_SO2bf(  I, J )
+            VOCbf  = GET_FUTURE_SCALE_VOCbf(  I, J )
                               
             ! Weekday avg biofuel    
-!           EPA_WD_BF_NOX (I,J) = EPA_WD_BF_NOX (I,J) * NOxbf
-!           EPA_WD_BF_CO  (I,J) = EPA_WD_BF_CO  (I,J) * CObf
-!           EPA_WD_BF_ALK4(I,J) = EPA_WD_BF_ALK4(I,J) * VOCbf
-!           EPA_WD_BF_ACET(I,J) = EPA_WD_BF_ACET(I,J) * VOCbf
-!           EPA_WD_BF_MEK (I,J) = EPA_WD_BF_MEK (I,J) * VOCbf
-!           EPA_WD_BF_PRPE(I,J) = EPA_WD_BF_PRPE(I,J) * VOCbf 
-!           EPA_WD_BF_C3H8(I,J) = EPA_WD_BF_C3H8(I,J) * VOCbf 
-!           EPA_WD_BF_CH2O(I,J) = EPA_WD_BF_CH2O(I,J) * VOCbf     
-!           EPA_WD_BF_C2H6(I,J) = EPA_WD_BF_C2H6(I,J) * VOCbf 
-!           EPA_WD_BF_SO2 (I,J) = EPA_WD_BF_SO2 (I,J) * SO2bf 
-!           EPA_WD_BF_SO4 (I,J) = EPA_WD_BF_SO4 (I,J) * SO2bf
-!           EPA_WD_BF_NH3 (I,J) = EPA_WD_BF_NH3 (I,J) * NH3bf
+            EPA_WD_BF_NOX (I,J) = EPA_WD_BF_NOX (I,J) * NOxbf
+            EPA_WD_BF_CO  (I,J) = EPA_WD_BF_CO  (I,J) * CObf
+            EPA_WD_BF_ALK4(I,J) = EPA_WD_BF_ALK4(I,J) * VOCbf
+            EPA_WD_BF_ACET(I,J) = EPA_WD_BF_ACET(I,J) * VOCbf
+            EPA_WD_BF_MEK (I,J) = EPA_WD_BF_MEK (I,J) * VOCbf
+            EPA_WD_BF_PRPE(I,J) = EPA_WD_BF_PRPE(I,J) * VOCbf 
+            EPA_WD_BF_C3H8(I,J) = EPA_WD_BF_C3H8(I,J) * VOCbf 
+            EPA_WD_BF_CH2O(I,J) = EPA_WD_BF_CH2O(I,J) * VOCbf     
+            EPA_WD_BF_C2H6(I,J) = EPA_WD_BF_C2H6(I,J) * VOCbf 
+            EPA_WD_BF_SO2 (I,J) = EPA_WD_BF_SO2 (I,J) * SO2bf 
+            EPA_WD_BF_SO4 (I,J) = EPA_WD_BF_SO4 (I,J) * SO2bf
+            EPA_WD_BF_NH3 (I,J) = EPA_WD_BF_NH3 (I,J) * NH3bf
             
             ! Weekend avg biofuel    
-!           EPA_WE_BF_NOX (I,J) = EPA_WE_BF_NOX (I,J) * NOxbf
-!           EPA_WE_BF_CO  (I,J) = EPA_WE_BF_CO  (I,J) * CObf
-!           EPA_WE_BF_ALK4(I,J) = EPA_WE_BF_ALK4(I,J) * VOCbf 
-!           EPA_WE_BF_ACET(I,J) = EPA_WE_BF_ACET(I,J) * VOCbf 
-!           EPA_WE_BF_MEK (I,J) = EPA_WE_BF_MEK (I,J) * VOCbf 
-!           EPA_WE_BF_PRPE(I,J) = EPA_WE_BF_PRPE(I,J) * VOCbf   
-!           EPA_WE_BF_C3H8(I,J) = EPA_WE_BF_C3H8(I,J) * VOCbf 
-!           EPA_WE_BF_CH2O(I,J) = EPA_WE_BF_CH2O(I,J) * VOCbf 
-!           EPA_WE_BF_C2H6(I,J) = EPA_WE_BF_C2H6(I,J) * VOCbf 
-!           EPA_WE_BF_SO2 (I,J) = EPA_WE_BF_SO2 (I,J) * SO2bf
-!           EPA_WE_BF_SO4 (I,J) = EPA_WE_BF_SO4 (I,J) * SO2bf
-!           EPA_WE_BF_NH3 (I,J) = EPA_WE_BF_NH3 (I,J) * NH3bf
+            EPA_WE_BF_NOX (I,J) = EPA_WE_BF_NOX (I,J) * NOxbf
+            EPA_WE_BF_CO  (I,J) = EPA_WE_BF_CO  (I,J) * CObf
+            EPA_WE_BF_ALK4(I,J) = EPA_WE_BF_ALK4(I,J) * VOCbf 
+            EPA_WE_BF_ACET(I,J) = EPA_WE_BF_ACET(I,J) * VOCbf 
+            EPA_WE_BF_MEK (I,J) = EPA_WE_BF_MEK (I,J) * VOCbf 
+            EPA_WE_BF_PRPE(I,J) = EPA_WE_BF_PRPE(I,J) * VOCbf   
+            EPA_WE_BF_C3H8(I,J) = EPA_WE_BF_C3H8(I,J) * VOCbf 
+            EPA_WE_BF_CH2O(I,J) = EPA_WE_BF_CH2O(I,J) * VOCbf 
+            EPA_WE_BF_C2H6(I,J) = EPA_WE_BF_C2H6(I,J) * VOCbf 
+            EPA_WE_BF_SO2 (I,J) = EPA_WE_BF_SO2 (I,J) * SO2bf
+            EPA_WE_BF_SO4 (I,J) = EPA_WE_BF_SO4 (I,J) * SO2bf
+            EPA_WE_BF_NH3 (I,J) = EPA_WE_BF_NH3 (I,J) * NH3bf
          ENDIF
+#endif
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO

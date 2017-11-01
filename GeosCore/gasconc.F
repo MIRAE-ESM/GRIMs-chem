@@ -40,7 +40,7 @@
       USE COMODE_MOD,     ONLY : IYSAVE, IZSAVE,  PRESS3, T3
       USE COMODE_MOD,     ONLY : CSPEC_FULL, JLOP
       USE DRYDEP_MOD,     ONLY : NUMDEP
-      USE TROPOPAUSE_MOD, ONLY : ITS_IN_THE_TROP!, COPY_FULL_TROP
+      USE TROPOPAUSE_MOD, ONLY : ITS_IN_THE_TROP
 !     USE TROPOPAUSE_MOD, ONLY : SAVE_FULL_TROP
       USE LOGICAL_MOD,    ONLY : LVARTROP
       USE DAO_MOD,        ONLY : T
@@ -251,7 +251,9 @@
 !
 !      IF ( LVARTROP .or. FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
 !-----------------------------------------------------------------------
-!     IF ( FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
+#ifdef NOUSE
+      IF ( FIRSTCHEM .or. READ_CSPEC ) CALL COPY_FULL_TROP
+#endif
 
 !  ********************************************************************
 !  *            Update starting concentrations for plumes             *

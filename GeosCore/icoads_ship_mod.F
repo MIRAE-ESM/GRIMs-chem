@@ -332,12 +332,14 @@
 
       ENDDO
 
+#ifdef NOUSE
       !--------------------------
       ! Compute future emissions
       !--------------------------
       IF ( LFUTURE ) THEN 
-!        CALL ICOADS_SCALE_FUTURE
+         CALL ICOADS_SCALE_FUTURE
       ENDIF
+#endif
 
       !--------------------------
       ! Print emission totals

@@ -554,7 +554,7 @@
       USE LOGICAL_MOD,  ONLY : LPRT
       USE TRACER_MOD,   ONLY : STT
       USE TRACERID_MOD, ONLY : IDTSALA, IDTSALC
-!     USE VDIFF_PRE_MOD,ONLY : emis_save ! (Lin, 03/31/09)
+      USE VDIFF_PRE_MOD,ONLY : emis_save ! (Lin, 03/31/09)
 
       USE CMN_SIZE_MOD       ! Size parameters
 
@@ -610,8 +610,8 @@
 !$OMP+PRIVATE( I, J )
          DO J = 1, JJPAR
          DO I = 1, IIPAR
-!           emis_save(I,J,IDTSALA) = ALK_EMIS(I,J,1,1)
-!           emis_save(I,J,IDTSALC) = ALK_EMIS(I,J,1,2)
+            emis_save(I,J,IDTSALA) = ALK_EMIS(I,J,1,1)
+            emis_save(I,J,IDTSALC) = ALK_EMIS(I,J,1,2)
          ENDDO
          ENDDO
 !$OMP END PARALLEL DO

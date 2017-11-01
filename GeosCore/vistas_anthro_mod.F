@@ -320,12 +320,14 @@
       CALL TRANS_REGRID( GEOS_1x1*DBLE(ARRAY), VISTAS_WD_NOx,
      &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
 
+#ifdef NOUSE
       !--------------------------
       ! Compute future emissions
       !--------------------------
       IF ( LFUTURE ) THEN 
-!        CALL VISTAS_SCALE_FUTURE
+         CALL VISTAS_SCALE_FUTURE
       ENDIF
+#endif
 
       !--------------------------
       ! Print emission totals

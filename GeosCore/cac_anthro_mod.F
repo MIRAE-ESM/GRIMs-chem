@@ -423,12 +423,14 @@
 
       ENDDO
 
+#ifdef NOUSE
       !--------------------------
       ! Compute future emissions
       !--------------------------
       IF ( LFUTURE ) THEN 
-!        CALL CAC_SCALE_FUTURE
+         CALL CAC_SCALE_FUTURE
       ENDIF
+#endif
 
       !--------------------------
       ! Print emission totals

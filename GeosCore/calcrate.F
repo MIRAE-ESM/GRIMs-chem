@@ -1222,8 +1222,10 @@ c     $            3.20d-11 * EXP( 70.d0*T3I(KLOOP)) * CONCO2(KLOOP)    )
 !                ARCHIVE FOR PLANE-FOLLOWING DIAGNOSTIC   
 ! *********************************************************************
 !
+#ifdef NOUSE
       ! Pass JO1D and N2O5 to "planeflight_mod.f" (mje, bmy, 8/7/03)
-!     CALL ARCHIVE_RXNS_FOR_PF( DUMMY, DUMMY2 )
+      CALL ARCHIVE_RXNS_FOR_PF( DUMMY, DUMMY2 )
+#endif
 
 
       !*********KPP_INTERFACE************ (phs,ks,dhk, 09/15/09)
