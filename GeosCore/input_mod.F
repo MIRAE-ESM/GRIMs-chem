@@ -2070,6 +2070,21 @@
             CALL ERROR_STOP( MSG, LOC )
          ENDIF
 
+#elif defined( GRIMS )
+
+         !--------------------------------
+         ! GRIMS error trap
+         !--------------------------------
+
+         IF ( LOTDLOC ) THEN
+            MSG = 'Lightning rescaling not available for GRIMS.  '  //
+     &            'Use one of the parameterizations without '       //
+     &            'redist/scale.  CTH performs best on GEOS-4 and ' //
+     &            'GEOS-5, though MFLUX and PRECON were developed ' //
+     &            ' w/ GEOS-STRAT met fields.'
+            CALL ERROR_STOP( MSG, LOC )
+         ENDIF
+
 #endif
 
       !=================================================================
