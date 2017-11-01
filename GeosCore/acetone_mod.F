@@ -555,7 +555,7 @@
 #elif defined( GRIMS )
 
       ! Based on 1-yr benchmark simulation
-      REAL*8, PARAMETER :: SCALE_FACTOR = 0.05d0
+      REAL*8, PARAMETER :: SCALE_FACTOR = 0.06d0
 
 #else
       
@@ -592,6 +592,12 @@
          ! SFCWINDSQR(I,J) is needed since this will compute the square
          ! of the surface wind correctly for all GEOS models (bmy, 9/5/01)
          U        = SQRT( SFCWINDSQR( I, J ) )
+
+#if   defined( GRIMS )
+         ! 10m wind in the GRIMs model is stronger than GEOS-5.
+         ! We apply a scale factor to reduce acetone source.
+         U        = U * 0.88
+#endif
 
          ! TC is temperature in Celsius
          ! Also make sure -5 <= TC <= 30 (mje, rvm, bmy, 11/26/01)
@@ -653,7 +659,8 @@
          ! Scale factor for the GRIMs model is based on T62(192,94)
          ! horizontal resolution. Apply further scale factor to account
          ! for horizontal resolution change.
-         OCEAN_ACET = OCEAN_ACET * ( 192. * 94. ) / ( IGLOB * JGLOB )
+         OCEAN_ACET = OCEAN_ACET * DBLE(192*94) / DBLE(IGLOB*JGLOB)
+         OCEAN_ACET = OCEAN_ACET * DTSRCE / 1200d0
 #endif
 
       ELSE

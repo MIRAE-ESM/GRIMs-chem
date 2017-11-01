@@ -1540,7 +1540,7 @@
 #elif defined( GRIMS )
 
       ! Based on 1-yr benchmark simulation
-      BETA = ANN_AVG_FLASHRATE / 25.918649d0
+      BETA = ANN_AVG_FLASHRATE / 50d0
 
 #endif
 

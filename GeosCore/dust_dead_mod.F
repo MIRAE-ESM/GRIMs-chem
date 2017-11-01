@@ -381,13 +381,14 @@
       ! the GEOS-5 4x5 1-year benchmark v8-01-01-Run0. (bmy, 11/10/08)
       REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 7.0d-4 / 9.57d0
 
-#elif defined( GRIMS ) && defined( USGS_SFC )
+#elif defined( GRIMS )
 
+      ! Based on 1-yr benchmark simulation
+#ifdef GMPDAMP
+      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 2.5d-4
+#else
       REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 1.5d-4
-
-#elif defined( GRIMS ) && defined( SIB_SFC )
-
-      REAL*8,  PARAMETER     :: FLX_MSS_FDG_FCT = 4.5d-4
+#endif
 
 #else
 
