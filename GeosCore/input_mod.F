@@ -46,7 +46,7 @@
 !     PRIVATE :: READ_ND50_MENU  
 !     PRIVATE :: READ_ND51_MENU  
 !     PRIVATE :: READ_ND51b_MENU  
-!     PRIVATE :: READ_PROD_LOSS_MENU 
+      PRIVATE :: READ_PROD_LOSS_MENU 
       PRIVATE :: READ_UNIX_CMDS_MENU
 !     PRIVATE :: READ_NESTED_GRID_MENU
 !     PRIVATE :: READ_ARCHIVED_OH_MENU
@@ -301,10 +301,10 @@
                                                   
          ELSE IF ( INDEX( LINE, 'ND51b MENU'       ) > 0 ) THEN
             CALL READ_ND51b_MENU  
+#endif
 
          ELSE IF ( INDEX( LINE, 'PROD & LOSS MENU' ) > 0 ) THEN
             CALL READ_PROD_LOSS_MENU               
-#endif
                                                   
          ELSE IF ( INDEX( LINE, 'UNIX CMDS MENU'   ) > 0 ) THEN 
             CALL READ_UNIX_CMDS_MENU              
@@ -4642,6 +4642,7 @@
 
       END SUBROUTINE READ_ND51b_MENU
 !EOC
+#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------
@@ -4829,21 +4830,27 @@
       !=================================================================
       ! Print to screen
       !=================================================================
+      IF (LMASTER) THEN
       WRITE( 6, '(/,a)' ) 'PROD & LOSS DIAGNOSTIC MENU'
       WRITE( 6, '(  a)' ) '---------------------------'      
       WRITE( 6, 100     ) 'Turn on prod & loss diag?   : ', DO_SAVE_PL
       WRITE( 6, 110     ) '# of levels for P/L diag    : ', ND65
       WRITE( 6, 100     ) 'Save P(Ox), L(Ox) for TagOx?: ', DO_SAVE_O3
+      ENDIF
       
       ! Loop over families
       DO F = 1, NFAM
 
          ! Write family name, type and # of members
+         IF (LMASTER) THEN
          WRITE( 6, 120 ) FAM_NAME(F), FAM_TYPE(F)
+         ENDIF
          
          ! Write info about each constituent member
          DO M = 1, FAM_NMEM(F)
+            IF (LMASTER) THEN
             WRITE( 6, 130 ) M, FAM_COEF(M,F), FAM_MEMB(M,F)
+            ENDIF
          ENDDO
       ENDDO
 
@@ -4863,7 +4870,6 @@
 
       END SUBROUTINE READ_PROD_LOSS_MENU
 !EOC
-#endif
 !------------------------------------------------------------------------------
 !          Harvard University Atmospheric Chemistry Modeling Group            !
 !------------------------------------------------------------------------------

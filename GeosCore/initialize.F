@@ -63,7 +63,7 @@
       USE DIAG41_MOD,  ONLY : ND41,        ZERO_DIAG41
 !     USE DIAG42_MOD,  ONLY : ND42,        ZERO_DIAG42
       USE DIAG56_MOD,  ONLY : ND56,        ZERO_DIAG56
-!     USE DIAG_PL_MOD, ONLY : AD65,        FAM_PL
+      USE DIAG_PL_MOD, ONLY : AD65,        FAM_PL
       USE ERROR_MOD,   ONLY : ERROR_STOP
       USE LOGICAL_MOD, ONLY : LCRYST
       USE TIME_MOD
@@ -312,13 +312,11 @@
             CALL ZERO_DIAG56
          ENDIF
 
-#ifdef NOUSE
          ! For ND65 -- Chemical production & loss (bmy, 12/5/00)
          IF ( ND65 > 0 ) THEN
             AD65  = 0d0
             IF ( ALLOCATED( FAM_PL ) ) FAM_PL = 0d0      
         ENDIF
-#endif
 
          ! Echo output
          IF (LMASTER) THEN

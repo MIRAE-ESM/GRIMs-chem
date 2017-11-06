@@ -71,7 +71,7 @@
       USE DIAG41_MOD,   ONLY : ND41,        WRITE_DIAG41
 !     USE DIAG42_MOD,   ONLY : ND42,        WRITE_DIAG42
       USE DIAG56_MOD,   ONLY : ND56,        WRITE_DIAG56
-!     USE DIAG_PL_MOD,  ONLY : AD65
+      USE DIAG_PL_MOD,  ONLY : AD65
       ! For mercury simulation. (ccc, 6/4/10)
 !     USE DEPO_MERCURY_MOD, ONLY : UPDATE_DEP
       USE DRYDEP_MOD,   ONLY : NUMDEP,      NTRAIND
@@ -3394,7 +3394,6 @@
          ENDDO
       ENDIF
 !
-#ifdef NOUSE
 !******************************************************************************
 !  ND65: Production/Loss of specified chemical families
 !
@@ -3471,7 +3470,6 @@
          ENDDO       
       ENDIF
 !
-#endif
 !******************************************************************************
 !  ND66: GMAO 3-D fields 
 !

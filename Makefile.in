@@ -81,6 +81,7 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/pbl_mix_mod.o \
         ${COREDIR}/meganut_mod.o \
         ${COREDIR}/comode_mod.o \
+        ${COREDIR}/diag_pl_mod.o \
         ${COREDIR}/drydep_mod.o \
         ${COREDIR}/global_oh_mod.o \
         ${COREDIR}/global_no3_mod.o \

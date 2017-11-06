@@ -415,7 +415,7 @@
       INTEGER, PARAMETER :: NOXEXTENT = 2 
 
       ! MAXFAM -- Max number of families for prod and loss output
-      INTEGER, PARAMETER :: MAXFAM = 40
+      INTEGER, PARAMETER :: MAXFAM = 10
 
       ! MAXMEM is maximum number of families of prod and loss
       ! moved from input_mod and diag_pl_mod to here (hotp 7/31/09)

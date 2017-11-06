@@ -26,7 +26,7 @@
       USE DAO_MOD,              ONLY : BXHEIGHT, MAKE_AVGW, OPTD  
       USE DAO_MOD,              ONLY : T,        SUNCOS_MID
       USE DIAG_OH_MOD,          ONLY : DO_DIAG_OH
-!     USE DIAG_PL_MOD,          ONLY : DO_DIAG_PL
+      USE DIAG_PL_MOD,          ONLY : DO_DIAG_PL
       USE DUST_MOD,             ONLY : RDUST_ONLINE, RDUST_OFFLINE
       USE ERROR_MOD,            ONLY : DEBUG_MSG,    ERROR_STOP
 !     USE FUTURE_EMISSIONS_MOD, ONLY : GET_FUTURE_YEAR
@@ -586,7 +586,6 @@
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after DO_DIAG_OH' )
 
-#ifdef NOUSE
       !=================================================================
       ! Save production and loss for chemical families.  Also save
       ! P(Ox) and L(Ox) for a future tagged Ox run (if necessary).
@@ -598,6 +597,7 @@
          IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after DO_DIAG_PL' )
       ENDIF
       
+#ifdef NOUSE
       !=================================================================
       ! Copy the chemical species from CSPEC (actual troposphere) to
       ! CSPEC_FULL (potential troposphere) array.  We only need to do 

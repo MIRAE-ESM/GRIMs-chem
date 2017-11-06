@@ -177,7 +177,7 @@
 !FP_ISOP 06/15/09 !IGAS, NMRATE and MAXGL increased
 !      PARAMETER ( IGAS    = 200,               IAERTY  = 1           )
 !      PARAMETER ( NMRATE  = 510,               IPHOT   = 85          )
-      PARAMETER ( IGAS    = 111,               IAERTY  = 1           )
+      PARAMETER ( IGAS    = 121,               IAERTY  = 1           )
       PARAMETER ( NMRATE  = 700,               IPHOT   = 51          )
       PARAMETER ( NMTRATE = NMRATE + IPHOT,    NMQRATE = 1           ) 
       PARAMETER ( NMRPROD = 25,                NMDEAD  = 100         )

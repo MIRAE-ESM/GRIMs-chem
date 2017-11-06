@@ -44,7 +44,7 @@
       ! References to F90 modules
       USE DRYDEP_MOD,  ONLY : MAXDEP
       USE ERROR_MOD,   ONLY : GEOS_CHEM_STOP
-!     USE DIAG_PL_MOD, ONLY : SETJFAM, SETPL
+      USE DIAG_PL_MOD, ONLY : SETJFAM, SETPL
 
       !FP_ISOP (6/2009)
       USE ERROR_MOD,   ONLY : DEBUG_MSG
@@ -397,7 +397,6 @@
       NGAS         = NACTIVE
       NTSPECGAS    = NGAS + NINAC
 
-#ifdef NOUSE
       !=================================================================
       ! Chemical prod-loss diagnostic (bdf, bmy, 4/18/03)
       !=================================================================
@@ -412,7 +411,6 @@
          NTSPECGAS   = NGAS + NINAC
          NTSPEC(NCS) = NGAS + NINAC
       ENDIF
-#endif
 !
       IF (NTSPECGAS.GT.IGAS   .OR.  NSDEAD.GT. NMDEAD) THEN
         IF (LMASTER) THEN
@@ -1311,11 +1309,9 @@
 ! ***** CALL JSPARSE TO SET ARRAYS FOR SOLVING CHEMICAL EQUATIONS ***** 
 ! *********************************************************************
 !
-#ifdef NOUSE
       ! Call SETPL to setup ND65 prod/loss diagnostic
       ! SETPL must be called before JSPARSE (ljm, bmy, 5/9/03)
       IF ( LFAMILY ) CALL SETPL
-#endif
 
       ! IFSOLVE = 1 means we are calling the chemistry solver
       IF ( IFSOLVE .EQ. 1 ) THEN

@@ -1424,8 +1424,8 @@
 !     USE DIAG51_MOD,   ONLY : DO_SAVE_DIAG51
 !     USE DIAG51b_MOD,  ONLY : DO_SAVE_DIAG51b
       USE DIAG56_MOD,   ONLY : ND56
-!     USE DIAG_PL_MOD,  ONLY : DO_SAVE_PL,  GET_NFAM
-!     USE DIAG_PL_MOD,  ONLY : GET_FAM_MWT, GET_FAM_NAME
+      USE DIAG_PL_MOD,  ONLY : DO_SAVE_PL,  GET_NFAM
+      USE DIAG_PL_MOD,  ONLY : GET_FAM_MWT, GET_FAM_NAME
       USE DRYDEP_MOD,   ONLY : DEPNAME,     NUMDEP,    NTRAIND
       USE LOGICAL_MOD,  ONLY : LSOA
       USE TRACER_MOD,   ONLY : ITS_A_CO2_SIM,    ITS_A_H2HD_SIM
@@ -3665,7 +3665,6 @@
          UNIT(T,60)  = 'unitless'
       ENDIF
 
-#ifdef NOUSE
       !-------------------------------------      
       ! Family prod & loss (ND65)
       !-------------------------------------      
@@ -3691,7 +3690,6 @@
             ENDIF
          ENDDO
       ENDIF
-#endif
 
       !-------------------------------------      
       ! 3-D GMAO met fields (ND66)
