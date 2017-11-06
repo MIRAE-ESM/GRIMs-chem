@@ -260,8 +260,10 @@
       !=================================================================      
 
       ! Redefine NTLOOP since READER defines it initially (bmy, 9/28/04)
-      NLOOP  = NLAT  * NLONG
-      NTLOOP = NLOOP * NVERT
+      IF ( .not. LNLPBL ) THEN
+         NLOOP  = NLAT  * NLONG
+         NTLOOP = NLOOP * NVERT
+      ENDIF
 
       !vartrop fix (dkh, 05/08/11)
       !Save a copy of JLOP from the previous time step before re-ordering
@@ -285,7 +287,7 @@
       IF ( LPRT ) CALL DEBUG_MSG( '### CHEMDR: after RURALBOX' ) 
 
       ! Reset NTTLOOP, the # of tropospheric grid boxes
-      NTTLOOP = NTLOOP
+      IF ( .not. LNLPBL) NTTLOOP = NTLOOP
 
       !=================================================================
       ! Call SETMODEL which defines number of grid-blocks in calculation,

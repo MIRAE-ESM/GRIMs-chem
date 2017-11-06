@@ -2537,6 +2537,7 @@ contains
           NLAT  = JJPAR
           NLONG = IIPAR
           NVERT = IVERT
+          NLOOP = NLAT * NLONG
           CALL READER( FIRST )
           CALL READCHEM
           CALL SETTRACE
