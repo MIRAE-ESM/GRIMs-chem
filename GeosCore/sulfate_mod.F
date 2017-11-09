@@ -4425,7 +4425,7 @@
       ! atmosphere since volcanic emissions are provided as meters above
       ! sea level (jaf, 10/15/09)
       REAL*8                 :: VOLCPRESS(LVOLC+1) = (/
-     &  1013.25, 954.61, 898.74, 845.56, 747.95, 746.83, 701.08,
+     &  1013.25, 954.61, 898.74, 845.56, 794.95, 746.83, 701.08,
      &   657.64, 616.40, 577.28, 540.20, 505.07, 471.81, 440.35,
      &   410.61, 382.52, 356.00, 330.99, 307.42, 285.24, 264.36 /)
 
@@ -5900,8 +5900,8 @@
 !-- Previous to (ccc, 9/30/10). Add parameters for edge years.
 !      IF ( INYEAR < 1985 ) THISYEAR = 1985
 !      IF ( INYEAR > 2007 ) THISYEAR = 2007
-      THISYEAR = MAX( INYEAR, MNYEAR_VOLC )
-      THISYEAR = MIN( INYEAR, MXYEAR_VOLC )
+      THISYEAR = MAX( THISYEAR, MNYEAR_VOLC )
+      THISYEAR = MIN( THISYEAR, MXYEAR_VOLC )
 
       ! Need to deal with leap years for which there is no data (i.e.
       ! 2008). Assume emissions on Feb. 29th are identical to emissions

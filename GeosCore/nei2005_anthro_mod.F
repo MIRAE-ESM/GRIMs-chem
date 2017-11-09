@@ -1306,6 +1306,11 @@
          THISYEAR = FSCALYR
       ENDIF
 
+      ! cap minimum scaling year
+      IF ( THISYEAR .lt. 1999 ) THEN
+         THISYEAR = 1999
+      ENDIF
+
       ! cap maximum scaling year
       IF ( THISYEAR .gt. 2007 ) THEN
          THISYEAR = 2007
