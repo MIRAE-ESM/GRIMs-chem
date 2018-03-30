@@ -264,7 +264,9 @@
       ENDDO
 
       LMIN = MINVAL( TPAUSE_LEV )
+      LMIN = MAX( LMIN, 1 )
       LMAX = MAXVAL( TPAUSE_LEV )
+      LMAX = MIN( LMAX, LLPAR )
 
       !### For backwards compatibility during transition (still needed??)
       !### LPAUSE is still used by CH4 chemistry and ND27 (phs, 1/19/07)
