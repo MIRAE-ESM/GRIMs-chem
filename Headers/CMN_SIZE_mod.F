@@ -18,6 +18,7 @@
       PUBLIC
 
 #     include "define.h"
+#     include "chem-depend.h"
 !
 ! !DEFINED PARAMETERS:
 !
