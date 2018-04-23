@@ -448,7 +448,7 @@
       ! concentration. (ccc, 11/20/08) 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, N, SUMADA, AD_A, TR_A, TR_DIFF )
+!$OMP+PRIVATE( I, J, L, N, SUMADA, AD_A, TR_A )
       DO N = 1, N_TOT_TRC
 
          ! Zero summing variable
@@ -488,7 +488,7 @@
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, N, SUMADA, AD_A, TR_A, TR_DIFF )
+!$OMP+PRIVATE( I, J, L, N, TR_DIFF )
       DO N = 1, N_TOT_TRC
 
          ! Residual mass difference [kg]: before - after

@@ -104,6 +104,7 @@
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
+!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
    do jj = 1,jjend
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
@@ -153,6 +154,7 @@
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
+!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
    do jj = 1,jjend
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
@@ -192,6 +194,7 @@
 ! ---------------------------------------------------------------------
 ! ------------------- in meridional great circle ----------------------
 ! ---------------------------------------------------------------------
+!$omp parallel do private(i)
    do i = 1,mylonlen
 ! 
 ! first set advection in meridional direction in great circle through two poles
@@ -217,6 +220,7 @@
 ! ---------------------------------------------------------------
 !     print *,' nislq adv loop in x for last '
 !
+!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
    do jj = 1,jjend
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
@@ -258,6 +262,7 @@
 ! --------------------------------------------------------------
 ! ----------- compute vertical advection and total ------------
 ! --------------------------------------------------------------
+!$omp parallel do private(j,lonsd,k,i,ppi,pdot2,qtn)
    do j = 1,jjend
      lonsd=LONF2S
 !

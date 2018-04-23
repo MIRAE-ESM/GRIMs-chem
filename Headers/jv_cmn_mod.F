@@ -105,6 +105,7 @@
 
       ALLOCATE ( ODMDUST(IPAR,JPAR,LPAR,NDUST) )
       ALLOCATE ( ODAER(IPAR,JPAR,LPAR,NAER*NRH) )
+!$OMP PARALLEL
       ALLOCATE ( TJ(NB) )
       ALLOCATE ( PJ(NB+1) )
       ALLOCATE ( DM(NB) )
@@ -116,9 +117,11 @@
       ALLOCATE ( ZJ(LPAR,JPMAX) )
       ALLOCATE ( FFF(NW,LPAR) )
       ALLOCATE ( JADSUB(NC) )
+!$OMP END PARALLEL
 
       ODMDUST = 0d0
       ODAER   = 0d0
+!$OMP PARALLEL
       TJ      = 0d0
       PJ      = 0d0
       DM      = 0d0
@@ -130,6 +133,7 @@
       ZJ      = 0d0
       FFF     = 0d0
       JADSUB  = 0
+!$OMP END PARALLEL
 
       END SUBROUTINE INIT_JV_CMN
 

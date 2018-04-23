@@ -2517,7 +2517,7 @@
       ! Loop over grid boxes
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, D, TMP_T, TMP_PARDR, TMP_PARDF )
+!$OMP+PRIVATE( I, J, D, TMP_T, TMP_PARDR, TMP_PARDF, D_DIM, D_DAYS )
       DO J = 1, JJPAR
       DO I = 1, IIPAR
 

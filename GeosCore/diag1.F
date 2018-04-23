@@ -371,12 +371,22 @@
       ! (6 ) DTRAIN : Detrainment mass flux           [kg/m2/s]
       !=================================================================
       IF ( ND66 > 0 ) THEN
-         AD66(:,:,1:LD66,1) = AD66(:,:,1:LD66,1) + UWND(:,:,1:LD66)
-         AD66(:,:,1:LD66,2) = AD66(:,:,1:LD66,2) + VWND(:,:,1:LD66)
-         AD66(:,:,1:LD66,3) = AD66(:,:,1:LD66,3) + T(:,:,1:LD66)
-         AD66(:,:,1:LD66,4) = AD66(:,:,1:LD66,4) + SPHU(:,:,1:LD66)
-         AD66(:,:,1:LD66,5) = AD66(:,:,1:LD66,5) + CLDMAS(:,:,1:LD66)
-         AD66(:,:,1:LD66,6) = AD66(:,:,1:LD66,6) + DTRAIN(:,:,1:LD66)
+!$OMP PARALLEL DO
+!$OMP+DEFAULT( SHARED )
+!$OMP+PRIVATE( I, J, L )
+         DO L = 1, LD66
+         DO J = 1, JJPAR
+         DO I = 1, IIPAR
+            AD66(I,J,L,1) = AD66(I,J,L,1) + UWND(I,J,L)
+            AD66(I,J,L,2) = AD66(I,J,L,2) + VWND(I,J,L)
+            AD66(I,J,L,3) = AD66(I,J,L,3) + T(I,J,L)
+            AD66(I,J,L,4) = AD66(I,J,L,4) + SPHU(I,J,L)
+            AD66(I,J,L,5) = AD66(I,J,L,5) + CLDMAS(I,J,L)
+            AD66(I,J,L,6) = AD66(I,J,L,6) + DTRAIN(I,J,L)
+         ENDDO
+         ENDDO
+         ENDDO
+!$OMP END PARALLEL DO
       ENDIF
 
       !=================================================================  
@@ -399,28 +409,28 @@
 
 #endif
 
-         ENDDO
-         ENDDO
+            AD67(I,J,1 ) = AD67(I,J,1 ) + HFLUX(I,J)
+            AD67(I,J,2 ) = AD67(I,J,2 ) + RADSWG(I,J)
+            AD67(I,J,3 ) = AD67(I,J,3 ) + PREACC(I,J)
+            AD67(I,J,4 ) = AD67(I,J,4 ) + PRECON(I,J)
+            AD67(I,J,5 ) = AD67(I,J,5 ) + TS(I,J)
+            AD67(I,J,7 ) = AD67(I,J,7 ) + USTAR(I,J)
+            AD67(I,J,8 ) = AD67(I,J,8 ) + Z0(I,J)
+            AD67(I,J,9 ) = AD67(I,J,9 ) + PBL(I,J)
+            AD67(I,J,10) = AD67(I,J,10) + CLDFRC(I,J)
+            AD67(I,J,11) = AD67(I,J,11) + U10M(I,J)
+            AD67(I,J,12) = AD67(I,J,12) + V10M(I,J)
+            AD67(I,J,14) = AD67(I,J,14) + ALBD(I,J)
+            AD67(I,J,16) = AD67(I,J,16) + CLDTOPS(I,J)
+            AD67(I,J,17) = AD67(I,J,17) + TROPP(I,J)
+            AD67(I,J,19) = AD67(I,J,19) + TSKIN(I,J)
+            AD67(I,J,20) = AD67(I,J,20) + PARDF(I,J)
+            AD67(I,J,21) = AD67(I,J,21) + PARDR(I,J)
+            AD67(I,J,22) = AD67(I,J,22) + GWETTOP(I,J)
+            AD67(I,J,23) = AD67(I,J,23) + EFLUX(I,J)
 
-         AD67(:,:,1 ) = AD67(:,:,1 ) + HFLUX
-         AD67(:,:,2 ) = AD67(:,:,2 ) + RADSWG
-         AD67(:,:,3 ) = AD67(:,:,3 ) + PREACC
-         AD67(:,:,4 ) = AD67(:,:,4 ) + PRECON
-         AD67(:,:,5 ) = AD67(:,:,5 ) + TS
-         AD67(:,:,7 ) = AD67(:,:,7 ) + USTAR
-         AD67(:,:,8 ) = AD67(:,:,8 ) + Z0
-         AD67(:,:,9 ) = AD67(:,:,9 ) + PBL
-         AD67(:,:,10) = AD67(:,:,10) + CLDFRC
-         AD67(:,:,11) = AD67(:,:,11) + U10M
-         AD67(:,:,12) = AD67(:,:,12) + V10M
-         AD67(:,:,14) = AD67(:,:,14) + ALBD
-         AD67(:,:,16) = AD67(:,:,16) + CLDTOPS
-         AD67(:,:,17) = AD67(:,:,17) + TROPP
-         AD67(:,:,19) = AD67(:,:,19) + TSKIN
-         AD67(:,:,20) = AD67(:,:,20) + PARDF
-         AD67(:,:,21) = AD67(:,:,21) + PARDR
-         AD67(:,:,22) = AD67(:,:,22) + GWETTOP
-         AD67(:,:,23) = AD67(:,:,23) + EFLUX
+         ENDDO
+         ENDDO
 
       ENDIF
 

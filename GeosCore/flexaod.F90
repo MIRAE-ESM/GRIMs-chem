@@ -701,6 +701,16 @@ subroutine calc_aod
   outod = 0.0
   outssa = 0.0
   outg = 0.0
+
+!$omp parallel do &
+!$omp private( ibnd, i, j, l, ispec, irh, iphob, idst, r ) &
+!$omp private( dz, fwet, weight ) &
+!$omp private( reff, qext, optdep, g, ss ) &
+!$omp private( scaleq, scaler, scaleod ) &
+!$omp private( kappa_ext, kappa_sca, totssa, totg ) &
+!$omp private( k_ext, k_sca, numconc ) &
+!$omp private( conc_gcm3 ) &
+!$omp private( rw, qw, gw, ssw )
   do ibnd = 1,nbnd
   do j = 1,nj
   do i = 1,ni

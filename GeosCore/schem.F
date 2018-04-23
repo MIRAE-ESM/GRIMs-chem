@@ -395,10 +395,10 @@
       !=================================================================
       !print*, 'In schem, before reaction with OH'
 
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, N, M, TK, RC, k0, k1, RDLOSS, T1L )
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO
+!!$OMP+DEFAULT( SHARED )
+!!$OMP+PRIVATE( I, J, L, N, M, TK, RC, k0, k1, RDLOSS, T1L )
+!!$OMP+SCHEDULE( DYNAMIC )
       DO N = 1,    N_TRACERS
       DO L = LMIN, LLPAR
       DO J = 1,    JJPAR
@@ -496,7 +496,7 @@
       ENDDO
       ENDDO
       ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ! Set FIRST = .FALSE. -- we have been thru SCHEM at least once now
       FIRST = .FALSE.
