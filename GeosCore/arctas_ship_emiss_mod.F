@@ -363,8 +363,7 @@
 
 
       ! Regrid from GEOS 1x1 --> current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, ARR,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 1 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, ARR, 1, 1, 0, 1 )
 
       END SUBROUTINE READ_ARCTAS_SHIP
 !EOC

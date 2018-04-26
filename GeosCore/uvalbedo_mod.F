@@ -110,6 +110,7 @@
       LOGICAL              :: FIRST = .TRUE.
       INTEGER              :: AS
       REAL*4               :: ARRAY(I2x25,J2x25,1)
+      REAL*8               :: ARRAY8(I2x25,J2x25,1)
       REAL*8               :: XTAU
       CHARACTER(LEN=255)   :: FILENAME
 
@@ -155,8 +156,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )         
 
       ! Transfer data from REAL*4 to REAL*8 and to size (IIPAR,JJPAR)
-      CALL TRANS_REGRID( DBLE(ARRAY), UVALBEDO,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, UVALBEDO, 1, 1, 0, 0 )
       
       ! Return to calling program
       END SUBROUTINE READ_UVALBEDO

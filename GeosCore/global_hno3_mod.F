@@ -148,6 +148,7 @@
       ! Local variables
       INTEGER             :: I, J, L
       REAL*4              :: ARRAY(I2x25,J2x25,LG5RED)
+      REAL*8              :: ARRAY8(I2x25,J2x25,LG5RED)
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
@@ -218,8 +219,8 @@
      &                 LG5RED,    ARRAY,     QUIET=.TRUE. )
 
       ! Assign data from ARRAY to the module variable HNO3
-      CALL TRANS_REGRID( DBLE(ARRAY), HNO3,
-     &                   I2x25, J2x25, LG5RED, LLPAR, 2, 2, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, HNO3, LG5RED, LLPAR, 2, 0 )
 
 #endif
 

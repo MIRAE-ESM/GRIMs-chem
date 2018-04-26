@@ -683,8 +683,8 @@
             ENDDO
 
             ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR)
-            CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+            CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                             LG5FUL, LLPAR, 2, 0 )
             STRATPNOY = REAL(P_ARRAY,4)
 
             ! [HNO3] in [v/v] is stored as tracer #2
@@ -697,8 +697,8 @@
             ENDDO
 
             ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR)
-            CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+            CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                             LG5FUL, LLPAR, 2, 0 )
             STRATHNO3 = REAL(P_ARRAY,4)
          
             ! [NO] in [v/v] is stored as tracer #4
@@ -711,8 +711,8 @@
             ENDDO
 
             ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR)
-            CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+            CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                             LG5FUL, LLPAR, 2, 0 )
             STRATNO = REAL(P_ARRAY,4)
 
             ! [NO2] in [v/v] is stored as tracer #5
@@ -725,8 +725,8 @@
             ENDDO
 
             ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR)
-            CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+            CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                             LG5FUL, LLPAR, 2, 0 )
             STRATNO2 = REAL(P_ARRAY,4)
 
             !===========================================================

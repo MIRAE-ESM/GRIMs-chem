@@ -99,6 +99,7 @@
       ! Local variables
       INTEGER                :: I, J, K, INDEX, MMM, PMM, IJLOOP
       REAL*4                 :: ARRAY(I1x1,J1x1,1)
+      REAL*8                 :: ARRAY8(I1x1,J1x1,1)
       REAL*8                 :: TAU0
       CHARACTER(LEN=255)     :: FILENAME
 
@@ -134,8 +135,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), MISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, MISOLAI, 1, 1, 0, 0 )
 
       !------------------------------------
       ! Read next month's lai at (I,J) 
@@ -154,8 +155,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), NMISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, NMISOLAI, 1, 1, 0, 0 )
 
       !------------------------------------
       ! Read previous month's lai at (I,J) 
@@ -174,8 +175,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), PMISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, PMISOLAI, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE READISOLAI_AVHRR
@@ -214,6 +215,7 @@
       ! Local variables
       INTEGER                :: I, J, K, INDEX, MMM, PMM, IJLOOP
       REAL*4                 :: ARRAY(I1x1,J1x1,1)
+      REAL*8                 :: ARRAY8(I1x1,J1x1,1)
       REAL*8                 :: TAU0
       CHARACTER(LEN=255)     :: FILENAME 
 
@@ -292,8 +294,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), MISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, MISOLAI, 1, 1, 0, 0 )
 
       ! ++++++++++++++++++++++++++++++++++
       ! Get LAI data for NEXT month
@@ -384,8 +386,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), NMISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, NMISOLAI, 1, 1, 0, 0 )
 
       ! ++++++++++++++++++++++++++++++++++
       ! Get LAI data for PAST month
@@ -475,8 +477,8 @@
      &                 1,         ARRAY,  QUIET=.TRUE. )
 
       ! Regrid from 1x1 to current grid resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), PMISOLAI,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, PMISOLAI, 1, 1, 0, 0 )
 
 100   FORMAT( '     - READISOLAI: Reading ', a )
      

@@ -1,14 +1,12 @@
 #include "define.h"
 !=====================================================================
 !
-!     SUBROUTINE TRANS_REGRID
+!     SUBROUTINE TRANS_INPUT
 !
 !        This subroutine performs horizontal and vertical
-!        regridding and transforms an array to model grid.
+!        regridding and transforms an array from various
+!        input grid to model grid.
 !
-!     RES=0  : no horizontal regrid
-!     RES=1  : 1x1  grid -> model grid
-!     RES=2  : 2x25 grid -> model grid
 !     VERT=0 : no vertical regrid
 !     VERT=1 : z weighted vertical regrid
 !     VERT=2 : p weighted vertical regrid
@@ -19,8 +17,7 @@
 !
 !=====================================================================
 
-      SUBROUTINE TRANS_REGRID( INDATA, OUTDATA, IN_NI, IN_NJ, IN_NL,
-     &                         OUT_NL, RES, VERT, MASS )
+      SUBROUTINE TRANS_INPUT_1x1(INDATA,OUTDATA,IN_NL,OUT_NL,VERT,MASS)
 
 #ifndef RMP
       USE CMN_SIZE_MOD
@@ -32,45 +29,23 @@
 
       IMPLICIT NONE
 
-      INTEGER :: IN_NI, IN_NJ, IN_NL, OUT_NL, RES, VERT, MASS
+      INTEGER :: IN_NL, OUT_NL, VERT, MASS
       INTEGER :: I, J, L
-      REAL*8  :: INDATA(IN_NI,IN_NJ,IN_NL)
+      REAL*8  :: INDATA(I1x1,J1x1,IN_NL)
       REAL*8  :: OUTDATA(IIPAR,JJPAR,OUT_NL)
       REAL*8  :: F_ARRAY(LONF2F,LATG2F,IN_NL)
       REAL*8  :: P_ARRAY(LONF2S,LATG2S,IN_NL)
       REAL*8  :: TMP(IIPAR,JJPAR,IN_NL)
 
       IF (LMASTER) THEN
-      ! No horizontal regridding
-      IF ( IN_NI .EQ. LONF2F .AND. IN_NJ .EQ. LATG2F ) THEN
-
-         F_ARRAY = INDATA
 
       ! Perform horizontal regridding
-      ELSE IF ( IN_NI .EQ. I1x1 .AND. IN_NJ .EQ. J1x1 ) THEN
+      DO L = 1, IN_NL
 
-         DO L = 1, IN_NL
+         ! 1x1 -> model grid
+         CALL REGRID_1x1( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
 
-            ! 1x1 -> model grid
-            CALL REGRID_1x1( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
-
-         ENDDO
-
-      ELSE IF ( IN_NI .EQ. I2x25 .AND. IN_NJ .EQ. J2x25 ) THEN
-
-         DO L = 1, IN_NL
-
-            ! 2x25 -> model grid
-            CALL REGRID_2x25( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
-
-         ENDDO
-
-      ELSE
-
-         WRITE(6,*) 'Error: Unknown NI_NI, NI_NJ in trans_regrid'
-         STOP 9999
-
-      ENDIF
+      ENDDO
 
       ! Transform to model grid
       CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
@@ -133,7 +108,188 @@
       ENDIF
 #endif
 
-      END SUBROUTINE TRANS_REGRID
+      END SUBROUTINE TRANS_INPUT_1x1
+
+      SUBROUTINE TRANS_INPUT_2x25(INDATA,OUTDATA,IN_NL,OUT_NL,VERT,MASS)
+
+#ifndef RMP
+      USE CMN_SIZE_MOD
+      USE module_trans
+      USE paramodel
+#ifdef MP
+      USE commpi
+#endif
+
+      IMPLICIT NONE
+
+      INTEGER :: IN_NL, OUT_NL, VERT, MASS
+      INTEGER :: I, J, L
+      REAL*8  :: INDATA(I2x25,J2x25,IN_NL)
+      REAL*8  :: OUTDATA(IIPAR,JJPAR,OUT_NL)
+      REAL*8  :: F_ARRAY(LONF2F,LATG2F,IN_NL)
+      REAL*8  :: P_ARRAY(LONF2S,LATG2S,IN_NL)
+      REAL*8  :: TMP(IIPAR,JJPAR,IN_NL)
+
+      IF (LMASTER) THEN
+
+      ! Perform horizontal regridding
+      DO L = 1, IN_NL
+
+         ! 2x25 -> model grid
+         CALL REGRID_2x25( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
+
+      ENDDO
+
+      ! Transform to model grid
+      CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
+      CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
+      CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
+      ENDIF
+
+#ifdef MP
+      ! MPI full grid to partial grid
+      CALL mpgf2p(F_ARRAY,LONF2F,LATG2F,P_ARRAY,LONF2S,LATG2S,IN_NL)
+#else
+      P_ARRAY = F_ARRAY
+#endif
+
+      ! No vertical regridding
+      IF ( IN_NL .EQ. OUT_NL ) THEN
+
+         DO L = 1, IN_NL
+         DO J = 1, JJPAR
+         DO I = 1, IIPAR
+            OUTDATA(I,J,L) = P_ARRAY(I,J,L)
+         ENDDO
+         ENDDO
+         ENDDO
+
+      ! Perform vertical regridding
+      ELSE
+
+         ! Initialize
+         TMP = 0d0
+
+         ! Copy
+         DO L = 1, IN_NL
+         DO J = 1, JJPAR
+         DO I = 1, IIPAR
+            TMP(I,J,L) = P_ARRAY(I,J,L)
+         ENDDO
+         ENDDO
+         ENDDO
+
+         IF ( MASS == 1 ) THEN
+            WRITE(6,*) 'Error: VERT /= 0 and MASS == 1 in trans_regrid'
+            STOP 9999
+         ENDIF
+
+         ! 38 layers -> model grid
+         IF ( IN_NL .EQ. 38 ) THEN
+            CALL INTERP_VER_T( TMP, OUTDATA, VERT, MASS )
+         ! 47 layers -> model grid
+         ELSE IF ( IN_NL .EQ. 47 ) THEN
+            CALL INTERP_VER_R( TMP, OUTDATA, VERT, MASS )
+         ! 72 layers -> model grid
+         ELSE IF ( IN_NL .EQ. 72 ) THEN
+            CALL INTERP_VER_F( TMP, OUTDATA, VERT, MASS )
+         ELSE
+            WRITE(6,*) 'Error: Unknown IN_NL in trans_regrid'
+            STOP 9999
+         ENDIF
+
+      ENDIF
+#endif
+
+      END SUBROUTINE TRANS_INPUT_2x25
+
+      SUBROUTINE TRANS_INPUT_RST(INDATA,OUTDATA,IN_NL,OUT_NL,VERT,MASS)
+
+#ifndef RMP
+      USE CMN_SIZE_MOD
+      USE module_trans
+      USE paramodel
+#ifdef MP
+      USE commpi
+#endif
+
+      IMPLICIT NONE
+
+      INTEGER :: IN_NL, OUT_NL, VERT, MASS
+      INTEGER :: I, J, L
+      REAL*8  :: INDATA(LONF2F,LATG2F,IN_NL)
+      REAL*8  :: OUTDATA(IIPAR,JJPAR,OUT_NL)
+      REAL*8  :: F_ARRAY(LONF2F,LATG2F,IN_NL)
+      REAL*8  :: P_ARRAY(LONF2S,LATG2S,IN_NL)
+      REAL*8  :: TMP(IIPAR,JJPAR,IN_NL)
+
+      IF (LMASTER) THEN
+
+      ! No horizontal regridding
+      F_ARRAY = INDATA
+
+      ! Transform to model grid
+      CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
+      CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
+      CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
+      ENDIF
+
+#ifdef MP
+      ! MPI full grid to partial grid
+      CALL mpgf2p(F_ARRAY,LONF2F,LATG2F,P_ARRAY,LONF2S,LATG2S,IN_NL)
+#else
+      P_ARRAY = F_ARRAY
+#endif
+
+      ! No vertical regridding
+      IF ( IN_NL .EQ. OUT_NL ) THEN
+
+         DO L = 1, IN_NL
+         DO J = 1, JJPAR
+         DO I = 1, IIPAR
+            OUTDATA(I,J,L) = P_ARRAY(I,J,L)
+         ENDDO
+         ENDDO
+         ENDDO
+
+      ! Perform vertical regridding
+      ELSE
+
+         ! Initialize
+         TMP = 0d0
+
+         ! Copy
+         DO L = 1, IN_NL
+         DO J = 1, JJPAR
+         DO I = 1, IIPAR
+            TMP(I,J,L) = P_ARRAY(I,J,L)
+         ENDDO
+         ENDDO
+         ENDDO
+
+         IF ( MASS == 1 ) THEN
+            WRITE(6,*) 'Error: VERT /= 0 and MASS == 1 in trans_regrid'
+            STOP 9999
+         ENDIF
+
+         ! 38 layers -> model grid
+         IF ( IN_NL .EQ. 38 ) THEN
+            CALL INTERP_VER_T( TMP, OUTDATA, VERT, MASS )
+         ! 47 layers -> model grid
+         ELSE IF ( IN_NL .EQ. 47 ) THEN
+            CALL INTERP_VER_R( TMP, OUTDATA, VERT, MASS )
+         ! 72 layers -> model grid
+         ELSE IF ( IN_NL .EQ. 72 ) THEN
+            CALL INTERP_VER_F( TMP, OUTDATA, VERT, MASS )
+         ELSE
+            WRITE(6,*) 'Error: Unknown IN_NL in trans_regrid'
+            STOP 9999
+         ENDIF
+
+      ENDIF
+#endif
+
+      END SUBROUTINE TRANS_INPUT_RST
 
 #ifndef RMP
 !=====================================================================
@@ -838,7 +994,7 @@
          ! Finding GEOS-5 reduced pressure level indices
          ! which correspond to the tip of GRIMs pressure level
          !=====================================================
-         DO ID=1, 47
+         DO ID=1, 38
          IF (PEDGE2(L) .LE. PEDGE1(ID) .AND.
      &       PEDGE2(L) .GT. PEDGE1(ID+1)) THEN
             ID1=ID

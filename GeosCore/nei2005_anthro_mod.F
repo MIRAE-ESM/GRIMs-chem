@@ -399,6 +399,7 @@
       INTEGER                    :: L, KLM, SPECIES_ID(15), ID,  MN
       INTEGER                    :: OFFLINE_ID(15)
       REAL*4                     :: ARRAY(I1x1,J1x1,5)
+      REAL*8                     :: ARRAY8(I1x1,J1x1,5)
       REAL*8                     :: GEOS_1x1(I1x1,J1x1,5)
       REAL*8                     :: SC_1x1(I1x1,J1x1)
       REAL*8                     :: TAU2005, TAU
@@ -512,10 +513,9 @@
          ! Regrid from GEOS 1x1 --> current model resolution
          IF ( SNo .eq. 1 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, NOx,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), NOx_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, NOx, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, NOx_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                NOx(:,:,L) = NOx(:,:,L) * USA_MASK(:,:)
                NOx_WKEND(:,:,L) = 
@@ -524,10 +524,9 @@
 
          ELSEIF ( SNo .eq. 4 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, CO,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), CO_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, CO, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, CO_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                CO(:,:,L) = CO(:,:,L) * USA_MASK(:,:)
                CO_WKEND(:,:,L) = 
@@ -536,10 +535,9 @@
 
          ELSEIF ( SNo .eq. 26 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, SO2,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), SO2_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, SO2, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, SO2_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                SO2_WKEND(:,:,L) =
      &                SO2_WKEND(:,:,L) * USA_MASK(:,:)
@@ -548,10 +546,9 @@
 
          ELSEIF ( SNo .eq. 27 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, SO4,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), SO4_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, SO4, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, SO4_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                SO4_WKEND(:,:,L) =
      &                SO4_WKEND(:,:,L) * USA_MASK(:,:)
@@ -560,10 +557,9 @@
 
          ELSEIF ( SNo .eq. 30 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, NH3,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), NH3_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, NH3, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, NH3_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                NH3_WKEND(:,:,L) =
      &                NH3_WKEND(:,:,L) * USA_MASK(:,:)
@@ -572,10 +568,9 @@
 
          ELSEIF ( SNo .eq. 35 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, OC,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), OC_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, OC, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, OC_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                OC_WKEND(:,:,L) =
      &                OC_WKEND(:,:,L) * USA_MASK(:,:)
@@ -584,10 +579,9 @@
 
          ELSEIF ( SNo .eq. 34 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, BC,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), BC_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, BC, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, BC_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                BC_WKEND(:,:,L) =
      &               BC_WKEND(:,:,L) * USA_MASK(:,:)
@@ -597,10 +591,9 @@
          !--VOC   
          ELSEIF ( SNo == 5 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, ALK4,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), ALK4_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, ALK4, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, ALK4_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                ALK4_WKEND(:,:,L) =
      &                ALK4_WKEND(:,:,L) * USA_MASK(:,:)
@@ -609,10 +602,9 @@
 
          ELSE IF ( SNo == 9 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, ACET,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), ACET_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, ACET, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, ACET_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                ACET_WKEND(:,:,L) =
      &                ACET_WKEND(:,:,L) * USA_MASK(:,:)
@@ -621,10 +613,9 @@
 
          ELSE IF ( SNo == 10 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, MEK,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), MEK_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, MEK, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, MEK_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                MEK_WKEND(:,:,L) =
      &                MEK_WKEND(:,:,L) * USA_MASK(:,:)
@@ -633,10 +624,9 @@
 
          ELSE IF ( SNo == 18 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, PRPE,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), PRPE_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, PRPE, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, PRPE_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                PRPE_WKEND(:,:,L) =
      &                PRPE_WKEND(:,:,L) * USA_MASK(:,:)
@@ -645,10 +635,9 @@
 
          ELSE IF ( SNo == 19 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, C3H8,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), C3H8_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, C3H8, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, C3H8_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                C3H8_WKEND(:,:,L) =
      &                C3H8_WKEND(:,:,L) * USA_MASK(:,:)
@@ -657,10 +646,9 @@
 
          ELSE IF ( SNo == 20 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, CH2O,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), CH2O_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, CH2O, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, CH2O_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                CH2O_WKEND(:,:,L) =
      &                CH2O_WKEND(:,:,L) * USA_MASK(:,:)
@@ -669,10 +657,9 @@
 
          ELSE IF ( SNo == 21 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, C2H6,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), C2H6_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, C2H6, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, C2H6_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                C2H6_WKEND(:,:,L) =
      &                C2H6_WKEND(:,:,L) * USA_MASK(:,:)
@@ -681,10 +668,9 @@
 
          ELSE IF ( SNo == 11 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, ALD2,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
-            CALL TRANS_REGRID( GEOS_1x1 * DBLE(ARRAY), ALD2_WKEND,
-     &                         I1x1, J1x1, 5, 5, 1, 0, 1 )
+            ARRAY8 = GEOS_1x1 * ARRAY
+            CALL TRANS_INPUT_1x1( GEOS_1x1, ALD2, 5, 5, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY8, ALD2_WKEND, 5, 5, 0, 1 )
             DO L = 1, 5
                ALD2_WKEND(:,:,L) =
      &                ALD2_WKEND(:,:,L) * USA_MASK(:,:)
@@ -1727,8 +1713,7 @@
       GEOS_1x1(:,:,:) = ARRAY2(:,:,:)
 
       ! Regrid from GEOS 1x1 --> current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, USA_MASK,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, USA_MASK, 1, 1, 0, 0 )
 
       WHERE ( USA_MASK /= 0D0 ) USA_MASK = 1D0
 

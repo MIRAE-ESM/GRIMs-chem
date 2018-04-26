@@ -182,6 +182,7 @@
       INTEGER                    :: I, J, THISYEAR
       INTEGER                    :: MN, SNo, ScNo
       REAL*4                     :: ARRAY(I1x1,J1x1,1)
+      REAL*8                     :: ARRAY8(I1x1,J1x1,1)
       REAL*8                     :: GEOS_1x1(I1x1,J1x1,1)
       REAL*8                     :: SC_1x1(I1x1,J1x1)
       REAL*8                     :: TAU2002, TAU
@@ -300,8 +301,8 @@
      &                    1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from GEOS 1x1 --> current model resolution
-      CALL TRANS_REGRID( GEOS_1x1*DBLE(ARRAY), VISTAS_WE_NOx,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = GEOS_1x1 * ARRAY
+      CALL TRANS_INPUT_1x1( ARRAY8, VISTAS_WE_NOx, 1, 1, 0, 0 )
 
       FILENAME  = TRIM( VISTAS_DIR )
      &            // 'wkday_an_scalar.nei99.geos.1x1'
@@ -317,8 +318,8 @@
      &                    1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from GEOS 1x1 --> current model resolution
-      CALL TRANS_REGRID( GEOS_1x1*DBLE(ARRAY), VISTAS_WD_NOx,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = GEOS_1x1 * ARRAY
+      CALL TRANS_INPUT_1x1( ARRAY8, VISTAS_WD_NOx, 1, 1, 0, 0 )
 
 #ifdef NOUSE
       !--------------------------

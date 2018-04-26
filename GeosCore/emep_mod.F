@@ -480,20 +480,13 @@
       CLOSE( IU_FILE )
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY1, EMEP_NOx,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY2, EMEP_CO,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY3, EMEP_ALK4,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY4, EMEP_MEK,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY5, EMEP_ALD2,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY6, EMEP_PRPE,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
-      CALL TRANS_REGRID( F_ARRAY7, EMEP_C2H6,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY1, EMEP_NOx,  1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY2, EMEP_CO,   1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY3, EMEP_ALK4, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY4, EMEP_MEK,  1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY5, EMEP_ALD2, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY6, EMEP_PRPE, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( F_ARRAY7, EMEP_C2H6, 1, 1, 0, 0 )
 
       !=================================================================
       ! Get and apply annual emissions factors (amv, phs, 3/17/08)
@@ -1028,6 +1021,7 @@
 ! !LOCAL VARIABLES:
 !
       REAL*4                  :: ARRAY(I1x1,J1x1,1)
+      REAL*8                  :: ARRAY8(I1x1,J1x1,1)
       CHARACTER(LEN=255)      :: FILENAME
 
       !=================================================================
@@ -1056,8 +1050,8 @@
      &                 1,         ARRAY,    QUIET=.TRUE. ) 
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-      CALL TRANS_REGRID( DBLE(ARRAY), EUROPE_MASK,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, EUROPE_MASK, 1, 1, 0, 0 )
 
       END SUBROUTINE READ_EUROPE_MASK
 !EOC
@@ -1173,6 +1167,7 @@
       REAL*4                        :: ARRAY_1x1(I1x1,J1x1,1)
       REAL*4                        :: ARRAY_1x1_SHIP(I1x1,J1x1,1)
       REAL*4                        :: ARRAY_1x1_LAND(I1x1,J1x1,1)
+      REAL*8                        :: ARRAY_1x1_8(I1x1,J1x1,1)
       CHARACTER(LEN=255)            :: FILENAME, DIR
       REAL*8                        :: EMEP_TAU, TAU, A, B
       INTEGER                       :: EMEP_NYMD, MN, RATIOID, I, J
@@ -1291,8 +1286,8 @@
      &                                       ARRAY_1x1_SHIP(:,:,1)
       IF ( wSHIP .eq. 2 ) ARRAY_1x1(:,:,1) = ARRAY_1x1_SHIP(:,:,1)
 
-      CALL TRANS_REGRID( DBLE(ARRAY_1x1), ARRAY,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 1 )
+      ARRAY_1x1_8 = DBLE(ARRAY_1x1)
+      CALL TRANS_INPUT_1x1( ARRAY_1x1_8, ARRAY, 1, 1, 0, 1 )
 
       ! Convert SOx to SO2 assuming a SOx is 95% SO2 over Europe, as used
       ! throughout GEOS-Chem, and as per Chin et al, 2000

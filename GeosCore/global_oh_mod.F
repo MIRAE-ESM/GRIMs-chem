@@ -108,6 +108,7 @@
 !
       INTEGER            :: I, J, L
       REAL*4             :: ARRAY(I2x25,J2x25,LG5FUL)
+      REAL*8             :: ARRAY8(I2x25,J2x25,LG5FUL)
       REAL*8             :: XTAU
       CHARACTER(LEN=255) :: FILENAME
 
@@ -168,8 +169,8 @@
 #else
 
       ! Assign data from ARRAY to the module variable OH
-      CALL TRANS_REGRID( DBLE(ARRAY), OH,
-     &                   I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, OH, LG5FUL, LLPAR, 1, 0 )
 
 #endif
 

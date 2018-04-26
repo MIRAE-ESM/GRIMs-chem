@@ -84,8 +84,7 @@
          READ(9999) F_ARRAY
          ENDIF
 
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
+         CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
 
          STT(:,:,:,N) = P_ARRAY
 
@@ -134,8 +133,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
@@ -150,8 +148,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
 
       BXHEIGHT = P_ARRAY
 
@@ -160,8 +157,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, LLPAR, LLPAR, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
 
       RH = P_ARRAY
 
@@ -210,8 +206,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, DAY_DIM, DAY_DIM, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
 
       T_DAY = P_ARRAY
 
@@ -220,8 +215,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, DAY_DIM, DAY_DIM, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
 
       PARDR_DAY = P_ARRAY
 
@@ -230,8 +224,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, DAY_DIM, DAY_DIM, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
 
       PARDF_DAY = P_ARRAY
 
@@ -248,8 +241,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, NUM_DAYS, NUM_DAYS, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
 
       T_15 = P_ARRAY
 
@@ -258,8 +250,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, NUM_DAYS, NUM_DAYS, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
 
       PARDR_15 = P_ARRAY
 
@@ -268,8 +259,7 @@
       READ(9999) F_ARRAY
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   IGLOB*2, JGLOB/2, NUM_DAYS, NUM_DAYS, 0, 0, 0 )
+      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
 
       PARDF_15 = P_ARRAY
 
@@ -329,8 +319,7 @@
          READ(9999) F_ARRAY
          ENDIF
 
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      IGLOB*2, JGLOB/2, LLTROP, LLTROP, 0, 0, 0 )
+         CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLTROP, LLTROP, 0, 0 )
 
          CSPEC(:,:,:,N) = P_ARRAY
 

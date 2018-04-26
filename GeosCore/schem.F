@@ -232,8 +232,7 @@
             F_ARRAY(I,:,:) = ARRAY(1,:,:)
          ENDDO
          ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR)
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, LG5FUL, LLPAR, 1, 0 )
          STRATOH = REAL(P_ARRAY,4)
 #endif
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,8 +269,8 @@
                F_ARRAY(I,:,:) = ARRAY(1,:,:)
             ENDDO
             ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR) 
-            CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                             LG5FUL, LLPAR, 1, 0 )
             SJVALUE(:,:,:,NN) = REAL(P_ARRAY,4)
 #endif
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,8 +305,7 @@
             F_ARRAY(I,:,:) = ARRAY(1,:,:)
          ENDDO
          ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR) 
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, LG5FUL, LLPAR, 2, 0 )
          COPROD = REAL(P_ARRAY,4)
 #endif
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -341,8 +339,7 @@
             F_ARRAY(I,:,:) = ARRAY(1,:,:)
          ENDDO
          ! Cast from REAL*4 to REAL*8 and resize to (JJPAR,LLPAR) 
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      I2x25, J2x25, LG5FUL, LLPAR, 2, 2, 0 )
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, LG5FUL, LLPAR, 2, 0 )
          COLOSS = REAL(P_ARRAY,4)
 #endif
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

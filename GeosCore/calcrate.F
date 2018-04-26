@@ -103,6 +103,7 @@
       INTEGER :: KLOOP,JLOOP,I,NK,JOLD2,JOLD,NK1,NKN,NH,MLOOP,J
       INTEGER :: NP,K,IFNC,IBRCH,IX,IY,IZ,IJWINDOW,INDEX,NN,ii,jj
       INTEGER :: PHOTVAL,KSUN
+      INTEGER :: LOCATION(4)
 
       REAL*8  :: ARRNK,FCVNK,FCT1,FCT2,FCT,XYRAT,BLOG,FEXP,RATE3M
 !      REAL*8  :: CONSTC,RATE2AIR,RATE3H2O,RIS,RST,TBEGIN,TFINISH
@@ -891,7 +892,8 @@ c new OH+CO rate from JPL2006.
 
                      ! Now call CHECK_VALUE to make sure that XSTKCF is 
                      ! not a NaN or an infinity
-                     CALL CHECK_VALUE( XSTKCF, (/KLOOP,0,0,0/),
+                     LOCATION = (/KLOOP,0,0,0/)
+                     CALL CHECK_VALUE( XSTKCF, LOCATION,
      &                                 'GAMMA_HO2', 'at calcrate')
 
                      ! Archive gamma HO2 for ND52 diagnostic

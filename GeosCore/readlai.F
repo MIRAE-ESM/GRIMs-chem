@@ -150,8 +150,8 @@
       ENDDO
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   I2x25, J2x25, NVEGTYPE, NVEGTYPE, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                       NVEGTYPE, NVEGTYPE, 0, 0 )
 
       ! Retrieve XLAI
       DO J = 1, JJPAR
@@ -229,8 +229,8 @@
       ENDDO
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                   I2x25, J2x25, NVEGTYPE, NVEGTYPE, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY,
+     &                       NVEGTYPE, NVEGTYPE, 0, 0 )
 
       ! Retrieve XLAI2
       DO J = 1, JJPAR

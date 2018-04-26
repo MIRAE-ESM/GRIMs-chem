@@ -2198,7 +2198,9 @@ ctdf        print *,' no mobilisation candidates'
 
       ! Local variables
       INTEGER               :: I, IOS
+      INTEGER               :: ARRAYI(I2x25,J2x25,1)
       REAL*4                :: ARRAY(I2x25,J2x25,1)
+      REAL*8                :: ARRAY8(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
@@ -2244,8 +2246,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), LND_FRC_DRY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, LND_FRC_DRY, 1, 1, 0, 0 )
 
       !-----------------
       ! MSS_FRC_CLY
@@ -2254,8 +2256,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CLY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, MSS_FRC_CLY, 1, 1, 0, 0 )
 
       !-----------------
       ! MSS_FRC_SND
@@ -2264,8 +2266,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_SND,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, MSS_FRC_SND, 1, 1, 0, 0 )
 
       !-----------------
       ! SFC_TYP
@@ -2278,7 +2280,8 @@ ctdf        print *,' no mobilisation candidates'
       !CALL TRANSFER_2D( ARRAY(:,:,1), SFC_TYP )
 
       ! Also round off
-      CALL TRANS_INDEX( NINT(ARRAY), SFC_TYP, I2x25, J2x25 )
+      ARRAYI = NINT(ARRAY)
+      CALL TRANS_INDEX( ARRAYI, SFC_TYP )
 
 !****************   SOIL TEXTURE INFO    **********
       ! Filename
@@ -2299,8 +2302,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S01,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S01, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_02  LOAMY SAND
@@ -2309,8 +2312,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S02,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S02, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_03  SANDY LOAM
@@ -2319,8 +2322,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S03,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S03, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_04  SILT LOAM
@@ -2329,8 +2332,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S04,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S04, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_05  SILT
@@ -2339,8 +2342,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S05,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S05, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_06  LOAM
@@ -2349,8 +2352,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S06,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S06, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_07  SANDY CLAY LOAM
@@ -2359,8 +2362,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S07,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S07, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_08  SILTY CLAY LOAM
@@ -2369,8 +2372,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S08,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S08, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_09  CLAY LOAM
@@ -2379,8 +2382,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S09,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S09, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_10  SANDY CLAY
@@ -2389,8 +2392,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S10,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S10, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_11  SILTY CLAY
@@ -2399,8 +2402,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S11,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S11, 1, 1, 0, 0 )
 
       !-----------------
       ! FRC_12  CLAY
@@ -2409,8 +2412,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), FRC_S12,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FRC_S12, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE GET_TIME_INVARIANT_DATA
@@ -2443,6 +2446,7 @@ ctdf        print *,' no mobilisation candidates'
       ! Local variables
       INTEGER               :: THISMONTH
       REAL*4                :: ARRAY(I2x25,J2x25,1)
+      REAL*8                :: ARRAY8(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
@@ -2473,8 +2477,8 @@ ctdf        print *,' no mobilisation candidates'
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), VAI_DST,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, VAI_DST, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE GET_MONTHLY_DATA

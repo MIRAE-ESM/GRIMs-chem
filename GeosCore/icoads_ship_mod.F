@@ -310,13 +310,11 @@
          ! Regrid from GEOS 1x1 --> current model resolution
          IF ( SPECIES .eq. 1 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, NOx,
-     &                         I1x1, J1x1, 1, 1, 1, 0, 1 )
+            CALL TRANS_INPUT_1x1( GEOS_1x1, NOx, 1, 1, 0, 1 )
 
          ELSEIF ( SPECIES .eq. 2 ) THEN
 
-            CALL TRANS_REGRID( GEOS_1x1, CO,
-     &                         I1x1, J1x1, 1, 1, 1, 0, 1 )
+            CALL TRANS_INPUT_1x1( GEOS_1x1, CO, 1, 1, 0, 1 )
 
          ELSEIF ( SPECIES .eq. 3 ) THEN
 
@@ -325,8 +323,7 @@
             ! utilized in sulfate_mod.f
             GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * 0.986
 
-            CALL TRANS_REGRID( GEOS_1x1, SO2,
-     &                         I1x1, J1x1, 1, 1, 1, 0, 1 )
+            CALL TRANS_INPUT_1x1( GEOS_1x1, SO2, 1, 1, 0, 1 )
 
          ENDIF
 

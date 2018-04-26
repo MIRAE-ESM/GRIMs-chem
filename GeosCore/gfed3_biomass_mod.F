@@ -612,8 +612,8 @@
 
       ! Regrid from GEOS 1x1 grid to current grid.  (The unit 'molec/cm2' 
       ! is just used to denote that the quantity is per unit area.)
-      CALL TRANS_REGRID( BIOM_GEOS_1x1, GFED3_BIOMASS,
-     &                   I1x1, J1x1, N_SPEC, N_SPEC, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( BIOM_GEOS_1x1, GFED3_BIOMASS,
+     &                      N_SPEC, N_SPEC, 0, 0 )
 
 #ifdef NOUSE
       ! Compute future biomass emissions (if necessary)

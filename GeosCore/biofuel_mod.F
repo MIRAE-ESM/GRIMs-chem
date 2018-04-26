@@ -233,6 +233,7 @@
       INTEGER                       :: AS, I, J, N, NN, DAY_NUM
       INTEGER                       :: SIM_YEAR
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8,  SAVE                 :: MOLWT(NBFMAX)
       REAL*8                        :: TOTAL, BXHEIGHT_CM, EPA_NEI
       REAL*8                        :: SUM_ARRAY
@@ -242,6 +243,9 @@
       REAL*8,  EXTERNAL             :: BOXVL
 
       REAL*8                        :: BF_CO( IIPAR, JJPAR )  ! Biofuel emission of CO [molec/cm2/s]
+
+      ! Array for transform
+      REAL*8                        :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
       !   B i o f u e l   B u r n i n g   B e g i n s   H e r e !!
@@ -326,8 +330,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
                          
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
                
 #ifdef NOUSE
                ! Compute future NOx emissions (if necessary)
@@ -337,13 +341,15 @@
 #endif
 
                ! Compute total of biofuel NOx
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'NOx ', TOTAL, '[Tg  /yr]'
                ENDIF
                
                ! Define MOLWT for use below
                MOLWT(N) = 46d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTCO ) THEN
 
@@ -357,15 +363,15 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
                ! Save BF_CO before scaling (tmf, 6/15/07) 
-               CALL TRANS_REGRID( DBLE(ARRAY), BF_CO,
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, BF_CO, 1, 1, 0, 1 )
 
                ! Scale CO to account for oxidation of extra VOC's
-               CALL SCALE_BIOFUEL_CO( BIOFUEL_KG(N,:,:) )
+               CALL SCALE_BIOFUEL_CO( P_ARRAY )
                
 #ifdef NOUSE
                ! Compute future CO emissions (if necessary)
@@ -375,13 +381,15 @@
 #endif
 
                ! Print total CO
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'CO  ', TOTAL, '[Tg  /yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 28d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTALK4 ) THEN
 
@@ -395,8 +403,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future ALK4 emissions (if necessary)
@@ -406,13 +414,15 @@
 #endif
 
                ! Compute total ALK4
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'ALK4', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTACET ) THEN
 
@@ -426,11 +436,11 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
                ! Scale to match a posteriori source (bdf, bmy, 9/10/01)
-               CALL SCALE_BIOFUEL_ACET( BIOFUEL_KG(N,:,:) )
+               CALL SCALE_BIOFUEL_ACET( P_ARRAY )
 
 #ifdef NOUSE
                ! Compute future ACET emissions (if necessary)
@@ -440,13 +450,15 @@
 #endif
 
                ! Compute total ACET
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'ACET', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTMEK ) THEN
 
@@ -460,8 +472,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future MEK emissions (if necessary)
@@ -471,13 +483,15 @@
 #endif
 
                ! Compute total MEK
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'MEK ', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTALD2 ) THEN
 
@@ -491,8 +505,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future ALD2 emissions (if necessary)
@@ -502,13 +516,15 @@
 #endif
 
                ! Compute total ALD2
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'ALD2', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTPRPE ) THEN
 
@@ -522,8 +538,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future PRPE emissions (if necessary)
@@ -533,13 +549,15 @@
 #endif
 
                ! Compute total PRPE
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'PRPE', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTC3H8 ) THEN
 
@@ -553,8 +571,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future C3H8 emissions (if necessary)
@@ -564,13 +582,15 @@
 #endif
 
                ! Compute total C3H8
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'C3H8', TOTAL, '[Tg C/yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTCH2O ) THEN
 
@@ -584,8 +604,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future CH2O emissions (if necessary)
@@ -595,13 +615,15 @@
 #endif
 
                ! Compute total CH2O
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'CH2O', TOTAL, '[Tg  /yr]'
                ENDIF
 
                ! Define MOLWT for use below
                MOLWT(N) = 30d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTC2H6 ) THEN
 
@@ -615,8 +637,8 @@
      &                          1,         ARRAY,     QUIET=.TRUE. ) 
 
                ! Cast from REAL*4 to REAL*8, resize to (IIPAR,JJPAR)
-               CALL TRANS_REGRID( DBLE(ARRAY), BIOFUEL_KG(N,:,:),
-     &                            I2x25, J2x25, 1, 1, 2, 0, 1 )
+               ARRAY8 = DBLE(ARRAY)
+               CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 1 )
 
 #ifdef NOUSE
                ! Compute future C2H6 emissions (if necessary)
@@ -626,13 +648,15 @@
 #endif
 
                ! Compute total C2H6
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'C2H6', TOTAL, '[Tg C/yr]'
                ENDIF
                
                ! Define MOLWT for use below
                MOLWT(N) = 12d-3
+
+               BIOFUEL_KG(N,:,:) = P_ARRAY
 
             ELSE IF ( NN == IDTGLYX ) THEN
 
@@ -645,7 +669,8 @@
      &          BF_CO(:,:) / 28d-3 * 58d-3 * 6.62d-3      ! [kg/box/yr]
 
                ! Compute total GLYX
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'GLYX', TOTAL, '[Tg/yr]'
                ENDIF
@@ -665,7 +690,8 @@
      &          BF_CO(:,:) / 28d-3 * 72d-3 * 3.47d-3      ! [kg/box/yr]
 
                ! Compute total MGLY
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'MGLY', TOTAL, '[Tg/yr]'
                ENDIF
@@ -684,7 +710,8 @@
      &          BF_CO(:,:) / 28d-3 * 12d-3 * 6d0 * 4.06d-3      ! [kg C/box/yr]
 
                ! Compute total BENZ
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'BENZ', TOTAL, '[Tg C/yr]'
                ENDIF
@@ -704,7 +731,8 @@
      &          BF_CO(:,:) / 28d-3 * 12d-3 * 7d0 * 2.01d-3      ! [kg C/box/yr]
 
                ! Compute total TOLU
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'TOLU', TOTAL, '[Tg C/yr]'
                ENDIF
@@ -723,7 +751,8 @@
      &          BF_CO(:,:) / 28d-3 * 12d-3 * 8d0 * 0.82d-3      ! [kg C/box/yr]
 
                ! Compute total XYLE
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'XYLE', TOTAL, '[Tg C/yr]'
                ENDIF
@@ -742,7 +771,8 @@
      &          BF_CO(:,:) / 28d-3 * 12d-3 * 2d0 * 15.7d-3      ! [kg C/box/yr]
 
                ! Compute total C2H4
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'C2H4', TOTAL, '[Tg C/yr]'
                ENDIF
@@ -761,7 +791,8 @@
      &          BF_CO(:,:) / 28d-3 * 12d-3 * 2d0 * 19d-3      ! [kg C/box/yr]
 
                ! Compute total C2H2
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'C2H2', TOTAL, '[Tg C/yr]'
                ENDIF
@@ -780,7 +811,8 @@
      &          BF_CO(:,:) / 28d-3 * 60d-3 * 3.66d-3      ! [kg/box/yr]
 
                ! Compute total GLYC
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'GLYC', TOTAL, '[Tg/yr]'
                ENDIF
@@ -799,7 +831,8 @@
      &          BF_CO(:,:) / 28d-3 * 74d-3 * 3.31d-3      ! [kg/box/yr]
 
                ! Compute total HAC
-               TOTAL = SUM_ARRAY( BIOFUEL_KG(N,:,:), 1 ) * 1d-9
+               P_ARRAY = BIOFUEL(N,:,:)
+               TOTAL = SUM_ARRAY( P_ARRAY, 1 ) * 1d-9
                IF (LMASTER) THEN
                WRITE( 6, 120 ) 'HAC', TOTAL, '[Tg/yr]'
                ENDIF

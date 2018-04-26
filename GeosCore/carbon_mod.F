@@ -4669,6 +4669,7 @@ c
       ! Local variables
       INTEGER                       :: I, J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: XTAU, STEPS_PER_YR, FUT_SCL
       REAL*8                        :: STEPS_PER_MON
       REAL*8                        :: FD2D(IIPAR,JJPAR)
@@ -4714,8 +4715,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4751,8 +4752,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4800,8 +4801,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4838,8 +4839,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -4914,6 +4915,7 @@ c
       ! Local variables
       INTEGER                       :: I, J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: XTAU, STEPS_PER_MON, FUT_SCL
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
@@ -4965,8 +4967,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
@@ -5005,8 +5007,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
@@ -5060,8 +5062,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
@@ -5103,8 +5105,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
@@ -5170,6 +5172,7 @@ c
       ! Local variables
       INTEGER                       :: I, J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: XTAU, STEPS_PER_YR, FUT_SCL
       REAL*8                        :: FD2D(IIPAR,JJPAR)
       CHARACTER(LEN=255)            :: FILENAME
@@ -5210,8 +5213,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -5247,8 +5250,8 @@ c
      &                 1,         ARRAY,     QUIET=.TRUE. ) 
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), FD2D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, FD2D, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )

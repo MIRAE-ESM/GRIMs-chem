@@ -163,6 +163,7 @@
       LOGICAL            :: FIRST = .TRUE.
       INTEGER            :: YYYYMMDD, YEAR
       REAL*4             :: ARRAY(I2x25,J2x25,1)
+      REAL*8             :: ARRAY8(I2x25,J2x25,1)
       REAL*8             :: XTAU
       CHARACTER(LEN=255) :: FILENAME
 
@@ -240,8 +241,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )         
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), TOMS,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, TOMS, 1, 1, 0, 0 )
 
       !--------------------------------
       ! d(TOMS)/dT (1st half of month)
@@ -253,8 +254,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )         
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), DTOMS1,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, DTOMS1, 1, 1, 0, 0 )
       
       !--------------------------------
       ! d(TOMS)/dT (2nd half of month)
@@ -266,8 +267,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )         
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), DTOMS2,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, DTOMS2, 1, 1, 0, 0 )
 
       END SUBROUTINE READ_TOMS
 !EOC

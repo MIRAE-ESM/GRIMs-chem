@@ -622,6 +622,7 @@
       ! Local variables
       INTEGER                       :: N
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
 
       ! Add storage of CO emissions to calculate emissions 
       ! of the 9 new species (tmf, 12/18/06) 
@@ -660,8 +661,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. )  
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBNOX),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBNOX),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future NOx emissions (if necessary)
@@ -688,13 +690,14 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBCO),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBCO),
+     &                             1, 1, 0, 0 )
 
             ! Store CO emissions before scaling 
             ! for new gaseous emissions (tmf, 1/7/09)
-            CALL TRANS_REGRID( DBLE(ARRAY), COEMIS,
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, COEMIS, 1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future NOx emissions (if necessary)
@@ -721,8 +724,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBALK4),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBALK4),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future ALK4 emissions (if necessary)
@@ -749,8 +753,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBACET),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBACET),
+     &                             1, 1, 0, 0 )
 
             ! ACET -- Convert from [molec/cm2/month] to [molec C/cm2/month] 
             BIOMASS(:,:,IDBACET) = BIOMASS(:,:,IDBACET) * 3d0  
@@ -783,8 +788,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBMEK),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBMEK),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future MEK emissions (if necessary)
@@ -811,8 +817,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBALD2),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBALD2),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future ALD2 emissions (if necessary)
@@ -839,8 +846,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBPRPE),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBPRPE),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future PRPE emissions (if necessary)
@@ -868,8 +876,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBC3H8),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBC3H8),
+     &                             1, 1, 0, 0 )
 
             ! C3H8 -- convert from [molec/cm2/month] to [molec C/cm2/month] 
             BIOMASS(:,:,IDBC3H8) = BIOMASS(:,:,IDBC3H8) * 3d0 
@@ -899,8 +908,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBCH2O),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBCH2O),
+     &                             1, 1, 0, 0 )
 
 #ifdef NOUSE
             ! Compute future CH2O emissions (if necessary)
@@ -927,8 +937,9 @@
      &                       1,         ARRAY,     QUIET=.TRUE. ) 
 
             ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-            CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS(:,:,IDBC2H6),
-     &                         I2x25, J2x25, 1, 1, 2, 0, 0 )
+            ARRAY8 = DBLE(ARRAY)
+            CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS(:,:,IDBC2H6),
+     &                             1, 1, 0, 0 )
 
             ! C2H6 --convert from [molec/cm2/month] to [molec C/cm2/month]
             BIOMASS(:,:,IDBC2H6) = BIOMASS(:,:,IDBC2H6) * 2d0 
@@ -1369,6 +1380,7 @@
       ! Local variables
       INTEGER                       :: I,       J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: CONV,    XTAU,   SEC_PER_MONTH
       CHARACTER(LEN=4)              :: CYEAR
       CHARACTER(LEN=255)            :: BC_FILE, OC_FILE
@@ -1467,8 +1479,8 @@
      &                 1,        ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS_BC,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS_BC, 1, 1, 0, 1 )
 
       !------------------
       ! Read OC biomass
@@ -1485,8 +1497,8 @@
      &                 1,        ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS_OC,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS_OC, 1, 1, 0, 1 )
 
       !=================================================================
       ! Convert from [kg C/mon] to [atoms C/cm2/s]
@@ -1573,6 +1585,7 @@
       ! Local variables             
       INTEGER                       :: I, J, THISYEAR
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: CONV, XTAU, SEC_PER_MONTH
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
@@ -1659,8 +1672,8 @@
      &                 1,         ARRAY(:,:,1),  QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS_SO2,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS_SO2, 1, 1, 0, 1 )
 
       !=================================================================
       ! Convert units [kg SO2/month] -> [molec SO2/cm2/s]
@@ -1741,6 +1754,7 @@
       ! Local variables
       INTEGER                       :: I, J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: CONV, SEC_PER_MONTH, XTAU
       CHARACTER(LEN=4  )            :: CYEAR
       CHARACTER(LEN=255)            :: FILENAME
@@ -1827,8 +1841,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS_NH3,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS_NH3, 1, 1, 0, 1 )
 
       !=================================================================
       ! Compute IPCC future emissions (if necessary)
@@ -1901,6 +1915,7 @@
       ! Local variables
       INTEGER                :: I, J
       REAL*4                 :: ARRAY(I2x25,J2x25,1)
+      REAL*8                 :: ARRAY8(I2x25,J2x25,1)
       REAL*8                 :: EMFACTCO2CO, TAU, SEC_PER_MONTH
       CHARACTER(LEN=4)       :: SYEAR
       CHARACTER(LEN=255)     :: FILENAME
@@ -1989,8 +2004,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8 and resize to (IIPAR,JJPAR)
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOMASS_CO2,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOMASS_CO2, 1, 1, 0, 0 )
 
       ! Convert from [molec CO/cm2/month] to [molec CO2/cm2/month]
       BIOMASS_CO2 = BIOMASS_CO2 * EMFACTCO2CO

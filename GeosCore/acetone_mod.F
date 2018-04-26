@@ -151,6 +151,7 @@
       LOGICAL, SAVE      :: FIRST = .TRUE.
       INTEGER            :: AS
       REAL*4             :: ARRAY(I2x25,J2x25,1)
+      REAL*8             :: ARRAY8(I2x25,J2x25,1)
       REAL*8             :: TAU0
       REAL*8             :: SUM_ARRAY
       CHARACTER(LEN=255) :: FILENAME
@@ -187,8 +188,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
    
       ! Cast from REAL*4 to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), JO1D,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, JO1D, 1, 1, 0, 0 )
 
       ! Make sure JO1D is not zero everywhere 
       IF ( .not. ( SUM_ARRAY( JO1D, 1 ) > 0d0 ) ) THEN
@@ -263,6 +264,7 @@
       LOGICAL, SAVE      :: FIRST = .TRUE.
       INTEGER            :: AS
       REAL*4             :: ARRAY(I2x25,J2x25,1)
+      REAL*8             :: ARRAY8(I2x25,J2x25,1)
       REAL*8             :: TAU0, TAU1
       CHARACTER(LEN=255) :: FILENAME
 
@@ -306,8 +308,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
    
       ! Cast from REAL*4 to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), XRESP,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, XRESP, 1, 1, 0, 0 )
 
       ! Convert RESP field to [g C/m2/s]
       XRESP = XRESP / ( ( TAU1 - TAU0 ) * 3600d0 )

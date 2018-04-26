@@ -212,8 +212,7 @@
          CLOSE( IU_FILE )
          ENDIF
 
-         CALL TRANS_REGRID( F_ARRAY, AIR,
-     &                      I2x25, J2x25, 20, 20, 2, 0, 1 )
+         CALL TRANS_INPUT_2x25( F_ARRAY, AIR, 20, 20, 0, 1 )
 
          ! Convert the units from [kg NO2/4hr] -> [molecules/s]
          DO K = 1, NAIR

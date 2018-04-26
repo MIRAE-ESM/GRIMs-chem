@@ -4669,7 +4669,9 @@ c Fix up for negative argument, erf, etc.
 
       ! Local variables
       INTEGER               :: I, IOS
+      INTEGER               :: ARRAYI(I2x25,J2x25,1)
       REAL*4                :: ARRAY(I2x25,J2x25,1)
+      REAL*8                :: ARRAY8(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
@@ -4746,8 +4748,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_GEO,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ERD_FCT_GEO, 1, 1, 0, 0 )
 
       !-----------------
       ! ERD_FCT_HYDRO
@@ -4756,8 +4758,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_HYDRO,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ERD_FCT_HYDRO, 1, 1, 0, 0 )
 
       !-----------------
       ! ERD_FCT_TOPO
@@ -4766,8 +4768,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_TOPO,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ERD_FCT_TOPO, 1, 1, 0, 0 )
 
       !-----------------
       ! ERD_FCT_UNITY
@@ -4776,8 +4778,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), ERD_FCT_UNITY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ERD_FCT_UNITY, 1, 1, 0, 0 )
 
       !-----------------
       ! MBL_BSN_FCT
@@ -4804,8 +4806,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), LND_FRC_DRY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, LND_FRC_DRY, 1, 1, 0, 0 )
 
       !-----------------
       ! MSS_FRC_CACO3
@@ -4814,8 +4816,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CACO3,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, MSS_FRC_CACO3, 1, 1, 0, 0 )
 
       !-----------------
       ! MSS_FRC_CLY
@@ -4824,8 +4826,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_CLY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, MSS_FRC_CLY, 1, 1, 0, 0 )
 
       !-----------------
       ! MSS_FRC_SND
@@ -4834,8 +4836,8 @@ c Fix up for negative argument, erf, etc.
      &                 XTAU,      I2x25,    J2x25,
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
-      CALL TRANS_REGRID( DBLE(ARRAY), MSS_FRC_SND,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, MSS_FRC_SND, 1, 1, 0, 0 )
 
       !-----------------
       ! SFC_TYP
@@ -4848,7 +4850,8 @@ c Fix up for negative argument, erf, etc.
       !CALL TRANSFER_2D( ARRAY(:,:,1), SFC_TYP )
 
       ! Also round off
-      CALL TRANS_INDEX( NINT(ARRAY), SFC_TYP, I2x25, J2x25 )
+      ARRAYI = NINT(ARRAY)
+      CALL TRANS_INDEX( ARRAYI, SFC_TYP )
 
       !------------------------
       ! GOCART source function
@@ -4871,8 +4874,8 @@ c Fix up for negative argument, erf, etc.
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), SRCE_FUNC,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, SRCE_FUNC, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE GET_TIME_INVARIANT_DATA
@@ -4905,6 +4908,7 @@ c Fix up for negative argument, erf, etc.
       ! Local variables
       INTEGER               :: THISMONTH
       REAL*4                :: ARRAY(I2x25,J2x25,1)
+      REAL*8                :: ARRAY8(I2x25,J2x25,1)
       REAL*8                :: XTAU
       CHARACTER(LEN=255)    :: FILENAME
 
@@ -4935,8 +4939,8 @@ c Fix up for negative argument, erf, etc.
      &                 1,         ARRAY,    QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize
-      CALL TRANS_REGRID( DBLE(ARRAY), VAI_DST,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, VAI_DST, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE GET_MONTHLY_DATA

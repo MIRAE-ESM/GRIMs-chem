@@ -10,14 +10,13 @@
 !
 !=====================================================================
 
-      SUBROUTINE TRANS_INDEX( INDATA, OUTDATA, IN_NI, IN_NJ )
+      SUBROUTINE TRANS_INDEX( INDATA, OUTDATA )
 
       USE CMN_SIZE_MOD
 
       IMPLICIT NONE
 
-      INTEGER :: IN_NI, IN_NJ
-      INTEGER :: INDATA(IN_NI,IN_NJ)
+      INTEGER :: INDATA(I2x25,J2x25)
       INTEGER :: OUTDATA(IIPAR,JJPAR)
       INTEGER :: I, J, XID, YID
       INTEGER :: NEAR_X, NEAR_Y
@@ -25,9 +24,9 @@
 #ifdef MP
       ! Broadcast
 #ifndef RMP
-      CALL mpbcasti(INDATA,IN_NI*IN_NJ)
+      CALL mpbcasti(INDATA,I2x25*J2x25)
 #else
-      CALL rmpbcasti(INDATA,IN_NI*IN_NJ)
+      CALL rmpbcasti(INDATA,I2x25*J2x25)
 #endif
 #endif
 

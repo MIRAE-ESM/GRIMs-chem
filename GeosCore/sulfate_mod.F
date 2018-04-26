@@ -1191,6 +1191,7 @@
       INTEGER, SAVE           :: LASTMONTH = -99
       INTEGER                 :: I, J, L, JLOOP
       REAL*4                  :: ARRAY(I2x25,J2x25,LG5TRO)
+      REAL*8                  :: ARRAY8(I2x25,J2x25,LG5TRO)
       REAL*8                  :: ND44_TMP(IIPAR,JJPAR,LLTROP)
       REAL*8                  :: DT,    Koh,  DH2O2, M,    F ,   XTAU   
       REAL*8                  :: H2O20, H2O2, ALPHA, FLUX, FREQ, PHOTJ
@@ -1255,8 +1256,8 @@
 
 
          ! Cast to REAL*8 and resize if necessary
-         CALL TRANS_REGRID( DBLE(ARRAY), JH2O2,
-     &                      I2x25, J2x25, LG5TRO, LLTROP, 2, 1, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, JH2O2, LG5TRO, LLTROP, 1, 0 )
             
          ! Reset LASTMONTH
          !LASTMONTH = GET_MONTH()
@@ -5949,8 +5950,7 @@
          CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
 
          ! Regrid from 1x1 to correct grid
-         CALL TRANS_REGRID( ARRAY_1x1, ARRAY_1LEV,
-     &                      I1x1, J1x1, 1, 1, 1, 0, 1 )
+         CALL TRANS_INPUT_1x1( ARRAY_1x1, ARRAY_1LEV, 1, 1, 0, 1 )
 
          ! Save into correct level of ARRAY
          ARRAY(:,:,L) = ARRAY_1LEV
@@ -6060,8 +6060,7 @@
             CALL DO_REGRID_G2G_1x1( 'kg', ARRAY_GEN8, ARRAY_1x1(:,:,1) )
 
             ! Regrid from 1x1 to correct grid
-            CALL TRANS_REGRID( ARRAY_1x1, ARRAY_1LEV,
-     &                         I1x1, J1x1, 1, 1, 1, 0, 1 )
+            CALL TRANS_INPUT_1x1( ARRAY_1x1, ARRAY_1LEV, 1, 1, 0, 1 )
 
             ! Save into correct level of ARRAY
             ARRAY(:,:,L) = ARRAY_1LEV
@@ -6166,6 +6165,7 @@
       INTEGER                       :: SCALEYEAR
       REAL*4                        :: E_SOx(IIPAR,JJPAR,2)
       REAL*4                        :: ARRAY(I2x25,J2x25,2)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,2)
       REAL*8                        :: XTAU, Fe, X, Y, AREA_CM2
       REAL*8                        :: EDG_SO2
       CHARACTER(LEN=4)              :: SYEAR
@@ -6317,8 +6317,8 @@
      &                    XTAU,      I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
          E_SOx = REAL(P_ARRAY,4)
 
          !=================================================================
@@ -6473,6 +6473,7 @@
       
       ! Local variables
       REAL*4              :: ARRAY(I2x25,J2x25,1)
+      REAL*8              :: ARRAY8(I2x25,J2x25,1)
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
@@ -6500,8 +6501,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. ) 
 
       ! Cast from REAL*4 to REAL*8 
-      CALL TRANS_REGRID( DBLE(ARRAY), DMSo,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, DMSo, 1, 1, 0, 0 )
       
       ! Return to calling program
       END SUBROUTINE READ_OCEAN_DMS
@@ -6546,6 +6547,8 @@
       ! Local variables
       REAL*4                  :: ARRAY(I2x25,J2x25,1)
       REAL*4                  :: ARRAY1(I1x1,J1x1,1)
+      REAL*8                  :: ARRAY8(I2x25,J2x25,1)
+      REAL*8                  :: ARRAY1_8(I1x1,J1x1,1)
       REAL*8                  :: XTAU
       CHARACTER(LEN=4)        :: SYEAR
       CHARACTER(LEN=255)      :: FILENAME
@@ -6584,8 +6587,8 @@
      &                    1,         ARRAY1(:,:,1), QUIET=.TRUE. ) 
 
          ! Regrid from 1x1 and cast to REAL*8
-         CALL TRANS_REGRID( DBLE(ARRAY1), SSTEMP,
-     &                      I1x1, J1x1, 1, 1, 1, 0, 0 )
+         ARRAY1_8 = DBLE(ARRAY1)
+         CALL TRANS_INPUT_1x1( ARRAY1_8, SSTEMP, 1, 1, 0, 0 )
 
       ELSE
 
@@ -6612,8 +6615,8 @@
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. ) 
 
          ! Cast from REAL*4 to REAL*8 
-         CALL TRANS_REGRID( DBLE(ARRAY), SSTEMP,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, SSTEMP, 1, 1, 0, 0 )
 
       ENDIF
 
@@ -6682,6 +6685,7 @@
       ! Local variables             
       INTEGER                       :: I, J, THISYEAR
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: BIOCO(IIPAR,JJPAR)
       REAL*8                        :: XTAU
       CHARACTER(LEN=4  )            :: CYEAR
@@ -6721,8 +6725,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE.  ) 
 
       ! Cast from REAL*4 to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), BIOCO,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, BIOCO, 1, 1, 0, 1 )
 
       !=================================================================
       ! Unit conversion to [kg SO2/s]
@@ -6922,8 +6926,7 @@
       CLOSE( IU_FILE )
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY, ACSO2,
-     &                   I2x25, J2x25, 20, 20, 2, 0, 1 )
+      CALL TRANS_INPUT_2x25( F_ARRAY, ACSO2, 20, 20, 0, 1 )
 
       !=================================================================
       ! Interpolate from the 1-km grid to the given GEOS-CHEM grid
@@ -7020,6 +7023,7 @@
       INTEGER                       :: I, J
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
       REAL*4                        :: SHIPSO2(IIPAR,JJPAR)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: XTAU, AREA_CM2
       CHARACTER (LEN=255)           :: FILENAME
 
@@ -7089,8 +7093,8 @@
      &                    1,         ARRAY(:,:,1),  QUIET=.TRUE. )
 
          ! Cast from REAL*4 to REAL*8
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 0 )
          SHIPSO2 = REAL(P_ARRAY,4)
 
          ! Loop over latitudes
@@ -7240,6 +7244,7 @@
       LOGICAL                       :: WEEKDAY
       INTEGER                       :: I, J, DAY_NUM
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: AREA_CM2, EPA_NEI, XTAU
       REAL*8              :: NMDAY(12) = (/ 31d0, 28d0, 31d0, 30d0,
      &                                      31d0, 30d0, 31d0, 31d0, 
@@ -7271,8 +7276,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_an,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ENH3_an, 1, 1, 0, 1 )
 
 !$OMP PARALLEL DO
 !$OMP+DEFAULT( SHARED )
@@ -7357,6 +7362,7 @@
 
       ! Local variables
       REAL*4              :: ARRAY(I2x25,J2x25,1)
+      REAL*8              :: ARRAY8(I2x25,J2x25,1)
       REAL*8              :: XTAU
       REAL*8              :: NMDAY(12) = (/ 31d0, 28d0, 31d0, 30d0,
      &                                      31d0, 30d0, 31d0, 31d0, 
@@ -7387,8 +7393,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
       ! Cast from REAL*4 to REAL*8
-      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_na,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ENH3_na, 1, 1, 0, 1 )
 
       ! Convert from [kg N/box/mon] to [kg NH3/box/s]
       ENH3_na = ENH3_na * ( 17.d0 / 14.d0 ) /
@@ -7464,6 +7470,7 @@
       ! Local variables
       INTEGER                       :: I, J, THISYEAR
       REAL*4                        :: ARRAY(I2x25,J2x25,1)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1)
       REAL*8                        :: XTAU, DMASS!, CONV
       REAL*8                        :: NMDAY(12) = (/31d0, 28d0, 31d0, 
      &                                               30d0, 31d0, 30d0, 
@@ -7500,8 +7507,8 @@
      &                 1,         ARRAY(:,:,1), QUIET=.TRUE. )
  
       ! Cast from REAL*4 to REAL*8 and resize if necesary
-      CALL TRANS_REGRID( DBLE(ARRAY), ENH3_bf,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 1 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, ENH3_bf, 1, 1, 0, 1 )
 
       ! Store NH3 in ENH3_bf array [kg NH3/box/s]
       ENH3_bf = ENH3_bf / ( NMDAY(THISMONTH) * 86400.d0 )
@@ -7629,6 +7636,7 @@
       ! Local variables 
       INTEGER             :: I, J, L, K      
       REAL*4              :: ARRAY(I2x25,J2x25,LG5TRO)
+      REAL*8              :: ARRAY8(I2x25,J2x25,LG5TRO)
       REAL*8              :: XTAU
       CHARACTER(LEN=255)  :: FILENAME
 
@@ -7668,8 +7676,8 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), PH2O2m,
-     &                   I2x25, J2x25, LG5TRO, LLTROP, 2, 1, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, PH2O2m, LG5TRO, LLTROP, 1, 0 )
             
       !=================================================================
       ! Read monthly mean O3 [v/v]
@@ -7694,8 +7702,8 @@
 !     &                 LLTROP,    ARRAY,     QUIET=.TRUE. )
 
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), O3m,
-     &                   I2x25, J2x25, LG5TRO, LLTROP, 2, 2, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, O3m, LG5TRO, LLTROP, 2, 0 )
       
       ! Return to calling program
       END SUBROUTINE READ_OXIDANT

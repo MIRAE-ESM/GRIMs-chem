@@ -1214,6 +1214,7 @@
 ! !LOCAL VARIABLES:
 !
       REAL*4             :: ARRAY(I2x25,J2x25,1)
+      REAL*8             :: ARRAY8(I2x25,J2x25,1)
       REAL*8             :: TAU0
       CHARACTER(LEN=255) :: FILENAME
       CHARACTER(LEN=9)   :: MODELNAME
@@ -1270,8 +1271,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )  
    
       ! Cast to REAL*8 and resize if necessary
-      CALL TRANS_REGRID( DBLE(ARRAY), OTD_LOC_REDIST,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_2x25( ARRAY8, OTD_LOC_REDIST, 1, 1, 0, 0 )
 
       END SUBROUTINE READ_LOCAL_REDIST
 !EOC

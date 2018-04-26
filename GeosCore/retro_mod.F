@@ -377,44 +377,31 @@
       CLOSE( IU_FILE )
       ENDIF
 
-      CALL TRANS_REGRID( F_ARRAY1, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY1, P_ARRAY, 1, 1, 0, 0 )
       ALK4 = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY2, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY2, P_ARRAY, 1, 1, 0, 0 )
       ACET = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY3, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY3, P_ARRAY, 1, 1, 0, 0 )
       MEK = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY4, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY4, P_ARRAY, 1, 1, 0, 0 )
       ALD2 = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY5, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY5, P_ARRAY, 1, 1, 0, 0 )
       PRPE = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY6, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY6, P_ARRAY, 1, 1, 0, 0 )
       C3H8 = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY7, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY7, P_ARRAY, 1, 1, 0, 0 )
       CH2O = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY8, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY8, P_ARRAY, 1, 1, 0, 0 )
       C2H6 = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY9, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY9, P_ARRAY, 1, 1, 0, 0 )
       BENZ = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY10, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY10, P_ARRAY, 1, 1, 0, 0 )
       TOLU = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY11, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY11, P_ARRAY, 1, 1, 0, 0 )
       XYLE = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY12, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY12, P_ARRAY, 1, 1, 0, 0 )
       C2H4 = REAL(P_ARRAY,4)
-      CALL TRANS_REGRID( F_ARRAY13, P_ARRAY,
-     &                   I2x25, J2x25, 1, 1, 2, 0, 0 )
+      CALL TRANS_INPUT_2x25( F_ARRAY13, P_ARRAY, 1, 1, 0, 0 )
       C2H2 = REAL(P_ARRAY,4)
 
       ! Apply annual scalar factor

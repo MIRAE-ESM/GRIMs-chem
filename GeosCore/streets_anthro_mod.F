@@ -1113,11 +1113,9 @@
 
       ! Regrid from GEOS 1x1 --> current model resolution
       IF ( PRESENT( UNIT ) ) THEN
-         CALL TRANS_REGRID( GEOS_1x1, ARR,
-     &                      I1x1, J1x1, 1, 1, 1, 0, 0 )
+         CALL TRANS_INPUT_1x1( GEOS_1x1, ARR, 1, 1, 0, 0 )
       ELSE
-         CALL TRANS_REGRID( GEOS_1x1, ARR,
-     &                      I1x1, J1x1, 1, 1, 1, 0, 1 )
+         CALL TRANS_INPUT_1x1( GEOS_1x1, ARR, 1, 1, 0, 1 )
       ENDIF
 
 
@@ -2077,8 +2075,7 @@
       CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, MASK_CHINA,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, MASK_CHINA, 1, 1, 0, 0 )
 
       !------------------------------------
       ! SE Asia Mask (for 2000 emissions)
@@ -2105,8 +2102,7 @@
       CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
 
       ! Regrid from GEOS 1x1 GRID to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, MASK_SE_ASIA,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, MASK_SE_ASIA, 1, 1, 0, 0 )
 
       ! Return to calling program
       END SUBROUTINE READ_STREETS_MASKS

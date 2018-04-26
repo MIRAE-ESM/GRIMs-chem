@@ -1700,6 +1700,7 @@
 !
       INTEGER                 :: I, J, IJLOOP
       REAL*4                  :: ARRAY(I1x1,J1x1,1)
+      REAL*8                  :: ARRAY8(I1x1,J1x1,1)
       REAL*8                  :: DTSRCE, AREA_M2, FACTOR
       CHARACTER(LEN=255)      :: FILENAME
 
@@ -1760,8 +1761,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_ISOP,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_ISOP, 1, 1, 0, 0 )
 
       ! Loop over longitudes
       DO J = 1, JJPAR
@@ -1800,8 +1801,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_MONOT,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_MONOT, 1, 1, 0, 0 )
 
       ! Loop over longitudes
       DO J = 1, JJPAR
@@ -1840,8 +1841,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_MBO,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_MBO, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -1880,8 +1881,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_OVOC,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_OVOC, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -1922,8 +1923,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_APINE,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_APINE, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -1960,8 +1961,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_BPINE,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_BPINE, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -1998,8 +1999,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_LIMON,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_LIMON, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -2036,8 +2037,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_SABIN,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_SABIN, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -2074,8 +2075,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_MYRCN,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_MYRCN, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -2112,8 +2113,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_CAREN,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_CAREN, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR
@@ -2150,8 +2151,8 @@
      &                 1,         ARRAY,     QUIET=.TRUE. )
 
       ! Regrid from 1x1 to the current grid (also cast to REAL*8)
-      CALL TRANS_REGRID( DBLE(ARRAY), AEF_OCIMN,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      ARRAY8 = DBLE(ARRAY)
+      CALL TRANS_INPUT_1x1( ARRAY8, AEF_OCIMN, 1, 1, 0, 0 )
 
       ! Loop over latitudes
       DO J = 1, JJPAR

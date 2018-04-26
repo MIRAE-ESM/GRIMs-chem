@@ -1223,6 +1223,7 @@
       INTEGER                :: I, J, N, M, IOS
       INTEGER                :: IPOINT(NDSTBIN) = (/3, 2, 2, 2/)
       REAL*4                 :: ARRAY(I2x25,J2x25,3)
+      REAL*8                 :: ARRAY8(I2x25,J2x25,3)
       REAL*8                 :: W10M,   DEN,  DIAM,   U_TS0, U_TS
       REAL*8                 :: SRCE_P, DSRC, REYNOL, ALPHA, BETA
       REAL*8                 :: GAMMA,  CW,   DTSRCE, AREA_M2
@@ -1283,8 +1284,8 @@
          ENDIF
 
          ! Cast to REAL*8
-         CALL TRANS_REGRID( DBLE(ARRAY), SRCE_FUNC,
-     &                      I2x25, J2x25, 3, 3, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, SRCE_FUNC, 3, 3, 0, 0 )
 
          ! Reset first-time flag
          FIRST = .FALSE.
@@ -1739,6 +1740,7 @@
       INTEGER             :: I, J, JLOOP, L, N
       INTEGER, SAVE       :: MONTH_LAST = -999
       REAL*4              :: TEMP(I2x25,J2x25,LG5FUL)
+      REAL*8              :: TEMP8(I2x25,J2x25,LG5FUL)
       REAL*8              :: DUST(IIPAR,JJPAR,LLPAR,NDUST)
       REAL*8              :: MSDENS(NDUST), XTAU
       CHARACTER (LEN=255) :: FILENAME
@@ -1782,8 +1784,9 @@
      &                       I2x25,     J2x25,    LG5FUL,TEMP, 
      &                       QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), DUST(:,:,:,N),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, DUST(:,:,:,N),
+     &                             LG5FUL, LLPAR, 1, 0 )
          ENDDO
 
          !==============================================================

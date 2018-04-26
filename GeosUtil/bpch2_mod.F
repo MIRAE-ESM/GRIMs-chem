@@ -375,11 +375,13 @@
       INTEGER, PARAMETER            :: END_OF_RECORD    = 8
 
       ! Array for transform
+      REAL*8 :: P_ARRAY(IIPAR,JJPAR,NL)
       REAL*8 :: F_ARRAY(IGLOB,JGLOB,NL)
 
       ! Transform
       IF ( IUNIT .NE. IU_ND49 ) THEN
-         CALL TRANS_OUTPUT( DBLE(ARRAY), F_ARRAY, NL )
+         P_ARRAY = DBLE(ARRAY)
+         CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, NL )
       ENDIF
 
       IF (LMASTER) THEN

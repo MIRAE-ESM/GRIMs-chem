@@ -99,6 +99,7 @@
 
       ! Arrays for transform
       REAL*4               :: ARRAY(I2x25,J2x25)
+      REAL*8               :: ARRAY8(I2x25,J2x25)
       REAL*8               :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
@@ -152,8 +153,8 @@
          CLOSE( IU_FILE )
          ENDIF
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 0 )
          TOTCO2 = REAL(P_ARRAY,4)
 
       ENDIF
@@ -205,6 +206,7 @@
 
       ! Arrays for transform
       REAL*4               :: ARRAY(I2x25,J2x25)
+      REAL*8               :: ARRAY8(I2x25,J2x25)
       REAL*8               :: P_ARRAY(IIPAR,JJPAR)
 
       !=================================================================
@@ -257,8 +259,8 @@
          CLOSE( IU_FILE )
          ENDIF
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 0 )
          LIQCO2 = REAL(P_ARRAY,4)
 
       ENDIF
@@ -662,6 +664,7 @@
       ! Local variables
       INTEGER                       :: L
       REAL*4                        :: ARRAY(I2x25,J2x25,2)
+      REAL*8                        :: ARRAY8(I2x25,J2x25,2)
       CHARACTER(LEN=255)            :: FILENAME
 
       ! Array for transform
@@ -692,8 +695,8 @@
      &                    -744d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
          
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2
             E_NOX(:,:,1,L) = REAL(P_ARRAY(:,:,L),4)
@@ -704,8 +707,8 @@
      &                    1416d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2
             E_NOX(:,:,2,L) = REAL(P_ARRAY(:,:,L),4)
@@ -716,8 +719,8 @@
      &                    3624d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2
             E_NOX(:,:,3,L) = REAL(P_ARRAY(:,:,L),4)
@@ -728,8 +731,8 @@
      &                    5832d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2
             E_NOX(:,:,4,L) = REAL(P_ARRAY(:,:,L),4)
@@ -744,8 +747,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_CO(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -758,8 +761,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_ALK4(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -772,8 +775,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_ACET(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -786,8 +789,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_MEK(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -800,8 +803,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_PRPE(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -814,8 +817,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_C3H8(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -828,8 +831,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
          
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_C2H6(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -842,8 +845,8 @@
      &                    0d0,       I2x25,        J2x25,     
      &                    1,         ARRAY(:,:,1), QUIET=.TRUE. )
          
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          E_ETHE(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -858,8 +861,8 @@
      &                    -744d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2 
             E_SOX(:,:,1,L) = REAL(P_ARRAY(:,:,L),4)
@@ -870,8 +873,8 @@
      &                    1416d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
       
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2 
             E_SOX(:,:,2,L) = REAL(P_ARRAY(:,:,L),4)
@@ -882,8 +885,8 @@
      &                    3624d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2 
             E_SOX(:,:,3,L) = REAL(P_ARRAY(:,:,L),4)
@@ -894,8 +897,8 @@
      &                    5832d0,    I2x25,     J2x25,     
      &                    2,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 2, 2, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 2, 2, 0, 0 )
 
          DO L = 1, 2 
             E_SOX(:,:,4,L) = REAL(P_ARRAY(:,:,L),4)
@@ -943,6 +946,7 @@
       ! Local variables
       INTEGER                       :: I, J, L, S
       REAL*4                        :: ARRAY(I2x25,J2x25,1) 
+      REAL*8                        :: ARRAY8(I2x25,J2x25,1) 
       CHARACTER(LEN=255)            :: FILENAME
 
       ! Array for transform
@@ -969,8 +973,8 @@
      &                    0d0,       I2x25,     J2x25,     
      &                    1,         ARRAY,     QUIET=.TRUE. )
          
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 0 )
 
          E_C3H8(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF
@@ -981,8 +985,8 @@
      &                    0d0,       I2x25,     J2x25,     
      &                    1,         ARRAY,     QUIET=.TRUE. )
 
-         CALL TRANS_REGRID( DBLE(ARRAY), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         ARRAY8 = DBLE(ARRAY)
+         CALL TRANS_INPUT_2x25( ARRAY8, P_ARRAY, 1, 1, 0, 0 )
 
          E_C2H6(:,:) = REAL(P_ARRAY(:,:,1),4)
       ENDIF

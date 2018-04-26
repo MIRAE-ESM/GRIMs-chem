@@ -593,6 +593,7 @@
       INTEGER             :: I, J, L, N, R, JLOOP, IRH, IRHN
       INTEGER, SAVE       :: MONTH_LAST = -999
       REAL*4              :: TEMP(I2x25,J2x25,LG5FUL)
+      REAL*8              :: TEMP8(I2x25,J2x25,LG5FUL)
       REAL*8              :: TEMP2(IIPAR,JJPAR,LLPAR)
       REAL*8              :: MSDENS(NAER), XTAU, DRYAREA
 
@@ -719,8 +720,9 @@
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
             ! Cast to REAL*8 and resize
-            CALL TRANS_REGRID( DBLE(TEMP), WAERSL(:,:,:,1),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, WAERSL(:,:,:,1),
+     &                             LG5FUL, LLPAR, 1, 0 )
          ENDIF
       ENDIF
 
@@ -794,8 +796,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), DAERSL(:,:,:,1),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, DAERSL(:,:,:,1),
+     &                             LG5FUL, LLPAR, 1, 0 )
 
             !---------------------------------
             ! Read Hydrophilic BC
@@ -804,8 +807,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), WAERSL(:,:,:,2),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, WAERSL(:,:,:,2),
+     &                             LG5FUL, LLPAR, 1, 0 )
 
             !---------------------------------
             ! Read Hydrophobic OC
@@ -814,8 +818,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), DAERSL(:,:,:,2),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, DAERSL(:,:,:,2),
+     &                             LG5FUL, LLPAR, 1, 0 )
 
             !---------------------------------
             ! Read Hydrophilic OC
@@ -824,8 +829,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), WAERSL(:,:,:,3),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, WAERSL(:,:,:,3),
+     &                             LG5FUL, LLPAR, 1, 0 )
          ENDIF
       ENDIF
 
@@ -894,8 +900,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), WAERSL(:,:,:,4),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, WAERSL(:,:,:,4),
+     &                             LG5FUL, LLPAR, 1, 0 )
 
             !----------------------------------
             ! Offline -- read Sea Salt (coarse)
@@ -904,8 +911,9 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), WAERSL(:,:,:,5),
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, WAERSL(:,:,:,5),
+     &                             LG5FUL, LLPAR, 1, 0 )
 
             !----------------------------------
             ! Offline -- read Sea Salt (coarse)
@@ -914,8 +922,8 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), TEMP2,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, TEMP2, LG5FUL, LLPAR, 1, 0 )
 
             ! Accumulate into one size bin
             WAERSL(:,:,:,5) = WAERSL(:,:,:,5) + TEMP2 
@@ -927,8 +935,8 @@
      &                       XTAU,      I2x25,     J2x25,     
      &                       LG5FUL,    TEMP,      QUIET=.TRUE. )
 
-            CALL TRANS_REGRID( DBLE(TEMP), TEMP2,
-     &                         I2x25, J2x25, LG5FUL, LLPAR, 2, 1, 0 )
+            TEMP8 = DBLE(TEMP)
+            CALL TRANS_INPUT_2x25( TEMP8, TEMP2, LG5FUL, LLPAR, 1, 0 )
 
             ! Accumulate into one size bin
             WAERSL(:,:,:,5) = WAERSL(:,:,:,5) + TEMP2 

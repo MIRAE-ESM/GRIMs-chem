@@ -179,8 +179,7 @@
          ENDIF
 
          ! Regrid
-         CALL TRANS_REGRID( F_ARRAY, P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, 1, 1, 0, 0 )
 
          ! Get the number of land grid box
          NLAND = 0
@@ -208,8 +207,7 @@
          ENDDO
 
          ! Regrid
-         CALL TRANS_REGRID( SOILFERT2, P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         CALL TRANS_INPUT_2x25( SOILFERT2, P_ARRAY, 1, 1, 0, 0 )
 
          ! SOILFERT
          DO M = 1, NLAND
@@ -266,8 +264,8 @@
          ENDIF
 
          ! Regrid
-         CALL TRANS_REGRID( SOILPREP2(1,:,:), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         F_ARRAY = SOILPREP2(1,:,:)
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, 1, 1, 0, 0 )
 
          ! SOILPREP
          DO M = 1, NLAND
@@ -277,8 +275,8 @@
          ENDDO
 
          ! Regrid
-         CALL TRANS_REGRID( SOILPREP2(2,:,:), P_ARRAY,
-     &                      I2x25, J2x25, 1, 1, 2, 0, 0 )
+         F_ARRAY = SOILPREP2(2,:,:)
+         CALL TRANS_INPUT_2x25( F_ARRAY, P_ARRAY, 1, 1, 0, 0 )
 
          ! SOILPREP
          DO M = 1, NLAND

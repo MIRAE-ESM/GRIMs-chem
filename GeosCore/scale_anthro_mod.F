@@ -96,8 +96,7 @@
       AS_1x1x1(:,:,1) = AS_1x1(:,:)
 
       ! Regrid emissions factors to current model resolution
-      CALL TRANS_REGRID( AS_1x1x1, AS_R8,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( AS_1x1x1, AS_R8, 1, 1, 0, 0 )
 
       ! Cast to REAL*4
       AS(:,:) = AS_R8(:,:)

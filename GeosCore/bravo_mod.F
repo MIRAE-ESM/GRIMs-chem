@@ -259,8 +259,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid NOx [molec/cm2/s] to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, BRAVO_NOx,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, BRAVO_NOx, 1, 1, 0, 0 )
 
       !---------------------
       ! Read and regrid CO
@@ -291,8 +290,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid CO [molec/cm2/s] to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, BRAVO_CO,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, BRAVO_CO, 1, 1, 0, 0 )
 
       !---------------------
       ! Read and regrid SO2
@@ -323,8 +321,7 @@
       GEOS_1x1(:,:,1) = GEOS_1x1(:,:,1) * SC_1x1(:,:)
 
       ! Regrid SO2 [molec/cm2/s] to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, BRAVO_SO2,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, BRAVO_SO2, 1, 1, 0, 0 )
 
 #ifdef NOUSE
       !=================================================================
@@ -587,8 +584,7 @@
       CALL DO_REGRID_G2G_1x1( 'unitless', GEN_1x1, GEOS_1x1(:,:,1) )
       
       ! Regrid from GEOS 1x1 GRID to current model resolution
-      CALL TRANS_REGRID( GEOS_1x1, BRAVO_MASK,
-     &                   I1x1, J1x1, 1, 1, 1, 0, 0 )
+      CALL TRANS_INPUT_1x1( GEOS_1x1, BRAVO_MASK, 1, 1, 0, 0 )
 
       END SUBROUTINE READ_BRAVO_MASK
 !EOC

@@ -60,8 +60,8 @@ UTILS = ${UTILDIR}/error_mod.o \
         ${UTILDIR}/linux_err.o \
         ${UTILDIR}/sum.o \
         ${UTILDIR}/trans_index.o \
+        ${UTILDIR}/trans_input.o \
         ${UTILDIR}/trans_output.o \
-        ${UTILDIR}/trans_regrid.o \
         ${UTILDIR}/xshift.o \
         ${UTILDIR}/yrev.o
 
