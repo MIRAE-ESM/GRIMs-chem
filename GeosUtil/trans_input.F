@@ -40,17 +40,21 @@
       IF (LMASTER) THEN
 
       ! Perform horizontal regridding
+!$OMP PARALLEL DO
+!$OMP+PRIVATE( L )
       DO L = 1, IN_NL
 
          ! 1x1 -> model grid
-         CALL REGRID_1x1( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
+         CALL REGRID_1x1( INDATA(1,1,L), F_ARRAY(1,1,L), MASS )
+
+         ! Transform to model grid
+         CALL XSHIFT(F_ARRAY(1,1,L),LONFD,LATGD,1)
+         CALL YREV(F_ARRAY(1,1,L),LONFD,LATGD,1)
+         CALL dyn_trans2model_grid(F_ARRAY(1,1,L),1)
 
       ENDDO
+!$OMP END PARALLEL DO
 
-      ! Transform to model grid
-      CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
-      CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
-      CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
       ENDIF
 
 #ifdef MP
@@ -133,17 +137,21 @@
       IF (LMASTER) THEN
 
       ! Perform horizontal regridding
+!$OMP PARALLEL DO
+!$OMP+PRIVATE( L )
       DO L = 1, IN_NL
 
          ! 2x25 -> model grid
-         CALL REGRID_2x25( INDATA(:,:,L), F_ARRAY(:,:,L), MASS )
+         CALL REGRID_2x25( INDATA(1,1,L), F_ARRAY(1,1,L), MASS )
+
+         ! Transform to model grid
+         CALL XSHIFT(F_ARRAY(1,1,L),LONFD,LATGD,1)
+         CALL YREV(F_ARRAY(1,1,L),LONFD,LATGD,1)
+         CALL dyn_trans2model_grid(F_ARRAY(1,1,L),1)
 
       ENDDO
+!$OMP END PARALLEL DO
 
-      ! Transform to model grid
-      CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
-      CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
-      CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
       ENDIF
 
 #ifdef MP

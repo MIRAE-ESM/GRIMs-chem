@@ -689,9 +689,9 @@
  100        FORMAT( '     - RDAER: Using online SO4 NH4 NIT!' )
          ENDIF
 
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L )
+!!$OMP PARALLEL DO
+!!$OMP+DEFAULT( SHARED )
+!!$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, JJPAR
          DO I = 1, IIPAR
@@ -699,7 +699,7 @@
          ENDDO
          ENDDO
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ELSE 
 
@@ -752,9 +752,9 @@
  110        FORMAT( '     - RDAER: Using online BCPI OCPI BCPO OCPO!' )
          ENDIF
 
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L )
+!!$OMP PARALLEL DO
+!!$OMP+DEFAULT( SHARED )
+!!$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, JJPAR
          DO I = 1, IIPAR
@@ -774,7 +774,7 @@
          ENDDO
          ENDDO
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ELSE 
 
@@ -862,9 +862,9 @@
  120        FORMAT( '     - RDAER: Using online SALA SALC' )
          ENDIF
 
-!$OMP PARALLEL DO
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L )
+!!$OMP PARALLEL DO
+!!$OMP+DEFAULT( SHARED )
+!!$OMP+PRIVATE( I, J, L )
          DO L = 1, LLPAR
          DO J = 1, JJPAR
          DO I = 1, IIPAR
@@ -878,7 +878,7 @@
          ENDDO
          ENDDO
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ELSE
             
@@ -1024,10 +1024,10 @@
          ENDDO
 
          ! Loop over SMVGEAR grid boxes
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED )
-!$OMP+PRIVATE( I, J, L, IRH, JLOOP, SCALEQ, SCALER, REFF, FRAC )
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED )
+!!$OMP+PRIVATE( I, J, L, IRH, JLOOP, SCALEQ, SCALER, REFF, FRAC )
+!!$OMP+SCHEDULE( DYNAMIC )
          DO JLOOP = 1, NTLOOP
 
             ! Get 3-D grid box indices
@@ -1086,7 +1086,7 @@
             ENDIF
 
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
       
          !==============================================================
          ! Convert concentration [kg/m3] to optical depth [unitless].
@@ -1115,10 +1115,10 @@
          !       some compilers may not like array masks in parallel
          !       regions (bmy, 2/28/02)
          !==============================================================
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED ) 
-!$OMP+PRIVATE( I, J, L, R, IRHN ) 
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED ) 
+!!$OMP+PRIVATE( I, J, L, R, IRHN ) 
+!!$OMP+SCHEDULE( DYNAMIC )
          DO R = 1, NRH
          DO L = 1, LLPAR
          DO J = 1, JJPAR
@@ -1153,7 +1153,7 @@
          ENDDO
          ENDDO
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
          !==============================================================
          !  Calculate Aerosol Surface Area
@@ -1172,10 +1172,10 @@
          !  Effective radius for surface area and optical depths 
          !  are identical.
          !==============================================================
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED ) 
-!$OMP+PRIVATE( I, J, L, JLOOP ) 
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED ) 
+!!$OMP+PRIVATE( I, J, L, JLOOP ) 
+!!$OMP+SCHEDULE( DYNAMIC )
          DO JLOOP = 1, NTLOOP
 
             ! Get 3-D grid box indices
@@ -1209,7 +1209,7 @@
 
 
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ENDDO  !Loop over NAER
 
@@ -1221,10 +1221,10 @@
          ! Index for combination of aerosol type and RH
          IRHN = ( (N-1) * NRH ) + 1
 
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED ) 
-!$OMP+PRIVATE( I, J, L ) 
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED ) 
+!!$OMP+PRIVATE( I, J, L ) 
+!!$OMP+SCHEDULE( DYNAMIC )
          DO L = 1, LLPAR
          DO J = 1, JJPAR
          DO I = 1, IIPAR
@@ -1250,7 +1250,7 @@
          ENDDO
          ENDDO
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
          ! Effective radius
          IF ( WAVELENGTH > 0 ) THEN
@@ -1260,10 +1260,10 @@
          ENDIF
 
          ! Loop over grid boxes
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED ) 
-!$OMP+PRIVATE( I, J, L, JLOOP, DRYAREA ) 
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED ) 
+!!$OMP+PRIVATE( I, J, L, JLOOP, DRYAREA ) 
+!!$OMP+SCHEDULE( DYNAMIC )
          DO JLOOP = 1, NTLOOP
 
             ! Get 3-D grid box indices
@@ -1285,7 +1285,7 @@
      &                               ( TAREA(JLOOP,N+NDUST) + DRYAREA )
 
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ENDDO
        
@@ -1335,10 +1335,10 @@
       IF ( ND21 > 0 .and. WAVELENGTH > 0 ) THEN
 
          ! Loop over aerosol types (dust handled in dust_mod.f)
-!$OMP PARALLEL DO 
-!$OMP+DEFAULT( SHARED ) 
-!$OMP+PRIVATE( I, IRHN, J, JLOOP, L, N, R ) 
-!$OMP+SCHEDULE( DYNAMIC )
+!!$OMP PARALLEL DO 
+!!$OMP+DEFAULT( SHARED ) 
+!!$OMP+PRIVATE( I, IRHN, J, JLOOP, L, N, R ) 
+!!$OMP+SCHEDULE( DYNAMIC )
          DO N = 1, NAER
 
             !------------------------------------
@@ -1380,7 +1380,7 @@
             ENDDO
 
          ENDDO
-!$OMP END PARALLEL DO
+!!$OMP END PARALLEL DO
 
       ENDIF 
 

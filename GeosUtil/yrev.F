@@ -15,18 +15,20 @@
       INTEGER :: NI, NJ, NL
       INTEGER :: I, J, L
       REAL*8  :: ARRAY(NI,NJ,NL)
-      REAL*8  :: TMP(NI,NJ,NL)
+      REAL*8  :: TMP(NI,NJ)
 
       ! Reverse
       DO L = 1, NL
-      DO J = 1, NJ
-      DO I = 1, NI
-         TMP(I,J,L) = ARRAY(I,NJ+1-J,L)
+         DO J = 1, NJ
+         DO I = 1, NI
+            TMP(I,J) = ARRAY(I,NJ+1-J,L)
+         ENDDO
+         ENDDO
+         DO J = 1, NJ
+         DO I = 1, NI
+            ARRAY(I,J,L) = TMP(I,J)
+         ENDDO
+         ENDDO
       ENDDO
-      ENDDO
-      ENDDO
-
-      ! Return
-      ARRAY = TMP
 
       END SUBROUTINE YREV

@@ -254,7 +254,7 @@
       !=================================================================
 
       ! AEROPH: add HPLUSTEMP as private (hotp 8/11/09)
-!$OMP PARALLEL DO
+!$OMP PARALLEL DO COLLAPSE( 3 )
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I,    J,      L,       N,      WI,   WT,  GAS,  TEMPI )
 !$OMP+PRIVATE( RHI,  VOL,    TSO4,    TNH3,   TNA,  TCL, ANO3, GNO3  )

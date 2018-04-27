@@ -8,7 +8,7 @@
 ! contact: hann-ming henry juang
 !
 ! <in : top to bottom>
-! deltim  time step from n to n+1
+! deltim  time step from n to n+1 divided by 2
 ! pt      surface pressure in cb
 ! ut      horizontal u wind in m/s
 ! vt      horizontal v wind in m/s
@@ -33,7 +33,7 @@
                            cyclic_cell_massadvx                               ,&
                            cyclic_cell_massadvy                               ,&
                            vertical_cell_advect
-   use tracer_mod , only : n_tracers, stt
+   use tracer_mod , only : nt=>n_tracers, stt
    use cmn_size_mod
 !-------------------------------------------------------------------------------
    implicit none
@@ -55,21 +55,27 @@
    integer                                                 ::  jjend,j,j1,j2  ,&
                                                                jj,lat         ,&
                                                                i,lonsd        ,&
-                                                               k,kk
-   real               , dimension(LONF2S ,levs_+1       )  ::  ppi,pdot2
-   real               , dimension(LONF2S ,levs_ ,LATG2S )  ::  qp
-   real               , dimension(lonf2_ ,LEVSS ,LATG2S )  ::  qt
+                                                               k,kk,t
+   real               , dimension(LONF2S ,levs_+1       )     ::  ppi,pdot2
+   real               , dimension(LONF2S ,nt*levs_ ,LATG2S )  ::  qp
+   real               , dimension(lonf2_ ,nt*LEVSS ,LATG2S )  ::  qt
+   real               , dimension(LONF2S ,levs_ ,LATG2S )     ::  qp1
+   real               , dimension(lonf2_ ,LEVSS ,LATG2S )     ::  qt1
 #ifdef MP
-   real               , dimension(lonf2_ ,levsp_,latg2p_)  ::  utp,vtp
-   real               , dimension(lonf2_ ,levsp_,latg2p_)  ::  qpp
-   real               , dimension(LONF2S ,levs_ ,LATG2S )  ::  qtp
+   real               , dimension(lonf2_ ,levsp_,latg2p_)     ::  utp,vtp
+   real               , dimension(lonf2_ ,nt*levsp_,latg2p_)  ::  qpp
+   real               , dimension(LONF2S ,nt*levs_ ,LATG2S )  ::  qtp
+   real               , dimension(lonf2_ ,levsp_,latg2p_)     ::  qpp1
+   real               , dimension(LONF2S ,levs_ ,LATG2S )     ::  qtp1
 #endif
-   real               , dimension(LONF2S ,levs_         )  ::  qtn
+   real               , dimension(LONF2S ,levs_            )  ::  qtn
    !
-   real               , dimension(lonfull,LEVSS ,latpart)  ::  uulon,vvlon
-   real               , dimension(latfull,LEVSS ,lonpart)  ::  vvlat
-   real               , dimension(lonfull,LEVSS ,latpart)  ::  qqlon,rrlon
-   real               , dimension(latfull,LEVSS ,lonpart)  ::  qqlat,rrlat
+   real               , dimension(lonfull,LEVSS ,latpart)     ::  uulon,vvlon
+   real               , dimension(latfull,LEVSS ,lonpart)     ::  vvlat
+   real               , dimension(lonfull,nt*LEVSS ,latpart)  ::  qqlon,rrlon
+   real               , dimension(latfull,nt*LEVSS ,lonpart)  ::  qqlat,rrlat
+   real               , dimension(lonfull,LEVSS ,latpart)     ::  qqlon1,rrlon1
+   real               , dimension(latfull,LEVSS ,lonpart)     ::  qqlat1,rrlat1
 !
 ! initialize
 !
@@ -87,24 +93,67 @@
 #else
    jjend=latg2_
 #endif
+!
+! qp[t2b], stt=[b2t]
+!
+!$omp parallel
+!$omp do collapse(2) &
+!$omp private(t,k,j,i) &
+!$omp schedule(dynamic)
+   do t = 1,nt
+     do k = 1,llpar
+       do j = 1,jjpar
+         do i = 1,iipar
+           qp(i,llpar*t+1-k,j) = stt(i,j,k,t)
+         enddo
+       enddo
+     enddo
+   enddo
 #ifdef MP
 !
 ! transpose z-full to x-full
 !
+!$omp master
    call mpnx2nk(ut,lonf2p_,levs_,utp,lonf2_,levsp_,latg2p_,levs_,levsp_,       &
                                                                  1,1,1)
    call mpnx2nk(vt,lonf2p_,levs_,vtp,lonf2_,levsp_,latg2p_,levs_,levsp_,       &
                                                                  1,1,1)
+   do t = 1,nt
+     kk = levs_*(t-1)
+     do j = 1,latg2p_
+       do k = 1,levs_
+         do i = 1,lonf2p_
+           qp1(i,k,j) = qp(i,kk+k,j)
+         enddo
+       enddo
+     enddo
+     call mpnx2nk(qp1,lonf2p_,levs_,qpp1,lonf2_,levsp_,latg2p_,levs_,levsp_,   &
+                                                                 1,1,1)
+     kk = LEVSS*(t-1)
+     do j = 1,latg2p_
+       do k = 1,LEVSS
+         do i = 1,lonf2_
+           qpp(i,kk+k,j) = qpp1(i,k,j)
+         enddo
+       enddo
+     enddo
+   enddo
+!$omp end master
+!$omp barrier
 #define UU utp
 #define VV vtp
+#define QQ qpp
 #else
 #define UU ut
 #define VV vt
+#define QQ qp
 #endif /* MP end */
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
-!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
+!$omp do &
+!$omp private(jj,j1,j2,lat,lonsd,k,i) &
+!$omp schedule(dynamic)
    do jj = 1,jjend
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
@@ -119,8 +168,6 @@
          vvlon(i,k,j2) = VV(lonsd+i,k,jj) * (rrerth_)
        enddo
      enddo
-#undef UU
-#undef VV
    enddo
 ! ---------------------------------------------------------------------
 ! mpi para from horizontal full grid to meridional full grid
@@ -128,34 +175,19 @@
 !
 ! para vvlon to vvlat
 !
+!$omp master
    call nislq_transpose_we2ns(vvlon,vvlat,LEVSS,nsize)
-!
-   do kk = 1, n_tracers
-!
-! qp[t2b], q1=[b2t]
-!
-   do k = 1,levs_
-     do j = 1,jjpar
-       do i = 1,iipar
-         qp(i,levs_+1-k,j) = stt(i,j,k,kk)
-       enddo
-     enddo
-   enddo
-#ifdef MP
-!
-! transpose z-full to x-full
-!
-   call mpnx2nk(qp,lonf2p_,levs_,qpp,lonf2_,levsp_,latg2p_,levs_,levsp_,       &
-                                                                 1,1,1)
-#define QQ qpp
-#else
-#define QQ qp
-#endif /* MP end */
+!$omp end master
+!$omp barrier
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
-!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
+!$omp do collapse(2) &
+!$omp private(t,jj,kk,j1,j2,lat,lonsd,k,i) &
+!$omp schedule(dynamic)
+ do t = 1,nt
    do jj = 1,jjend
+     kk = LEVSS*(t-1)
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
      lat=latdef(jj)
@@ -163,49 +195,79 @@
      ! at time step n-1 (convert dynamics to SL grid)
      do k = 1,LEVSS
        do i = 1,lonsd
-         qqlon(i,k,j1) = QQ(i      ,k,jj)
-         qqlon(i,k,j2) = QQ(lonsd+i,k,jj)
+         qqlon(i,kk+k,j1) = QQ(i      ,kk+k,jj)
+         qqlon(i,kk+k,j2) = QQ(lonsd+i,kk+k,jj)
        enddo
      enddo
+#undef UU
+#undef VV
 #undef QQ
 !
      do k = 1,LEVSS
        do i = 1,lonfull
-         rrlon(i,k,j1) = qqlon(i,k,j1)
-         rrlon(i,k,j2) = qqlon(i,k,j2)
+         rrlon(i,kk+k,j1) = qqlon(i,kk+k,j1)
+         rrlon(i,kk+k,j2) = qqlon(i,kk+k,j2)
        enddo
      enddo
 !
 ! first set positive advection in horziontal direction with mass conserving
 !
-     call cyclic_cell_massadvx(LEVSS,1,deltim,                              &
-                                          uulon(1,1,j1),rrlon(1,1,j1),mass)
-     call cyclic_cell_massadvx(LEVSS,1,deltim,                              &
-                                          uulon(1,1,j2),rrlon(1,1,j2),mass)
+     call cyclic_cell_massadvx(LEVSS,1,deltim,                                 &
+                                          uulon(1,1,j1),rrlon(1,kk+1,j1),mass)
+     call cyclic_cell_massadvx(LEVSS,1,deltim,                                 &
+                                          uulon(1,1,j2),rrlon(1,kk+1,j2),mass)
    enddo
+ enddo
 ! ---------------------------------------------------------------------
 ! mpi para from horizontal full grid to meridional full grid
 ! ---------------------------------------------------------------------
 !
-! para qqlon and rrlon to qqlat, rrlat
+! para qqlon and rrlon to qqlat and rrlat
 !
-   call nislq_transpose_we2ns(qqlon,qqlat,LEVSS,nsize)
-   call nislq_transpose_we2ns(rrlon,rrlat,LEVSS,nsize)
+!$omp master
+   do t = 1,nt
+     kk = LEVSS*(t-1)
+     do j = 1,latpart
+       do k = 1,LEVSS
+         do i = 1,lonfull
+           qqlon1(i,k,j) = qqlon(i,kk+k,j)
+           rrlon1(i,k,j) = rrlon(i,kk+k,j)
+         enddo
+       enddo
+     enddo
+     call nislq_transpose_we2ns(qqlon1,qqlat1,LEVSS,nsize)
+     call nislq_transpose_we2ns(rrlon1,rrlat1,LEVSS,nsize)
+     do i = 1,lonpart
+       do k = 1,LEVSS
+         do j = 1,latfull
+           qqlat(j,kk+k,i) = qqlat1(j,k,i)
+           rrlat(j,kk+k,i) = rrlat1(j,k,i)
+         enddo
+       enddo
+     enddo
+   enddo
+!$omp end master
+!$omp barrier
 ! ---------------------------------------------------------------------
 ! ------------------- in meridional great circle ----------------------
 ! ---------------------------------------------------------------------
-!$omp parallel do private(i)
+!$omp do collapse(2) &
+!$omp private(t,i,kk) &
+!$omp schedule(dynamic)
+ do t = 1,nt
    do i = 1,mylonlen
+   kk = LEVSS*(t-1)
 ! 
 ! first set advection in meridional direction in great circle through two poles
 !
-     call cyclic_cell_massadvy(LEVSS,1,deltim,vvlat(1,1,i),rrlat(1,1,i),mass)
+     call cyclic_cell_massadvy(LEVSS,1,deltim,vvlat(1,1,i),rrlat(1,kk+1,i),mass)
 !
 ! second set advection in meridional direction in great circle through two poles
 !
-     call cyclic_cell_massadvy(LEVSS,1,deltim,vvlat(1,1,i),qqlat(1,1,i),mass)
+     call cyclic_cell_massadvy(LEVSS,1,deltim,vvlat(1,1,i),qqlat(1,kk+1,i),mass)
 
    enddo
+ enddo
 !
 ! ----------------------------------------------------------------------
 ! mpi para from meridional direction to horizontal directory 
@@ -213,15 +275,41 @@
 !
 ! para qqlat and rrlat to qqlon and rrlon
 !
-   call nislq_transpose_ns2we(qqlat,qqlon,LEVSS,nsize)
-   call nislq_transpose_ns2we(rrlat,rrlon,LEVSS,nsize)
+!$omp master
+   do t = 1,nt
+     kk = LEVSS*(t-1)
+     do i = 1,lonpart
+       do k = 1,LEVSS
+         do j = 1,latfull
+           qqlat1(j,k,i) = qqlat(j,kk+k,i)
+           rrlat1(j,k,i) = rrlat(j,kk+k,i)
+         enddo
+       enddo
+     enddo
+     call nislq_transpose_ns2we(qqlat1,qqlon1,LEVSS,nsize)
+     call nislq_transpose_ns2we(rrlat1,rrlon1,LEVSS,nsize)
+     do j = 1,latpart
+       do k = 1,LEVSS
+         do i = 1,lonfull
+           qqlon(i,kk+k,j) = qqlon1(i,k,j)
+           rrlon(i,kk+k,j) = rrlon1(i,k,j)
+         enddo
+       enddo
+     enddo
+   enddo
+!$omp end master
+!$omp barrier
 ! ---------------------------------------------------------------
 ! ---------------- back to east-west direction ------------------
 ! ---------------------------------------------------------------
 !     print *,' nislq adv loop in x for last '
 !
-!$omp parallel do private(jj,j1,j2,lat,lonsd,k,i)
+!$omp do collapse(2) &
+!$omp private(t,jj,kk,j1,j2,lat,lonsd) &
+!$omp schedule(dynamic)
+ do t = 1,nt
    do jj = 1,jjend
+     kk = LEVSS*(t-1)
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
      lat=latdef(jj)
@@ -229,14 +317,14 @@
 !
 ! second set advection in x for the second of the pair
 !
-     call cyclic_cell_massadvx(LEVSS,1,deltim,                              &
-                                          uulon(1,1,j1),qqlon(1,1,j1),mass)
-     call cyclic_cell_massadvx(LEVSS,1,deltim,                              &
-                                          uulon(1,1,j2),qqlon(1,1,j2),mass)
+     call cyclic_cell_massadvx(LEVSS,1,deltim,                                 &
+                                          uulon(1,1,j1),qqlon(1,kk+1,j1),mass)
+     call cyclic_cell_massadvx(LEVSS,1,deltim,                                 &
+                                          uulon(1,1,j2),qqlon(1,kk+1,j2),mass)
      do k = 1,LEVSS
        do i = 1,lonsd
-         rrlon(i,k,j1) = 0.5 * ( qqlon(i,k,j1) + rrlon(i,k,j1) )
-         rrlon(i,k,j2) = 0.5 * ( qqlon(i,k,j2) + rrlon(i,k,j2) )
+         rrlon(i,kk+k,j1) = 0.5 * ( qqlon(i,kk+k,j1) + rrlon(i,kk+k,j1) )
+         rrlon(i,kk+k,j2) = 0.5 * ( qqlon(i,kk+k,j2) + rrlon(i,kk+k,j2) )
        enddo
      enddo
 !
@@ -244,17 +332,39 @@
 !
      do k = 1,LEVSS
        do i = 1,lonsd
-         qt(i      ,k,jj)=rrlon(i,k,j1)
-         qt(lonsd+i,k,jj)=rrlon(i,k,j2)
+         qt(i      ,kk+k,jj)=rrlon(i,kk+k,j1)
+         qt(lonsd+i,kk+k,jj)=rrlon(i,kk+k,j2)
        enddo
      enddo
    enddo
+ enddo
 #ifdef MP
 !
 ! transpose x-full to z-full
 !
-   call mpnk2nx(qt,lonf2_,levsp_,qtp,lonf2p_,levs_,latg2p_,levsp_,levs_,       &
+!$omp master
+   do t = 1,nt
+     kk = LEVSS*(t-1)
+     do j = 1,latg2p_
+       do k = 1,LEVSS
+         do i = 1,lonf2_
+           qt1(i,k,j) = qt(i,kk+k,j)
+         enddo
+       enddo
+     enddo
+     call mpnk2nx(qt1,lonf2_,levsp_,qtp1,lonf2p_,levs_,latg2p_,levsp_,levs_,   &
                                                                   1,1,1)
+     kk = levs_*(t-1)
+     do j = 1,latg2p_
+       do k = 1,levs_
+         do i = 1,lonf2p_
+           qtp(i,kk+k,j) = qtp1(i,k,j)
+         enddo
+       enddo
+     enddo
+   enddo
+!$omp end master
+!$omp barrier
 #define QT qtp
 #else
 #define QT qt
@@ -262,8 +372,12 @@
 ! --------------------------------------------------------------
 ! ----------- compute vertical advection and total ------------
 ! --------------------------------------------------------------
-!$omp parallel do private(j,lonsd,k,i,ppi,pdot2,qtn)
+!$omp do collapse(2) &
+!$omp private(t,j,kk,lonsd,k,i,ppi,pdot2,qtn) &
+!$omp schedule(dynamic)
+ do t = 1,nt
    do j = 1,jjend
+     kk = levs_*(t-1)
      lonsd=LONF2S
 !
 !    pressure (top to bottom)
@@ -277,7 +391,7 @@
 !
      do k = 1,levs_
        do i = 1,lonsd
-         qtn(i,k)=QT(i,k,j)
+         qtn(i,k)=QT(i,kk+k,j)
        enddo
      enddo
 #undef QT
@@ -289,13 +403,14 @@
 !    q update at time step n+1 (bottom to top)
 !
      do k = 1,levs_
-       do i = 1,iipar
-         stt(i,j,k,kk) = qtn(i,levs_+1-k)
+       do i = 1,lonsd
+         stt(i,j,levs_+1-k,t)=qtn(i,k)
        enddo
      enddo
    enddo
+ enddo
+!$omp end parallel
 !
-   enddo
 !
 #endif
    return

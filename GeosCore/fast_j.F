@@ -177,7 +177,7 @@
       ! J-values will be stored in the common-block variable ZPJ, and 
       ! will be later accessed via function FJFUNC. 
       !=================================================================
-!$OMP PARALLEL DO
+!$OMP PARALLEL DO COLLAPSE( 2 )
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( NLON, NLAT,   YLAT,  CSZA,      OPTAER  )
 !$OMP+PRIVATE( PRES, TEMP,   OPTD,  SFCA,      OPTDUST )
