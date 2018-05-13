@@ -1811,6 +1811,7 @@ contains
 !   USE OCEAN_MERCURY_MOD,  ONLY : LHg2HalfAerosol !cdh
     USE DRYDEP_MOD,   ONLY : DRYHg0, DRYHg2, DRYHgP !cdh
     USE TRACER_MOD,   ONLY: ITS_A_FULLCHEM_SIM  !bmy
+    USE TRACER_MOD,   ONLY: ITS_AN_AEROSOL_SIM
 
 
 #   include "define.h"
@@ -1873,6 +1874,7 @@ contains
 
     ! Add flags
     LOGICAL :: IS_CH4, IS_FULLCHEM, IS_Hg, IS_TAGOx, IS_TAGCO
+    LOGICAL :: IS_OFFLINE
 
     !=================================================================
     ! vdiffdr begins here!
@@ -1908,6 +1910,7 @@ contains
     IS_Hg       = ITS_A_MERCURY_SIM()
     IS_TAGCO    = ITS_A_TAGCO_SIM()
     IS_TAGOX    = ITS_A_TAGOX_SIM()
+    IS_OFFLINE  = ITS_AN_AEROSOL_SIM()
 
     dtime = GET_TS_CONV()*60d0 ! min -> second
     
@@ -2049,6 +2052,20 @@ contains
           do N = 1, N_TRACERS
              eflx(I,J,N) = eflx(I,J,N) + emis_save(I,J,N)/GET_AREA_M2(I,J)/ &
                   GET_TS_EMIS() / 60.d0
+          enddo
+       ENDIF
+
+       !----------------------------------------------------------------
+       ! Add emissions for offline aerosol simulation
+       !----------------------------------------------------------------
+       IF ( IS_OFFLINE ) THEN
+          ! add surface emis of aerosols 
+          ! (after converting kg/box/timestep to kg/m2/s)
+          ! Should NOT use ID_EMITTED here, since it is only for gases 
+          ! for SMVGEAR. (Lin, 06/10/08)
+          do N = 1, N_TRACERS
+             eflx(I,J,N) = eflx(I,J,N) + emis_save(I,J,N)/GET_AREA_M2(I,J)/ &
+                                                         GET_TS_EMIS() / 60.d0
           enddo
        ENDIF
 
@@ -2533,7 +2550,7 @@ contains
        CALL INIT_PBL_MIX
        CALL INIT_VDIFF_PRE
        call vdinti
-       IF ( LCHEM ) THEN
+       IF ( LCHEM .and. ITS_A_FULLCHEM_SIM() ) THEN
           NLAT  = JJPAR
           NLONG = IIPAR
           NVERT = IVERT
