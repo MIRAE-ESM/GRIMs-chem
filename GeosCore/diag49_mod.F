@@ -372,7 +372,7 @@
             !-------------------------------------
             ! Aerosol Optical Depth [unitless]
             !-------------------------------------
-            CATEGORY = 'DIAGAOD'
+            CATEGORY = 'AEROPROP'
             UNIT     = 'unitless'
             GMNL     = ND49_NL
             GMTRC    = 1
@@ -380,11 +380,7 @@
             DO L = 1, ND49_NL
             DO J = 1, JJPAR
             DO I = 1, IIPAR
-#if defined (RRTMGSW) && defined (RRTMGLW)
                P_ARRAY(I,J,L) = OUTOD(I,J,L,10)
-#else
-               P_ARRAY(I,J,L) = OUTOD(I,J,L,4)
-#endif
             ENDDO
             ENDDO
             ENDDO
@@ -411,19 +407,15 @@
             !-------------------------------------
             ! Single Scattering Albedo [unitless]
             !-------------------------------------
-            CATEGORY = 'DIAGSSA'
+            CATEGORY = 'AEROPROP'
             UNIT     = 'unitless'
             GMNL     = ND49_NL
-            GMTRC    = 1
+            GMTRC    = 2
 
             DO L = 1, ND49_NL
             DO J = 1, JJPAR
             DO I = 1, IIPAR
-#if defined (RRTMGSW) && defined (RRTMGLW)
                P_ARRAY(I,J,L) = OUTSSA(I,J,L,10)
-#else
-               P_ARRAY(I,J,L) = OUTSSA(I,J,L,4)
-#endif
             ENDDO
             ENDDO
             ENDDO
@@ -450,19 +442,15 @@
             !-------------------------------------
             ! Asymmerty Parameter [unitless]
             !-------------------------------------
-            CATEGORY = 'DIAGASM'
+            CATEGORY = 'AEROPROP'
             UNIT     = ''           ! Let GAMAP pick the unit
             GMNL     = ND49_NL
-            GMTRC    = 1
+            GMTRC    = 3
 
             DO L = 1, ND49_NL
             DO J = 1, JJPAR
             DO I = 1, IIPAR
-#if defined (RRTMGSW) && defined (RRTMGLW)
                P_ARRAY(I,J,L) = OUTG(I,J,L,10)
-#else
-               P_ARRAY(I,J,L) = OUTG(I,J,L,4)
-#endif
             ENDDO
             ENDDO
             ENDDO

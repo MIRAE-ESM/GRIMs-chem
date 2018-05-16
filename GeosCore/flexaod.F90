@@ -32,11 +32,7 @@ module flexaod
   integer,parameter :: nwl = 61        ! number input wavelengths
   integer,parameter :: nrh = 5         ! number of input RH bins
   integer,parameter :: nsinyuk = 109
-#if defined (RRTMGSW) && defined (RRTMGLW)
   integer,parameter :: nbnd = 30
-#else
-  integer,parameter :: nbnd = 8
-#endif
   integer,parameter :: nspecs = 6      ! Number of GEOS-Chem species
   integer,parameter :: ndust = 7       ! Number of GEOS-Chem DUST species
   integer,parameter :: npcoef = 100    ! Number of Legendre expansion coeff.
@@ -82,7 +78,6 @@ module flexaod
   subroutine read_mie
 
   ! Wavelenght in microns (um)
-#if defined (RRTMGSW) && defined (RRTMGLW)
   wl_um(1)  = (  3.846  +  3.077  ) / 2d0
   wl_um(2)  = (  3.077  +  2.500  ) / 2d0
   wl_um(3)  = (  2.500  +  2.150  ) / 2d0
@@ -113,16 +108,6 @@ module flexaod
   wl_um(28) = (  4.444  +  4.202  ) / 2d0
   wl_um(29) = (  4.202  +  3.846  ) / 2d0
   wl_um(30) = (  3.846  +  3.077  ) / 2d0
-#else
-  wl_um(1) = ( 0.225 + 0.285 ) / 2d0
-  wl_um(2) = ( 0.285 + 0.300 ) / 2d0
-  wl_um(3) = ( 0.300 + 0.325 ) / 2d0
-  wl_um(4) = ( 0.325 + 0.690 ) / 2d0
-  wl_um(5) = ( 2.27  + 4.0   ) / 2d0
-  wl_um(6) = ( 1.22  + 2.27  ) / 2d0
-  wl_um(7) = ( 0.70  + 1.22  ) / 2d0
-  wl_um(8) = ( 0.70  + 4.0   ) / 2d0
-#endif
 
   ! Cap
   wl_um = max(0.250,wl_um)
@@ -379,11 +364,7 @@ module flexaod
   !--------------------------------------------------------------------
 
     if (lmaster) then
-#if defined (RRTMGSW) && defined (RRTMGLW)
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
-#else
-    filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'
-#endif
     open(iou, file=filename, form='unformatted', status='old', iostat=ios)
     endif
 
@@ -464,11 +445,7 @@ module flexaod
     endif
 
     if (lmaster) then
-#if defined (RRTMGSW) && defined (RRTMGLW)
     filename = trim(data_dir)//'/flexaod/'//'mie_tables_rrtmg'
-#else
-    filename = trim(data_dir)//'/flexaod/'//'mie_tables_gfdl'
-#endif
     open(iou, file=filename, form='unformatted', status='new')
     write(iou) q_ext, c_ext, c_sca, r_eff, v_ave, ssalb, asym, &
                q_dext, c_dext, c_dsca, r_dust, v_dave, dssalb, dasym

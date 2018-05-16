@@ -534,7 +534,7 @@
       ENDIF
 
       !-----------------------------------
-      ! SPACING*52: AOD, SSA, ASM
+      ! SPACING*52: AEROPROP
       !-----------------------------------
 
       CALL WRITE_SEPARATOR( 700 )
@@ -555,44 +555,74 @@
      &                  1,        1e0,         'unitless', N )
 
       !-----------------------------------
-      ! SPACING*53: Aerosol SWHR
+      ! SPACING*53: AEROSWRF
       !-----------------------------------
 
       CALL WRITE_SEPARATOR( 800 )
 
       N = ( SPACING * 53 ) + 1
-      NAME_NEW = 'AERSWHR'
+      NAME_NEW = 'SWHR'
       CALL WRITE_TINFO( NAME_NEW, FNAME(4,70), 1e0,
      &                  1,        1e0,         'K/s', N )
 
       N = ( SPACING * 53 ) + 2
-      NAME_NEW = 'AERSWHRC'
+      NAME_NEW = 'DRFTOA'
       CALL WRITE_TINFO( NAME_NEW, FNAME(5,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 53 ) + 3
+      NAME_NEW = 'DRFSFC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(6,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 53 ) + 4
+      NAME_NEW = 'SWHRC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(7,70), 1e0,
      &                  1,        1e0,         'K/s', N )
 
+      N = ( SPACING * 53 ) + 5
+      NAME_NEW = 'DRFTOAC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(8,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 53 ) + 6
+      NAME_NEW = 'DRFSFCC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(9,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+
       !-----------------------------------
-      ! SPACING*54: Aerosol RADF
+      ! SPACING*54: AEROLWRF
       !-----------------------------------
 
       CALL WRITE_SEPARATOR( 900 )
 
       N = ( SPACING * 54 ) + 1
-      NAME_NEW = 'ARFTOA'
-      CALL WRITE_TINFO( NAME_NEW, FNAME(6,70), 1e0,
-     &                  1,        1e0,         'W/m2', N )
+      NAME_NEW = 'LWHR'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(4,70), 1e0,
+     &                  1,        1e0,         'K/s', N )
 
       N = ( SPACING * 54 ) + 2
-      NAME_NEW = 'ARFSFC'
-      CALL WRITE_TINFO( NAME_NEW, FNAME(7,70), 1e0,
+      NAME_NEW = 'DRFTOA'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(5,70), 1e0,
      &                  1,        1e0,         'W/m2', N )
 
       N = ( SPACING * 54 ) + 3
-      NAME_NEW = 'ARFTOAC'
-      CALL WRITE_TINFO( NAME_NEW, FNAME(8,70), 1e0,
+      NAME_NEW = 'DRFSFC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(6,70), 1e0,
      &                  1,        1e0,         'W/m2', N )
 
       N = ( SPACING * 54 ) + 4
-      NAME_NEW = 'ARFSFCC'
+      NAME_NEW = 'LWHRC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(7,70), 1e0,
+     &                  1,        1e0,         'K/s', N )
+
+      N = ( SPACING * 54 ) + 5
+      NAME_NEW = 'DRFTOAC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(8,70), 1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 54 ) + 6
+      NAME_NEW = 'DRFSFCC'
       CALL WRITE_TINFO( NAME_NEW, FNAME(9,70), 1e0,
      &                  1,        1e0,         'W/m2', N )
 
@@ -767,9 +797,9 @@
  140  FORMAT( '# GEOS-CHEM tracers [kg]'             )
  150  FORMAT( '# GEOS-CHEM tracers [ug/m3]'          )
  160  FORMAT( '# SOA GPROD & APROD [kg/kg]'          )
- 170  FORMAT( '# AOD, SSA, ASM [unitless]'           )
- 180  FORMAT( '# Aerosol Heat Rate [K/s]'            )
- 190  FORMAT( '# Aerosol Radiative Forcing [W/m2]'   )
+ 170  FORMAT( '# Aerosol Optical Properties'         )
+ 180  FORMAT( '# Aerosol SW Radiative Forcing'       )
+ 190  FORMAT( '# Aerosol LW Radiative Forcing'       )
  200  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
       
       END SUBROUTINE WRITE_SEPARATOR
@@ -1370,18 +1400,18 @@
       OFFSET(N)   = SPACING * 51
 
       N           = N + 1
-      CATEGORY(N) = 'AERPROP'
+      CATEGORY(N) = 'AEROPROP'
       DESCRIPT(N) = 'Aerosol Optical Properties'
       OFFSET(N)   = SPACING * 52
 
       N           = N + 1
-      CATEGORY(N) = 'AERSWHR'
-      DESCRIPT(N) = 'Aerosol Heat Rate'
+      CATEGORY(N) = 'AEROSWRF'
+      DESCRIPT(N) = 'Aerosol SW Radiative Forcing'
       OFFSET(N)   = SPACING * 53
 
       N           = N + 1
-      CATEGORY(N) = 'AERRADF'
-      DESCRIPT(N) = 'Aerosol Radiative Forcing'
+      CATEGORY(N) = 'AEROLWRF'
+      DESCRIPT(N) = 'Aerosol LW Radiative Forcing'
       OFFSET(N)   = SPACING * 54
 
 ! NEED TO DO THAT AT ONE POINT      
@@ -3902,23 +3932,21 @@
       ENDIF
 
       !-------------------------------------
-      ! AERPROP, AERSWHR, AERRADF
+      ! Aerosol Optical Properties
       !-------------------------------------
-#if defined( RRTMGSW ) && defined( RRTMGLW )
-      FNAME(1,70) = 'AOD at 533nm'
-      FNAME(2,70) = 'SSA at 533nm'
-      FNAME(3,70) = 'ASM at 533nm'
+      FNAME(1,70) = 'Aerosol Optical Depth 533nm'
+      FNAME(2,70) = 'Single Scattering Albedo 533nm'
+      FNAME(3,70) = 'Asymmetry Parameter 533nm'
+
+      !-------------------------------------
+      ! Aerosol SW & LW Radiative Forcing
+      !-------------------------------------
       FNAME(4,70) = 'Aerosol Heat Rate (all-sky)'
-      FNAME(5,70) = 'Aerosol Heat Rate (clear-sky)'
-      FNAME(6,70) = 'Aerosol RF at TOA (all-sky)'
-      FNAME(7,70) = 'Aerosol RF at SFC (all-sky)'
-      FNAME(8,70) = 'Aerosol RF at TOA (clear-sky)'
-      FNAME(9,70) = 'Aerosol RF at SFC (clear-sky)'
-#else
-      FNAME(1,70) = 'AOD at 508nm'
-      FNAME(2,70) = 'SSA at 508nm'
-      FNAME(3,70) = 'ASM at 508nm'
-#endif
+      FNAME(5,70) = 'Aerosol DRF at TOA (all-sky)'
+      FNAME(6,70) = 'Aerosol DRF at SFC (all-sky)'
+      FNAME(7,70) = 'Aerosol Heat Rate (clear-sky)'
+      FNAME(8,70) = 'Aerosol DRF at TOA (clear-sky)'
+      FNAME(9,70) = 'Aerosol DRF at SFC (clear-sky)'
 
       END SUBROUTINE INIT_TRACERINFO
 !EOC

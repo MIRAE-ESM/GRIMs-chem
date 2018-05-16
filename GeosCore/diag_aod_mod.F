@@ -14,12 +14,14 @@
 
       IMPLICIT NONE
 
-      INTEGER, ALLOCATABLE :: SCALEAOD(:,:)
+      INTEGER :: SCALESW, SCALELW
       REAL*8,  ALLOCATABLE :: DIAGAOD(:,:,:)
       REAL*8,  ALLOCATABLE :: DIAGSSA(:,:,:)
       REAL*8,  ALLOCATABLE :: DIAGASM(:,:,:)
       REAL*8,  ALLOCATABLE :: AERSWHR(:,:,:,:)
-      REAL*8,  ALLOCATABLE :: AERRADF(:,:,:)
+      REAL*8,  ALLOCATABLE :: AERLWHR(:,:,:,:)
+      REAL*8,  ALLOCATABLE :: AERSWRF(:,:,:)
+      REAL*8,  ALLOCATABLE :: AERLWRF(:,:,:)
 
       CONTAINS
 
@@ -58,21 +60,21 @@
       ! Write data to the bpch file
       !=================================================================
 
-      ! AERPROP
-      CATEGORY  = 'AERPROP'
+      !=================================================================
+      ! CATEGORY = AEROPROP
+      !=================================================================
+      CATEGORY  = 'AEROPROP'
 
       ! Select proper unit string
       UNIT = 'unitless'
 
-      ! Divide by SCALEAOD
+      !=================================================================
+      ! AOD
+      !=================================================================
       DO L = 1, LLPAR
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = DIAGAOD(I,J,L) / DBLE(SCALEAOD(I,J))
-         ENDIF
+         ARRAY(I,J,L) = DIAGAOD(I,J,L) / SCALESW
       ENDDO
       ENDDO
       ENDDO
@@ -84,15 +86,13 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! Divide by SCALEAOD
+      !=================================================================
+      ! SSA
+      !=================================================================
       DO L = 1, LLPAR
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = DIAGSSA(I,J,L) / DBLE(SCALEAOD(I,J))
-         ENDIF
+         ARRAY(I,J,L) = DIAGSSA(I,J,L) / SCALESW
       ENDDO
       ENDDO
       ENDDO
@@ -104,15 +104,13 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! Divide by SCALEAOD
+      !=================================================================
+      ! ASM
+      !=================================================================
       DO L = 1, LLPAR
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = DIAGASM(I,J,L) / DBLE(SCALEAOD(I,J))
-         ENDIF
+         ARRAY(I,J,L) = DIAGASM(I,J,L) / SCALESW
       ENDDO
       ENDDO
       ENDDO
@@ -124,21 +122,21 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! AERSWHR
-      CATEGORY  = 'AERSWHR'
+      !=================================================================
+      ! CATEGORY = AEROSWRF
+      !=================================================================
+      CATEGORY  = 'AEROSWRF'
 
       ! Select proper unit string
       UNIT = 'K/s'
 
-      ! Divide by SCALEAOD
+      !=================================================================
+      ! SWHR
+      !=================================================================
       DO L = 1, LLPAR
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = AERSWHR(I,J,L,1) / DBLE(SCALEAOD(I,J))
-         ENDIF
+         ARRAY(I,J,L) = AERSWHR(I,J,L,1) / SCALESW
       ENDDO
       ENDDO
       ENDDO
@@ -150,16 +148,15 @@
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! Divide by SCALEAOD
-      DO L = 1, LLPAR
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! DRFTOA
+      !=================================================================
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = AERSWHR(I,J,L,2) / DBLE(SCALEAOD(I,J))
-         ENDIF
-      ENDDO
+         ARRAY(I,J,1) = AERSWRF(I,J,1) / SCALESW
       ENDDO
       ENDDO
 
@@ -167,48 +164,212 @@
       CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
      &            HALFPOLAR, CENTER180, CATEGORY, 2,
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
-     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
 
-      ! AERRADF
-      CATEGORY  = 'AERRADF'
-
-      ! Select proper unit string
-      UNIT = 'W/m2'
-
-      ! Divide by SCALEAOD
-      DO L = 1, 4
+      !=================================================================
+      ! DRFSFC
+      !=================================================================
       DO J = 1, JJPAR
       DO I = 1, IIPAR
-         IF (SCALEAOD(I,J) .EQ. 0) THEN
-            ARRAY(I,J,L) = 0e0
-         ELSE
-            ARRAY(I,J,L) = AERRADF(I,J,L) / DBLE(SCALEAOD(I,J))
-         ENDIF
+         ARRAY(I,J,1) = AERSWRF(I,J,2) / SCALESW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 3,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Select proper unit string
+      UNIT = 'K/s'
+
+      !=================================================================
+      ! SWHRC
+      !=================================================================
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,L) = AERSWHR(I,J,L,2) / SCALESW
       ENDDO
       ENDDO
       ENDDO
 
       ! Write to bpch file
-      DO L = 1, 4
-         CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
-     &               HALFPOLAR, CENTER180, CATEGORY, L,
-     &               UNIT,      DIAGb,     DIAGe,    RESERVED,
-     &               IIPAR,     JJPAR,     1,        1,
-     &               1,         1,         ARRAY(:,:,L) )
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 4,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! DRFTOAC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERSWRF(I,J,3) / SCALESW
       ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 5,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! DRFSFCC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERSWRF(I,J,4) / SCALESW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 6,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! CATEGORY = AEROLWRF
+      !=================================================================
+      CATEGORY  = 'AEROLWRF'
+
+      ! Select proper unit string
+      UNIT = 'K/s'
+
+      !=================================================================
+      ! LWHR
+      !=================================================================
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,L) = AERLWHR(I,J,L,1) / SCALELW
+      ENDDO
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! DRFTOA
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERLWRF(I,J,1) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 2,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! DRFSFC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERLWRF(I,J,2) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 3,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Select proper unit string
+      UNIT = 'K/s'
+
+      !=================================================================
+      ! LWHRC
+      !=================================================================
+      DO L = 1, LLPAR
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,L) = AERLWHR(I,J,L,2) / SCALELW
+      ENDDO
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 4,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     LLPAR,    1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! DRFTOAC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERLWRF(I,J,3) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 5,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! DRFSFCC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = AERLWRF(I,J,4) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 6,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
 
       IF (LMASTER) THEN
       WRITE( 6, '(a)' ) '     - DIAG_AOD: Diagnostics written to bpch!'
       ENDIF
 
       ! Initialize
-      SCALEAOD = 0
-      DIAGAOD  = 0d0
-      DIAGSSA  = 0d0
-      DIAGASM  = 0d0
-      AERSWHR  = 0d0
-      AERRADF  = 0d0
+      SCALESW = 0
+      SCALELW = 0
+      DIAGAOD = 0d0
+      DIAGSSA = 0d0
+      DIAGASM = 0d0
+      AERSWHR = 0d0
+      AERLWHR = 0d0
+      AERSWRF = 0d0
+      AERLWRF = 0d0
 
       END SUBROUTINE WRITE_DIAG_AOD
 
@@ -217,20 +378,24 @@
       SUBROUTINE INIT_DIAG_AOD
 
       ! Allocate module variables
-      ALLOCATE( SCALEAOD(IIPAR,JJPAR) )
       ALLOCATE( DIAGAOD(IIPAR,JJPAR,LLPAR) )
       ALLOCATE( DIAGSSA(IIPAR,JJPAR,LLPAR) )
       ALLOCATE( DIAGASM(IIPAR,JJPAR,LLPAR) )
       ALLOCATE( AERSWHR(IIPAR,JJPAR,LLPAR,2) )
-      ALLOCATE( AERRADF(IIPAR,JJPAR,4) )
+      ALLOCATE( AERLWHR(IIPAR,JJPAR,LLPAR,2) )
+      ALLOCATE( AERSWRF(IIPAR,JJPAR,4) )
+      ALLOCATE( AERLWRF(IIPAR,JJPAR,4) )
 
       ! Initialize module variables
-      SCALEAOD = 0
-      DIAGAOD  = 0d0
-      DIAGSSA  = 0d0
-      DIAGASM  = 0d0
-      AERSWHR  = 0d0
-      AERRADF  = 0d0
+      SCALESW = 0
+      SCALELW = 0
+      DIAGAOD = 0d0
+      DIAGSSA = 0d0
+      DIAGASM = 0d0
+      AERSWHR = 0d0
+      AERLWHR = 0d0
+      AERSWRF = 0d0
+      AERLWRF = 0d0
 
       END SUBROUTINE INIT_DIAG_AOD
 
