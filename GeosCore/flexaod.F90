@@ -13,8 +13,10 @@
 
 module flexaod
 
-  use dao_mod,       only : airden, bxheight, rh
+  use dao_mod,       only : airden, bxheight, rh, ps1
+  use dao_mod,       only : airqnt, make_rh
   use directory_mod, only : data_dir
+  use pressure_mod,  only : set_floating_pressure
   use tracer_mod,    only : stt
   use tracerid_mod,  only : idtso4, idtnh4, idtnit
   use tracerid_mod,  only : idtbcpi, idtocpi, idtbcpo, idtocpo
@@ -673,6 +675,14 @@ subroutine calc_aod
   real :: k_ext, k_sca, numconc
   real,dimension(nsizspc+2) :: conc_gcm3
   real,dimension(nrh) :: rw, qw, gw, ssw
+  logical, save :: first = .true.
+
+  if (first) then
+    call set_floating_pressure(ps1)
+    call airqnt
+    call make_rh
+    first = .false.
+  endif
 
   ! Loop over horizontal grid
   outod = 0.0
@@ -695,8 +705,6 @@ subroutine calc_aod
 
     ! Loop over levels
     do l = 1,nl
-
-      if (airden(l,i,j) .eq. 0) cycle
 
       conc_gcm3 = 0d0
       ! Tracer concentrations (kg/kg)

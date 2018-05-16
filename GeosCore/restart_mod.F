@@ -12,7 +12,6 @@
       MODULE RESTART_MOD
 
       USE COMODE_MOD,   ONLY : CSPEC
-      USE DAO_MOD,      ONLY : AIRDEN, BXHEIGHT, RH
       USE LOGICAL_MOD,  ONLY : LCHEM, LEMIS, LMEGAN, LSVCSPEC
       USE MEGAN_MOD,    ONLY : DAY_DIM, NUM_DAYS
       USE MEGAN_MOD,    ONLY : T_DAY, T_15
@@ -100,79 +99,6 @@
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart chemi is read!'
-      ENDIF
-
-      !--------------!
-      ! Read bxhghti !
-      !--------------!
-
-      ! Check bxhght initial condition file
-      IF ( FILE_EXISTS( 'bxhghti' ) ) THEN
-
-      IF (LMASTER) THEN
-      ! Open file for read
-      OPEN(9999, FILE='bxhghti', FORM='UNFORMATTED', STATUS='OLD')
-
-      ! Read header
-      READ(9999) NI, NJ, NL
-
-      ! Dimension check
-      IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
-     &     NL .NE. LLPAR ) THEN
-         WRITE(6,*) '    - RESTART_MOD: Dimension of bxhghti is bad!'
-         STOP 9999
-      ENDIF
-      ENDIF
-
-      ! Allocate
-      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLPAR ) )
-      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLPAR ) )
-
-      ! Read AIRDEN
-      IF (LMASTER) THEN
-      READ(9999) F_ARRAY
-      ENDIF
-
-      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
-
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
-      DO L = 1, LLPAR
-         AIRDEN(L,I,J) = P_ARRAY(I,J,L)
-      ENDDO
-      ENDDO
-      ENDDO
-
-      ! Read BXHEIGHT
-      IF (LMASTER) THEN
-      READ(9999) F_ARRAY
-      ENDIF
-
-      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
-
-      BXHEIGHT = P_ARRAY
-
-      ! Read RH
-      IF (LMASTER) THEN
-      READ(9999) F_ARRAY
-      ENDIF
-
-      CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
-
-      RH = P_ARRAY
-
-      ! Deallocate
-      DEALLOCATE( P_ARRAY )
-      DEALLOCATE( F_ARRAY )
-
-      IF (LMASTER) THEN
-      ! Close file
-      CLOSE(9999)
-
-      ! Message
-      WRITE(6,*) '    - RESTART_MOD: Restart bxhghti is read!'
-      ENDIF
-
       ENDIF
 
       !-------------!
@@ -390,67 +316,6 @@
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart chemi is written!'
-      ENDIF
-
-      !---------------!
-      ! Write bxhghti !
-      !---------------!
-
-      IF (LMASTER) THEN
-      ! Open file for write
-      OPEN(9999, FILE='bxhghti', FORM='UNFORMATTED', STATUS='REPLACE')
-
-      ! Write header
-      WRITE(9999) IGLOB, JGLOB, LLPAR
-      ENDIF
-
-      ! Allocate
-      ALLOCATE( P_ARRAY( IIPAR, JJPAR, LLPAR ) )
-      ALLOCATE( F_ARRAY( IGLOB, JGLOB, LLPAR ) )
-
-      ! Write AIRDEN
-      DO L = 1, LLPAR
-      DO J = 1, JJPAR
-      DO I = 1, IIPAR
-         P_ARRAY(I,J,L) = AIRDEN(L,I,J)
-      ENDDO
-      ENDDO
-      ENDDO
-
-      CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLPAR )
-
-      IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
-      ENDIF
-
-      ! Write BXHEIGHT
-      P_ARRAY = BXHEIGHT
-
-      CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLPAR )
-
-      IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
-      ENDIF
-
-      ! Write RH
-      P_ARRAY = RH
-
-      CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLPAR )
-
-      IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
-      ENDIF
-
-      ! Deallocate
-      DEALLOCATE( P_ARRAY )
-      DEALLOCATE( F_ARRAY )
-
-      IF (LMASTER) THEN
-      ! Close file
-      CLOSE(9999)
-
-      ! Message
-      WRITE(6,*) '    - RESTART_MOD: Restart bxhghti is written!'
       ENDIF
 
       !--------------!
