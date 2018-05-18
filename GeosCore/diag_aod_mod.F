@@ -22,6 +22,8 @@
       REAL*8,  ALLOCATABLE :: AERLWHR(:,:,:,:)
       REAL*8,  ALLOCATABLE :: AERSWRF(:,:,:)
       REAL*8,  ALLOCATABLE :: AERLWRF(:,:,:)
+      REAL*8,  ALLOCATABLE :: CLDSWRF(:,:,:)
+      REAL*8,  ALLOCATABLE :: CLDLWRF(:,:,:)
 
       CONTAINS
 
@@ -356,6 +358,86 @@
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
 
+      !=================================================================
+      ! CATEGORY = CLDSWRF
+      !=================================================================
+      CATEGORY  = 'CLDSWRF'
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! CRFTOA
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = CLDSWRF(I,J,1) / SCALESW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! CRFSFC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = CLDSWRF(I,J,2) / SCALESW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 2,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! CATEGORY = CLDLWRF
+      !=================================================================
+      CATEGORY  = 'CLDLWRF'
+
+      ! Select proper unit string
+      UNIT = 'W/m2'
+
+      !=================================================================
+      ! CRFTOA
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = CLDLWRF(I,J,1) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 1,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
+      !=================================================================
+      ! CRFSFC
+      !=================================================================
+      DO J = 1, JJPAR
+      DO I = 1, IIPAR
+         ARRAY(I,J,1) = CLDLWRF(I,J,2) / SCALELW
+      ENDDO
+      ENDDO
+
+      ! Write to bpch file
+      CALL BPCH2( IU_BPCH,   MODELNAME, LONRES,   LATRES,
+     &            HALFPOLAR, CENTER180, CATEGORY, 2,
+     &            UNIT,      DIAGb,     DIAGe,    RESERVED,
+     &            IIPAR,     JJPAR,     1,        1,
+     &            1,         1,         ARRAY(:,:,1) )
+
       IF (LMASTER) THEN
       WRITE( 6, '(a)' ) '     - DIAG_AOD: Diagnostics written to bpch!'
       ENDIF
@@ -370,6 +452,8 @@
       AERLWHR = 0d0
       AERSWRF = 0d0
       AERLWRF = 0d0
+      CLDSWRF = 0d0
+      CLDLWRF = 0d0
 
       END SUBROUTINE WRITE_DIAG_AOD
 
@@ -385,6 +469,8 @@
       ALLOCATE( AERLWHR(IIPAR,JJPAR,LLPAR,2) )
       ALLOCATE( AERSWRF(IIPAR,JJPAR,4) )
       ALLOCATE( AERLWRF(IIPAR,JJPAR,4) )
+      ALLOCATE( CLDSWRF(IIPAR,JJPAR,2) )
+      ALLOCATE( CLDLWRF(IIPAR,JJPAR,2) )
 
       ! Initialize module variables
       SCALESW = 0
@@ -396,6 +482,8 @@
       AERLWHR = 0d0
       AERSWRF = 0d0
       AERLWRF = 0d0
+      CLDSWRF = 0d0
+      CLDLWRF = 0d0
 
       END SUBROUTINE INIT_DIAG_AOD
 

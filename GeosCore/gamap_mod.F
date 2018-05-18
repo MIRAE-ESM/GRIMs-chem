@@ -626,6 +626,38 @@
       CALL WRITE_TINFO( NAME_NEW, FNAME(9,70), 1e0,
      &                  1,        1e0,         'W/m2', N )
 
+      !-----------------------------------
+      ! SPACING*55: CLDSWRF
+      !-----------------------------------
+
+      CALL WRITE_SEPARATOR( 1000 )
+
+      N = ( SPACING * 55 ) + 1
+      NAME_NEW = 'CRFTOA'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(10,70),1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 55 ) + 2
+      NAME_NEW = 'CRFSFC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(11,70),1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      !-----------------------------------
+      ! SPACING*56: CLDLWRF
+      !-----------------------------------
+
+      CALL WRITE_SEPARATOR( 1100 )
+
+      N = ( SPACING * 56 ) + 1
+      NAME_NEW = 'CRFTOA'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(10,70),1e0,
+     &                  1,        1e0,         'W/m2', N )
+
+      N = ( SPACING * 56 ) + 2
+      NAME_NEW = 'CRFSFC'
+      CALL WRITE_TINFO( NAME_NEW, FNAME(11,70),1e0,
+     &                  1,        1e0,         'W/m2', N )
+
       !------------------------------
       ! All other diagnostics 
       !------------------------------
@@ -778,8 +810,12 @@
             WRITE( IU_FILE, 180, IOSTAT=IOS )
          CASE( 900 )
             WRITE( IU_FILE, 190, IOSTAT=IOS )
+         CASE( 1000 )
+            WRITE( IU_FILE, 200, IOSTAT=IOS )
+         CASE( 1100 )
+            WRITE( IU_FILE, 210, IOSTAT=IOS )
          CASE DEFAULT
-            WRITE( IU_FILE, 200, IOSTAT=IOS ) DIAG
+            WRITE( IU_FILE, 220, IOSTAT=IOS ) DIAG
       END SELECT
 
       ! Error check
@@ -800,7 +836,9 @@
  170  FORMAT( '# Aerosol Optical Properties'         )
  180  FORMAT( '# Aerosol SW Radiative Forcing'       )
  190  FORMAT( '# Aerosol LW Radiative Forcing'       )
- 200  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
+ 200  FORMAT( '# Cloud SW Radiative Forcing'         )
+ 210  FORMAT( '# Cloud LW Radiative Forcing'         )
+ 220  FORMAT( '# ND', i2.2, ' diagnostic quantities' )
       
       END SUBROUTINE WRITE_SEPARATOR
 !EOC
@@ -1413,6 +1451,16 @@
       CATEGORY(N) = 'AEROLWRF'
       DESCRIPT(N) = 'Aerosol LW Radiative Forcing'
       OFFSET(N)   = SPACING * 54
+
+      N           = N + 1
+      CATEGORY(N) = 'CLDSWRF'
+      DESCRIPT(N) = 'Cloud SW Radiative Forcing'
+      OFFSET(N)   = SPACING * 55
+
+      N           = N + 1
+      CATEGORY(N) = 'CLDLWRF'
+      DESCRIPT(N) = 'Cloud LW Radiative Forcing'
+      OFFSET(N)   = SPACING * 56
 
 ! NEED TO DO THAT AT ONE POINT      
 !      ! New for CSPEC
@@ -3947,6 +3995,12 @@
       FNAME(7,70) = 'Aerosol Heat Rate (clear-sky)'
       FNAME(8,70) = 'Aerosol DRF at TOA (clear-sky)'
       FNAME(9,70) = 'Aerosol DRF at SFC (clear-sky)'
+
+      !-------------------------------------
+      ! Cloud SW & LW Radiative Forcing
+      !-------------------------------------
+      FNAME(10,70) = 'Cloud RF at TOA'
+      FNAME(11,70) = 'Cloud RF at SFC'
 
       END SUBROUTINE INIT_TRACERINFO
 !EOC
