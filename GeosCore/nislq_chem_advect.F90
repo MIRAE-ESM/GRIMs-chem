@@ -403,7 +403,7 @@
 !    q update at time step n+1 (bottom to top)
 !
      do k = 1,levs_
-       do i = 1,lonsd
+       do i = 1,iipar
          stt(i,j,levs_+1-k,t)=qtn(i,k)
        enddo
      enddo
