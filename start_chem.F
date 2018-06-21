@@ -20,6 +20,7 @@
       USE LINOZ_MOD,        ONLY : LINOZ_READ
       USE LOGICAL_MOD,      ONLY : LCHEM, LEMIS, LLINOZ, LMEGAN, LPRT
       USE LOGICAL_MOD,      ONLY : LSVMET, LSVMETNEST, LKPP
+      USE LOGICAL_MOD,      ONLY : LAERODIR, LAEROIND
       USE MEGAN_MOD,        ONLY : INIT_MEGAN
       USE METEO_MOD,        ONLY : INIT_METEO
       USE PRESSURE_MOD,     ONLY : INIT_PRESSURE
@@ -81,8 +82,10 @@
       IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_RESTART' )
 
       ! Read MIE tables for aerosol direct effect
-      CALL READ_MIE
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_MIE' )
+      IF ( LAERODIR ) THEN
+         CALL READ_MIE
+         IF ( LPRT ) CALL DEBUG_MSG( '### START: a READ_MIE' )
+      ENDIF
 
       ! Initialize METEO module
       IF ( LSVMET .or. LSVMETNEST ) THEN
@@ -91,7 +94,9 @@
       ENDIF
 
       ! Initialize AOD diagnostic module
-      CALL INIT_DIAG_AOD
-      IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
+      IF ( LAERODIR .or. LAEROIND ) THEN
+         CALL INIT_DIAG_AOD
+         IF ( LPRT ) CALL DEBUG_MSG( '### START: a INIT_DIAG_AOD' )
+      ENDIF
 
       END SUBROUTINE START_CHEM

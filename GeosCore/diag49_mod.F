@@ -367,7 +367,7 @@
             ENDDO
 !$OMP END PARALLEL DO
 
-         ELSE IF ( N == 71 ) THEN
+         ELSE IF ( N == 71 .and. ALLOCATED( OUTOD ) ) THEN
 
             !-------------------------------------
             ! Aerosol Optical Depth [unitless]
@@ -402,7 +402,7 @@
             ENDDO
 !$OMP END PARALLEL DO
 
-         ELSE IF ( N == 72 ) THEN
+         ELSE IF ( N == 72 .and. ALLOCATED( OUTSSA ) ) THEN
 
             !-------------------------------------
             ! Single Scattering Albedo [unitless]
@@ -437,7 +437,7 @@
             ENDDO
 !$OMP END PARALLEL DO
 
-         ELSE IF ( N == 73 ) THEN
+         ELSE IF ( N == 73 .and. ALLOCATED( OUTG ) ) THEN
 
             !-------------------------------------
             ! Asymmerty Parameter [unitless]

@@ -31,6 +31,7 @@
       USE LOGICAL_MOD,       ONLY : LPRT, LTRAN, LTURB, LVARTROP, LWETD
       USE LOGICAL_MOD,       ONLY : LSVMET, LSVMETNEST
       USE LOGICAL_MOD,       ONLY : LLIGHTNOX, LMEGAN, LUPBD
+      USE LOGICAL_MOD,       ONLY : LAERODIR, LAEROIND
       USE MEGAN_MOD,         ONLY : UPDATE_T_15_AVG
       USE MEGAN_MOD,         ONLY : UPDATE_T_DAY
       USE METEO_MOD,         ONLY : DO_METEO, INIT_A3, INIT_A6
@@ -166,7 +167,9 @@
          CALL DIAG3
 
          ! Write AOD, SSA, ASM
-         CALL WRITE_DIAG_AOD
+         IF ( LAERODIR .or. LAEROIND ) THEN
+            CALL WRITE_DIAG_AOD
+         ENDIF
 
          ! Flush file units
          CALL FLUSH( IU_ND48    )          
