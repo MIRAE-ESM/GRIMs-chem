@@ -42,6 +42,7 @@
       USE CMN_SIZE_MOD, ONLY : NDUST, MAXIJ, NAER, NRH
       USE CMN_FJ_MOD, ONLY : IPAR, JPAR, LPAR, JPMAX, JPPJ     ! IPAR, JPAR, LPAR, F77_CMN_SIZE
       USE JV_CMN_MOD, ONLY : ODMDUST, PJ, NB, ODAER
+      USE paramodel, ONLY : ncpus_
 
       IMPLICIT NONE
 
@@ -147,6 +148,8 @@
       
       LOGICAL, SAVE      :: FIRST = .true.
 
+      INTEGER :: CHUNK
+
       !=================================================================
       ! FAST_J begins here!
       !=================================================================
@@ -177,13 +180,14 @@
       ! J-values will be stored in the common-block variable ZPJ, and 
       ! will be later accessed via function FJFUNC. 
       !=================================================================
+      CHUNK = IIPAR * JJPAR / ncpus_ / 100
 !$OMP PARALLEL DO COLLAPSE( 2 )
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( NLON, NLAT,   YLAT,  CSZA,      OPTAER  )
 !$OMP+PRIVATE( PRES, TEMP,   OPTD,  SFCA,      OPTDUST )
 !$OMP+PRIVATE( FMAX, CLDF1D, KK,    NUMB,      L       )
 !$OMP+PRIVATE( KBOT, KTOP,   ODNEW, INDICATOR, INDIC   )
-!$OMP+SCHEDULE( DYNAMIC )
+!$OMP+SCHEDULE( DYNAMIC, CHUNK )
 
       ! Loop over latitudes
       DO NLAT = 1, JJPAR

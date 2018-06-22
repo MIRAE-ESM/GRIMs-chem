@@ -97,9 +97,7 @@
 ! qp[t2b], stt=[b2t]
 !
 !$omp parallel
-!$omp do collapse(2) &
-!$omp private(t,k,j,i) &
-!$omp schedule(dynamic)
+!$omp do collapse(2) private(t,k,j,i)
    do t = 1,nt
      do k = 1,llpar
        do j = 1,jjpar
@@ -151,9 +149,7 @@
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
-!$omp do &
-!$omp private(jj,j1,j2,lat,lonsd,k,i) &
-!$omp schedule(dynamic)
+!$omp do private(jj,j1,j2,lat,lonsd,k,i)
    do jj = 1,jjend
      j1=2*jj-1     ! N.H.
      j2=2*jj       ! S.H.
@@ -182,9 +178,7 @@
 !
 ! first mass conserving interpolation from reduced grid to full grid
 !
-!$omp do collapse(2) &
-!$omp private(t,jj,kk,j1,j2,lat,lonsd,k,i) &
-!$omp schedule(dynamic)
+!$omp do collapse(2) private(t,jj,kk,j1,j2,lat,lonsd,k,i)
  do t = 1,nt
    do jj = 1,jjend
      kk = LEVSS*(t-1)
@@ -251,9 +245,7 @@
 ! ---------------------------------------------------------------------
 ! ------------------- in meridional great circle ----------------------
 ! ---------------------------------------------------------------------
-!$omp do collapse(2) &
-!$omp private(t,i,kk) &
-!$omp schedule(dynamic)
+!$omp do collapse(2) private(t,i,kk)
  do t = 1,nt
    do i = 1,mylonlen
    kk = LEVSS*(t-1)
@@ -304,9 +296,7 @@
 ! ---------------------------------------------------------------
 !     print *,' nislq adv loop in x for last '
 !
-!$omp do collapse(2) &
-!$omp private(t,jj,kk,j1,j2,lat,lonsd) &
-!$omp schedule(dynamic)
+!$omp do collapse(2) private(t,jj,kk,j1,j2,lat,lonsd)
  do t = 1,nt
    do jj = 1,jjend
      kk = LEVSS*(t-1)
@@ -372,9 +362,7 @@
 ! --------------------------------------------------------------
 ! ----------- compute vertical advection and total ------------
 ! --------------------------------------------------------------
-!$omp do collapse(2) &
-!$omp private(t,j,kk,lonsd,k,i,ppi,pdot2,qtn) &
-!$omp schedule(dynamic)
+!$omp do collapse(2) private(t,j,kk,lonsd,k,i,ppi,pdot2,qtn)
  do t = 1,nt
    do j = 1,jjend
      kk = levs_*(t-1)

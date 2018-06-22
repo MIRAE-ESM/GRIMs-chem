@@ -127,6 +127,7 @@
 #endif
 
       USE CMN_SIZE_MOD        ! Size parameters
+      USE paramodel, ONLY : ncpus_
 !
 ! !REMARKS:
 !  Original isoropia v1.3 implmentation: (rjp, bec, bmy, 12/17/01, 8/22/05)
@@ -185,6 +186,8 @@
       ! debug variables
       INTEGER                  :: Itemp, Jtemp, Ltemp
       LOGICAL, SAVE            :: FIRSTCHECK = .TRUE.
+
+      INTEGER :: CHUNK
                   
       !=================================================================
       ! DO_ISOROPIAII begins here!
@@ -254,6 +257,7 @@
       !=================================================================
 
       ! AEROPH: add HPLUSTEMP as private (hotp 8/11/09)
+      CHUNK = IIPAR * JJPAR * LLTROP / ncpus_ / 100
 !$OMP PARALLEL DO COLLAPSE( 3 )
 !$OMP+DEFAULT( SHARED )
 !$OMP+PRIVATE( I,    J,      L,       N,      WI,   WT,  GAS,  TEMPI )
@@ -264,7 +268,7 @@
 #if   defined( APM )
 !$OMP+PRIVATE( TSO4COAT             )
 #endif
-!$OMP+SCHEDULE( DYNAMIC )
+!$OMP+SCHEDULE( DYNAMIC, CHUNK )
       DO L = 1, LLTROP
       DO J = 1, JJPAR
       DO I = 1, IIPAR
