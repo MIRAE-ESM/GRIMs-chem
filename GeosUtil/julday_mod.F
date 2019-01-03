@@ -105,15 +105,15 @@
       ENDIF
    
       ! Compute the "A" term. 
-      X1 = DBLE( YYYY ) / 100.0d0
+      X1 = DBLE( YEAR1 ) / 100.0d0
       A  = MINT( X1 )
    
       ! The Gregorian calendar begins on 10 October 1582
       ! Any dates prior to this will be in the Julian calendar
-      IF ( YYYY > 1582 ) THEN
+      IF ( YEAR1 > 1582 ) THEN
          ISGREGORIAN = .TRUE.
       ELSE
-         IF ( ( YYYY   == 1582 )  .AND. 
+         IF ( ( YEAR1  == 1582 )  .AND. 
      &        ( MONTH1 >= 10   )  .AND. 
      &        ( DD     >= 15.0 ) ) THEN 
             ISGREGORIAN = .TRUE.
