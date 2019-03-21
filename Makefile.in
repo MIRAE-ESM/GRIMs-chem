@@ -188,6 +188,7 @@ CORES = ${COREDIR}/tracer_mod.o \
         ${COREDIR}/mmran_16.o \
         ${COREDIR}/ndxx_setup.o \
         ${COREDIR}/nislq_chem_advect.o \
+        ${COREDIR}/nislq_fwd.o \
         ${COREDIR}/NOABS.o \
         ${COREDIR}/ohsave.o \
         ${COREDIR}/OPMIE.o \

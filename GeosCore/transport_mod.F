@@ -357,7 +357,7 @@
       pdot = 0d0
 
       ! Prepare met-fields for NISLQ
-      deltim = D_DYN / 2d0
+      deltim = D_DYN
 
       DO J = 1, JJPAR
       DO I = 1, IIPAR
