@@ -2572,6 +2572,10 @@ contains
     !=================================================================
     IF ( ITS_A_FULLCHEM_SIM() ) THEN
 
+       ! Set NCS=NCSURBAN here since we have defined our tropospheric
+       ! chemistry mechanism in the urban slot of SMVGEAR II
+       NCS = NCSURBAN
+
        ! If it's time to do emissions, call SETEMIS
        IF ( ITS_TIME_FOR_EMIS() ) THEN 
           IF ( LCHEM ) THEN
@@ -2579,7 +2583,6 @@ contains
              JLOP_PREVIOUS(:,:,:) = JLOP(:,:,:)
              CALL RURALBOX( AD, T, AVGW, ALBD )
              NTTLOOP = NTLOOP
-             NCS     = NCSURBAN
           ENDIF
           CALL SETEMIS( EMISRR, EMISRRN )
           IF ( LPRT ) CALL DEBUG_MSG( '### DO_PBL_MIX_2: aft SETEMIS' )
