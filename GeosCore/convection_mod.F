@@ -88,9 +88,11 @@
       USE DAO_MOD,      ONLY : BXHEIGHT 
       USE DAO_MOD,      ONLY : T        
       USE DAO_MOD,      ONLY : CLDMAS
+      USE DAO_MOD,      ONLY : CLDMAS2
       USE DAO_MOD,      ONLY : CMFMC
       USE DAO_MOD,      ONLY : DQRCU
       USE DAO_MOD,      ONLY : DTRAIN
+      USE DAO_MOD,      ONLY : DTRAIN2
       USE DAO_MOD,      ONLY : PFICU
       USE DAO_MOD,      ONLY : PFLCU
       USE DAO_MOD,      ONLY : REEVAPCN
@@ -173,7 +175,12 @@
 #endif
 
       ! Call the S-J Lin convection routine for GEOS-3
+#ifdef GRIMS
+      CALL NFCLDMX( N_TOT_TRC, TCVV, CLDMAS, DTRAIN, STT, 
+     &              CLDMAS2=CLDMAS2, DTRN2=DTRAIN2 )
+#else
       CALL NFCLDMX( N_TOT_TRC, TCVV, CLDMAS, DTRAIN, STT )
+#endif
 
 #elif defined( GEOS_4 )
 
@@ -824,7 +831,7 @@
 !\\
 ! !INTERFACE:
 !
-      SUBROUTINE NFCLDMX( NC, TCVV, CLDMAS, DTRN, Q )
+      SUBROUTINE NFCLDMX( NC, TCVV, CLDMAS, DTRN, Q, CLDMAS2, DTRN2 )
 
 !
 ! !USES:
@@ -862,6 +869,12 @@
 
       ! MW air (g/mol) / MW of tracer (g/mol) [unitless]
       REAL*8,  INTENT(IN)    :: TCVV(NC)
+
+      ! CLDMAS : Cloud mass flux (at upper edges of each level) [kg/m2/s]
+      REAL*8,  INTENT(IN),  OPTIONAL    :: CLDMAS2(IIPAR,JJPAR,LLPAR)
+
+      ! Detrainment mass flux [kg/m2/s]
+      REAL*8,  INTENT(IN),  OPTIONAL    :: DTRN2(IIPAR,JJPAR,LLPAR)
 !
 ! !INPUT/OUTPUT PARAMETERS: 
 ! 
@@ -1014,6 +1027,8 @@
       INTEGER                :: I, J, K, KTOP, L, N, NDT
       INTEGER                :: IC, ISTEP, JUMP, JS, JN, NS
       INTEGER                :: IMR, JNP, NLAY
+      INTEGER                :: CB(IIPAR,JJPAR)
+      INTEGER                :: CB2(IIPAR,JJPAR)
 !     REAL*8,  SAVE          :: DSIG(LLPAR)
       REAL*8                 :: SDT, CMOUT, ENTRN, DQ, AREA_M2
       REAL*8                 :: T0, T1, T2, T3, T4, TSUM, DELQ
@@ -1058,7 +1073,7 @@
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          WRITE( 6, '(a)' ) 'N F C L D M X  -- by S-J Lin'
          WRITE( 6, '(a)' ) 'Modified for GRIMs by Seungun Lee'
-         WRITE( 6, '(a)' ) 'Last Modification Date: 1/25/16'
+         WRITE( 6, '(a)' ) 'Last Modification Date: 2/17/22'
          WRITE( 6, '(a)' ) REPEAT( '=', 79 )
          ENDIF
 
@@ -1117,6 +1132,24 @@
       NS  = MAX(NS,1)
       SDT = FLOAT(NDT) / FLOAT(NS)
       DNS = DBLE( NS )
+
+#ifdef GRIMS
+      ! Find the cloud base
+      DO J = 1, JJPAR
+      DO I = 1, IMR
+      DO K = 2, NLAY
+         CB(I,J) = K
+         IF ( DTRN(I,J,K) > 0d0 ) EXIT
+      ENDDO
+      DO K = KTOP, 1, -1
+         CB2(I,J) = K
+         IF ( DTRN2(I,J,K) > 0d0 ) EXIT
+      ENDDO
+      ENDDO
+      ENDDO
+#else
+      CB = 3
+#endif
 
 !=============================================================================
 !  BMASS has units of kg/m^2 and is equivalent to AD(I,J,L) / AREA_M2
@@ -1228,8 +1261,8 @@
                ! the cloud base.
                !========================================================
 
-               IF ( CLDMAS(I,J,2) .gt. TINY ) THEN 
-#if   defined( GEOS_5 ) || defined( GRIMS )
+               IF ( CLDMAS(I,J,CB(I,J)-1) .gt. TINY ) THEN 
+#if   defined( GEOS_5 )
 
                   ! Need to replace DSIG w/ the difference 
                   ! of pressure edges for GEOS-5 (bmy, 6/27/07)
@@ -1238,6 +1271,16 @@
      &         Q(I,J,2,IC) * ( GET_PEDGE(I,J,2) - GET_PEDGE(I,J,3) ) ) / 
      &                       ( GET_PEDGE(I,J,1) - GET_PEDGE(I,J,3) )
 
+#elif defined( GRIMS )
+                  ! Compute the weighted avg mixing ratio below
+                  ! the cloud base
+                  QB(I,J) = 0d0
+                  DO K = 1, CB(I,J)-1
+                     QB(I,J) = QB(I,J) + Q(I,J,K,IC) *
+     &                         ( GET_PEDGE(I,J,K) - GET_PEDGE(I,J,K+1) )
+                  ENDDO
+                  QB(I,J) = QB(I,J) /
+     &                     ( GET_PEDGE(I,J,1) - GET_PEDGE(I,J,CB(I,J)) )
 #else
                   ! for GEOS-3
                   QB(I,J) = 
@@ -1247,7 +1290,10 @@
 #endif
 
                   ! total mass of air below the cloud base
-                  MB(I,J) = BMASS(I,J,1) + BMASS(I,J,2)
+                  MB(I,J) = 0d0
+                  DO K = 1, CB(I,J)-1
+                     MB(I,J) = MB(I,J) + BMASS(I,J,K)
+                  ENDDO
 
 !=============================================================================
 !         Total mass of tracer below cloud base (i.e. MB  * QB ) +   
@@ -1256,9 +1302,9 @@
 !             Total air mass below cloud base (i.e. MB + C(2)*Q(3) )
 !=============================================================================
                   QC(I,J) = 
-     &               ( MB(I,J)       * QB(I,J)       + 
-     &                 CLDMAS(I,J,2) * Q(I,J,3,IC)   * SDT ) /
-     &               ( MB(I,J)       + CLDMAS(I,J,2) * SDT )
+     &         ( MB(I,J)               * QB(I,J)               + 
+     &           CLDMAS(I,J,CB(I,J)-1) * Q(I,J,CB(I,J),IC)     * SDT ) /
+     &         ( MB(I,J)               + CLDMAS(I,J,CB(I,J)-1) * SDT )
      
                   !=====================================================
                   ! DQ = QB - QC is the total mass to be transported 
@@ -1282,15 +1328,16 @@
 !                     Q(I,J,1,IC) = Q(I,J,1,IC) - DQ
 !                  ENDIF
 !-----------------------------------------------------------------------------
-                  Q(I,J,2,IC) = QC(I,J)
-                  Q(I,J,1,IC) = QC(I,J)
+                  DO K = 1, CB(I,J)-1
+                     Q(I,J,K,IC) = QC(I,J)
+                  ENDDO
 
                !========================================================
                ! If there is no Cloud mass flux, set QC = Q(K=3) 
                ! at this I,J location
                !========================================================
                ELSE
-                  QC(I,J) = Q(I,J,3,IC)
+                  QC(I,J) = Q(I,J,CB(I,J),IC)
                ENDIF
             ENDDO !I
             ENDDO !J
@@ -1304,12 +1351,13 @@
             ! is the level ABOVE level K.  This is the way that SJ Lin 
             ! indexes the sigma levels.
             !===========================================================
-            DO K = 3, KTOP
+            DO K = 1, KTOP
             DO J = 1, JJPAR
 
                DO I = 1, IMR
 
                   IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+                  IF (K .LT. CB(I,J)) CYCLE
 
                   ! Grid box surface area [m2]
                   AREA_M2 = GET_AREA_M2( I, J )
@@ -1520,6 +1568,96 @@
                ENDDO  !I
             ENDDO     !J
             ENDDO     !K
+#ifdef GRIMS
+            ! Downdraft
+            DO J = 1, JJPAR
+            DO I = 1, IMR
+
+               IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+
+               QB(I,J) = Q(I,J,CB2(I,J)+1,IC)
+               MB(I,J) = BMASS(I,J,CB2(I,J)+1)
+
+               QC(I,J) =
+     &      ( MB(I,J)               * QB(I,J)               +
+     &        CLDMAS2(I,J,CB2(I,J)) * Q(I,J,CB2(I,J),IC)    * SDT ) /
+     &      ( MB(I,J)               + CLDMAS2(I,J,CB2(I,J)) * SDT )
+
+               Q(I,J,CB2(I,J)+1,IC) = QC(I,J)
+
+            ENDDO
+            ENDDO
+
+            ! Downdraft
+            DO K = NLAY, 1, -1
+            DO J = 1, JJPAR
+
+               DO I = 1, IMR
+
+                  IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+                  IF (K .GT. CB2(I,J)) CYCLE
+
+                  ! Grid box surface area [m2]
+                  AREA_M2 = GET_AREA_M2( I, J )
+
+                  IF (K .GT. 1) THEN
+
+                     CMOUT    = CLDMAS2(I,J,K-1) + DTRN2(I,J,K)
+                     ENTRN    = CMOUT            - CLDMAS2(I,J,K)
+                     QC_PRES  = QC(I,J) * ( 1d0 - F(I,J,K,IC) )
+                     QC_SCAV  = QC(I,J) * F(I,J,K,IC)
+
+                     IF ( ENTRN .ge. 0 ) THEN
+                        QC(I,J) = ( CLDMAS2(I,J,K) * QC_PRES       +
+     &                              ENTRN          * Q(I,J,K,IC) ) /
+     &                              CMOUT
+                     ENDIF
+
+                     T0   =  CLDMAS2(I,J,K  ) * QC_SCAV   
+                     T1   =  CLDMAS2(I,J,K  ) * QC_PRES
+                     T2   = -CLDMAS2(I,J,K-1) * QC(I,J       )
+                     T3   =  CLDMAS2(I,J,K-1) * Q (I,J,K-1,IC)
+                     T4   = -CLDMAS2(I,J,K  ) * Q (I,J,K,  IC)
+
+                  ELSE
+
+                     QC_PRES  = QC(I,J) * ( 1d0 - F(I,J,K,IC) )
+                     QC_SCAV  = QC(I,J) * F(I,J,K,IC)
+
+                     T0   =  CLDMAS2(I,J,K  ) * QC_SCAV   
+                     T1   =  CLDMAS2(I,J,K  ) * QC_PRES
+                     T2   =  0.
+                     T3   =  0.
+                     T4   = -CLDMAS2(I,J,K  ) * Q (I,J,K,  IC)
+
+                  ENDIF
+
+                  TSUM = T1 + T2 + T3 + T4
+
+                  DELQ = ( SDT / BMASS(I,J,K) ) * TSUM
+
+                  ! If DELQ > Q then do not make Q negative!!!
+                  IF ( Q(I,J,K,IC) + DELQ < 0 ) THEN
+                     DELQ = -Q(I,J,K,IC)
+                  ENDIF
+
+                  Q(I,J,K,IC) = Q(I,J,K,IC) + DELQ
+
+                  IF ( ND14 > 0 ) THEN
+                     DTCSUM(I,J,K,IC) = DTCSUM(I,J,K,IC) +
+     &                    (-T1-T4) * AREA_M2 / TCVV(IC)
+                  ENDIF
+
+                  IF ( ( ND38 > 0 .or. LGTMM )
+     &                 .and. ISOL > 0 .and. K <= LD38 ) THEN
+                     AD38(I,J,K,ISOL) = AD38(I,J,K,ISOL) +
+     &                    ( T0 * AREA_M2 / ( TCVV(IC) * DNS ) )
+                  ENDIF
+
+               ENDDO  !I
+            ENDDO     !J
+            ENDDO     !K
+#endif
          ENDDO        !NSTEP
       ENDDO           !IC
 !$OMP END PARALLEL DO
@@ -1534,10 +1672,11 @@
 !$OMP+PRIVATE( I, IC, J, K ) 
 !$OMP+SCHEDULE( DYNAMIC )
          DO IC = 1,  NC
-         DO K  = 3,  KTOP
+         DO K  = 1,  KTOP
          DO J  = 1,  JJPAR
          DO I  = 1,  IMR
             IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+            IF (K .LT. CB(I,J)) CYCLE
             CONVFLUP(I,J,K,IC) = CONVFLUP(I,J,K,IC) +
      &                           ( DTCSUM(I,J,K,IC) / DNS )
          ENDDO

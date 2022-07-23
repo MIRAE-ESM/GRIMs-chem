@@ -124,6 +124,7 @@
       REAL*8,  ALLOCATABLE, PUBLIC :: DQRLSAN (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: CLDF    (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: CLDMAS  (:,:,:)
+      REAL*8,  ALLOCATABLE, PUBLIC :: CLDMAS2 (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: CMFMC   (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: DELP    (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: DETRAINE(:,:,:)
@@ -136,6 +137,7 @@
       REAL*8,  ALLOCATABLE, PUBLIC :: DQRLSC  (:,:,:)    
       REAL*8,  ALLOCATABLE, PUBLIC :: DQVDTMST(:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: DTRAIN  (:,:,:)
+      REAL*8,  ALLOCATABLE, PUBLIC :: DTRAIN2 (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: ENTRAIN (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: HKBETA  (:,:,:)
       REAL*8,  ALLOCATABLE, PUBLIC :: HKETA   (:,:,:)
@@ -2380,10 +2382,20 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'CLDMAS' )
       CLDMAS = 0d0
 
+      ! GEOS-3 cloud mass flux
+      ALLOCATE( CLDMAS2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'CLDMAS2' )
+      CLDMAS2 = 0d0
+
       ! GEOS-3 detrainment 
       ALLOCATE( DTRAIN( IIPAR, JJPAR, LLPAR ), STAT=AS )
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'DTRAIN' )
       DTRAIN = 0d0
+
+      ! GEOS-3 detrainment 
+      ALLOCATE( DTRAIN2( IIPAR, JJPAR, LLPAR ), STAT=AS )
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'DTRAIN2' )
+      DTRAIN2 = 0d0
 
 #ifdef NOUSE
       ! Specific humidity at start of 6-hr interval
@@ -2856,6 +2868,7 @@
       IF ( ALLOCATED( CLDF     ) ) DEALLOCATE( CLDF     )
       IF ( ALLOCATED( CLDFRC   ) ) DEALLOCATE( CLDFRC   )
       IF ( ALLOCATED( CLDMAS   ) ) DEALLOCATE( CLDMAS   )
+      IF ( ALLOCATED( CLDMAS2  ) ) DEALLOCATE( CLDMAS2  )
       IF ( ALLOCATED( CLDTOPS  ) ) DEALLOCATE( CLDTOPS  )
       IF ( ALLOCATED( CMFMC    ) ) DEALLOCATE( CMFMC    )
       IF ( ALLOCATED( DELP     ) ) DEALLOCATE( DELP     )
@@ -2871,6 +2884,7 @@
       IF ( ALLOCATED( DQRLSAN  ) ) DEALLOCATE( DQRLSAN  )
       IF ( ALLOCATED( DQVDTMST ) ) DEALLOCATE( DQVDTMST )
       IF ( ALLOCATED( DTRAIN   ) ) DEALLOCATE( DTRAIN   )
+      IF ( ALLOCATED( DTRAIN2  ) ) DEALLOCATE( DTRAIN2  )
       IF ( ALLOCATED( ENTRAIN  ) ) DEALLOCATE( ENTRAIN  ) 
       IF ( ALLOCATED( EVAP     ) ) DEALLOCATE( EVAP     ) 
       IF ( ALLOCATED( FRLAND   ) ) DEALLOCATE( FRLAND   )

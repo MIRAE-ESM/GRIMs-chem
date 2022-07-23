@@ -473,7 +473,11 @@
 
             ! Large scale or convective fraction of precipitation
             IF ( LS ) THEN
+#ifdef GRIMS
+               FRAC = 1d0
+#else
                FRAC = ( PREACC(I,J) - PRECON(I,J) ) / PREACC(I,J) 
+#endif
             ELSE
                FRAC = PRECON(I,J) / PREACC(I,J)
             ENDIF
