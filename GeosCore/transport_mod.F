@@ -362,16 +362,16 @@
       DO J = 1, JJPAR
       DO I = 1, IIPAR
          pt  (I,J)         = PSC2(I,J) * 1d-1
-         pdot(I,LLPAR+1,J) = 0d0
+         pdot(I,LLPAR+1,J) = OMEGA(I,J,LLPAR+1)
       ENDDO
       ENDDO
 
       DO J = 1, JJPAR
       DO L = 1, LLPAR
       DO I = 1, IIPAR
-         ut  (I,L,J) = UWND  (I,J,LLPAR+1-L)
-         vt  (I,L,J) = VWND  (I,J,LLPAR+1-L)
-         pdot(I,L,J) = OMEGA (I,J,LLPAR+2-L)
+         ut  (I,L,J) = UWND(I,J,L)
+         vt  (I,L,J) = VWND(I,J,L)
+         pdot(I,L,J) = OMEGA(I,J,L)
       ENDDO
       ENDDO
       ENDDO

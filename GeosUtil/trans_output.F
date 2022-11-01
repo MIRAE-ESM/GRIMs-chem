@@ -50,7 +50,7 @@
       IF (LMASTER) THEN
       ! Transform to output grid
 #ifndef RMP
-      CALL dyn_trans2output_grid(OUTDATA,NL)
+      CALL dyns_trans2output_grid(OUTDATA,NL)
       CALL XSHIFT(OUTDATA,LONFD,LATGD,NL)
       CALL YREV(OUTDATA,LONFD,LATGD,NL)
 #else

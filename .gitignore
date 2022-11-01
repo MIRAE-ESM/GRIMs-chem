@@ -1,4 +1,3 @@
-.svn
 *.a
 *.o
 Makefile

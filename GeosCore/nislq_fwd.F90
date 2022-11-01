@@ -149,41 +149,38 @@
    real                                  ::  deltim
    real   , dimension(londim,levs+1)     ::  ppi,wwi
    real   , dimension(londim,levs,ncld)  ::  qql
-   real   , dimension(lons,levs)         ::  dsfact,rqnn,rqda
-   real   , dimension(lons,levs+1)       ::  ppii,ppia
+   real   , dimension(levs)              ::  dsfact
+   real   , dimension(levs+1)            ::  ppii,ppia
+   real   , dimension(levs,ncld)         ::  rqnn,rqda
 !
-   do k = 1,levs+1
-     do i = 1,lons
-       ppii(i,k)=ppi(i,k)
-       ppia(i,k)=ppi(i,k)+wwi(i,k)*deltim
+   do i = 1,lons
+     do k = 1,levs+1
+       ppii(k)=ppi(i,k)
+       ppia(k)=ppi(i,k)+wwi(i,k)*deltim
      enddo
-   enddo
 !
-   if( mass.eq.1) then
-     do k = 1,levs
-       do i = 1,lons
-         dsfact(i,k)=(ppii(i,k)-ppii(i,k+1))/(ppia(i,k)-ppia(i,k+1))
+     if( mass.eq.1) then
+       do k = 1,levs
+         dsfact(k)=(ppii(k)-ppii(k+1))/(ppia(k)-ppia(k+1))
        enddo
-     enddo
-   endif
+     endif
 !
-   do n = 1,ncld                              !hmhj nisl
-     do k = 1,levs
-       do i = 1,lons
-         rqda(i,k) = qql(i,k,n)
+     do n = 1,ncld                              !hmhj nisl
+       do k = 1,levs
+         rqda(k,n) = qql(i,k,n)
        enddo
      enddo
      if( mass.eq.1 ) then
-       do k = 1,levs
-         do i = 1,lons
-           rqda(i,k) = rqda(i,k) * dsfact(i,k)
+       do n = 1,ncld
+         do k = 1,levs
+           rqda(k,n) = rqda(k,n) * dsfact(k)
          enddo
        enddo
      endif
-     call vertical_cell_ppm_intp(ppia,rqda,ppii,rqnn,lons,levs)
-     do k = 1,levs
-       do i = 1,lons
-         qql(i,k,n)=rqnn(i,k)
+     call vertical_cell_ppm_intp(ppia,rqda,ppii,rqnn,levs,ncld)
+     do n = 1,ncld
+       do k = 1,levs
+         qql(i,k,n)=rqnn(k,n)
        enddo
      enddo
    enddo

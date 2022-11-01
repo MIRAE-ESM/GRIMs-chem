@@ -50,7 +50,7 @@
          ! Transform to model grid
          CALL XSHIFT(F_ARRAY(1,1,L),LONFD,LATGD,1)
          CALL YREV(F_ARRAY(1,1,L),LONFD,LATGD,1)
-         CALL dyn_trans2model_grid(F_ARRAY(1,1,L),1)
+         CALL dyns_trans2model_grid(F_ARRAY(1,1,L),1)
 
       ENDDO
 !$OMP END PARALLEL DO
@@ -147,7 +147,7 @@
          ! Transform to model grid
          CALL XSHIFT(F_ARRAY(1,1,L),LONFD,LATGD,1)
          CALL YREV(F_ARRAY(1,1,L),LONFD,LATGD,1)
-         CALL dyn_trans2model_grid(F_ARRAY(1,1,L),1)
+         CALL dyns_trans2model_grid(F_ARRAY(1,1,L),1)
 
       ENDDO
 !$OMP END PARALLEL DO
@@ -239,7 +239,7 @@
       ! Transform to model grid
       CALL XSHIFT(F_ARRAY,LONFD,LATGD,IN_NL)
       CALL YREV(F_ARRAY,LONFD,LATGD,IN_NL)
-      CALL dyn_trans2model_grid(F_ARRAY,IN_NL)
+      CALL dyns_trans2model_grid(F_ARRAY,IN_NL)
       ENDIF
 
 #ifdef MP

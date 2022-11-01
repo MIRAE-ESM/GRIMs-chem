@@ -73,6 +73,7 @@
       USE comfphys,          ONLY : lastep
       USE comfver,           ONLY : stepone
 #endif
+      USE tprof,             ONLY : tprof_s, tprof_e
 
       USE CMN_DIAG_MOD    ! Diagnostic switches, NJDAY
       USE CMN_GCTM_MOD    ! Physical constants
@@ -81,6 +82,7 @@
 
       INTEGER :: DAY_OF_YEAR, ELAPSED_SEC, MONTH, NHMS, NYMD, HOUR
       INTEGER :: MINUTE, YEAR, SEASON, ELAPSED_TODAY
+      INTEGER :: ierr
       REAL*8  :: TAU
       CHARACTER(LEN=255) :: FILENAME
       LOGICAL, SAVE :: FIRST = .TRUE.
@@ -342,7 +344,9 @@
       IF ( ITS_TIME_FOR_DYN() ) THEN
 
          ! Call the appropritate version of TPCORE
+         ierr = tprof_s('    transport')
          IF ( LTRAN ) CALL DO_TRANSPORT
+         ierr = tprof_e('    transport')
 
          ! Reset air mass quantities
          CALL AIRQNT
@@ -376,12 +380,16 @@
          !========================================================
          !         ***** D R Y   D E P O S I T I O N *****
          !========================================================
+         ierr = tprof_s('    drydep')
          IF ( LDRYD ) CALL DO_DRYDEP
+         ierr = tprof_e('    drydep')
 
          !========================================================
          !             ***** E M I S S I O N S *****
          !========================================================
+         ierr = tprof_s('    emission')
          IF ( LEMIS ) CALL DO_EMISSIONS
+         ierr = tprof_e('    emission')
 
          IF ( ITS_TIME_FOR_UNIT() )
      &      CALL CONVERT_UNITS( 1, N_TRACERS, TCVV, AD, STT ) ! kg -> v/v
@@ -400,6 +408,7 @@
          !      ***** M I X E D   L A Y E R   M I X I N G *****
          !===========================================================
          ! Add option for non-local PBL. (Lin, 03/31/09)
+         ierr = tprof_s('    pblmix')
          IF ( .NOT. LNLPBL ) THEN
             CALL DO_PBL_MIX( LTURB )
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
@@ -410,10 +419,12 @@
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:2' )
+         ierr = tprof_e('    pblmix')
 
          !===========================================================
          !        ***** C L O U D   C O N V E C T I O N *****
          !===========================================================
+         ierr = tprof_s('    convection')
          IF ( LCONV ) THEN
 
             CALL DO_CONVECTION
@@ -421,6 +432,7 @@
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVECTION' )
          ENDIF
+         ierr = tprof_e('    convection')
       ENDIF
 
 
@@ -445,12 +457,16 @@
          !========================================================
          !         ***** D R Y   D E P O S I T I O N *****
          !========================================================
+         ierr = tprof_s('    drydep')
          IF ( LDRYD ) CALL DO_DRYDEP
+         ierr = tprof_e('    drydep')
             
          !========================================================
          !             ***** E M I S S I O N S *****
          !========================================================
+         ierr = tprof_s('    emission')
          IF ( LEMIS ) CALL DO_EMISSIONS
+         ierr = tprof_e('    emission')
       ENDIF
 
          
@@ -465,7 +481,9 @@
          CALL SET_CT_CHEM( INCREMENT=.TRUE. )
             
          ! Call the appropriate chemistry routine
+         ierr = tprof_s('    chemistry')
          CALL DO_CHEMISTRY
+         ierr = tprof_e('    chemistry')
          
       ENDIF
          
@@ -474,7 +492,9 @@
       !==============================================================
       IF ( LWETD .and. ITS_TIME_FOR_DYN() ) THEN
             
+         ierr = tprof_s('    wetdep')
          CALL DO_WETDEP
+         ierr = tprof_e('    wetdep')
             
       ENDIF
 

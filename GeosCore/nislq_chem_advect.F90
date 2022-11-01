@@ -7,7 +7,7 @@
 ! considering mass advection together with gases
 ! contact: hann-ming henry juang
 !
-! <in : top to bottom>
+! <in : bottom to top>
 ! deltim  time step from n to n+1 divided by 2
 ! pt      surface pressure in cb
 ! ut      horizontal u wind in m/s
@@ -127,7 +127,7 @@
 !
    call nislq_transpose_we2ns(vvlon,vvlat,LEVSS,nsize)
 !
-! qp[t2b], stt=[b2t]
+! qp[b2t], stt=[b2t]
 !
    do t = 1,nt
 !
@@ -135,7 +135,7 @@
    do k = 1,llpar
      do j = 1,jjpar
        do i = 1,iipar
-         qp(i,llpar+1-k,j) = stt(i,j,k,t)
+         qp(i,k,j) = stt(i,j,k,t)
        enddo
      enddo
    enddo
@@ -261,11 +261,11 @@
    do j = 1,jjend
      lonsd=LONF2S
 !
-!    pressure (top to bottom)
+!    pressure (bottom to top)
 !
      do k = 1,levs_+1
        do i = 1,lonsd
-         ppi(i,k)=ak5(k)+bk5(k)*pt(i,j)
+         ppi(i,k)=ak5(levs_+2-k)+bk5(levs_+2-k)*pt(i,j)
          pdot2(i,k)=pdot(i,k,j)
        enddo
      enddo
@@ -285,7 +285,7 @@
 !
      do k = 1,levs_
        do i = 1,iipar
-         stt(i,j,levs_+1-k,t)=qtn(i,k)
+         stt(i,j,k,t)=qtn(i,k)
        enddo
      enddo
    enddo
