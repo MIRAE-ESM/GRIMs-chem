@@ -69,10 +69,6 @@
       USE UVALBEDO_MOD,      ONLY : READ_UVALBEDO
       USE VDIFF_MOD,         ONLY : DO_PBL_MIX_2
       USE WETSCAV_MOD,       ONLY : DO_WETDEP, INIT_WETSCAV
-#ifndef RMP
-      USE comfphys,          ONLY : lastep
-      USE comfver,           ONLY : stepone
-#endif
       USE tprof,             ONLY : tprof_s, tprof_e
 
       USE CMN_DIAG_MOD    ! Diagnostic switches, NJDAY
@@ -86,10 +82,6 @@
       REAL*8  :: TAU
       CHARACTER(LEN=255) :: FILENAME
       LOGICAL, SAVE :: FIRST = .TRUE.
-
-#ifndef RMP
-      IF ( stepone .AND. .NOT. lastep ) RETURN
-#endif
 
       IF (FIRST) THEN
 
