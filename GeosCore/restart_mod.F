@@ -35,6 +35,8 @@
 
       INTEGER :: I, J, L, N
       INTEGER :: NI, NJ, NL, NT
+      INTEGER :: IUNIT
+      LOGICAL :: IS_OPEN
       REAL*8, ALLOCATABLE :: P_ARRAY(:,:,:)
       REAL*8, ALLOCATABLE :: F_ARRAY(:,:,:)
 
@@ -58,11 +60,20 @@
       !------------!
 
       IF (LMASTER) THEN
+      ! Get available unit for I/O
+      DO N = 101, 999
+         INQUIRE(UNIT=N, OPENED=IS_OPEN)
+         IF ( .not. IS_OPEN ) THEN
+            IUNIT = N
+            EXIT
+         ENDIF
+      ENDDO
+
       ! Open file for read
-      OPEN(9999, FILE='chemi', FORM='UNFORMATTED', STATUS='OLD')
+      OPEN(IUNIT, FILE='chemi', FORM='UNFORMATTED', STATUS='OLD')
 
       ! Read header
-      READ(9999) NI, NJ, NL, NT
+      READ(IUNIT) NI, NJ, NL, NT
 
       ! Dimension check
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
@@ -80,7 +91,7 @@
       DO N = 1, N_TRACERS
 
          IF (LMASTER) THEN
-         READ(9999) F_ARRAY
+         READ(IUNIT) F_ARRAY
          ENDIF
 
          CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLPAR, LLPAR, 0, 0 )
@@ -95,7 +106,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart chemi is read!'
@@ -110,10 +121,10 @@
 
       IF (LMASTER) THEN
       ! Open file for read
-      OPEN(9999, FILE='megani', FORM='UNFORMATTED', STATUS='OLD')
+      OPEN(IUNIT, FILE='megani', FORM='UNFORMATTED', STATUS='OLD')
 
       ! Read header
-      READ(9999) NI, NJ, NL, NT
+      READ(IUNIT) NI, NJ, NL, NT
 
       ! Dimension check
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
@@ -129,7 +140,7 @@
 
       ! Read T_DAY
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
@@ -138,7 +149,7 @@
 
       ! Read PARDR_DAY
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
@@ -147,7 +158,7 @@
 
       ! Read PARDF_DAY
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, DAY_DIM, DAY_DIM, 0, 0 )
@@ -164,7 +175,7 @@
 
       ! Read T_15
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
@@ -173,7 +184,7 @@
 
       ! Read PARDR_15
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
@@ -182,7 +193,7 @@
 
       ! Read PARDF_15
       IF (LMASTER) THEN
-      READ(9999) F_ARRAY
+      READ(IUNIT) F_ARRAY
       ENDIF
 
       CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, NUM_DAYS, NUM_DAYS, 0, 0 )
@@ -195,7 +206,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart megani is read!'
@@ -213,10 +224,10 @@
 
       IF (LMASTER) THEN
       ! Open file for read
-      OPEN(9999, FILE='cspeci', FORM='UNFORMATTED', STATUS='OLD')
+      OPEN(IUNIT, FILE='cspeci', FORM='UNFORMATTED', STATUS='OLD')
 
       ! Read header
-      READ(9999) NI, NJ, NL, NT
+      READ(IUNIT) NI, NJ, NL, NT
 
       ! Dimension check
       IF ( NI .NE. IGLOB .OR. NJ .NE. JGLOB .OR.
@@ -242,7 +253,7 @@
       DO N = 1, NT
 
          IF (LMASTER) THEN
-         READ(9999) F_ARRAY
+         READ(IUNIT) F_ARRAY
          ENDIF
 
          CALL TRANS_INPUT_RST( F_ARRAY, P_ARRAY, LLTROP, LLTROP, 0, 0 )
@@ -257,7 +268,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart cspeci is read!'
@@ -274,6 +285,8 @@
       SUBROUTINE WRITE_RESTART
 
       INTEGER :: I, J, L, N
+      INTEGER :: IUNIT
+      LOGICAL :: IS_OPEN
       REAL*8, ALLOCATABLE :: P_ARRAY(:,:,:)
       REAL*8, ALLOCATABLE :: F_ARRAY(:,:,:)
 
@@ -282,11 +295,20 @@
       !-------------!
 
       IF (LMASTER) THEN
+      ! Get available unit for I/O
+      DO N = 101, 999
+         INQUIRE(UNIT=N, OPENED=IS_OPEN)
+         IF ( .not. IS_OPEN ) THEN
+            IUNIT = N
+            EXIT
+         ENDIF
+      ENDDO
+
       ! Open file for write
-      OPEN(9999, FILE='chemi', FORM='UNFORMATTED', STATUS='REPLACE')
+      OPEN(IUNIT, FILE='chemi', FORM='UNFORMATTED', STATUS='REPLACE')
 
       ! Write header
-      WRITE(9999) IGLOB, JGLOB, LLPAR, N_TRACERS
+      WRITE(IUNIT) IGLOB, JGLOB, LLPAR, N_TRACERS
       ENDIF
 
       ! Allocate
@@ -301,7 +323,7 @@
          CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLPAR )
 
          IF (LMASTER) THEN
-         WRITE(9999) F_ARRAY
+         WRITE(IUNIT) F_ARRAY
          ENDIF
 
       ENDDO
@@ -312,7 +334,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart chemi is written!'
@@ -326,10 +348,10 @@
 
       IF (LMASTER) THEN
       ! Open file for write
-      OPEN(9999, FILE='megani', FORM='UNFORMATTED', STATUS='REPLACE')
+      OPEN(IUNIT, FILE='megani', FORM='UNFORMATTED', STATUS='REPLACE')
 
       ! Write header
-      WRITE(9999) IGLOB, JGLOB, DAY_DIM, NUM_DAYS
+      WRITE(IUNIT) IGLOB, JGLOB, DAY_DIM, NUM_DAYS
       ENDIF
 
       ! Allocate
@@ -342,7 +364,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, DAY_DIM )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Write PARDR_DAY
@@ -351,7 +373,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, DAY_DIM )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Write PARDF_DAY
@@ -360,7 +382,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, DAY_DIM )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Deallocate
@@ -377,7 +399,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, NUM_DAYS )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Write PARDR_15
@@ -386,7 +408,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, NUM_DAYS )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Write PARDF_15
@@ -395,7 +417,7 @@
       CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, NUM_DAYS )
 
       IF (LMASTER) THEN
-      WRITE(9999) F_ARRAY
+      WRITE(IUNIT) F_ARRAY
       ENDIF
 
       ! Deallocate
@@ -404,7 +426,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart megani is written!'
@@ -420,10 +442,10 @@
 
       IF (LMASTER) THEN
       ! Open file for write
-      OPEN(9999, FILE='cspeci', FORM='UNFORMATTED', STATUS='REPLACE')
+      OPEN(IUNIT, FILE='cspeci', FORM='UNFORMATTED', STATUS='REPLACE')
 
       ! Write header
-      WRITE(9999) IGLOB, JGLOB, LLTROP, NTSPECGAS
+      WRITE(IUNIT) IGLOB, JGLOB, LLTROP, NTSPECGAS
       ENDIF
 
       ! Allocate
@@ -438,7 +460,7 @@
          CALL TRANS_OUTPUT( P_ARRAY, F_ARRAY, LLTROP )
 
          IF (LMASTER) THEN
-         WRITE(9999) F_ARRAY
+         WRITE(IUNIT) F_ARRAY
          ENDIF
 
       ENDDO
@@ -449,7 +471,7 @@
 
       IF (LMASTER) THEN
       ! Close file
-      CLOSE(9999)
+      CLOSE(IUNIT)
 
       ! Message
       WRITE(6,*) '    - RESTART_MOD: Restart cspeci is written!'
