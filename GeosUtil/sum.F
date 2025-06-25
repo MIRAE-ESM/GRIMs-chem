@@ -52,7 +52,7 @@
 #ifdef MP
       ! Gather values from all PE
       CALL MPI_GATHER( VALUE, 1, MPI_REAL8, BUFFER, 1, MPI_REAL8,
-     &                 0, MPI_COMM_WORLD, IERR )
+     &                 0, comm_world, IERR )
 
       ! Sum
       TOTAL = SUM( BUFFER )

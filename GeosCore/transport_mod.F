@@ -482,7 +482,7 @@
       ! Gather values from all PE
       CALL MPI_ALLGATHER( SUMALL, N_TOT_TRC*3, MPI_REAL16,
      &                    BUFFER, N_TOT_TRC*3, MPI_REAL16,
-     &                    MPI_COMM_WORLD, IERR )
+     &                    comm_world, IERR )
       SUMALL = SUM( BUFFER, DIM=3 )
 #endif
 
