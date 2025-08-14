@@ -212,6 +212,9 @@
 !     USE TAGGED_OX_MOD,  ONLY : ADD_STRAT_POX
       USE TIME_MOD,       ONLY : GET_TS_DYN
       USE TRACER_MOD,     ONLY : STT, ITS_A_TAGOX_SIM
+#ifdef CHEM_NEWTP
+      USE TRACER_MOD,     ONLY : STT_TP
+#endif
       USE TRACERID_MOD,   ONLY : IDTOX
       USE TROPOPAUSE_MOD, ONLY : GET_TPAUSE_LEVEL
       
@@ -491,8 +494,13 @@
                PO3 = PO3 * H70mb / BXHEIGHT(I,J,L) 
             ENDIF
             
+#ifdef CHEM_NEWTP
+            ! Store O3 flux in the proper tracer number
+            STT_TP(I,J,L,NTRACER) = STT_TP(I,J,L,NTRACER) + PO3
+#else
             ! Store O3 flux in the proper tracer number
             STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER) + PO3 
+#endif
 
             ! Store O3 flux for strat Ox tracer (Tagged Ox only)
             !IF ( ITS_A_TAGOX_SIM() ) CALL ADD_STRAT_POX( I, J, L, PO3 )
@@ -551,6 +559,9 @@
       USE TIME_MOD,       ONLY : GET_TS_DYN,   GET_MONTH
       USE TIME_MOD,       ONLY : ITS_A_NEW_MONTH
       USE TRACER_MOD,     ONLY : STT,          XNUMOLAIR
+#ifdef CHEM_NEWTP
+      USE TRACER_MOD,     ONLY : STT_TP
+#endif
 !     USE TRANSFER_MOD,   ONLY : TRANSFER_ZONAL
       USE TROPOPAUSE_MOD, ONLY : GET_MIN_TPAUSE_LEVEL
       USE TROPOPAUSE_MOD, ONLY : ITS_IN_THE_STRAT
@@ -807,12 +818,21 @@
                ! PNOY is now the total [NOy] concentration
                PNOY = PNOY + STT(I,J,L,IDTNOX) + STT(I,J,L,IDTHNO3)
 
+#ifdef CHEM_NEWTP
+               ! Partition total [NOy] to [NOx], units are [v/v]
+               STT_TP(I,J,L,IDTNOX)  = PNOY * XRATIO(I,J,L)
+
+               ! Partition total [NOy] to [HNO3], units are [v/v]
+               STT_TP(I,J,L,IDTHNO3) = PNOY *
+     &                            MAX( ( 1d0 -  XRATIO(I,J,L) ), 1d-20 )
+#else
                ! Partition total [NOy] to [NOx], units are [v/v]
                STT(I,J,L,IDTNOX)  = PNOY * XRATIO(I,J,L) 
 
                ! Partition total [NOy] to [HNO3], units are [v/v]
                STT(I,J,L,IDTHNO3) = PNOY *
      &                            MAX( ( 1d0 -  XRATIO(I,J,L) ), 1d-20 )
+#endif
 
             ENDIF
          ENDDO   

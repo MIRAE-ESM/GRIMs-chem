@@ -285,7 +285,7 @@
 !
      do k = 1,levs_
        do i = 1,iipar
-         stt(i,j,k,t)=qtn(i,k)
+         stt(i,j,k,t)=max(qtn(i,k),0.)
        enddo
      enddo
    enddo

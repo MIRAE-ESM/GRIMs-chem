@@ -62,6 +62,9 @@
       USE TIME_MOD,          ONLY : EXPAND_DATE
       USE TRACER_MOD,        ONLY : CHECK_STT, N_TRACERS
       USE TRACER_MOD,        ONLY : STT, TCVV
+#ifdef CHEM_NEWTP
+      USE TRACER_MOD,        ONLY : STT_TP
+#endif
       USE TRACER_MOD,        ONLY : ITS_A_FULLCHEM_SIM
       USE TRANSPORT_MOD,     ONLY : DO_TRANSPORT
       USE TROPOPAUSE_MOD,    ONLY : CHECK_VAR_TROP, DIAG_TROPOPAUSE
@@ -85,13 +88,6 @@
 
       IF (FIRST) THEN
 
-         ! Call AIRQNT to compute air mass quantities from PSC2
-         CALL SET_FLOATING_PRESSURE( PS1 )
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a SET_FLT_PRS' )
-
-         CALL AIRQNT
-         IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a AIRQNT' )
-
          ! Read land types and fractions from "vegtype.global"
          CALL RDLAND
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a RDLAND' )
@@ -105,9 +101,6 @@
            CALL DO_PBL_MIX_2( .FALSE. )
            IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a NLPBL 1' )
          ENDIF
-
-         ! Tropopause [hPa]
-         CALL TPP_REICHLER( T, PS1, TROPP )
 
          ! Save I6 fields
          IF ( MOD(GET_NHMS(),010000) .EQ. 0 ) THEN
@@ -276,20 +269,20 @@
       ENDIF
 
       ! Tropopause [hPa]
-      CALL TPP_REICHLER( T, PSC2, TROPP )
+      !CALL TPP_REICHLER( T, PSC2, TROPP )
 
       ! Case of variable tropopause:
       ! Check LLTROP and set LMIN, LMAX, and LPAUSE
       ! since this is not done with READ_TROPOPAUSE anymore.
       ! (Need to double-check that LMIN, Lmax are not used before-phs) 
-      IF ( LVARTROP ) CALL CHECK_VAR_TROP
+      !IF ( LVARTROP ) CALL CHECK_VAR_TROP
 
       ! If we are not doing transport, then make sure that
       ! the floating pressure is set to PSC2 (bdf, bmy, 8/22/02)
       IF ( .not. LTRAN ) CALL SET_FLOATING_PRESSURE( PSC2 )
 
       ! Compute airmass quantities at each grid box 
-      CALL AIRQNT
+      IF ( .not. LTRAN ) CALL AIRQNT
 
       ! Compute the cosine of the solar zenith angle array
       ! SUNCOS     = cos(SZA) at the current time
@@ -325,20 +318,28 @@
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVERT_UNITS:1' )
       ENDIF
 
+#ifndef CHEM_NEWTP
       !==============================================================
       !     ***** S T R A T O S P H E R I C   F L U X E S *****
       !==============================================================
       IF ( LUPBD ) CALL DO_UPBDFLX
+#endif
 
       !==============================================================
       !              ***** T R A N S P O R T *****
       !==============================================================
       IF ( ITS_TIME_FOR_DYN() ) THEN
 
+#ifndef CHEM_NEWTP
          ! Call the appropritate version of TPCORE
          ierr = tprof_s('    transport')
          IF ( LTRAN ) CALL DO_TRANSPORT
          ierr = tprof_e('    transport')
+#else
+         ! We do transport in dyns_slq_driver
+         STT = STT_TP
+         CALL SET_FLOATING_PRESSURE( PSC2 )
+#endif
 
          ! Reset air mass quantities
          CALL AIRQNT

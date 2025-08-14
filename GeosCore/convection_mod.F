@@ -1137,14 +1137,21 @@
       ! Find the cloud base
       DO J = 1, JJPAR
       DO I = 1, IMR
-      DO K = 2, NLAY
-         CB(I,J) = K
-         IF ( DTRN(I,J,K) > 0d0 ) EXIT
-      ENDDO
-      DO K = KTOP, 1, -1
-         CB2(I,J) = K
-         IF ( DTRN2(I,J,K) > 0d0 ) EXIT
-      ENDDO
+         CB(I,J)  = NLAY
+         CB2(I,J) = 0
+         IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+         DO K = 2, KTOP
+            IF ( DTRN(I,J,K) > 0d0 ) THEN
+               CB(I,J) = K
+               EXIT
+            ENDIF
+         ENDDO
+         DO K = KTOP, 2, -1
+            IF ( DTRN2(I,J,K) > 0d0 ) THEN
+               CB2(I,J) = K
+               EXIT
+            ENDIF
+         ENDDO
       ENDDO
       ENDDO
 #else
@@ -1248,7 +1255,7 @@
             DO J = 1, JJPAR
             DO I = 1, IMR
 
-               IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+               IF (CB(I,J) .EQ. NLAY) CYCLE
 
                !========================================================
                ! (4.1) If Cloud Mass Flux exists at (I,J,2), 
@@ -1351,12 +1358,11 @@
             ! is the level ABOVE level K.  This is the way that SJ Lin 
             ! indexes the sigma levels.
             !===========================================================
-            DO K = 1, KTOP
+            DO K = 2, KTOP
             DO J = 1, JJPAR
 
                DO I = 1, IMR
 
-                  IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
                   IF (K .LT. CB(I,J)) CYCLE
 
                   ! Grid box surface area [m2]
@@ -1573,7 +1579,7 @@
             DO J = 1, JJPAR
             DO I = 1, IMR
 
-               IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
+               IF (CB2(I,J) .EQ. 0) CYCLE
 
                QB(I,J) = Q(I,J,CB2(I,J)+1,IC)
                MB(I,J) = BMASS(I,J,CB2(I,J)+1)
@@ -1589,12 +1595,11 @@
             ENDDO
 
             ! Downdraft
-            DO K = NLAY, 1, -1
+            DO K = KTOP, 1, -1
             DO J = 1, JJPAR
 
                DO I = 1, IMR
 
-                  IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
                   IF (K .GT. CB2(I,J)) CYCLE
 
                   ! Grid box surface area [m2]
@@ -1675,8 +1680,6 @@
          DO K  = 1,  KTOP
          DO J  = 1,  JJPAR
          DO I  = 1,  IMR
-            IF (LATID(I,J) .LT. JS .OR. LATID(I,J) .GT. JN) CYCLE
-            IF (K .LT. CB(I,J)) CYCLE
             CONVFLUP(I,J,K,IC) = CONVFLUP(I,J,K,IC) +
      &                           ( DTCSUM(I,J,K,IC) / DNS )
          ENDDO

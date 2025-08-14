@@ -117,7 +117,7 @@
       ENDIF
 
       ! Linoz needs time step in seconds
-      NSCHEM = GET_TS_CHEM() * 60D0 
+      NSCHEM = GET_TS_DYN() * 60D0
 
       ! Call the Linoz chemistry
       CALL LINOZ_CHEM3( NSCHEM )
@@ -336,6 +336,15 @@
                ! LINOX valid only up to 58 km, so do not use above 0.3 hPa
                ! dbj: impose exponential fall off of mixing ratio 
                ! between 0.3 and 0.01 hPa (with fall off of a scale height)
+#ifdef CHEM_NEWTP
+               IF (GET_PEDGE(I,J,L) .LE. 0.3D0 .or. L .EQ. LM) THEN
+                  STT_TP(I,J,L,NTRACER) =
+     &                (GET_PCENTER(I,J,L)/GET_PCENTER(I,J,LPOS-1)) *
+     &                STT_TP(I,J,LPOS-1,NTRACER)
+               ELSE
+                  STT_TP(I,J,L,NTRACER) = STT_TP(I,J,L,NTRACER)+DMASS
+               ENDIF
+#else
                IF (GET_PEDGE(I,J,L) .LE. 0.3D0 .or. L .EQ. LM) THEN
                   STT(I,J,L,NTRACER) = 
      &                (GET_PCENTER(I,J,L)/GET_PCENTER(I,J,LPOS-1)) * 
@@ -343,6 +352,7 @@
                ELSE
                   STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER)+DMASS 
                ENDIF
+#endif
 
             ENDDO       ! loop over L
 
@@ -352,8 +362,13 @@
                DO L = LBOT-1,1,-1
 
                   ! Lifetime = 22.3day
+#ifdef CHEM_NEWTP
+                  STT_TP(I,J,L,NTRACER) = STT_TP(I,J,L,NTRACER)
+     &                              * EXP( - DTCHEM / 22.3d0 / 86400d0 )
+#else
                   STT(I,J,L,NTRACER) = STT(I,J,L,NTRACER)
      &                              * EXP( - DTCHEM / 22.3d0 / 86400d0 )
+#endif
 
                ENDDO       ! loop over L
 

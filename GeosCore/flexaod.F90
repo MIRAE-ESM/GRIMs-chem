@@ -13,10 +13,8 @@
 
 module flexaod
 
-  use dao_mod,       only : airden, bxheight, rh, ps1
-  use dao_mod,       only : airqnt, make_rh
+  use dao_mod,       only : airden, bxheight, rh
   use directory_mod, only : data_dir
-  use pressure_mod,  only : set_floating_pressure
   use tracer_mod,    only : stt
   use tracerid_mod,  only : idtso4, idtnh4, idtnit
   use tracerid_mod,  only : idtbcpi, idtocpi, idtbcpo, idtocpo
@@ -675,16 +673,8 @@ subroutine calc_aod
   real :: k_ext, k_sca, numconc
   real,dimension(nsizspc+2) :: conc_gcm3
   real,dimension(nrh) :: rw, qw, gw, ssw
-  logical, save :: first = .true.
 
-  if (first) then
-    call set_floating_pressure(ps1)
-    call airqnt
-    call make_rh
-    first = .false.
-  endif
-
-  ! Loop over horizontal grid
+  ! Initialize
   outod = 0.0
   outssa = 0.0
   outg = 0.0
@@ -698,12 +688,9 @@ subroutine calc_aod
 !$omp private( k_ext, k_sca, numconc ) &
 !$omp private( conc_gcm3 ) &
 !$omp private( rw, qw, gw, ssw )
-  do ibnd = 1,nbnd
+  do l = 1,nl
   do j = 1,nj
   do i = 1,ni
-
-    ! Loop over levels
-    do l = 1,nl
 
       conc_gcm3 = 0d0
       ! Tracer concentrations (kg/kg)
@@ -760,19 +747,28 @@ subroutine calc_aod
       ! Box Height (m --> cm)
       dz = bxheight(i,j,l) * 1e2
 
+      ! Select RH bin
+      do irh = 2,nrh
+        if (rh(i,j,l)<rhbins(irh)) exit
+      enddo
+      irh = irh - 1
 
-      ! Reset total variables
-      kappa_ext = 0.0
-      kappa_sca = 0.0
-      totssa = 0.0
-      totg = 0.0
+      if (irh<nrh) then
+        ! Interpolation weight
+        weight = (rh(i,j,l)-rhbins(irh)) / (rhbins(irh+1)-rhbins(irh))
+        if ( weight > 1.0d0 ) weight = 1.0d0
+      endif
 
 
-        ! Select RH bin
-        do irh = 2,nrh
-          if (rh(i,j,l)<rhbins(irh)) exit
-        enddo
-        irh = irh - 1
+      ! Loop over bands
+      do ibnd = 1,nbnd
+
+        ! Reset total variables
+        kappa_ext = 0.0
+        kappa_sca = 0.0
+        totssa = 0.0
+        totg = 0.0
+
 
       ! Loop over non-dust species
       do ispec = 1,nspecs-1
@@ -806,10 +802,6 @@ subroutine calc_aod
 
             ! Interpolate optical parameters
             if (irh<nrh) then
-
-              ! Interpolation weight
-              weight = (rh(i,j,l)-rhbins(irh)) / (rhbins(irh+1)-rhbins(irh))
-              if ( weight > 1.0d0 ) weight = 1.0d0
 
               ! Interpolate radius and Q scaling factor
               scaleq = (weight*qw(irh+1) + (1.d0-weight)*qw(irh)) / qw(1)
@@ -953,7 +945,7 @@ subroutine calc_aod
          outg(i,j,l,ibnd) = totg / kappa_sca
       endif
 
-    enddo  ! levels
+    enddo
 
   enddo
   enddo

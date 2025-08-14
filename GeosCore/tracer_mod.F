@@ -61,6 +61,7 @@
 !  16 Feb 2011 - R. Yantosca - Add modifications for APM microphysics (G. Luo)
 !******************************************************************************
 !
+#     include "define.h"
       !=================================================================
       ! MODULE VARIABLES
       !=================================================================
@@ -81,6 +82,9 @@
       INTEGER,           ALLOCATABLE :: ID_EMITTED(:)
       INTEGER,           ALLOCATABLE :: TRACER_N_CONST(:)
       REAL*8,            ALLOCATABLE :: STT(:,:,:,:)
+#ifdef CHEM_NEWTP
+      REAL*8,            ALLOCATABLE :: STT_TP(:,:,:,:)
+#endif
       REAL*8,            ALLOCATABLE :: TCVV(:)
       REAL*8,            ALLOCATABLE :: TRACER_COEFF(:,:)
       REAL*8,            ALLOCATABLE :: TRACER_MW_G(:)
@@ -576,6 +580,10 @@
 #if   defined( APM ) 
       USE APM_INIT_MOD,  ONLY : APM_NTRACERS
 #endif
+#ifdef CHEM_NEWTP
+      USE nislq, ONLY : nlevs, nlevsp
+      USE paramodel, ONLY : LEVSS
+#endif
 
       USE CMN_SIZE_MOD
 
@@ -616,6 +624,12 @@
 
       ! N_TOT_TRC is the total # of G-C advected tracers only
       N_TOT_TRC = N_TRACERS
+
+#ifdef CHEM_NEWTP
+      ! For NISLQ
+      nlevs  = nlevs  + N_TOT_TRC * LLPAR
+      nlevsp = nlevsp + N_TOT_TRC * LEVSS
+#endif
 
 #endif
 
@@ -662,6 +676,12 @@
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'STT' )
       STT = 0d0      
 
+#ifdef CHEM_NEWTP
+      ALLOCATE( STT_TP( IIPAR, JJPAR, LLPAR, N_TOT_TRC ), STAT=AS )
+      IF ( AS /= 0 ) CALL ALLOC_ERR( 'STT_TP' )
+      STT_TP = 0d0
+#endif
+
       ALLOCATE( XNUMOL( N_TOT_TRC ), STAT=AS )
       IF ( AS /= 0 ) CALL ALLOC_ERR( 'XNUMOL' )
       XNUMOL = 0
@@ -694,6 +714,9 @@
       IF ( ALLOCATED( TRACER_MW_G    ) ) DEALLOCATE( TRACER_MW_G    )
       IF ( ALLOCATED( TRACER_MW_KG   ) ) DEALLOCATE( TRACER_MW_KG   )
       IF ( ALLOCATED( STT            ) ) DEALLOCATE( STT            )
+#ifdef CHEM_NEWTP
+      IF ( ALLOCATED( STT_TP         ) ) DEALLOCATE( STT_TP         )
+#endif
       IF ( ALLOCATED( XNUMOL         ) ) DEALLOCATE( XNUMOL         )
 
       ! Return to calling program

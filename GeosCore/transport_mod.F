@@ -236,10 +236,13 @@
 !
       INTEGER :: I, J, L, L2, N, N_DYN, N_TOT_TRC
       REAL*8  :: A_DIFF, D_DYN, TR_DIFF
+#ifdef NOUSE
       REAL*8  :: AD_A(IIPAR,JJPAR,LLPAR)
       REAL*8  :: AD_B(IIPAR,JJPAR,LLPAR)
+#endif
       REAL*8  :: P_TP1(IIPAR,JJPAR)
       REAL*8  :: P_TP2(IIPAR,JJPAR)
+#ifdef NOUSE
       REAL*8  :: P_TEMP(IIPAR,JJPAR)
       REAL*8  :: TR_A(IIPAR,JJPAR,LLPAR)
 #if   defined( APM )
@@ -255,6 +258,7 @@
       ! Variable to ensure mass conservation (ccc, 2/17/09)
       REAL*8  :: SUMADA
       REAL*16 :: SUMALL(N_TRACERS,3)
+#endif
 
       ! For NISLQ
       REAL*8  :: deltim
@@ -263,18 +267,22 @@
       REAL*8  :: vt(LONF2S,LLPAR,LATG2S)
       REAL*8  :: pdot(LONF2S,LLPAR+1,LATG2S)
 
+#ifdef NOUSE
 #ifdef MP
       ! For MPI
       INTEGER :: IERR
       REAL*16 :: BUFFER(N_TRACERS,3,npes)
+#endif
 #endif
 
       !=================================================================
       ! GEOS4_GEOS5_GLOBAL_ADV begins here!
       !=================================================================
 
+#ifdef NOUSE
       ! Initialize
       SUMALL = 0d0
+#endif
 
       ! Pick the proper # of tracers
 #if   defined( APM )
@@ -315,6 +323,7 @@
       ENDDO
 !$OMP END PARALLEL DO
       
+#ifdef NOUSE
       !=================================================================
       ! Get the air and tracer mass before advection
       !=================================================================
@@ -347,6 +356,7 @@
       ENDDO
       ENDDO
 !$OMP END PARALLEL DO
+#endif
 
 #if   defined( GRIMS )
 
@@ -443,6 +453,7 @@
       ! surface pressure at the end of the dynamic timestep.
       CALL SET_FLOATING_PRESSURE( P_TP2 )
 
+#ifdef NOUSE
       ! Adjust tracer to correct residual non-conservation of mass
       ! This was changed to be applied only for cells with tracer 
       ! concentration. (ccc, 11/20/08) 
@@ -512,6 +523,7 @@
          ENDDO
       ENDDO
 !$OMP END PARALLEL DO
+#endif
 
       !### Debug
       IF ( LPRT ) CALL DEBUG_MSG( '### G4_G5_GLOB_ADV: a TPCORE' ) 
