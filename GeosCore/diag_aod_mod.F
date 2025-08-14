@@ -129,6 +129,7 @@
       !=================================================================
       CATEGORY  = 'AEROSWRF'
 
+#ifdef CHEM_SWRF
       ! Select proper unit string
       UNIT = 'K/s'
 
@@ -149,6 +150,7 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
       ! Select proper unit string
       UNIT = 'W/m2'
@@ -185,6 +187,7 @@
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
 
+#ifdef CHEM_SWRF
       ! Select proper unit string
       UNIT = 'K/s'
 
@@ -240,12 +243,14 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
       !=================================================================
       ! CATEGORY = AEROLWRF
       !=================================================================
       CATEGORY  = 'AEROLWRF'
 
+#ifdef CHEM_LWRF
       ! Select proper unit string
       UNIT = 'K/s'
 
@@ -266,6 +271,7 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     LLPAR,    1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
       ! Select proper unit string
       UNIT = 'W/m2'
@@ -302,6 +308,7 @@
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
 
+#ifdef CHEM_LWRF
       ! Select proper unit string
       UNIT = 'K/s'
 
@@ -357,7 +364,9 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
+#ifdef CHEM_SWRF
       !=================================================================
       ! CATEGORY = CLDSWRF
       !=================================================================
@@ -397,7 +406,9 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
+#ifdef CHEM_LWRF
       !=================================================================
       ! CATEGORY = CLDLWRF
       !=================================================================
@@ -437,6 +448,7 @@
      &            UNIT,      DIAGb,     DIAGe,    RESERVED,
      &            IIPAR,     JJPAR,     1,        1,
      &            1,         1,         ARRAY(:,:,1) )
+#endif
 
       IF (LMASTER) THEN
       WRITE( 6, '(a)' ) '     - DIAG_AOD: Diagnostics written to bpch!'
