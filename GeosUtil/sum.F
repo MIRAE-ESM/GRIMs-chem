@@ -62,8 +62,10 @@
 #endif
 
       ! Remove floating-point error
-      L_TOT = LOG(TOTAL)
-      L_TOT = REAL(L_TOT-INT(L_TOT),4) + INT(L_TOT)
-      TOTAL = EXP(L_TOT)
+      IF ( TOTAL .GT. 0. ) THEN
+         L_TOT = LOG(TOTAL)
+         L_TOT = REAL(L_TOT-INT(L_TOT),4) + INT(L_TOT)
+         TOTAL = EXP(L_TOT)
+      ENDIF
 
       END FUNCTION SUM_VALUE
