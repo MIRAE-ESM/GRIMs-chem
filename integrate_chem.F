@@ -72,6 +72,7 @@
       USE UVALBEDO_MOD,      ONLY : READ_UVALBEDO
       USE VDIFF_MOD,         ONLY : DO_PBL_MIX_2
       USE WETSCAV_MOD,       ONLY : DO_WETDEP, INIT_WETSCAV
+      USE comfver,           ONLY : inistp
       USE tprof,             ONLY : tprof_s, tprof_e
 
       USE CMN_DIAG_MOD    ! Diagnostic switches, NJDAY
@@ -85,6 +86,34 @@
       REAL*8  :: TAU
       CHARACTER(LEN=255) :: FILENAME
       LOGICAL, SAVE :: FIRST = .TRUE.
+
+      IF (inistp) THEN
+#ifndef CHEM_NEWTP
+         ierr = tprof_s('      transport', 2)
+         ierr = tprof_e('      transport', 2)
+#endif
+         IF ( LNLPBL ) THEN
+            ierr = tprof_s('      drydep', 2)
+            ierr = tprof_e('      drydep', 2)
+            ierr = tprof_s('      emission', 2)
+            ierr = tprof_e('      emission', 2)
+         ENDIF
+         ierr = tprof_s('      pblmix', 2)
+         ierr = tprof_e('      pblmix', 2)
+         ierr = tprof_s('      convection', 2)
+         ierr = tprof_e('      convection', 2)
+         IF ( .NOT. LNLPBL ) THEN
+            ierr = tprof_s('      drydep', 2)
+            ierr = tprof_e('      drydep', 2)
+            ierr = tprof_s('      emission', 2)
+            ierr = tprof_e('      emission', 2)
+         ENDIF
+         ierr = tprof_s('      chemistry', 2)
+         ierr = tprof_e('      chemistry', 2)
+         ierr = tprof_s('      wetdep', 2)
+         ierr = tprof_e('      wetdep', 2)
+         RETURN
+      ENDIF
 
       IF (FIRST) THEN
 
@@ -332,9 +361,9 @@
 
 #ifndef CHEM_NEWTP
          ! Call the appropritate version of TPCORE
-         ierr = tprof_s('    transport')
+         ierr = tprof_s('      transport', 2)
          IF ( LTRAN ) CALL DO_TRANSPORT
-         ierr = tprof_e('    transport')
+         ierr = tprof_e('      transport', 2)
 #else
          ! We do transport in dyns_slq_driver
          STT = STT_TP
@@ -373,16 +402,16 @@
          !========================================================
          !         ***** D R Y   D E P O S I T I O N *****
          !========================================================
-         ierr = tprof_s('    drydep')
+         ierr = tprof_s('      drydep', 2)
          IF ( LDRYD ) CALL DO_DRYDEP
-         ierr = tprof_e('    drydep')
+         ierr = tprof_e('      drydep', 2)
 
          !========================================================
          !             ***** E M I S S I O N S *****
          !========================================================
-         ierr = tprof_s('    emission')
+         ierr = tprof_s('      emission', 2)
          IF ( LEMIS ) CALL DO_EMISSIONS
-         ierr = tprof_e('    emission')
+         ierr = tprof_e('      emission', 2)
 
          IF ( ITS_TIME_FOR_UNIT() )
      &      CALL CONVERT_UNITS( 1, N_TRACERS, TCVV, AD, STT ) ! kg -> v/v
@@ -401,7 +430,7 @@
          !      ***** M I X E D   L A Y E R   M I X I N G *****
          !===========================================================
          ! Add option for non-local PBL. (Lin, 03/31/09)
-         ierr = tprof_s('    pblmix')
+         ierr = tprof_s('      pblmix', 2)
          IF ( .NOT. LNLPBL ) THEN
             CALL DO_PBL_MIX( LTURB )
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:1' )
@@ -412,12 +441,12 @@
 
          !### Debug
          IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a TURBDAY:2' )
-         ierr = tprof_e('    pblmix')
+         ierr = tprof_e('      pblmix', 2)
 
          !===========================================================
          !        ***** C L O U D   C O N V E C T I O N *****
          !===========================================================
-         ierr = tprof_s('    convection')
+         ierr = tprof_s('      convection', 2)
          IF ( LCONV ) THEN
 
             CALL DO_CONVECTION
@@ -425,7 +454,7 @@
             !### Debug
             IF ( LPRT ) CALL DEBUG_MSG( '### MAIN: a CONVECTION' )
          ENDIF
-         ierr = tprof_e('    convection')
+         ierr = tprof_e('      convection', 2)
       ENDIF
 
 
@@ -450,16 +479,16 @@
          !========================================================
          !         ***** D R Y   D E P O S I T I O N *****
          !========================================================
-         ierr = tprof_s('    drydep')
+         ierr = tprof_s('      drydep', 2)
          IF ( LDRYD ) CALL DO_DRYDEP
-         ierr = tprof_e('    drydep')
+         ierr = tprof_e('      drydep', 2)
             
          !========================================================
          !             ***** E M I S S I O N S *****
          !========================================================
-         ierr = tprof_s('    emission')
+         ierr = tprof_s('      emission', 2)
          IF ( LEMIS ) CALL DO_EMISSIONS
-         ierr = tprof_e('    emission')
+         ierr = tprof_e('      emission', 2)
       ENDIF
 
          
@@ -474,9 +503,9 @@
          CALL SET_CT_CHEM( INCREMENT=.TRUE. )
             
          ! Call the appropriate chemistry routine
-         ierr = tprof_s('    chemistry')
+         ierr = tprof_s('      chemistry', 2)
          CALL DO_CHEMISTRY
-         ierr = tprof_e('    chemistry')
+         ierr = tprof_e('      chemistry', 2)
          
       ENDIF
          
@@ -485,9 +514,9 @@
       !==============================================================
       IF ( LWETD .and. ITS_TIME_FOR_DYN() ) THEN
             
-         ierr = tprof_s('    wetdep')
+         ierr = tprof_s('      wetdep', 2)
          CALL DO_WETDEP
-         ierr = tprof_e('    wetdep')
+         ierr = tprof_e('      wetdep', 2)
             
       ENDIF
 
