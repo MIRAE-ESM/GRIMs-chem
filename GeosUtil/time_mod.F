@@ -429,7 +429,7 @@
       ENDIF
 
       ! Error check THISNYMDb
-      IF ( THISNYMDb < 19000101 ) THEN
+      IF ( THISNYMDb < 18500101 ) THEN
          CALL ERROR_STOP( 'NYMDb must be in the format YYYYMMDD!',
      &                    'SET_BEGIN_TIME (time_mod.f)' )
 

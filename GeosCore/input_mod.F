@@ -1587,6 +1587,7 @@
 !     READ( SUBSTRS(1:N), * ) TS_EMIS
 #ifndef RMP
       TS_EMIS = con(1) / 60d0
+      IF ( con(1) == 1200d0 ) TS_EMIS = TS_EMIS * 3d0
 #else
       TS_EMIS = con(11) / 60d0
 #endif
@@ -2608,6 +2609,7 @@
 !     READ( SUBSTRS(1:N), * ) TS_CHEM
 #ifndef RMP
       TS_CHEM = con(1) / 60d0
+      IF ( con(1) == 1200d0 ) TS_CHEM = TS_CHEM * 3d0
 #else
       TS_CHEM = con(11) / 60d0
 #endif

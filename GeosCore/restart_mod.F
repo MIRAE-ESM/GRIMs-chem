@@ -12,6 +12,7 @@
       MODULE RESTART_MOD
 
       USE COMODE_MOD,   ONLY : CSPEC
+      USE LINOZ_MOD,    ONLY : LINOZ_STRATL, TLSTT
       USE LOGICAL_MOD,  ONLY : LCHEM, LEMIS, LMEGAN, LSVCSPEC
       USE MEGAN_MOD,    ONLY : DAY_DIM, NUM_DAYS
       USE MEGAN_MOD,    ONLY : T_DAY, T_15
@@ -19,6 +20,7 @@
       USE MEGAN_MOD,    ONLY : PARDF_DAY, PARDF_15
       USE TRACER_MOD,   ONLY : STT, N_TRACERS
       USE TRACER_MOD,   ONLY : ITS_A_FULLCHEM_SIM
+      USE TRACERID_MOD, ONLY : IDTOX
 
       USE CMN_SIZE_MOD
       USE COMODE_LOOP_MOD
@@ -45,6 +47,10 @@
 
          ! Set initial condition to be 1d-30
          STT = 1d-30
+
+         ! Climatological ozone
+         CALL LINOZ_STRATL
+         STT(:,:,:,IDTOX) = TLSTT(:,:,:,1)
 
          ! Message
          IF (LMASTER) THEN
