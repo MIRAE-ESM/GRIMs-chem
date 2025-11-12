@@ -3500,7 +3500,7 @@
 #elif defined( MERRA )
          SCALE_ND66 = SCALE_A3   ! For MERRA,  ND66 is 3-hour time-avg data
 #elif defined( GRIMS )
-         SCALE_ND66 = SCALEDYN   ! For GRIMS,  ND66 is instantaneous data
+         SCALE_ND66 = SCALEDIAG  ! For GRIMS,  ND66 is instantaneous data
 #else
          SCALE_ND66 = SCALE_A6   ! Otherwise,  ND66 is 6-hr time-avg data
 #endif
@@ -3594,7 +3594,7 @@
 #if   defined( MERRA )
          SCALE_ND67 = SCALE_A1     ! For MERRA, most ND67 fields are hourly
 #elif defined( GRIMS )
-         SCALE_ND67 = SCALEDYN     ! For GRIMS, most ND67 fields are instantaneous
+         SCALE_ND67 = SCALEDIAG    ! For GRIMS, most ND67 fields are instantaneous
 #else
          SCALE_ND67 = SCALE_A3     ! Otherwise, most ND67 fields are 3-hourly
 #endif

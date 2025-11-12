@@ -240,6 +240,7 @@ ISOROPIA = ISOROPIA/isoropiaIIcode.o
 
 OBJS = start_chem.o integrate_chem.o end_chem.o
 
+AR = @AR@
 CP = @CP@
 CC = @CC@
 F77 = @F77_FCST@
